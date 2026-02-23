@@ -145,7 +145,7 @@ const CartDropdown = ({ isOpen, onClose }) => {
   return (
     <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-200 rounded-lg shadow-2xl z-[100] overflow-hidden animate-fadeIn">
       {/* Header */}
-      <div className="p-4 bg-gradient-to-r from-black via-gray-900 to-purple-950 border-b border-purple-800">
+      <div className="p-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 border-b border-slate-800">
         <h3 className="text-white font-bold text-lg flex items-center gap-2">
           <FaShoppingBag className="text-purple-400" />
           {t("cart.title")} ({carts.length})
@@ -267,7 +267,7 @@ const CartDropdown = ({ isOpen, onClose }) => {
             </button>
             <button
               onClick={handleCheckout}
-              className="w-full py-2.5 bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:from-gray-900 hover:to-purple-900 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 transform hover:scale-105 border border-purple-800"
+              className="w-full py-2.5 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 transform hover:scale-105 border border-purple-500"
             >
               {t("cart.checkout")}
             </button>

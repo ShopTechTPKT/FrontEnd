@@ -685,12 +685,12 @@ const ShoppingCardItem = () => {
       localStorage.setItem("orderDisplay", JSON.stringify(orderDisplayData));
 
       // Chuyển hướng sang trang thanh toán VNPAY KHÔNG tạo order trước
-      // Sau khi thanh toán thành công, VNPAY sẽ redirect về: /thank_you_shopping?code=00&amount=...
+      // Sau khi thanh toán thành công, VNPAY (sandbox) sẽ redirect về: /thank_you_shopping?vnp_ResponseCode=00&vnp_Amount=...
       openConfirm("Bạn có chắc chắn muốn thanh toán qua VNPAY?", () => {
-        // Tạo form để POST đến VNPAY demo
+        // Tạo form để POST đến service VNPay NodeJS (vnpay_nodejs)
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = "http://localhost:8889/demo/create_payment_url";
+        form.action = "http://localhost:8888/order/create_payment_url";
 
         // Thêm các field cần thiết
         const authToken = localStorage.getItem("authToken") || "";
@@ -698,12 +698,14 @@ const ShoppingCardItem = () => {
           amount: Math.round(discountedTotal),
           bankCode: "",
           language: "vn",
+          // Các field bên dưới hiện tại service vnpay_nodejs không dùng,
+          // nhưng giữ lại để có thể mở rộng về sau nếu cần.
           orderType: "billpayment",
           orderInfo: `Thanh toan don hang ${Date.now()}`,
           returnUrl: `${window.location.origin}/thank_you_shopping`,
           customerEmail: customerInfo.email,
           customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
-          authToken: authToken, // ⚡ Thêm token để gửi email
+          authToken: authToken,
         };
 
         Object.keys(fields).forEach(key => {

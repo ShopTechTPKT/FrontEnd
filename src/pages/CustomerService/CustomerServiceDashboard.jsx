@@ -178,7 +178,7 @@ const CustomerServiceDashboard = () => {
 
       <div className="flex-1 flex flex-col bg-white overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white shadow-lg px-6 py-4">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white shadow-lg px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">

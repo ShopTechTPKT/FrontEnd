@@ -119,7 +119,7 @@ const NewArrivals = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white py-20 overflow-hidden">
+      <div className="relative bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-20 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-transparent to-purple-600/10 animate-pulse"></div>
         </div>
@@ -260,7 +260,7 @@ const NewArrivals = () => {
       </div>
 
       {/* Bottom Banner */}
-      <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 py-16">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-4">{t('common.stay_updated')}</h2>
           <p className="text-xl text-purple-300 mb-8">

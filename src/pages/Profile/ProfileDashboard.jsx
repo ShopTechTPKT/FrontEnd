@@ -148,7 +148,7 @@ function ProfileDashboard() {
                     <div className="flex flex-col gap-3">
                         <button
                             onClick={handleEditButtonClick}
-                            className="px-6 py-2 bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
+                            className="px-6 py-2 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
                         >
                             {t('account.edit')}
                         </button>
@@ -225,7 +225,7 @@ function ProfileDashboard() {
                                         <button
                                             onClick={handleChangePasswordSubmit}
                                             disabled={passwordLoading}
-                                            className="px-6 py-2 bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="px-6 py-2 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {passwordLoading ? 'Đang lưu...' : t('account.lu_thay_i')}
                                         </button>
@@ -300,7 +300,7 @@ function ProfileDashboard() {
                         <button
                             onClick={handleSaveAccountInfo}
                             disabled={editLoading}
-                            className="px-6 py-2 bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {editLoading ? 'Đang lưu...' : t('common.save')}
                         </button>

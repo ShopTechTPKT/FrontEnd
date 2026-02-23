@@ -52,7 +52,7 @@ const NotFound = () => {
             <div className="mt-8 flex items-center justify-center">
               <button
                 onClick={() => window.history.back()}
-                className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:opacity-90 transition-opacity"
+                className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 transition-opacity"
               >
                 {t("notfound.go_back") || "Quay lại"}
               </button>

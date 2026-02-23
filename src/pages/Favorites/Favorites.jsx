@@ -93,10 +93,10 @@ const Favorites = () => {
     <div className="min-h-screen bg-white">
       <Header />
       
-      <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 py-16">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-sky-600 rounded-2xl flex items-center justify-center shadow-lg">
               <FaHeart className="text-white text-3xl" />
             </div>
             <div>

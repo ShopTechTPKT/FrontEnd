@@ -184,7 +184,7 @@ export default function Product() {
               >
                 {t("product.about_product")}
                 {activeNav === "about" && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-purple-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-sky-500 rounded-full"></span>
                 )}
               </Link>
               <Link
@@ -197,7 +197,7 @@ export default function Product() {
               >
                 {t("common.details")}
                 {activeNav === "detail" && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-purple-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-sky-500 rounded-full"></span>
                 )}
               </Link>
               <Link
@@ -210,7 +210,7 @@ export default function Product() {
               >
                 {t("product.specs")}
                 {activeNav === "specs" && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-purple-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-sky-500 rounded-full"></span>
                 )}
               </Link>
             </div>
@@ -251,7 +251,7 @@ export default function Product() {
                 {/* Action Buttons */}
                 <button
                   onClick={() => handleClickAddToCart(product)}
-                  className="flex items-center space-x-2 bg-purple-600 text-white px-5 py-2.5 rounded-lg hover:bg-purple-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center space-x-2 bg-sky-600 text-white px-5 py-2.5 rounded-lg hover:bg-sky-700 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <span className="text-sm font-medium">
                     {t("common.add_to_cart")}

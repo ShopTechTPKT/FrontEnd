@@ -253,14 +253,14 @@ const ChatWindow = ({
             placeholder={t("chat.enter_message")}
             value={input}
             onChange={e => setInput(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-950 transition-all text-sm"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all text-sm"
           />
           <button
             type="submit"
             disabled={!connected || isUploading || (!input.trim() && !selectedFile)}
             className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-md ${
               connected && !isUploading && (input.trim() || selectedFile)
-                ? "bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white hover:opacity-90"
+                ? "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white hover:opacity-90"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >

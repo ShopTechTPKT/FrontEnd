@@ -185,7 +185,7 @@ export default function Appointments() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white py-16">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-16">
         <div className="text-center">
           <FaCalendarAlt className="text-6xl mx-auto mb-4 text-purple-400" />
           <h1 className="text-5xl font-bold mb-4">Đặt lịch sửa chữa</h1>

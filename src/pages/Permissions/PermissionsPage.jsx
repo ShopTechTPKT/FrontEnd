@@ -56,7 +56,7 @@ const PermissionsPage = () => {
       case 'admin':
         return 'from-red-600 to-pink-600';
       case 'manager':
-        return 'from-purple-600 to-blue-600';
+        return 'from-sky-500 to-sky-700';
       case 'staff':
         return 'from-blue-600 to-cyan-600';
       case 'customer':
@@ -72,21 +72,21 @@ const PermissionsPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50 py-8">
+    <div className="min-h-screen bg-slate-950 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded-2xl shadow-2xl p-8 mb-8">
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white rounded-2xl shadow-2xl p-8 mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2">{t('common.roles_permissions')}</h1>
-              <p className="text-purple-200">{t('common.manage_user_roles_and')}</p>
+              <p className="text-sky-200">{t('common.manage_user_roles_and')}</p>
             </div>
             <button
               onClick={() => {
                 setSelectedRole(null);
                 setIsModalOpen(true);
               }}
-              className="px-6 py-3 bg-white text-purple-900 rounded-lg font-semibold hover:bg-purple-50 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+              className="px-6 py-3 bg-white text-slate-900 rounded-lg font-semibold hover:bg-slate-50 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
             >
               <FaPlus />
               Create Role
@@ -96,14 +96,14 @@ const PermissionsPage = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-600">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-sky-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">{t('common.total_roles')}</p>
                 <p className="text-3xl font-bold text-gray-900">{roles.length}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                <FaUserShield className="text-purple-600 text-xl" />
+              <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center">
+                <FaUserShield className="text-sky-600 text-xl" />
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ const PermissionsPage = () => {
               placeholder={t('common.search_roles')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:outline-none"
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ const PermissionsPage = () => {
                       setSelectedRole(role);
                       setIsModalOpen(true);
                     }}
-                    className="flex-1 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-2 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                   >
                     <FaEdit />{t('account.edit')}</button>
                   <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-all flex items-center justify-center gap-2">
@@ -237,7 +237,7 @@ const PermissionsPage = () => {
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 pt-28">
             <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
-              <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+              <div className="bg-gradient-to-r from-sky-500 to-sky-700 text-white p-6">
                 <h2 className="text-2xl font-bold">
                   {selectedRole ? 'Edit Role' : 'Create New Role'}
                 </h2>
@@ -251,7 +251,7 @@ const PermissionsPage = () => {
                       type="text"
                       placeholder={t('common.eg_manager')}
                       defaultValue={selectedRole?.name || ''}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:outline-none"
                     />
                   </div>
 
@@ -260,7 +260,7 @@ const PermissionsPage = () => {
                     <textarea
                       placeholder={t('common.describe_the_role')}
                       defaultValue={selectedRole?.description || ''}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:outline-none"
                       rows="3"
                     />
                   </div>
@@ -271,12 +271,12 @@ const PermissionsPage = () => {
                       {allPermissions.map((perm) => (
                         <label
                           key={perm.id}
-                          className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition-all"
+                          className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg hover:border-sky-400 cursor-pointer transition-all"
                         >
                           <input
                             type="checkbox"
                             defaultChecked={selectedRole?.permissions.includes(perm.id)}
-                            className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
+                            className="w-5 h-5 text-sky-600 rounded focus:ring-sky-500"
                           />
                           <div>
                             <p className="font-semibold text-gray-900">{perm.name}</p>
@@ -289,7 +289,7 @@ const PermissionsPage = () => {
                 </div>
 
                 <div className="flex gap-3 mt-6">
-                  <button className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all">
+                  <button className="flex-1 py-3 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 text-white rounded-lg font-semibold transition-all">
                     {selectedRole ? 'Update Role' : 'Create Role'}
                   </button>
                   <button

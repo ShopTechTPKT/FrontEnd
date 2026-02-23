@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import logo from "../assets/logo-text.png";
+import logo from "../assets/shop.svg";
 import { FaShoppingCart, FaFacebookF } from "react-icons/fa";
-import { IoPersonCircle } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import path from "../constant/path";
 import { useDispatch, useSelector } from "react-redux";
@@ -213,25 +212,25 @@ const Header = () => {
           isScrolled ? "shadow-md" : ""
         }`}
       >
-      {/* Top Bar - Simplified */}
+      {/* Top Bar - Simplified (white background, dark text) */}
       <div
-        className={`bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white text-xs flex justify-between items-center px-4 md:px-8 py-2 transition-all duration-300 ${
+        className={`bg-white text-xs flex justify-between items-center px-4 md:px-8 py-2 border-b border-gray-100 transition-all duration-300 ${
           isScrolled ? "hidden" : ""
         }`}
       >
         {/* Date & Time - Simplified */}
-        <div className="flex items-center gap-3 text-white/90">
+        <div className="flex items-center gap-3 text-gray-700">
           <span className="hidden sm:inline">{getFormattedDate()}</span>
           <span className="hidden md:inline">{formatTime()}</span>
         </div>
 
         {/* Store Location - Simplified */}
-        <div className="hidden lg:flex items-center gap-2 text-sm">
+        <div className="hidden lg:flex items-center gap-2 text-sm text-gray-700">
           <span>📍</span>
-          <span className="text-white/90">{t("header.visitShop")}</span>
+          <span>{t("header.visitShop")}</span>
           <Link
             to="/contact"
-            className="text-white/90 hover:text-white underline"
+            className="text-sky-600 hover:text-sky-700 underline"
           >
             {t("header.contactUs")}
           </Link>
@@ -239,23 +238,21 @@ const Header = () => {
 
         {/* Contact Info - Simplified */}
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-white/90">
+          <span className="hidden sm:inline text-gray-700">
             {t("header.call")} <strong>{t("header.inContactUs")}</strong>
           </span>
           <a
             href="#"
-            className="w-7 h-7 flex items-center justify-center text-white hover:text-purple-300 transition-colors"
+            className="w-7 h-7 flex items-center justify-center text-sky-600 hover:text-sky-700 transition-colors"
           >
             <FaFacebookF className="w-4 h-4" />
           </a>
         </div>
       </div>
 
-      {/* Main Navigation Bar - Simplified */}
+      {/* Main Navigation Bar - Simplified (white background, dark text) */}
       <div
-        className={`bg-gradient-to-r from-black via-gray-900 to-purple-950 border-b border-gray-700 ${
-          isScrolled ? "py-2" : "py-3"
-        }`}
+        className={`bg-white border-b border-gray-200 ${isScrolled ? "py-2" : "py-3"}`}
       >
         {/* Container: 3-column layout - Logo | Menu Center | Icons */}
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 grid grid-cols-3 items-center">
@@ -272,12 +269,12 @@ const Header = () => {
 
           {/* CENTER: Navigation Links - Simplified */}
           <nav className="flex justify-center">
-            <ul className="flex gap-4 md:gap-6 text-sm font-medium text-white whitespace-nowrap">
+            <ul className="flex gap-4 md:gap-6 text-sm font-medium text-gray-900 whitespace-nowrap">
               {/* Home */}
               <li>
                 <Link
                   to={path.home}
-                  className="hover:text-purple-300 transition-colors"
+                  className="hover:text-sky-600 transition-colors"
                 >
                   {t("nav.home")}
                 </Link>
@@ -285,7 +282,7 @@ const Header = () => {
 
               {/* Products Dropdown - Simplified */}
               <li className="relative group">
-                <div className="flex items-center gap-1 hover:text-purple-300 cursor-pointer transition-colors">
+                <div className="flex items-center gap-1 hover:text-sky-600 cursor-pointer transition-colors">
                   <span>{t("nav.products")}</span>
                   <FaChevronDown
                     size={12}
@@ -643,7 +640,7 @@ const Header = () => {
               />
             </div>
 
-            {/* User Account - Simplified */}
+            {/* User Account - chỉ dùng text, không icon emoji */}
             <div
               className="relative"
               ref={dropdownRef}
@@ -651,33 +648,26 @@ const Header = () => {
               onMouseLeave={handleMouseLeave}
             >
               <button
-                className="w-9 h-9 flex items-center justify-center text-white hover:text-purple-300 transition-colors"
+                className="px-3 h-9 flex items-center justify-center text-gray-900 hover:text-sky-600 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <IoPersonCircle className="text-2xl" />
+                {user ? t("account.myAccount") : t("account.loginRegister")}
               </button>
 
               {showDropdown && (
                 <div className="absolute right-0 w-64 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                   {/* User Header - Simplified */}
-                  <div className="p-4 bg-gradient-to-r from-black via-gray-900 to-purple-950 border-b border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
-                        {user ? "👤" : "🔐"}
-                      </div>
-                      <div>
-                        <p className="text-sm text-white font-semibold">
-                          {user
-                            ? `${t("header.hello")}, ${user.fullName}`
-                            : t("header.welcomeBack")}
-                        </p>
-                        <p className="text-xs text-white/80">
-                          {user
-                            ? t("header.manageAccount")
-                            : t("header.pleaseLogin")}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="p-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 border-b border-gray-200">
+                    <p className="text-sm text-white font-semibold">
+                      {user
+                        ? `${t("header.hello")}, ${user.fullName}`
+                        : t("header.welcomeBack")}
+                    </p>
+                    <p className="text-xs text-white/80 mt-1">
+                      {user
+                        ? t("header.manageAccount")
+                        : t("header.pleaseLogin")}
+                    </p>
                   </div>
 
                   <ul className="py-2">

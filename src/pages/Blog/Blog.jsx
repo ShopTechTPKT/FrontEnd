@@ -231,7 +231,7 @@ const Blog = () => {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white'
+                    ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white'
                     : 'bg-gray-100 text-gray-700'
                 }`}
               >
@@ -257,7 +257,7 @@ const Blog = () => {
                   e.target.src = 'https://via.placeholder.com/800x600?text=Featured+Post';
                 }}
               />
-              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded font-bold text-sm">
+              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded font-bold text-sm">
                 {t('blog.featured')}
               </div>
             </div>
@@ -352,7 +352,7 @@ const Blog = () => {
       </div>
 
       {/* Newsletter */}
-      <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 py-12">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-12">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
           <h2 className="text-2xl font-bold mb-3">{t('blog.subscribe_title')}</h2>
           <p className="text-gray-300 mb-6">

@@ -217,22 +217,26 @@ function AuthCard() {
       const response = await registerUser(registerData);
 
       if (response.success) {
-        // Show success notification
+        // Hiển thị thông báo thành công
         notify.success(t('common.auth.register_success'));
 
-        // Switch to login view after a short delay
+        // Giữ trạng thái loading thêm một chút để người dùng cảm giác
+        // hệ thống đang lưu dữ liệu, sau đó mới chuyển sang màn hình đăng nhập
         setTimeout(() => {
           setIsLogin(true);
-        }, 2000);
-
-        // Reset signup form
-        setSignUpForm({
-          fullName: '',
-          email: '',
-          phoneNumber: '',
-          password: '',
-          confirmPassword: ''
-        });
+          setSignUpForm({
+            fullName: '',
+            email: '',
+            phoneNumber: '',
+            password: '',
+            confirmPassword: ''
+          });
+          setLoading(false);
+        }, 800);
+      } else {
+        // Trường hợp backend trả về không success nhưng cũng không throw
+        notify.error(t('common.auth.register_failed'));
+        setLoading(false);
       }
 
     } catch (err) {
@@ -240,10 +244,9 @@ function AuthCard() {
       console.error('Error object:', err);
       console.error('Error message:', err.message);
 
-      // Display the error message from the service
+      // Hiển thị lỗi từ service
       const errorMessage = err.message || t('common.auth.register_failed');
       notify.error(errorMessage);
-    } finally {
       setLoading(false);
     }
   };
@@ -374,6 +377,18 @@ function AuthCard() {
 
   return (
     <>
+      {/* Global loading overlay cho cả đăng nhập và đăng ký */}
+      {loading && (
+        <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl px-8 py-6 flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            <div className="text-gray-900 font-semibold">
+              Đang xử lý, vui lòng đợi trong giây lát...
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Inactive Account Modal - Simple and user-friendly */}
       {showInactiveModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4" onClick={handleCloseInactiveModal}>
@@ -423,7 +438,7 @@ function AuthCard() {
               <button
                 onClick={handleRequestUnlock}
                 disabled={isSendingEmail || emailSent}
-                className="w-full py-2.5 bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSendingEmail ? t('common.auth.sending') : emailSent ? t('common.auth.unlock_request_sent_status') : t('common.auth.request_unlock')}
               </button>
@@ -456,7 +471,7 @@ function AuthCard() {
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-3 rounded-lg font-semibold transition-all ${isLogin
-                  ? 'bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white shadow-md'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -465,7 +480,7 @@ function AuthCard() {
               <button
                 onClick={() => setIsLogin(false)}
                 className={`flex-1 py-3 rounded-lg font-semibold transition-all ${!isLogin
-                  ? 'bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white shadow-md'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -503,7 +518,7 @@ function AuthCard() {
 
                 <div className="flex items-center justify-between">
                   <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
+                    <input type="checkbox" className="w-4 h-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500" />
                     <span className="ml-2 text-sm text-gray-600">{t('common.remember_me')}</span>
                   </label>
                   <button
@@ -519,6 +534,7 @@ function AuthCard() {
                   text={loading ? t('common.signing_in') : t('common.sign_in')}
                   type="submit"
                   disabled={loading}
+                  variant="primary"
                 />
 
                 <div className="relative my-6">
@@ -595,7 +611,7 @@ function AuthCard() {
                 />
 
                 <div className="flex items-start">
-                  <input type="checkbox" className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 mt-1" />
+                  <input type="checkbox" className="w-4 h-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500 mt-1" />
                   <span className="ml-2 text-sm text-gray-600">
                     {t('common.i_agree_to')} <a href="#" className="text-purple-700 hover:text-purple-900 font-medium">{t('common.terms_conditions')}</a>{t('common.and')}<a href="#" className="text-purple-700 hover:text-purple-900 font-medium">{t('common.privacy_policy')}</a>
                   </span>
@@ -605,6 +621,7 @@ function AuthCard() {
                   text={loading ? t('common.creating_account') : t('common.create_account')}
                   type="submit"
                   disabled={loading}
+                  variant="primary"
                 />
 
                 <div className="relative my-6">
@@ -626,21 +643,21 @@ function AuthCard() {
             )}
           </div>
 
-          {/* Right Side - Promo Banner */}
-          <div className="bg-gradient-to-br from-black via-gray-900 to-purple-950 p-8 lg:p-12 text-white flex flex-col justify-center relative overflow-hidden">
+          {/* Right Side - Promo Banner (primary gradient) */}
+          <div className="bg-gradient-to-br from-purple-900 via-purple-700 to-purple-500 p-8 lg:p-12 text-white flex flex-col justify-center relative overflow-hidden">
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600 rounded-full filter blur-3xl opacity-20"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-800 rounded-full filter blur-3xl opacity-20"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-800 rounded-full filter blur-3xl opacity-20"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900 rounded-full filter blur-3xl opacity-20"></div>
 
             <div className="relative z-10">
               <div className="mb-8">
-                <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
-                  <FaShieldAlt className="text-3xl" />
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-md">
+                  <FaShieldAlt className="text-3xl text-blue-600" />
                 </div>
                 <h3 className="text-4xl font-bold mb-4">
                   {isLogin ? t('common.new_here') : t('common.already_have_account')}
                 </h3>
-                <p className="text-purple-200 text-lg leading-relaxed mb-8">
+                <p className="text-blue-200 text-lg leading-relaxed mb-8">
                   {isLogin
                     ? t('common.register_description')
                     : t('common.login_description')}
@@ -656,7 +673,7 @@ function AuthCard() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-purple-800">
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-blue-800">
                 <Stat number="10K+" label={t('common.products')} />
                 <Stat number="50K+" label={t('common.customers')} />
                 <Stat number="4.9★" label={t('common.rating')} />
@@ -691,7 +708,7 @@ const ModernInput = ({ type = "text", placeholder, name, value, onChange, error,
         onChange={onChange}
         className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${error
           ? 'border-red-500 focus:ring-red-500'
-          : 'border-gray-300 focus:ring-purple-500 focus:border-purple-500'
+            : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
           }`}
       />
     </div>
@@ -700,16 +717,25 @@ const ModernInput = ({ type = "text", placeholder, name, value, onChange, error,
 );
 
 // Modern Button Component
-const ModernButton = ({ text, onClick, type = "button", disabled }) => (
-  <button
-    onClick={onClick}
-    type={type}
-    disabled={disabled}
-    className="w-full py-3 bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:from-gray-900 hover:to-purple-900 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
-  >
-    {text}
-  </button>
-);
+const ModernButton = ({ text, onClick, type = "button", disabled, variant = "primary" }) => {
+  const base =
+    "w-full py-3 font-semibold rounded-lg transition-all transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg";
+  const primary =
+    "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white hover:scale-[1.02]";
+  const secondary = "bg-slate-800 text-slate-100 hover:bg-slate-700";
+  const classes = `${base} ${variant === "secondary" ? secondary : primary}`;
+
+  return (
+    <button
+      onClick={onClick}
+      type={type}
+      disabled={disabled}
+      className={classes}
+    >
+      {text}
+    </button>
+  );
+};
 
 // Social Button Component
 const SocialButton = ({ icon, onClick }) => (
@@ -725,8 +751,8 @@ const SocialButton = ({ icon, onClick }) => (
 // Feature Component
 const Feature = ({ text }) => (
   <div className="flex items-center gap-3">
-    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-    <span className="text-purple-100">{text}</span>
+    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+    <span className="text-blue-100">{text}</span>
   </div>
 );
 
@@ -734,9 +760,7 @@ const Feature = ({ text }) => (
 const Stat = ({ number, label }) => (
   <div className="text-center">
     <div className="text-2xl font-bold text-white mb-1">{number}</div>
-    <div className="text-sm text-purple-300">{label}</div>
+    <div className="text-sm text-blue-200">{label}</div>
   </div>
 );
 // Updated: 2025-10-12T16:06:23.114Z
-
-// Updated: 2025-10-12T16:08:57.087Z

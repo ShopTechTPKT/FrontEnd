@@ -586,7 +586,7 @@ const ChatWindow = () => {
   return (
     <div className="fixed bottom-24 left-6 z-50 w-96 h-[520px] bg-white shadow-xl rounded-3xl border border-gray-100 flex flex-col overflow-hidden transition-all duration-300">
       {/* Header - Màu như header chính */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white px-5 py-4 shadow-md">
+      <div className="flex items-center justify-between bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white px-5 py-4 shadow-md">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
             💬
@@ -738,7 +738,7 @@ const ChatWindow = () => {
               <button
                 type="submit"
                 disabled={!customer.name || !customer.phone || isRegistering}
-                className="w-full bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:opacity-90 text-white px-4 py-3 rounded-xl transition-all font-medium text-sm shadow-lg shadow-purple-950/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-4 py-3 rounded-xl transition-all font-medium text-sm shadow-lg shadow-purple-500/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isRegistering ? (
                   <>
@@ -779,7 +779,7 @@ const ChatWindow = () => {
                     <div
                       className={`max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
                         m.senderType === "CUSTOMER"
-                          ? "bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white rounded-br-sm"
+                          ? "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-br-sm"
                           : "bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-sm"
                       } ${m.pending ? "opacity-60 italic" : ""}`}
                     >
@@ -858,7 +858,7 @@ const ChatWindow = () => {
                 <div className="flex justify-center gap-2">
                   <button
                     onClick={handleEnableAI}
-                    className="bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:opacity-90 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all shadow-md"
+                    className="bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all shadow-md"
                   >
                     {t("bookingChat.useAI")}
                   </button>
@@ -944,7 +944,7 @@ const ChatWindow = () => {
             />
             <button
               type="submit"
-              className="bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
+              className="bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
               disabled={(!connected && !useAI) || isBotThinking || askedAI || (!input.trim() && !selectedFile)}
             >
               Gửi
@@ -967,7 +967,7 @@ const ChatWindow = () => {
           />
           <button
             type="submit"
-            className="bg-gradient-to-r from-black via-gray-900 to-purple-950 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
+            className="bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
             disabled={(!connected && !useAI) || isBotThinking || askedAI}
           >
             Gửi

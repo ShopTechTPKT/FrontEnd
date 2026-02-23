@@ -215,7 +215,7 @@ function Content() {
             return hasPlays ? (
               <a
                 href="/minigame"
-                className="inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-gradient-to-r from-black via-gray-900 to-purple-950 rounded-lg hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="inline-flex items-center justify-center px-8 py-3 font-semibold text-white bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 rounded-lg hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <span className="mr-2">🎮</span>
                 {t('minigame.playButton')}

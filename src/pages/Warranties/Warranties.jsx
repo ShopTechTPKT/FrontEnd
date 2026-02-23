@@ -130,7 +130,7 @@ const Warranties = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white py-16">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
@@ -250,7 +250,7 @@ const Warranties = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <button className="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                  <button className="flex-1 bg-sky-600 text-white py-2 rounded-lg hover:bg-sky-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
                     <FaFileAlt />{t('search.view_details')}</button>
                   {warranty.status === 'active' && (
                     <button className="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">

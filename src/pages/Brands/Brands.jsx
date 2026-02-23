@@ -136,7 +136,7 @@ const Brands = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-black via-gray-900 to-purple-950 text-white py-20">
+      <div className="relative bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-20">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-transparent to-purple-600/10"></div>
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center">
@@ -244,7 +244,7 @@ const Brands = () => {
       </div>
 
       {/* Bottom CTA */}
-      <div className="bg-gradient-to-r from-black via-gray-900 to-purple-950 py-16">
+      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-4">{t('brand.cant_find_your_brand')}</h2>
           <p className="text-xl text-purple-300 mb-8">

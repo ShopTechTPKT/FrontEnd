@@ -172,7 +172,7 @@ export default function ProductDetail() {
                 </div>
 
                 <div className="flex justify-center space-x-2">
-                  <span className="h-2 w-2 rounded-full bg-purple-600"></span>
+                  <span className="h-2 w-2 rounded-full bg-sky-500"></span>
                   <span className="h-2 w-2 rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer transition"></span>
                   <span className="h-2 w-2 rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer transition"></span>
                 </div>

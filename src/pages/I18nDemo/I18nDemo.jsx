@@ -50,7 +50,7 @@ const I18nDemo = () => {
               <h3 className="font-bold text-gray-800 mb-2">MacBook Pro M3</h3>
               <p className="text-sm text-gray-600 mb-4">{t('product.description')}</p>
               <div className="flex gap-2">
-                <button className="flex-1 bg-purple-600 text-white rounded-lg py-2 font-semibold hover:bg-purple-700 transition-colors">
+                <button className="flex-1 bg-sky-600 text-white rounded-lg py-2 font-semibold hover:bg-sky-700 transition-colors">
                   {t('product.addToCart')}
                 </button>
                 <button className="flex-1 bg-green-600 text-white rounded-lg py-2 font-semibold hover:bg-green-700 transition-colors">
@@ -66,7 +66,7 @@ const I18nDemo = () => {
               <h3 className="font-bold text-gray-800 mb-2">Gaming PC RTX 4090</h3>
               <p className="text-sm text-gray-600 mb-4">{t('product.description')}</p>
               <div className="flex gap-2">
-                <button className="flex-1 bg-purple-600 text-white rounded-lg py-2 font-semibold hover:bg-purple-700 transition-colors">
+                <button className="flex-1 bg-sky-600 text-white rounded-lg py-2 font-semibold hover:bg-sky-700 transition-colors">
                   {t('product.addToCart')}
                 </button>
                 <button className="flex-1 bg-green-600 text-white rounded-lg py-2 font-semibold hover:bg-green-700 transition-colors">
@@ -82,7 +82,7 @@ const I18nDemo = () => {
               <h3 className="font-bold text-gray-800 mb-2">Mechanical Keyboard</h3>
               <p className="text-sm text-gray-600 mb-4">{t('product.description')}</p>
               <div className="flex gap-2">
-                <button className="flex-1 bg-purple-600 text-white rounded-lg py-2 font-semibold hover:bg-purple-700 transition-colors">
+                <button className="flex-1 bg-sky-600 text-white rounded-lg py-2 font-semibold hover:bg-sky-700 transition-colors">
                   {t('product.addToCart')}
                 </button>
                 <button className="flex-1 bg-green-600 text-white rounded-lg py-2 font-semibold hover:bg-green-700 transition-colors">

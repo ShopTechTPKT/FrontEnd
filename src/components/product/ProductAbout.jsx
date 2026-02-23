@@ -511,7 +511,7 @@ const handleSubmitReview = async () => {
               </div>
 
               <button
-                className="w-full flex items-center justify-center space-x-2 bg-purple-600 text-white text-base font-semibold py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
+                className="w-full flex items-center justify-center space-x-2 bg-sky-600 text-white text-base font-semibold py-3 rounded-lg hover:bg-sky-700 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
                 onClick={() => handleAddToCart(product, quantity)}
               >
                 <FaShoppingCart className="w-5 h-5" />
@@ -677,7 +677,7 @@ const handleSubmitReview = async () => {
 
             <button
                 onClick={handleSubmitReview}
-                className="mt-3 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                className="mt-3 px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded-lg hover:bg-sky-700 transition-colors"
             >
                 {/* Sửa: Nút Gửi */}
                 {t('reviews.submit_button')}
