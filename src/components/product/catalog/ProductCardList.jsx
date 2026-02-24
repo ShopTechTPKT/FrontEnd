@@ -113,9 +113,7 @@ export default function ProductCardList({ product }) {
               e.stopPropagation(); // Ngăn chặn click từ lan ra ngoài
               handleAddToCart();
             }}
-            className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg 
-              bg-indigo-600 text-white font-semibold text-sm
-              hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white font-semibold text-sm hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             <ShoppingCart className="w-4 h-4" /> {/* Sử dụng icon đồng bộ */}
             {t("product.add_to_cart")}

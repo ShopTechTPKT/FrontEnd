@@ -3,6 +3,7 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 // Components
 import ChatSidebar from "../../components/Chat/ChatSidebar";
@@ -13,6 +14,8 @@ import AppointmentBookingForm from "../../components/AppointmentBookingForm"; //
 const CustomerServiceDashboard = () => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
   const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:8081/ws";
+
+  const navigate = useNavigate();
 
   const [sessions, setSessions] = useState([]);
   const [selectedSession, setSelectedSession] = useState(null);
@@ -169,7 +172,7 @@ const CustomerServiceDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-white font-sans overflow-hidden">
+    <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
       <ChatSidebar
         sessions={sessions}
         selectedSession={selectedSession}
@@ -178,17 +181,17 @@ const CustomerServiceDashboard = () => {
 
       <div className="flex-1 flex flex-col bg-white overflow-hidden">
         {/* Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white shadow-lg px-6 py-4">
+      <div className="bg-white border-b border-gray-200 text-gray-900 shadow-sm px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <span className="text-2xl">💬</span>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-purple-900 to-purple-600 text-white shadow-sm">
+                <span className="text-xl">💬</span>
               </div>
               <div>
                 <h1 className="text-xl font-semibold">
                   {t("dashboard.title")}
                 </h1>
-                <p className="text-sm opacity-90 mt-0.5 flex items-center gap-2">
+                <p className="text-sm text-gray-600 mt-0.5 flex items-center gap-2">
                   <span
                     className={`inline-block w-2 h-2 rounded-full ${
                       connected ? "bg-green-400 animate-pulse" : "bg-red-400"
@@ -207,7 +210,7 @@ const CustomerServiceDashboard = () => {
               {/* Nút Đặt lịch hẹn (Booking Form) */}
               <button
                 onClick={() => setShowAppointmentForm(true)}
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 border border-white/10 shadow-lg"
+                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-sm"
               >
                 <svg
                   className="w-4 h-4"
@@ -228,7 +231,7 @@ const CustomerServiceDashboard = () => {
               {/* Nút Lịch trình (Schedule Form - cho session hiện tại) */}
               <button
                 onClick={() => setShowScheduleForm(true)}
-                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 border border-white/10"
+                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 border border-purple-200 shadow-sm"
               >
                 <svg
                   className="w-4 h-4"
@@ -244,6 +247,27 @@ const CustomerServiceDashboard = () => {
                   />
                 </svg>
                 {t("dashboard.btn_schedule")}
+              </button>
+
+              {/* Nút Hỏi đáp sản phẩm */}
+              <button
+                onClick={() => navigate("/products")}
+                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 border border-purple-200 shadow-sm"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 10h8M8 14h5M5 20l2-3h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v13z"
+                  />
+                </svg>
+                Hỏi đáp sản phẩm
               </button>
             </div>
           </div>

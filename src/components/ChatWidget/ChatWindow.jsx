@@ -738,7 +738,7 @@ const ChatWindow = () => {
               <button
                 type="submit"
                 disabled={!customer.name || !customer.phone || isRegistering}
-                className="w-full bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-4 py-3 rounded-xl transition-all font-medium text-sm shadow-lg shadow-purple-500/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-4 py-3 rounded-xl transition-all font-medium text-sm shadow-lg shadow-purple-500/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isRegistering ? (
                   <>
@@ -779,7 +779,7 @@ const ChatWindow = () => {
                     <div
                       className={`max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
                         m.senderType === "CUSTOMER"
-                          ? "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-br-sm"
+                          ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-br-sm"
                           : "bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-sm"
                       } ${m.pending ? "opacity-60 italic" : ""}`}
                     >
@@ -858,7 +858,7 @@ const ChatWindow = () => {
                 <div className="flex justify-center gap-2">
                   <button
                     onClick={handleEnableAI}
-                    className="bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all shadow-md"
+                    className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all shadow-md"
                   >
                     {t("bookingChat.useAI")}
                   </button>
@@ -944,7 +944,7 @@ const ChatWindow = () => {
             />
             <button
               type="submit"
-              className="bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
+              className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
               disabled={(!connected && !useAI) || isBotThinking || askedAI || (!input.trim() && !selectedFile)}
             >
               Gửi
@@ -967,7 +967,7 @@ const ChatWindow = () => {
           />
           <button
             type="submit"
-            className="bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
+            className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
             disabled={(!connected && !useAI) || isBotThinking || askedAI}
           >
             Gửi

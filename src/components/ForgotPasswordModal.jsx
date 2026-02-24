@@ -182,14 +182,14 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <div key={s} className="flex items-center">
               <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold ${
               step >= s
-                ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white'
+                ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white'
                 : 'bg-gray-200 text-gray-500'
             }`}>
                 {step > s ? <FaCheckCircle /> : s}
               </div>
               {s < 3 && (
                 <div className={`w-16 h-1 mx-2 ${
-                  step > s ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500' : 'bg-gray-200'
+                  step > s ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500' : 'bg-gray-200'
                 }`} />
               )}
             </div>
@@ -249,7 +249,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+              className="w-full py-3 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
             >
               {loading ? t('forgotPassword.sending') : t('forgotPassword.step1.send_otp')}
             </button>
@@ -298,7 +298,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="flex-1 py-3 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                className="flex-1 py-3 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
               >
                 {loading ? t('forgotPassword.verifying') : t('forgotPassword.step2.verify')}
               </button>
@@ -367,7 +367,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                className="flex-1 py-3 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
               >
                 {loading ? t('forgotPassword.resetting') : t('forgotPassword.step3.reset_password')}
               </button>

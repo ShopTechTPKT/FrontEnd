@@ -251,7 +251,7 @@ export default function Product() {
                 {/* Action Buttons */}
                 <button
                   onClick={() => handleClickAddToCart(product)}
-                  className="flex items-center space-x-2 bg-sky-600 text-white px-5 py-2.5 rounded-lg hover:bg-sky-700 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white px-5 py-2.5 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <span className="text-sm font-medium">
                     {t("common.add_to_cart")}

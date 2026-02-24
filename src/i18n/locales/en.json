@@ -2056,7 +2056,12 @@
     "about_product": "About Product",
     "specs": "Specs",
     "home": "Home",
-    "compare_products": "Compare Products"
+    "compare_products": "Compare Products",
+    "question_sent": "Your question has been sent. Our staff will answer as soon as possible.",
+    "question_error": "Failed to send question. Please try again.",
+    "staff_only_answer": "Only shop staff can send official answers.",
+    "login_required_to_ask": "You need to log in to ask a question.",
+    "question_required": "Please enter your question content."
   },
   "my_discount": {
     "point": "point",

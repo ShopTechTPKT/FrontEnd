@@ -231,7 +231,7 @@ const Blog = () => {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white'
+                    ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white'
                     : 'bg-gray-100 text-gray-700'
                 }`}
               >
@@ -257,7 +257,7 @@ const Blog = () => {
                   e.target.src = 'https://via.placeholder.com/800x600?text=Featured+Post';
                 }}
               />
-              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded font-bold text-sm">
+              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded font-bold text-sm">
                 {t('blog.featured')}
               </div>
             </div>

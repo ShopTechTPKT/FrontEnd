@@ -260,7 +260,7 @@ const ChatWindow = ({
             disabled={!connected || isUploading || (!input.trim() && !selectedFile)}
             className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-md ${
               connected && !isUploading && (input.trim() || selectedFile)
-                ? "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white hover:opacity-90"
+                ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white hover:opacity-90"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >

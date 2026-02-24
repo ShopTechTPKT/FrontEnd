@@ -348,10 +348,10 @@ const HeroSearchSection = ({ product = [] }) => {
             </button>
           </div>
 
-          {/* Search Button - Match header color */}
+          {/* Search Button - Match primary gradient */}
           <button
             onClick={handleSearch}
-            className="h-[42px] px-6 py-2.5 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white text-base rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 flex items-center justify-center gap-2 transition-opacity whitespace-nowrap"
+            className="h-[42px] px-6 py-2.5 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white text-base rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 flex items-center justify-center gap-2 transition-opacity whitespace-nowrap"
           >
             <FaSearch />
             <span>{t('search.search')}</span>

@@ -267,7 +267,7 @@ const CartDropdown = ({ isOpen, onClose }) => {
             </button>
             <button
               onClick={handleCheckout}
-              className="w-full py-2.5 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 transform hover:scale-105 border border-purple-500"
+              className="w-full py-2.5 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 transform hover:scale-105 border border-purple-500"
             >
               {t("cart.checkout")}
             </button>

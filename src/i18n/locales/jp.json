@@ -2009,7 +2009,12 @@
     "about_product": "商品について",
     "specs": "仕様",
     "home": "ホーム",
-    "compare_products": "製品比較"
+    "compare_products": "製品比較",
+    "question_sent": "ご質問を送信しました。スタッフができるだけ早く回答いたします。",
+    "question_error": "質問を送信できませんでした。もう一度お試しください。",
+    "staff_only_answer": "公式な回答はショップスタッフのみが行えます。",
+    "login_required_to_ask": "質問するにはログインが必要です。",
+    "question_required": "質問内容を入力してください。"
   },
   "my_discount": {
     "point": "ポイント",

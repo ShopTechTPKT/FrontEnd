@@ -272,9 +272,9 @@ const Header = () => {
             <ul className="flex gap-4 md:gap-6 text-sm font-medium text-gray-900 whitespace-nowrap">
               {/* Home */}
               <li>
-                <Link
+              <Link
                   to={path.home}
-                  className="hover:text-sky-600 transition-colors"
+                  className="hover:text-purple-600 transition-colors"
                 >
                   {t("nav.home")}
                 </Link>
@@ -282,7 +282,7 @@ const Header = () => {
 
               {/* Products Dropdown - Simplified */}
               <li className="relative group">
-                <div className="flex items-center gap-1 hover:text-sky-600 cursor-pointer transition-colors">
+                <div className="flex items-center gap-1 hover:text-purple-600 cursor-pointer transition-colors">
                   <span>{t("nav.products")}</span>
                   <FaChevronDown
                     size={12}
@@ -648,16 +648,16 @@ const Header = () => {
               onMouseLeave={handleMouseLeave}
             >
               <button
-                className="px-3 h-9 flex items-center justify-center text-gray-900 hover:text-sky-600 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+                className="px-3 h-9 flex items-center justify-center text-gray-900 hover:text-purple-600 text-sm font-medium rounded-md border border-purple-400 hover:bg-purple-50 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 {user ? t("account.myAccount") : t("account.loginRegister")}
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 w-64 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                <div className="absolute right-0 w-64 mt-2 bg-white border border-purple-400 rounded-lg shadow-lg z-10">
                   {/* User Header - Simplified */}
-                  <div className="p-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 border-b border-gray-200">
+                  <div className="p-4 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 border-b border-purple-400">
                     <p className="text-sm text-white font-semibold">
                       {user
                         ? `${t("header.hello")}, ${user.fullName}`
@@ -699,7 +699,7 @@ const Header = () => {
                         {isCustomerService && (
                           <li onClick={() => handleMenuItemClick("employee")}>
                             <Link
-                              to="/employee"
+                              to="/customer-service"
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                             >
                               {t("account.staff")}

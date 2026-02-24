@@ -467,9 +467,9 @@ const Deals = () => {
             <div className="text-5xl mb-3">🔍</div>
             <h3 className="text-lg font-bold text-gray-700 mb-2">{t('deals.empty.title')}</h3>
             <p className="text-sm text-gray-500 mb-4">{t('deals.empty.description')}</p>
-            <button
-              onClick={resetFilters}
-              className="bg-sky-600 text-white px-5 py-2 rounded-lg hover:bg-sky-700 transition-colors text-sm"
+          <button
+            onClick={resetFilters}
+            className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white px-5 py-2 rounded-lg hover:opacity-90 transition-colors text-sm"
             >
               {t('deals.empty.resetFilters')}
             </button>
@@ -566,12 +566,12 @@ const Deals = () => {
                   )}
 
                   {/* Action Button - Simplified */}
-                  <button 
+              <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       viewProductDetails(deal.id);
                     }}
-                    className="w-full py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors text-sm flex items-center justifycenter gap-2"
+                    className="w-full py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg font-medium hover:opacity-90 transition-colors text-sm flex items-center justify-center gap-2"
                   >
                     <FaShoppingCart className="text-xs" />
                     {t('deals.buyNow')}

@@ -52,7 +52,7 @@ const ChatButton = () => {
             className={`relative flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 ${
               isOpen
                 ? "bg-white text-gray-700 hover:bg-gray-50 rotate-0"
-                : "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white hover:opacity-90 float-animation-button"
+                : "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white hover:opacity-90 float-animation-button"
             } focus:outline-none focus:ring-4 focus:ring-purple-950/30`}
             aria-label={isOpen ? "Đóng khung chat" : "Mở khung chat"}
           >

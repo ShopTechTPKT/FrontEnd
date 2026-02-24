@@ -2101,7 +2101,12 @@
     "specs": "Thông số",
     "in_stock": "Còn Hàng",
     "home": "Trang Chủ",
-    "compare_products": "So Sánh Sản Phẩm"
+    "compare_products": "So Sánh Sản Phẩm",
+    "question_sent": "Đã gửi câu hỏi, shop sẽ trả lời sớm nhất.",
+    "question_error": "Không gửi được câu hỏi. Vui lòng thử lại.",
+    "staff_only_answer": "Chỉ nhân viên Shop mới có thể trả lời chính thức.",
+    "login_required_to_ask": "Bạn cần đăng nhập để đặt câu hỏi.",
+    "question_required": "Vui lòng nhập nội dung câu hỏi."
     },  "my_discount": {
     "point": "điểm",
     "all": "Tất cả",

@@ -90,9 +90,7 @@ export default function ProductCard({ product }) {
       {/*them button add to cart*/}
       <button
         onClick={handleAddToCart}
-        className="w-full flex items-center justify-center gap-2 py-2 rounded-lg 
-          bg-indigo-600 text-white font-semibold text-sm
-          hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 mt-4"
+        className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white font-semibold text-sm hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 mt-4"
       >
         <ShoppingCart className="w-4 h-4" />
         {t("product.add_to_cart")}

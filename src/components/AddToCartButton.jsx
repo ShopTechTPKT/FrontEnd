@@ -116,7 +116,7 @@ const AddToCartButton = ({ product, className = "", showQuantity = true }) => {
           flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all
           ${added 
             ? 'bg-green-600 text-white' 
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
+            : 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white'
           }
           ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'}
         `}

@@ -193,9 +193,9 @@ const ChatBox = () => {
       hoverBg: "hover:bg-gray-100",
       hoverText: "hover:text-gray-800",
       borderColor: "border-gray-200/60",
-      buttonBg: "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500",
+      buttonBg: "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500",
       buttonHover: "hover:opacity-90 hover:scale-105",
-      animateColor: "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500",
+      animateColor: "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500",
       glowColor: "shadow-purple-950/25",
       accentGlow: "shadow-xl shadow-purple-950/30"
     },
@@ -716,7 +716,7 @@ const handleFileSelect = (e, multiple = false) => {
           </div>
         </div>
         {isUser && (
-          <div className={`w-8 h-8 rounded-full bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 flex items-center justify-center text-white text-sm font-bold shadow-lg`}>
+          <div className={`w-8 h-8 rounded-full bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 flex items-center justify-center text-white text-sm font-bold shadow-lg`}>
             You
           </div>
         )}

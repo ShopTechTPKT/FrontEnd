@@ -438,7 +438,7 @@ function AuthCard() {
               <button
                 onClick={handleRequestUnlock}
                 disabled={isSendingEmail || emailSent}
-                className="w-full py-2.5 bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSendingEmail ? t('common.auth.sending') : emailSent ? t('common.auth.unlock_request_sent_status') : t('common.auth.request_unlock')}
               </button>
@@ -471,7 +471,7 @@ function AuthCard() {
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-3 rounded-lg font-semibold transition-all ${isLogin
-                  ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white shadow-md'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -480,7 +480,7 @@ function AuthCard() {
               <button
                 onClick={() => setIsLogin(false)}
                 className={`flex-1 py-3 rounded-lg font-semibold transition-all ${!isLogin
-                  ? 'bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white shadow-md'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -643,21 +643,17 @@ function AuthCard() {
             )}
           </div>
 
-          {/* Right Side - Promo Banner (primary gradient) */}
-          <div className="bg-gradient-to-br from-purple-900 via-purple-700 to-purple-500 p-8 lg:p-12 text-white flex flex-col justify-center relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-800 rounded-full filter blur-3xl opacity-20"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-900 rounded-full filter blur-3xl opacity-20"></div>
-
+          {/* Right Side - Promo Banner (now light theme) */}
+          <div className="bg-white p-8 lg:p-12 text-gray-900 flex flex-col justify-center relative overflow-hidden border-l border-gray-100">
             <div className="relative z-10">
               <div className="mb-8">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-md">
-                  <FaShieldAlt className="text-3xl text-blue-600" />
+                <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 shadow-md">
+                  <FaShieldAlt className="text-3xl text-purple-600" />
                 </div>
-                <h3 className="text-4xl font-bold mb-4">
+                <h3 className="text-4xl font-bold mb-4 text-gray-900">
                   {isLogin ? t('common.new_here') : t('common.already_have_account')}
                 </h3>
-                <p className="text-blue-200 text-lg leading-relaxed mb-8">
+                <p className="text-gray-600 text-lg leading-relaxed mb-8">
                   {isLogin
                     ? t('common.register_description')
                     : t('common.login_description')}
@@ -721,7 +717,7 @@ const ModernButton = ({ text, onClick, type = "button", disabled, variant = "pri
   const base =
     "w-full py-3 font-semibold rounded-lg transition-all transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg";
   const primary =
-    "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-400 text-white hover:scale-[1.02]";
+    "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white hover:scale-[1.02]";
   const secondary = "bg-slate-800 text-slate-100 hover:bg-slate-700";
   const classes = `${base} ${variant === "secondary" ? secondary : primary}`;
 
@@ -751,8 +747,8 @@ const SocialButton = ({ icon, onClick }) => (
 // Feature Component
 const Feature = ({ text }) => (
   <div className="flex items-center gap-3">
-    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-    <span className="text-blue-100">{text}</span>
+    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+    <span className="text-gray-700">{text}</span>
   </div>
 );
 

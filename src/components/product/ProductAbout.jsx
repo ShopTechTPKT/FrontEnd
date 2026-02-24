@@ -25,6 +25,7 @@ import { addToCart } from "../../utils/redux/cartSlice.jsx";
 import { getReviewsByProduct, createReview } from "../../apis/reviewProductApi.jsx";
 import { getUserById } from "../../apis/userApis.jsx";
 import Loading from "../Loading";
+import ProductQASection from "./ProductQASection.jsx";
 import { toast } from "react-toastify";
 import logo from "../../assets/logo-text.png";
 import notify from "../../utils/notify.js";
@@ -104,6 +105,7 @@ export default function ProductDetail() {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState("");
   const [validationError, setValidationError] = useState("");
+  const [activeTab, setActiveTab] = useState("reviews"); // "reviews" | "qa"
   const {
     isFavorited,
     loading: favoriteLoading,
@@ -511,7 +513,7 @@ const handleSubmitReview = async () => {
               </div>
 
               <button
-                className="w-full flex items-center justify-center space-x-2 bg-sky-600 text-white text-base font-semibold py-3 rounded-lg hover:bg-sky-700 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
+              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
                 onClick={() => handleAddToCart(product, quantity)}
               >
                 <FaShoppingCart className="w-5 h-5" />
@@ -568,142 +570,218 @@ const handleSubmitReview = async () => {
             </div>
           </div>
         </div>
-        {/* Product Reviews Section - Simplified */}
+        {/* Product Reviews & Q&A Section */}
         <div className="mt-8 bg-white rounded-lg p-6 border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-800">{t('reviews.title')}</h2>
+          {/* Tabs */}
+          <div className="flex flex-wrap gap-3 items-center justify-between mb-4">
+            <div className="inline-flex rounded-full bg-gray-100 p-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab("reviews")}
+                className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
+                  activeTab === "reviews"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                {t("reviews.title")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("qa")}
+                className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
+                  activeTab === "qa"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-800"
+                }`}
+              >
+                Hỏi đáp
+              </button>
+            </div>
 
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-yellow-500">{averageRating?.toFixed(1) ?? "0.0"}</span>
-              <div className="flex">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span key={star} className={`text-sm ${star <= Math.round(averageRating) ? "text-yellow-400" : "text-gray-300"}`}>★</span>
+            {activeTab === "reviews" && (
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl font-bold text-yellow-500">
+                  {averageRating?.toFixed(1) ?? "0.0"}
+                </span>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      className={`text-sm ${
+                        star <= Math.round(averageRating)
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">({reviews.length})</span>
+              </div>
+            )}
+          </div>
+
+          {/* Tab content */}
+          {activeTab === "reviews" && (
+            <>
+              <div className="space-y-4 mb-6">
+                {reviews.slice(0, showAll ? reviews.length : 3).map((review) => (
+                  <div
+                    key={review.id || review.reviewId}
+                    className="pb-4 border-b last:border-0"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                          <span className="text-purple-600 font-semibold text-sm">
+                            {(review.reviewerName || "A")[0].toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="font-medium text-gray-700 text-sm">
+                          {review.reviewerName || "Ẩn danh"}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <span
+                              key={star}
+                              className={`text-xs ${
+                                star <= review.rating
+                                  ? "text-yellow-400"
+                                  : "text-gray-300"
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {review.comment}
+                    </p>
+                    {review.reply && (
+                      <div className="mt-3 ml-8 pl-4 border-l-2 border-purple-200 bg-purple-50 rounded-r-lg p-3">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <img
+                            src={logo}
+                            alt="Shop Solid Phere"
+                            className="w-6 h-6 rounded object-contain"
+                          />
+                          <span className="font-semibold text-purple-700 text-sm">
+                            Shop Solid Phere
+                          </span>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {review.reply}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
-              <span className="text-sm text-gray-500">({reviews.length})</span>
-            </div>
-          </div>
 
-          {/* Danh sách review - Minimal */}
-          <div className="space-y-4 mb-6">
-            {reviews.slice(0, showAll ? reviews.length : 3).map((review) => (
-              <div key={review.id || review.reviewId} className="pb-4 border-b last:border-0">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                      <span className="text-purple-600 font-semibold text-sm">
-                        {(review.reviewerName || "A")[0].toUpperCase()}
-                      </span>
-                    </div>
-                    <span className="font-medium text-gray-700 text-sm">{review.reviewerName || "Ẩn danh"}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="flex">
+              {getCurrentUser() ? (
+                <div className="pt-6 border-t">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">
+                      {t("reviews.your_rating")}
+                    </span>
+                    <div className="flex space-x-1">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <span key={star} className={`text-xs ${star <= review.rating ? "text-yellow-400" : "text-gray-300"}`}>★</span>
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setNewRating(star)}
+                          className={`text-xl transition-colors ${
+                            star <= newRating
+                              ? "text-yellow-400 hover:text-yellow-500"
+                              : "text-gray-300 hover:text-gray-400"
+                          }`}
+                        >
+                          ★
+                        </button>
                       ))}
                     </div>
-                    <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString("vi-VN")}</span>
                   </div>
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed">{review.comment}</p>
-                {/* Reply section - Hiển thị reply nếu có */}
-                {review.reply && (
-                  <div className="mt-3 ml-8 pl-4 border-l-2 border-purple-200 bg-purple-50 rounded-r-lg p-3">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <img
-                        src={logo}
-                        alt="Shop Solid Phere"
-                        className="w-6 h-6 rounded object-contain"
-                      />
-                      <span className="font-semibold text-purple-700 text-sm">Shop Solid Phere</span>
+
+                  <textarea
+                    className={`w-full p-3 border rounded-lg text-sm focus:ring-1 outline-none transition-all ${
+                      validationError
+                        ? "border-red-300 focus:border-red-400 focus:ring-red-200"
+                        : "border-gray-200 focus:border-purple-400 focus:ring-purple-200"
+                    }`}
+                    rows="3"
+                    placeholder={t("reviews.placeholder_comment")}
+                    value={newComment}
+                    onChange={(e) => {
+                      setNewComment(e.target.value);
+                      if (validationError) setValidationError("");
+                    }}
+                  />
+
+                  {validationError && (
+                    <div className="mt-2 flex items-center space-x-2 text-xs text-red-600 bg-red-50 rounded px-3 py-2">
+                      <span>⚠️</span>
+                      <p>{validationError}</p>
                     </div>
-                    <p className="text-gray-700 text-sm leading-relaxed">{review.reply}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          {/* Form Viết Đánh Giá - Simplified */}
-        {/* Form Viết Đánh Giá - Simplified */}
-    {getCurrentUser() ? (
-        <div className="pt-6 border-t">
-            <div className="flex items-center justify-between mb-3">
-                {/* Sửa: Nhãn Đánh giá của bạn */}
-                <span className="text-sm font-medium text-gray-700">{t('reviews.your_rating')}</span> 
-                <div className="flex space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                            key={star}
-                            type="button"
-                            onClick={() => setNewRating(star)}
-                            className={`text-xl transition-colors ${
-                                star <= newRating ? "text-yellow-400 hover:text-yellow-500" : "text-gray-300 hover:text-gray-400"
-                            }`}
-                        >
-                            ★
-                        </button>
-                    ))}
+                  )}
+
+                  {!validationError && (
+                    <p className="mt-2 text-xs text-gray-400">
+                      {t("reviews.guideline")}
+                    </p>
+                  )}
+
+                  <button
+                    onClick={handleSubmitReview}
+                    className="mt-3 px-4 py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors"
+                  >
+                    {t("reviews.submit_button")}
+                  </button>
                 </div>
-            </div>
-
-            <textarea
-                className={`w-full p-3 border rounded-lg text-sm focus:ring-1 outline-none transition-all ${
-                    validationError 
-                        ? 'border-red-300 focus:border-red-400 focus:ring-red-200' 
-                        : 'border-gray-200 focus:border-purple-400 focus:ring-purple-200'
-                }`}
-                rows="3"
-                // Sửa: Placeholder
-                placeholder={t('reviews.placeholder_comment')} 
-                value={newComment}
-                onChange={(e) => {
-                    setNewComment(e.target.value);
-                    if (validationError) setValidationError("");
-                }}
-            />
-            
-            {validationError && (
-                <div className="mt-2 flex items-center space-x-2 text-xs text-red-600 bg-red-50 rounded px-3 py-2">
-                    <span>⚠️</span>
-                    <p>{validationError}</p>
+              ) : (
+                <div className="pt-6 border-t text-center">
+                  <p className="text-sm text-gray-600">
+                    <a
+                      href="/login"
+                      className="text-purple-600 font-medium hover:underline"
+                    >
+                      {t("product.login")}
+                    </a>{" "}
+                    {t("reviews.to_write_review")}
+                  </p>
                 </div>
-            )}
-            
-            {!validationError && (
-                // Sửa: Hướng dẫn văn minh
-                <p className="mt-2 text-xs text-gray-400">{t('reviews.guideline')}</p>
-            )}
+              )}
 
-            <button
-                onClick={handleSubmitReview}
-                className="mt-3 px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded-lg hover:bg-sky-700 transition-colors"
-            >
-                {/* Sửa: Nút Gửi */}
-                {t('reviews.submit_button')}
-            </button>
-        </div>
-    ) : (
-        <div className="pt-6 border-t text-center">
-            <p className="text-sm text-gray-600">
-                <a href="/login" className="text-purple-600 font-medium hover:underline">
-                    {t('product.login')} 
-                </a> {t('reviews.to_write_review')}
-            </p>
-        </div>
-    )}
+              {reviews.length > 3 && (
+                <button
+                  className="w-full py-2 text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center justify-center space-x-1 transition-colors"
+                  onClick={() => setShowAll(!showAll)}
+                >
+                  <span>
+                    {showAll
+                      ? t("reviews.hide_reviews")
+                      : t("reviews.show_more", {
+                          count: reviews.length - 3,
+                        })}
+                  </span>
+                  {showAll ? <BiChevronUp /> : <BiChevronDown />}
+                </button>
+              )}
+            </>
+          )}
 
-{reviews.length > 3 && (
-        <button
-            className="w-full py-2 text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center justify-center space-x-1 transition-colors"
-            onClick={() => setShowAll(!showAll)}
-        >
-            {/* Sửa: Nút Xem thêm/Ẩn bớt */}
-            <span>{showAll ? t('reviews.hide_reviews') : t('reviews.show_more', { count: reviews.length - 3 })}</span>
-            {showAll ? <BiChevronUp /> : <BiChevronDown />}
-        </button>
-    )}
-</div>
+          {activeTab === "qa" && (
+            <ProductQASection productId={id} />
+          )}
+        </div>
       </div>
   );
 }

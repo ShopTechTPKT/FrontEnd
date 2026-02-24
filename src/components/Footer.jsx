@@ -37,15 +37,15 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 text-gray-300 py-12 px-4 border-t-2 border-slate-800">
+    <footer className="bg-white text-gray-700 py-12 px-4 border-t border-gray-200">
       <div className="max-w-7xl mx-auto">
         {/* Newsletter Section */}
         <div className="mb-12 text-center">
           <div className="mb-6">
-            <h3 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-sky-600 mb-4">
+            <h3 className="text-4xl font-bold text-gray-900 mb-4">
               {t('footer.newsletter.title')}
             </h3>
-            <p className="mb-6 text-sky-200">
+            <p className="mb-6 text-gray-500">
               {t('footer.newsletter.subtitle')}
             </p>
           </div>
@@ -55,13 +55,13 @@ const Footer = () => {
               placeholder={t('footer.newsletter.placeholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="px-4 py-2 w-80 rounded-lg focus:outline-none text-white bg-slate-800 border-2 border-sky-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500 transition-all placeholder-gray-400"
+              className="px-4 py-2 w-80 rounded-lg focus:outline-none text-gray-900 bg-white border border-gray-300 focus:border-sky-500 focus:ring-2 focus:ring-sky-500 transition-all placeholder-gray-400"
               required
             />
             <button 
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 px-6 py-2 rounded-lg text-white font-medium cursor-pointer transition-all duration-300 shadow-lg hover:shadow-sky-500/50 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 px-6 py-2 rounded-lg text-white font-medium cursor-pointer transition-all duration-300 shadow-lg hover:shadow-purple-500/40 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Đang gửi..." : t('footer.newsletter.subscribe')}
             </button>
@@ -77,45 +77,45 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
           {/* Column 1 */}
           <div>
-            <h4 className="text-sky-400 font-bold mb-4 text-lg">{t('footer.information.title')}</h4>
+            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.information.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-sky-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.aboutUs')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.aboutZip')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.privatePolicy')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.search')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.terms')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.ordersReturns')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.contactUs')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.information.advancedSearch')}
                 </a>
               </li>
@@ -129,15 +129,15 @@ const Footer = () => {
 
           {/* Column 2 */}
           <div>
-            <h4 className="text-sky-400 font-bold mb-4 text-lg">{t('footer.pcParts.title')}</h4>
+            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.pcParts.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-sky-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.pcParts.cpus')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.pcParts.addOnCards')}
                 </a>
               </li>
@@ -185,10 +185,10 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-sky-400 font-bold mb-4 text-lg">{t('footer.desktopPCs.title')}</h4>
+            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.desktopPCs.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-sky-300 transition-colors duration-200">
+                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
                   {t('footer.desktopPCs.cpus')}
                 </a>
               </li>
@@ -227,7 +227,7 @@ const Footer = () => {
 
           {/* Column 3 */}
           <div>
-            <h4 className="text-sky-400 font-bold mb-4 text-lg">{t('footer.laptops.title')}</h4>
+            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.laptops.title')}</h4>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="hover:text-sky-300 transition-colors duration-200">
@@ -264,13 +264,13 @@ const Footer = () => {
 
           {/* Column 4 - Contact Info */}
           <div>
-            <h4 className="text-sky-400 font-bold mb-4 text-lg">{t('footer.address.title')}</h4>
+            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.address.title')}</h4>
             <address className="not-italic">
               <p className="mb-2">
                 {t('footer.address.street')}
               </p>
               <p className="mb-2">
-                {t('footer.address.phone')} <span className="text-sky-400 font-semibold">{t('footer.address.phoneNumber')}</span>
+                {t('footer.address.phone')} <span className="text-purple-700 font-semibold">{t('footer.address.phoneNumber')}</span>
               </p>
               <p className="mb-2">{t('footer.address.openHours')}</p>
               <ul
@@ -282,7 +282,7 @@ const Footer = () => {
                 <li>{t('footer.address.saturday')}</li>
               </ul>
               <p>
-                {t('footer.address.email')} <span className="text-sky-400 font-semibold">{t('footer.address.emailAddress')}</span>
+                {t('footer.address.email')} <span className="text-purple-700 font-semibold">{t('footer.address.emailAddress')}</span>
               </p>
             </address>
           </div>
@@ -295,14 +295,14 @@ const Footer = () => {
             <div className="flex gap-4">
               <a 
                 href="#" 
-                className="bg-sky-600 hover:bg-sky-500 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
                 aria-label={t('remaining.facebook')}
               >
                 <FaFacebook />
               </a>
               <a 
                 href="#" 
-                className="bg-purple-700 hover:bg-purple-600 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
                 aria-label={t('remaining.instagram')}
               >
                 <FaInstagram />
@@ -313,14 +313,14 @@ const Footer = () => {
             <div className="flex gap-4 flex-wrap justify-center">
               <a 
                 href="#" 
-                className="bg-purple-700 hover:bg-purple-600 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
                 aria-label={t('remaining.paypal')}
               >
                 <SiPaypal />
               </a>
               <a 
                 href="#" 
-                className="bg-purple-700 hover:bg-purple-600 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
                 aria-label={t('remaining.visa')}
               >
                 <SiVisa />

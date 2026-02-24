@@ -15,7 +15,7 @@ const ChatMessage = ({ message }) => {
       <div
         className={`max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
           message.senderType === "STAFF"
-            ? "bg-gradient-to-r from-purple-900 via-purple-700 to-purple-500 text-white rounded-br-sm"
+            ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-br-sm"
             : "bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-sm"
         }`}
       >
