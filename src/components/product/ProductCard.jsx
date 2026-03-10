@@ -14,13 +14,21 @@ const ProductCard = ({ product }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isCheckingFavorite, setIsCheckingFavorite] = useState(false);
 
-  // Helper: lấy userId từ localStorage
+  // Helper: lấy userId (Long) từ localStorage
   const getCurrentUserId = () => {
     try {
       const savedUser = localStorage.getItem("user");
       if (!savedUser) return null;
       const parsed = JSON.parse(savedUser);
-      return parsed?.customerID ?? parsed?.id ?? parsed?.customerId ?? null;
+      const raw =
+        parsed?.id ??
+        parsed?.customerId ??
+        parsed?.customerID ??
+        parsed?.userId ??
+        null;
+      if (raw == null) return null;
+      const idNum = typeof raw === "number" ? raw : Number(raw);
+      return Number.isFinite(idNum) ? idNum : null;
     } catch (e) {
       console.error("Lỗi khi đọc user từ localStorage:", e);
       return null;

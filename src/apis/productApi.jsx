@@ -15,6 +15,12 @@ export async function getAllProducts() {
 
   return { EC: 1, DT: list };
 }
+
+// Optimized home products API
+export async function getHomeProducts() {
+  const response = await axiosInstance.get("/products/home");
+  return response.data;
+}
 export const getProductsByCategory = async categoryId => {
   try {
     const response = await axiosInstance.get(
@@ -85,7 +91,12 @@ export const filterByPrice = async (minPrice, maxPrice = null) => {
 };
 
 
-export default { getAllProducts, getProductById , filterProducts,
+export default {
+  getAllProducts,
+  getHomeProducts,
+  getProductById,
+  filterProducts,
   getFilterOptions,
   filterByCategory,
-  filterByPrice};
+  filterByPrice,
+};

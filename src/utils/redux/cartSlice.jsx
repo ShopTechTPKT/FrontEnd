@@ -2,13 +2,22 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { cartApi } from "../../apis/cartApi";
 import notify from "../notify";
 
-// Helper: lấy id của user hiện tại từ localStorage (hỗ trợ customerID hoặc id)
+// Helper: lấy id (Long) của user hiện tại từ localStorage
 const getCurrentUserId = () => {
   try {
     const savedUser = localStorage.getItem("user");
     if (!savedUser) return null;
     const parsed = JSON.parse(savedUser);
-    return parsed?.customerID ?? parsed?.id ?? parsed?.customerId ?? null;
+    const raw =
+      parsed?.id ??
+      parsed?.customerId ??
+      parsed?.customerID ??
+      parsed?.userId ??
+      null;
+
+    if (raw == null) return null;
+    const idNum = typeof raw === "number" ? raw : Number(raw);
+    return Number.isFinite(idNum) ? idNum : null;
   } catch (e) {
     console.error("Lỗi khi đọc user từ localStorage trong cartSlice:", e);
     return null;

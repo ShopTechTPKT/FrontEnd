@@ -624,7 +624,7 @@ const Header = () => {
               onMouseLeave={handleCartMouseLeave}
             >
               <button
-                className="relative w-9 h-9 flex items-center justify-center text-white hover:text-purple-300 transition-colors"
+                className="relative w-9 h-9 flex items-center justify-center text-gray-900 hover:text-white hover:bg-purple-700 rounded-md transition-colors"
                 onClick={handleClickCart}
               >
                 <FaShoppingCart className="text-lg" />

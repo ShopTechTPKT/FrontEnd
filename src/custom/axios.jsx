@@ -1,10 +1,13 @@
 import axios from "axios";
 import { isTokenExpired } from "../utils/jwtUtils";
 
-// Cấu hình axios: dùng proxy của Vite để tránh CORS
-const axiosInstance = axios.create({
-  baseURL: "/api",
-});
+// Dev (Vite): use proxy "/api" to avoid CORS.
+// Prod/build: allow overriding via VITE_API_URL; fallback to api-gateway.
+const API_BASE_URL = import.meta.env.DEV
+  ? "/api"
+  : (import.meta.env.VITE_API_URL || "http://localhost:8081/api");
+
+const axiosInstance = axios.create({ baseURL: API_BASE_URL });
 
 // Flag to prevent multiple refresh token requests
 let isRefreshing = false;
@@ -37,7 +40,7 @@ const refreshAccessToken = async () => {
   try {
     // Create a plain axios instance without interceptors to avoid loop
     const plainAxios = axios.create({
-      baseURL: "/api",
+      baseURL: API_BASE_URL,
     });
     
     // Call refresh token API
@@ -185,7 +188,7 @@ axiosInstance.interceptors.response.use(
             // Retry the original request with new token
             error.config.headers.Authorization = `Bearer ${newAccessToken}`;
             return axiosInstance(error.config);
-          } catch (refreshError) {
+          } catch {
             isRefreshing = false;
             console.log('❌ Token refresh failed in response interceptor');
             

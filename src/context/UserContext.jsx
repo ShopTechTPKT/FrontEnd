@@ -110,6 +110,20 @@ const UserProvider = ({ children }) => {
             // Parse saved user from localStorage
             const parsedUser = JSON.parse(savedUser);
 
+            // Guard against stale/invalid userId formats (e.g. Mongo ObjectId strings)
+            if (parsedUser?.id != null) {
+              const idNum = typeof parsedUser.id === "number" ? parsedUser.id : Number(parsedUser.id);
+              if (!Number.isFinite(idNum)) {
+                setUser(null);
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("user");
+                return;
+              }
+              parsedUser.id = idNum;
+              localStorage.setItem("user", JSON.stringify(parsedUser));
+            }
+
             // Verify role from token matches saved user
             const roleFromToken = getRoleFromToken(token);
             if (roleFromToken && parsedUser.role !== roleFromToken) {

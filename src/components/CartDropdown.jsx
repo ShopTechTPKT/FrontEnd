@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   removeFromCart,
@@ -25,20 +25,26 @@ const CartDropdown = ({ isOpen, onClose }) => {
     });
   }, [carts, cartSummary, loading]);
 
-  // Lấy user ID từ localStorage
+  // Lấy user ID (Long) từ localStorage
   const getCurrentUserId = () => {
     try {
       const savedUser = localStorage.getItem("user");
       if (!savedUser) return null;
       const parsed = JSON.parse(savedUser);
-      return parsed?.customerID ?? parsed?.id ?? parsed?.customerId ?? null;
+      const raw =
+        parsed?.id ??
+        parsed?.customerId ??
+        parsed?.customerID ??
+        parsed?.userId ??
+        null;
+      if (raw == null) return null;
+      const idNum = typeof raw === "number" ? raw : Number(raw);
+      return Number.isFinite(idNum) ? idNum : null;
     } catch (e) {
       console.error("Lỗi khi đọc user từ localStorage:", e);
       return null;
     }
   };
-
-  const [isInitialMount, setIsInitialMount] = useState(true);
 
   useEffect(() => {
     // Chỉ load khi dropdown được MỞ

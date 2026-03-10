@@ -29,7 +29,7 @@ import Loading from "../Loading";
 import TestimonialCard from "../info/TestimonialCard";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllProducts } from "../../apis/productApi";
+import { getHomeProducts } from "../../apis/productApi";
 import { useTranslation } from 'react-i18next';
 
 const ID_CUSTOM_BUILD = Array.from({ length: 35 - 18 + 1 }, (_, i) => i + 18);
@@ -62,13 +62,14 @@ const ID_DESKTOP = [...CATEGORY_IDS.mainboard, ...CATEGORY_IDS.ram, ...CATEGORY_
 
 const ID_SCREEN_ACCESSORIES = [...ID_SCREEN, ...ID_ACCESSORIES]
 
+const HOME_PRODUCT_LIMIT = 15;
 
 function Content() {
   const { t } = useTranslation();
 
   // const { user } = React.useContext(UserContext);
 
-  const [products, setProducts] = useState([]);
+  const [homeProducts, setHomeProducts] = useState(null);
   const [loading, setLoading] = useState(true);
   
   // Get products from Mock Data
@@ -76,12 +77,10 @@ function Content() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await getAllProducts();
-        if (response.EC !== 1) {
-          throw new Error("Failed to fetch products");
-        }
-        setProducts(
-          response.DT.map((item) => {
+        const data = await getHomeProducts();
+
+        const normalize = (list) =>
+          (list || []).map((item) => {
 
             const stock = item.stock ?? item.quantity ?? item.inventory ?? 0;
             const categoryName = item.categoryName || item.category?.name || item.category;
@@ -107,9 +106,14 @@ function Content() {
               price,
               inStock: stock > 0,
             };
-          })
-        );
-        console.log("Fetched products:", products);
+          });
+
+        setHomeProducts({
+          newProducts: normalize(data.newProducts).slice(0, HOME_PRODUCT_LIMIT),
+          laptops: normalize(data.laptops).slice(0, HOME_PRODUCT_LIMIT),
+          desktops: normalize(data.desktops).slice(0, HOME_PRODUCT_LIMIT),
+          accessories: normalize(data.accessories).slice(0, HOME_PRODUCT_LIMIT),
+        });
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -198,6 +202,15 @@ function Content() {
     );
   }
 
+  const products = homeProducts
+    ? [
+        ...homeProducts.newProducts,
+        ...homeProducts.laptops,
+        ...homeProducts.desktops,
+        ...homeProducts.accessories,
+      ]
+    : [];
+
   return (
     <div className="pt-4">
       {/* Hero Search Section */}
@@ -249,31 +262,7 @@ function Content() {
             />
           </div>
         </div>
-        {/* Quick render to ensure products visible on page */}
-        {products?.length > 0 && (
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {/* {products.slice(0, 10).map((p, idx) => (
-              <div key={p.id || idx} className="border rounded-md p-3 bg-white shadow-sm">
-                {p.imageUrl ? (
-                  <img src={p.imageUrl} alt={p.name} className="w-full h-32 object-contain mb-2" />
-                ) : null}
-                <div className="text-sm font-semibold line-clamp-2">{p.name}</div>
-                <div className="text-xs text-gray-500 mt-1">{p.brandName || ''}</div>
-                <div className="text-blue-600 font-bold mt-2">
-                  {p.unitPrice != null ? p.unitPrice.toLocaleString() + ' ₫' : ''}
-                </div>
-              </div>
-            ))} */}
-          </div>
-        )}
-        <div className="text-right mt-4">
-          <Link
-            to="/products"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            {t('common.see_all_products')}
-          </Link>
-        </div>
+        {/* (Đã bỏ link "see all products" ở đây theo yêu cầu) */}
       </div>
       {/* slide */}
       <div className="w-full max-w-screen-xl mx-auto mt-4 rounded-md overflow-hidden shadow-md">
