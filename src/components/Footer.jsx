@@ -42,7 +42,7 @@ const Footer = () => {
         {/* Newsletter Section */}
         <div className="mb-12 text-center">
           <div className="mb-6">
-            <h3 className="text-4xl font-bold text-gray-900 mb-4">
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
               {t('footer.newsletter.title')}
             </h3>
             <p className="mb-6 text-gray-500">
@@ -55,19 +55,19 @@ const Footer = () => {
               placeholder={t('footer.newsletter.placeholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="px-4 py-2 w-80 rounded-lg focus:outline-none text-gray-900 bg-white border border-gray-300 focus:border-sky-500 focus:ring-2 focus:ring-sky-500 transition-all placeholder-gray-400"
+              className="px-4 py-2 w-80 rounded-xl focus:outline-none text-gray-900 bg-gray-50/60 border border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder-gray-400"
               required
             />
             <button 
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 px-6 py-2 rounded-lg text-white font-medium cursor-pointer transition-all duration-300 shadow-lg hover:shadow-purple-500/40 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-violet-600 hover:bg-violet-700 px-6 py-2 rounded-xl text-white font-medium cursor-pointer transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Đang gửi..." : t('footer.newsletter.subscribe')}
             </button>
           </form>
           {message && (
-            <p className={`mt-4 text-sm ${message.includes('thành công') ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`mt-4 text-sm ${message.includes('thành công') ? 'text-green-600' : 'text-red-600'}`}>
               {message}
             </p>
           )}
@@ -77,50 +77,50 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
           {/* Column 1 */}
           <div>
-            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.information.title')}</h4>
+            <h4 className="text-gray-900 font-semibold mb-4 text-lg">{t('footer.information.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.aboutUs')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.aboutZip')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.privatePolicy')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.search')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.terms')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.ordersReturns')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.contactUs')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.advancedSearch')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.information.newsletter')}
                 </a>
               </li>
@@ -129,55 +129,55 @@ const Footer = () => {
 
           {/* Column 2 */}
           <div>
-            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.pcParts.title')}</h4>
+            <h4 className="text-gray-900 font-semibold mb-4 text-lg">{t('footer.pcParts.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.cpus')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.addOnCards')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.hardDrives')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.graphicCards')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.keyboardsMice')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.casesPowerCooling')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.ram')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.software')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.speakersHeadsets')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.pcParts.motherboards')}
                 </a>
               </li>
@@ -185,40 +185,40 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.desktopPCs.title')}</h4>
+            <h4 className="text-gray-900 font-semibold mb-4 text-lg">{t('footer.desktopPCs.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-purple-600 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.cpus')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.customPCs')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.servers')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.msiAllInOne')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.hpCompaq')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.asusPCs')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.desktopPCs.tecsPCs')}
                 </a>
               </li>
@@ -227,35 +227,35 @@ const Footer = () => {
 
           {/* Column 3 */}
           <div>
-            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.laptops.title')}</h4>
+            <h4 className="text-gray-900 font-semibold mb-4 text-lg">{t('footer.laptops.title')}</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="hover:text-sky-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.laptops.everydayUse')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.laptops.msiWorkstation')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.laptops.msiPrestige')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.laptops.tabletsPads')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.laptops.netbooks')}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-purple-300 transition-colors duration-200">
+                <a href="#" className="hover:text-violet-700 transition-colors duration-200">
                   {t('footer.laptops.infinityGaming')}
                 </a>
               </li>
@@ -264,13 +264,13 @@ const Footer = () => {
 
           {/* Column 4 - Contact Info */}
           <div>
-            <h4 className="text-purple-700 font-bold mb-4 text-lg">{t('footer.address.title')}</h4>
+            <h4 className="text-gray-900 font-semibold mb-4 text-lg">{t('footer.address.title')}</h4>
             <address className="not-italic">
               <p className="mb-2">
                 {t('footer.address.street')}
               </p>
               <p className="mb-2">
-                {t('footer.address.phone')} <span className="text-purple-700 font-semibold">{t('footer.address.phoneNumber')}</span>
+                {t('footer.address.phone')} <span className="text-violet-700 font-semibold">{t('footer.address.phoneNumber')}</span>
               </p>
               <p className="mb-2">{t('footer.address.openHours')}</p>
               <ul
@@ -282,27 +282,27 @@ const Footer = () => {
                 <li>{t('footer.address.saturday')}</li>
               </ul>
               <p>
-                {t('footer.address.email')} <span className="text-purple-700 font-semibold">{t('footer.address.emailAddress')}</span>
+                {t('footer.address.email')} <span className="text-violet-700 font-semibold">{t('footer.address.emailAddress')}</span>
               </p>
             </address>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-slate-700 pt-6">
+        <div className="border-t border-gray-200 pt-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Social Icons */}
             <div className="flex gap-4">
               <a 
                 href="#" 
-                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.facebook')}
               >
                 <FaFacebook />
               </a>
               <a 
                 href="#" 
-                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.instagram')}
               >
                 <FaInstagram />
@@ -313,35 +313,35 @@ const Footer = () => {
             <div className="flex gap-4 flex-wrap justify-center">
               <a 
                 href="#" 
-                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.paypal')}
               >
                 <SiPaypal />
               </a>
               <a 
                 href="#" 
-                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.visa')}
               >
                 <SiVisa />
               </a>
               <a 
                 href="#" 
-                className="bg-purple-700 hover:bg-purple-600 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.maestro')}
               >
                 <SiMastercard />
               </a>
               <a 
                 href="#" 
-                className="bg-purple-700 hover:bg-purple-600 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.discover')}
               >
                 <SiDiscover />
               </a>
               <a 
                 href="#" 
-                className="bg-purple-700 hover:bg-purple-600 p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-white text-xl"
+                className="p-2 rounded-xl transition-colors duration-200 flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100"
                 aria-label={t('remaining.american_express')}
               >
                 <FaCcAmex />
@@ -350,7 +350,7 @@ const Footer = () => {
 
             {/* Copyright Text */}
             <div>
-              <p className="text-sky-300">{t('footer.copyright')}</p>
+              <p className="text-gray-500 text-sm">{t('footer.copyright')}</p>
             </div>
           </div>
         </div>

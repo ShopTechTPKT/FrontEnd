@@ -16,7 +16,7 @@ export default function LoginWave() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-gray-100 flex items-center justify-center py-12 px-4 pt-40">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-violet-50 to-white flex items-center justify-center py-12 px-4 pt-40">
         <AuthCard />
       </div>
       <Footer />
@@ -202,8 +202,6 @@ function AuthCard() {
     setLoading(true);
 
     try {
-      console.log('Đang đăng ký với email:', signUpForm.email, 'và số điện thoại:', signUpForm.phoneNumber);
-
       // Call real register service from LoginServices
       // Backend expects: { fullName, email, phoneNumber, password, confirmPassword }
       const registerData = {
@@ -240,10 +238,6 @@ function AuthCard() {
       }
 
     } catch (err) {
-      console.error('=== SIGNUP ERROR IN COMPONENT ===');
-      console.error('Error object:', err);
-      console.error('Error message:', err.message);
-
       // Hiển thị lỗi từ service
       const errorMessage = err.message || t('common.auth.register_failed');
       notify.error(errorMessage);
@@ -262,15 +256,12 @@ function AuthCard() {
     setLoading(true);
 
     try {
-      console.log('Đang gửi yêu cầu đăng nhập với email:', signInForm.email);
-
       // Call the login function from UserContext
       await login({
         email: signInForm.email,
         password: signInForm.password
       });
 
-      console.log('Đăng nhập thành công, đang chuyển hướng...');
       notify.success(t('common.auth.login_success'));
       // Redirect immediately based on role to avoid race with useEffect
       const role = getUserRole();
@@ -286,10 +277,6 @@ function AuthCard() {
       navigate(from, { replace: true });
 
     } catch (err) {
-      console.error("=== SIGNIN ERROR IN COMPONENT ===");
-      console.error("Error object:", err);
-      console.error("Error message:", err.message);
-
       // Display the error message from the service
       const errorMessage = err.message || t('common.auth.login_failed');
       
@@ -314,9 +301,8 @@ function AuthCard() {
               userId: null
             });
           }
-        } catch (err) {
+        } catch {
           // If can't fetch user info, use email from form
-          console.log("Could not fetch user info:", err);
           setInactiveUserInfo({
             email: signInForm.email,
             userName: null,
@@ -462,16 +448,16 @@ function AuthCard() {
       )}
 
       <div className="w-full max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Left Side - Form */}
           <div className="p-8 lg:p-12">
             {/* Toggle Tabs */}
-            <div className="flex mb-8 bg-gray-100 rounded-lg p-1">
+            <div className="flex mb-8 bg-gray-50 rounded-xl p-1 border border-gray-100">
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-3 rounded-lg font-semibold transition-all ${isLogin
-                  ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white shadow-md'
+                  ? 'bg-white text-gray-900 shadow-sm ring-1 ring-gray-200'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -480,7 +466,7 @@ function AuthCard() {
               <button
                 onClick={() => setIsLogin(false)}
                 className={`flex-1 py-3 rounded-lg font-semibold transition-all ${!isLogin
-                  ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white shadow-md'
+                  ? 'bg-white text-gray-900 shadow-sm ring-1 ring-gray-200'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -504,6 +490,7 @@ function AuthCard() {
                   onChange={handleSignInChange}
                   error={signInErrors.email}
                   icon={<FaEnvelope />}
+                  autoComplete="email"
                 />
 
                 <ModernInput
@@ -514,6 +501,7 @@ function AuthCard() {
                   onChange={handleSignInChange}
                   error={signInErrors.password}
                   icon={<FaLock />}
+                  autoComplete="current-password"
                 />
 
                 <div className="flex items-center justify-between">
@@ -568,6 +556,7 @@ function AuthCard() {
                   onChange={handleSignUpChange}
                   error={signUpErrors.fullName}
                   icon={<FaUser />}
+                  autoComplete="name"
                 />
 
                 <ModernInput
@@ -578,6 +567,7 @@ function AuthCard() {
                   onChange={handleSignUpChange}
                   error={signUpErrors.email}
                   icon={<FaEnvelope />}
+                  autoComplete="email"
                 />
 
                 <ModernInput
@@ -588,6 +578,8 @@ function AuthCard() {
                   onChange={handleSignUpChange}
                   error={signUpErrors.phoneNumber}
                   icon={<FaUser />}
+                  autoComplete="tel"
+                  inputMode="tel"
                 />
 
                 <ModernInput
@@ -598,6 +590,7 @@ function AuthCard() {
                   onChange={handleSignUpChange}
                   error={signUpErrors.password}
                   icon={<FaLock />}
+                  autoComplete="new-password"
                 />
 
                 <ModernInput
@@ -608,6 +601,7 @@ function AuthCard() {
                   onChange={handleSignUpChange}
                   error={signUpErrors.confirmPassword}
                   icon={<FaShieldAlt />}
+                  autoComplete="new-password"
                 />
 
                 <div className="flex items-start">
@@ -644,11 +638,11 @@ function AuthCard() {
           </div>
 
           {/* Right Side - Promo Banner (now light theme) */}
-          <div className="bg-white p-8 lg:p-12 text-gray-900 flex flex-col justify-center relative overflow-hidden border-l border-gray-100">
+          <div className="bg-gradient-to-b from-white via-violet-50/40 to-white p-8 lg:p-12 text-gray-900 flex flex-col justify-center relative overflow-hidden border-l border-gray-100">
             <div className="relative z-10">
               <div className="mb-8">
-                <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 shadow-md">
-                  <FaShieldAlt className="text-3xl text-purple-600" />
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm ring-1 ring-gray-200">
+                  <FaShieldAlt className="text-3xl text-violet-600" />
                 </div>
                 <h3 className="text-4xl font-bold mb-4 text-gray-900">
                   {isLogin ? t('common.new_here') : t('common.already_have_account')}
@@ -669,7 +663,7 @@ function AuthCard() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-blue-800">
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200">
                 <Stat number="10K+" label={t('common.products')} />
                 <Stat number="50K+" label={t('common.customers')} />
                 <Stat number="4.9★" label={t('common.rating')} />
@@ -690,7 +684,17 @@ function AuthCard() {
 }
 
 // Modern Input Component
-const ModernInput = ({ type = "text", placeholder, name, value, onChange, error, icon }) => (
+const ModernInput = ({
+  type = "text",
+  placeholder,
+  name,
+  value,
+  onChange,
+  error,
+  icon,
+  autoComplete,
+  inputMode,
+}) => (
   <div className="w-full">
     <div className="relative">
       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
@@ -702,9 +706,12 @@ const ModernInput = ({ type = "text", placeholder, name, value, onChange, error,
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${error
-          ? 'border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        aria-invalid={Boolean(error)}
+        className={`w-full pl-12 pr-4 py-3 border rounded-xl bg-gray-50/60 focus:bg-white focus:outline-none focus:ring-2 transition-all ${error
+          ? 'border-red-500 focus:ring-red-500/30'
+            : 'border-gray-200 focus:ring-violet-500/25 focus:border-violet-400'
           }`}
       />
     </div>
@@ -715,9 +722,9 @@ const ModernInput = ({ type = "text", placeholder, name, value, onChange, error,
 // Modern Button Component
 const ModernButton = ({ text, onClick, type = "button", disabled, variant = "primary" }) => {
   const base =
-    "w-full py-3 font-semibold rounded-lg transition-all transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg";
+    "w-full py-3 font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ring-1 ring-transparent";
   const primary =
-    "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white hover:scale-[1.02]";
+    "bg-violet-600 hover:bg-violet-600 text-white ring-violet-600/10";
   const secondary = "bg-slate-800 text-slate-100 hover:bg-slate-700";
   const classes = `${base} ${variant === "secondary" ? secondary : primary}`;
 
@@ -738,7 +745,7 @@ const SocialButton = ({ icon, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center justify-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-purple-500 transition-all text-gray-600 hover:text-purple-700"
+    className="flex items-center justify-center p-3 border border-gray-200 rounded-xl bg-white hover:bg-violet-50 hover:border-violet-300 transition-all text-gray-600 hover:text-violet-700"
   >
     <span className="text-xl">{icon}</span>
   </button>
@@ -755,8 +762,8 @@ const Feature = ({ text }) => (
 // Stat Component
 const Stat = ({ number, label }) => (
   <div className="text-center">
-    <div className="text-2xl font-bold text-white mb-1">{number}</div>
-    <div className="text-sm text-blue-200">{label}</div>
+    <div className="text-2xl font-bold text-gray-900 mb-1">{number}</div>
+    <div className="text-sm text-gray-600">{label}</div>
   </div>
 );
 // Updated: 2025-10-12T16:06:23.114Z

@@ -12,7 +12,8 @@ const ChatBox = () => {
   const [open, setOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const [colorTheme, setColorTheme] = useState("gradient");
+  // Đồng bộ màu nút chat (khi đóng) theo hệ thống (violet)
+  const [colorTheme, setColorTheme] = useState("violet");
   const [unreadCount, setUnreadCount] = useState(0);
   
   // THÊM CÁC STATE MISSING NÀY:
@@ -144,18 +145,18 @@ const ChatBox = () => {
       accentGlow: "shadow-lg shadow-amber-500/30"
     },
     violet: {
-      bgPrimary: "bg-gradient-to-r from-violet-500 to-purple-600",
+      bgPrimary: "bg-violet-600",
       bgSecondary: "bg-gradient-to-br from-violet-50 via-white to-purple-50",
       textPrimary: "text-white",
       textSecondary: "text-violet-600",
       hoverBg: "hover:bg-violet-100/80",
       hoverText: "hover:text-violet-800",
       borderColor: "border-violet-200/60",
-      buttonBg: "bg-gradient-to-r from-violet-500 to-purple-600",
-      buttonHover: "hover:from-violet-600 hover:to-purple-700 hover:scale-105",
-      animateColor: "bg-violet-500",
-      glowColor: "shadow-violet-500/25",
-      accentGlow: "shadow-lg shadow-violet-500/30"
+      buttonBg: "bg-violet-600",
+      buttonHover: "hover:bg-violet-700",
+      animateColor: "bg-violet-600",
+      glowColor: "shadow-violet-500/20",
+      accentGlow: "shadow-lg shadow-violet-500/20"
     },
     rose: {
       bgPrimary: "bg-gradient-to-r from-rose-400 to-pink-600",
@@ -193,11 +194,11 @@ const ChatBox = () => {
       hoverBg: "hover:bg-gray-100",
       hoverText: "hover:text-gray-800",
       borderColor: "border-gray-200/60",
-      buttonBg: "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500",
-      buttonHover: "hover:opacity-90 hover:scale-105",
-      animateColor: "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500",
-      glowColor: "shadow-purple-950/25",
-      accentGlow: "shadow-xl shadow-purple-950/30"
+      buttonBg: "bg-violet-600",
+      buttonHover: "hover:bg-violet-700 hover:scale-105",
+      animateColor: "bg-violet-600",
+      glowColor: "shadow-violet-500/20",
+      accentGlow: "shadow-xl shadow-violet-500/20"
     },
     dark: {
       bgPrimary: "bg-gradient-to-r from-gray-800 to-gray-900",
@@ -613,11 +614,23 @@ const handleFileSelect = (e, multiple = false) => {
   );
 
   // Enhanced Chat button component with modern effects
-  const ChatButton = ({ icon, onClick }) => (
+  const ChatButton = ({ icon, onClick }) => {
+    const labelDotClass =
+      colorTheme === "messenger"
+        ? "bg-blue-500"
+        : colorTheme === "emerald"
+        ? "bg-emerald-500"
+        : colorTheme === "amber"
+        ? "bg-amber-500"
+        : colorTheme === "teal"
+        ? "bg-teal-500"
+        : "bg-violet-500";
+
+    return (
     <div className="relative group">
       {/* Floating animation rings */}
-      <div className={`absolute -inset-2 rounded-full ${theme.animateColor} opacity-20 animate-ping`}></div>
-      <div className={`absolute -inset-1 rounded-full ${theme.animateColor} opacity-30 animate-pulse delay-200`}></div>
+      <div className={`absolute -inset-2 rounded-full ${theme.animateColor} opacity-10 animate-ping`}></div>
+      <div className={`absolute -inset-1 rounded-full ${theme.animateColor} opacity-15 animate-pulse delay-200`}></div>
       
       {/* Unread badge */}
       {unreadCount > 0 && (
@@ -628,13 +641,14 @@ const handleFileSelect = (e, multiple = false) => {
       
       {/* Label "Chat Box AI" - hiển thị khi hover */}
       <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 pointer-events-none z-30">
-        <div className={`${theme.buttonBg} ${theme.textPrimary} px-4 py-2 rounded-lg shadow-xl whitespace-nowrap text-sm font-semibold relative backdrop-blur-sm border border-white/20`}>
+        <div className="px-4 py-2 rounded-2xl shadow-lg whitespace-nowrap text-sm font-semibold relative bg-white text-gray-800 border border-gray-200">
           <span className="flex items-center gap-2">
-           
+            <span className={`inline-flex w-2 h-2 rounded-full ${labelDotClass}`}></span>
             <span>Chat Box AI</span>
           </span>
-          {/* Arrow pointer - khớp với màu gradient */}
-          <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-l-[8px] border-t-transparent border-b-transparent border-l-gray-900"></div>
+          {/* Arrow pointer */}
+          <div className="absolute left-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[7px] border-b-[7px] border-l-[9px] border-t-transparent border-b-transparent border-l-white"></div>
+          <div className="absolute left-full top-1/2 -translate-y-1/2 translate-x-[1px] w-0 h-0 border-t-[8px] border-b-[8px] border-l-[10px] border-t-transparent border-b-transparent border-l-gray-200 -z-10"></div>
         </div>
       </div>
       
@@ -644,11 +658,7 @@ const handleFileSelect = (e, multiple = false) => {
           onClick();
           setUnreadCount(0);
         }}
-        className={`relative z-10 flex items-center justify-center w-16 h-16 rounded-full ${theme.buttonBg} ${theme.textPrimary} ${theme.buttonHover} ${theme.accentGlow} backdrop-blur-sm border border-white/20 focus:outline-none transition-all duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-2 group-hover:rotate-3`}
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
-          backdropFilter: 'blur(10px)',
-        }}
+        className={`relative z-10 flex items-center justify-center w-16 h-16 rounded-full ${theme.buttonBg} ${theme.textPrimary} ${theme.accentGlow} backdrop-blur-sm border border-white/20 focus:outline-none transition-all duration-200 ease-out hover:scale-105`}
       >
         <div className={theme.buttonBg + ' absolute inset-0 rounded-full -z-10'}></div>
         <div className="transform group-hover:scale-110 transition-transform duration-200">
@@ -656,7 +666,8 @@ const handleFileSelect = (e, multiple = false) => {
         </div>
       </button>
     </div>
-  );
+    );
+  };
 
   // Thay thế MessageBubble component hiện tại
 
@@ -863,61 +874,31 @@ const ImagePreviewModal = () => (
           />
         )}
 
-        {/* Enhanced Chat window with glassmorphism */}
+        {/* Chat window */}
         {open && (
-          <div className="fixed bottom-4 right-4 w-[380px] h-[550px] flex flex-col rounded-3xl shadow-2xl overflow-hidden backdrop-blur-xl border border-white/20"
-               style={{
-                 background: 'rgba(255, 255, 255, 0.95)',
-                 backdropFilter: 'blur(20px)',
-               }}>
+          <div className="fixed bottom-4 right-4 w-[380px] h-[550px] flex flex-col rounded-3xl shadow-xl overflow-hidden bg-white border border-gray-200">
             
-            {/* Enhanced Header with floating particles */}
-            <div className={`relative px-6 py-5 ${theme.bgPrimary} ${theme.textPrimary} ${theme.accentGlow}`}>
-              {/* Floating particles */}
-              {/* <div className="absolute top-2 left-4 w-1 h-1 bg-white/30 rounded-full float-animation"></div>
-              <div className="absolute top-6 right-8 w-2 h-2 bg-white/20 rounded-full float-animation" style={{animationDelay: '1s'}}></div>
-              <div className="absolute bottom-3 left-12 w-1.5 h-1.5 bg-white/25 rounded-full float-animation" style={{animationDelay: '2s'}}></div> */}
-              {/* Extra floating particles */}
-{/* <div className="absolute top-10 left-6 w-1.5 h-1.5 bg-white/30 rounded-full float-animation" style={{animationDelay: '1.2s'}}></div>
-<div className="absolute bottom-6 right-10 w-2 h-2 bg-white/20 rounded-full float-animation" style={{animationDelay: '1.6s'}}></div>
-<div className="absolute top-4 right-20 w-1 h-1 bg-white/15 rounded-full float-animation" style={{animationDelay: '2.4s'}}></div>
-<div className="absolute bottom-10 left-8 w-1.5 h-1.5 bg-white/20 rounded-full float-animation" style={{animationDelay: '3s'}}></div>
-<div className="absolute top-8 right-4 w-2 h-2 bg-white/10 rounded-full float-animation" style={{animationDelay: '0.8s'}}></div> */}
-{bubbles.map((b, idx) => (
-  <div
-    key={idx}
-    className={`absolute ${b.top || ''} ${b.bottom || ''} ${b.left || ''} ${b.right || ''} ${b.size} ${b.opacity} rounded-full float-animation`}
-    style={{ animationDelay: b.delay }}
-  ></div>
-))}
-
+            {/* Header */}
+            <div className="relative px-6 py-5 bg-gradient-to-r from-violet-50 via-fuchsia-50 to-white border-b border-gray-200">
               <div className="relative z-10 flex justify-between items-center">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-<div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm ring-1 ring-gray-200">
   <img
     src="https://cdn-icons-png.flaticon.com/512/14958/14958350.png"
     alt="AI Assistant"
     className="w-8 h-8 object-contain"
   />
 </div>
-                  </div>
                   <div>
-                    <h2 className="text-lg font-bold">Chat Bot AI</h2>
-                    <p className="text-xs opacity-80">Luôn sẵn sàng hỗ trợ bạn</p>
+                    <h2 className="text-lg font-semibold text-gray-900">Hỗ trợ khách hàng</h2>
+                    <p className="text-xs text-gray-600">Luôn sẵn sàng hỗ trợ bạn</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <button
-                    onClick={cycleTheme}
-                    className="text-xs opacity-70 bg-white/10 px-3 py-1 rounded-full hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
-                    title="Thay đổi giao diện"
-                  >
-                    🎨
-                  </button>
-                  <button 
-                    onClick={() => setOpen(false)} 
-                    className="focus:outline-none p-1 rounded-full hover:bg-white/10 transition-all duration-200"
+                    onClick={() => setOpen(false)}
+                    className="focus:outline-none p-2 rounded-xl hover:bg-gray-100 transition-colors text-gray-600"
+                    aria-label="Đóng"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -937,16 +918,15 @@ const ImagePreviewModal = () => (
             </div>
 
             {/* Enhanced Chat content */}
-            <div className={`flex-1 p-6 overflow-y-auto custom-scrollbar ${theme.bgSecondary}`} ref={messagesEndRef} >
+            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white" ref={messagesEndRef} >
               {messages.length === 0 && (
-                <div className="bg-white/80 backdrop-blur-sm text-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200/60 text-center animate-fadeIn">
+                <div className="bg-gray-50 text-gray-800 p-6 rounded-2xl border border-gray-200 text-center animate-fadeIn">
                   <div className="mb-4">
                     <span className="text-4xl">👋</span>
                   </div>
                   <p className="mb-3 font-semibold text-lg">Chào mừng bạn!</p>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    Tôi là Chat Bot AI  của website <span className="font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-purple-950 bg-clip-text text-transparent"> SolidSphere</span>. 
-                    <br />Hãy hỏi về sản phẩm <span className={`font-bold ${theme.textSecondary}`}></span> .
+                    Mình có thể giúp bạn tìm sản phẩm, so sánh theo ảnh và trả lời nhanh các câu hỏi cơ bản.
                   </p>
                 </div>
               )}
@@ -967,12 +947,12 @@ const ImagePreviewModal = () => (
             </div>
 
             {/* Enhanced Input section with glassmorphism and image upload */}
-            <div className="p-4 border-t border-gray-200/60 bg-white/50 backdrop-blur-sm">
+            <div className="p-4 border-t border-gray-200 bg-white">
   <div className="flex items-center space-x-3">
     <div className="flex-1 relative">
       <input
         type="text"
-        className="glass-input w-full rounded-full px-5 py-3 pr-20 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200 placeholder-gray-500"
+        className="w-full rounded-full px-5 py-3 pr-20 text-sm bg-gray-50/60 border border-gray-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all duration-200 placeholder-gray-500"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Nhập tin nhắn của bạn..."
@@ -990,7 +970,7 @@ const ImagePreviewModal = () => (
         {/* Single image upload */}
         <button 
           onClick={() => fileInputRef.current?.click()}
-          className="text-gray-400 hover:text-blue-500 transition-colors p-1 rounded-full hover:bg-blue-50"
+          className="text-gray-400 hover:text-violet-700 transition-colors p-1 rounded-full hover:bg-violet-50"
           disabled={loading || isUploading}
           title="Upload ảnh sản phẩm"
         >
@@ -1005,7 +985,7 @@ const ImagePreviewModal = () => (
             setCompareMode(true);
             fileInputRefMultiple.current?.click();
           }}
-          className="text-gray-400 hover:text-green-500 transition-colors p-1 rounded-full hover:bg-green-50"
+          className="text-gray-400 hover:text-violet-700 transition-colors p-1 rounded-full hover:bg-violet-50"
           disabled={loading || isUploading}
           title="So sánh 2 ảnh sản phẩm"
         >
@@ -1017,15 +997,10 @@ const ImagePreviewModal = () => (
     </div>
     
     <button
-      className={`${theme.buttonBg} ${theme.textPrimary} rounded-full w-12 h-12 flex items-center justify-center focus:outline-none disabled:opacity-50 transition-all duration-200 ${theme.buttonHover} ${theme.accentGlow} backdrop-blur-sm border border-white/20 hover:rotate-12 hover:scale-110`}
+      className="bg-violet-600 hover:bg-violet-700 text-white rounded-full w-12 h-12 flex items-center justify-center focus:outline-none disabled:opacity-50 transition-colors duration-200 shadow-sm"
       onClick={sendMessage}
       disabled={loading || isUploading}
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
-        backdropFilter: 'blur(10px)',
-      }}
     >
-      <div className={theme.buttonBg + ' absolute inset-0 rounded-full -z-10'}></div>
       {(loading || isUploading) ? (
         <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -1043,14 +1018,14 @@ const ImagePreviewModal = () => (
   <div className="flex space-x-2 mt-3 justify-center">
     <button 
       onClick={() => fileInputRef.current?.click()}
-      className="text-xs bg-blue-100/80 hover:bg-blue-200/80 px-3 py-1.5 rounded-full transition-all duration-200 backdrop-blur-sm border border-blue-200/60"
+      className="text-xs bg-violet-50 hover:bg-violet-100 text-violet-800 px-3 py-1.5 rounded-full transition-colors duration-200 border border-violet-200"
       disabled={loading || isUploading}
     >
       📷 Tìm sản phẩm
     </button>
     <button 
       onClick={() => fileInputRefMultiple.current?.click()}
-      className="text-xs bg-green-100/80 hover:bg-green-200/80 px-3 py-1.5 rounded-full transition-all duration-200 backdrop-blur-sm border border-green-200/60"
+      className="text-xs bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full transition-colors duration-200 border border-gray-200"
       disabled={loading || isUploading}
     >
       🔄 So sánh SP = ảnh

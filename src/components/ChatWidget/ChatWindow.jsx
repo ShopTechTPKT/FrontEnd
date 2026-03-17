@@ -584,18 +584,18 @@ const ChatWindow = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-24 left-6 z-50 w-96 h-[520px] bg-white shadow-xl rounded-3xl border border-gray-100 flex flex-col overflow-hidden transition-all duration-300">
-      {/* Header - Màu như header chính */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white px-5 py-4 shadow-md">
+    <div className="fixed bottom-24 left-6 z-50 w-96 h-[520px] bg-white shadow-xl rounded-3xl border border-gray-200 flex flex-col overflow-hidden transition-all duration-300">
+      {/* Header */}
+      <div className="flex items-center justify-between bg-gradient-to-r from-violet-50 via-fuchsia-50 to-white text-gray-900 px-5 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm ring-1 ring-gray-200">
             💬
           </div>
           <div>
             <h3 className="font-semibold text-base">
               {t("bookingChat.booking_form")}
             </h3>
-            <span className="text-xs opacity-90">
+            <span className="text-xs text-gray-600">
               {isRegistered
                 ? useAI
                   ? t("bookingChat.aiSupport")
@@ -622,7 +622,7 @@ const ChatWindow = () => {
           {isRegistered && (
             <button
               onClick={handleResetChat}
-              className="bg-white/10 hover:bg-red-500/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 border border-white/10"
+              className="bg-white hover:bg-red-50 text-red-600 px-3 py-1.5 rounded-xl text-xs font-medium transition-colors flex items-center gap-1.5 border border-gray-200"
               title="Thoát chat"
             >
               <span>✕</span>
@@ -637,7 +637,7 @@ const ChatWindow = () => {
         {!isRegistered ? (
           <form onSubmit={handleRegister} className="flex flex-col gap-4 mt-4">
             <div className="text-center mb-2">
-              <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-gray-900 to-purple-950 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+              <div className="w-16 h-16 mx-auto mb-3 bg-violet-600 rounded-2xl flex items-center justify-center text-3xl shadow-sm">
                 💬
               </div>
               <h2 className="text-lg font-semibold text-gray-800 mb-1">
@@ -694,7 +694,7 @@ const ChatWindow = () => {
                   onChange={e =>
                     setCustomer({ ...customer, name: e.target.value })
                   }
-                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-950 transition-all text-sm"
+                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
                 />
               </div>
 
@@ -725,7 +725,7 @@ const ChatWindow = () => {
                   onChange={e =>
                     setCustomer({ ...customer, phone: e.target.value })
                   }
-                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-950 transition-all text-sm"
+                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
                 />
               </div>
 
@@ -738,7 +738,7 @@ const ChatWindow = () => {
               <button
                 type="submit"
                 disabled={!customer.name || !customer.phone || isRegistering}
-                className="w-full bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-4 py-3 rounded-xl transition-all font-medium text-sm shadow-lg shadow-purple-500/20 mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-violet-600 hover:bg-violet-700 text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm shadow-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isRegistering ? (
                   <>
@@ -779,7 +779,7 @@ const ChatWindow = () => {
                     <div
                       className={`max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
                         m.senderType === "CUSTOMER"
-                          ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-br-sm"
+                          ? "bg-violet-600 text-white rounded-br-sm"
                           : "bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-sm"
                       } ${m.pending ? "opacity-60 italic" : ""}`}
                     >
@@ -858,7 +858,7 @@ const ChatWindow = () => {
                 <div className="flex justify-center gap-2">
                   <button
                     onClick={handleEnableAI}
-                    className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all shadow-md"
+                    className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
                   >
                     {t("bookingChat.useAI")}
                   </button>
@@ -939,12 +939,12 @@ const ChatWindow = () => {
               placeholder={t("bookingChat.enterMessages")}
               value={input}
               onChange={e => setInput(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-950 transition-all text-sm"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
               disabled={isBotThinking || askedAI}
             />
             <button
               type="submit"
-              className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
+              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 font-medium text-sm shadow-sm"
               disabled={(!connected && !useAI) || isBotThinking || askedAI || (!input.trim() && !selectedFile)}
             >
               Gửi
@@ -962,12 +962,12 @@ const ChatWindow = () => {
             placeholder={t("bookingChat.enterMessages")}
             value={input}
             onChange={e => setInput(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-950 transition-all text-sm"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
             disabled={isBotThinking || askedAI}
           />
           <button
             type="submit"
-            className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm shadow-md"
+            className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 font-medium text-sm shadow-sm"
             disabled={(!connected && !useAI) || isBotThinking || askedAI}
           >
             Gửi

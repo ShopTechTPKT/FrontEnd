@@ -655,15 +655,15 @@ const Header = () => {
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 w-64 mt-2 bg-white border border-purple-400 rounded-lg shadow-lg z-10">
+                <div className="absolute right-0 w-64 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-10 overflow-hidden">
                   {/* User Header - Simplified */}
-                  <div className="p-4 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 border-b border-purple-400">
-                    <p className="text-sm text-white font-semibold">
+                  <div className="p-4 bg-gradient-to-r from-purple-50 via-fuchsia-50 to-white border-b border-gray-200">
+                    <p className="text-sm text-gray-900 font-semibold">
                       {user
                         ? `${t("header.hello")}, ${user.fullName}`
                         : t("header.welcomeBack")}
                     </p>
-                    <p className="text-xs text-white/80 mt-1">
+                    <p className="text-xs text-gray-600 mt-1">
                       {user
                         ? t("header.manageAccount")
                         : t("header.pleaseLogin")}
@@ -678,7 +678,7 @@ const Header = () => {
                           <li onClick={() => handleMenuItemClick("profile")}>
                             <Link
                               to="/userProfile"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
                             >
                               {t("account.myAccount")}
                             </Link>
@@ -689,7 +689,7 @@ const Header = () => {
                           <li onClick={() => handleMenuItemClick("admin")}>
                             <Link
                               to="/admin"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
                             >
                               {t("account.manage")}
                             </Link>
@@ -700,7 +700,7 @@ const Header = () => {
                           <li onClick={() => handleMenuItemClick("employee")}>
                             <Link
                               to="/customer-service"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
                             >
                               {t("account.staff")}
                             </Link>
@@ -710,7 +710,7 @@ const Header = () => {
                         <li onClick={() => handleMenuItemClick("favorites")}>
                           <Link
                             to="/favorites"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
                           >
                             Yêu thích
                           </Link>
@@ -719,7 +719,7 @@ const Header = () => {
                         <div className="my-1 border-t border-gray-200"></div>
                         {/* Sign Out */}
                         <li onClick={handleLogoutConfirm}>
-                          <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                          <button className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                             {t("account.signOut")}
                           </button>
                         </li>
@@ -731,7 +731,7 @@ const Header = () => {
                           onClick={() =>
                             window.scrollTo({ top: 0, behavior: "smooth" })
                           }
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                          className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors font-medium"
                         >
                           {t("account.loginRegister")}
                         </Link>

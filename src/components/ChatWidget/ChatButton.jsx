@@ -18,7 +18,7 @@ const ChatButton = () => {
       <style>{`
         @keyframes float-button {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
+          50% { transform: translateY(-4px); }
         }
         @keyframes pulse-ring {
           0% { transform: scale(0.95); opacity: 0.7; }
@@ -38,22 +38,22 @@ const ChatButton = () => {
           {/* Pulse rings - màu tím như header */}
           {!isOpen && (
             <>
-              <div className="absolute inset-0 rounded-full bg-purple-950 opacity-40 pulse-ring"></div>
+              <div className="absolute inset-0 rounded-full bg-violet-600 opacity-20 pulse-ring"></div>
               <div
-                className="absolute inset-0 rounded-full bg-purple-800 opacity-30 pulse-ring"
+                className="absolute inset-0 rounded-full bg-violet-600 opacity-10 pulse-ring"
                 style={{ animationDelay: "1s" }}
               ></div>
             </>
           )}
 
-          {/* Main button - gradient như header */}
+          {/* Main button */}
           <button
             onClick={toggle}
-            className={`relative flex items-center justify-center w-16 h-16 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 ${
+            className={`relative flex items-center justify-center w-16 h-16 rounded-full shadow-lg transition-all duration-200 transform hover:scale-105 ${
               isOpen
                 ? "bg-white text-gray-700 hover:bg-gray-50 rotate-0"
-                : "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white hover:opacity-90 float-animation-button"
-            } focus:outline-none focus:ring-4 focus:ring-purple-950/30`}
+                : "bg-violet-600 text-white hover:bg-violet-700 float-animation-button"
+            } focus:outline-none focus:ring-4 focus:ring-violet-500/25`}
             aria-label={isOpen ? "Đóng khung chat" : "Mở khung chat"}
           >
             {isOpen ? (
@@ -89,7 +89,7 @@ const ChatButton = () => {
 
           {/* Tooltip */}
           {!isOpen && (
-            <div className="absolute left-20 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-sm px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+            <div className="absolute left-20 top-1/2 -translate-y-1/2 bg-white text-gray-800 text-sm px-3 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-200">
               {t("bookingChat.booking_form")}
             </div>
           )}
