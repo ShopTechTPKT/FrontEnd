@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import logo from "../assets/shop.svg";
-import { FaShoppingCart, FaFacebookF } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart, FaFacebookF, FaBars, FaTimes } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import path from "../constant/path";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../context/UserContext";
@@ -23,6 +23,9 @@ const Header = () => {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const cartDropdownRef = useRef(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showMobileProducts, setShowMobileProducts] = useState(false);
+  const [showMobileSupport, setShowMobileSupport] = useState(false);
   const dispatch = useDispatch();
   // Access UserContext
   const { user, logout, isCustomer, isAdmin, isCustomerService } =
@@ -30,6 +33,7 @@ const Header = () => {
 
   // Define navigate
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Handler cho navigation với loading
   const handleNavigateWithLoading = (path, state) => {
@@ -182,9 +186,47 @@ const Header = () => {
     }, 100);
   };
 
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setShowMobileProducts(false);
+    setShowMobileSupport(false);
+  };
+
+  const handleMobileNavigate = (targetPath, state) => {
+    closeMobileMenu();
+    handleNavigateWithLoading(targetPath, state);
+  };
+
   const cartQuantity = useSelector(state =>
     state.cart.cartSummary ? state.cart.cartSummary.totalItems : 0
   );
+
+  useEffect(() => {
+    closeMobileMenu();
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        closeMobileMenu();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -214,7 +256,7 @@ const Header = () => {
       >
       {/* Top Bar - Simplified (white background, dark text) */}
       <div
-        className={`bg-white text-xs flex justify-between items-center px-4 md:px-8 py-2 border-b border-gray-100 transition-all duration-300 ${
+        className={`hidden md:flex bg-white text-xs justify-between items-center px-4 md:px-8 py-2 border-b border-gray-100 transition-all duration-300 ${
           isScrolled ? "hidden" : ""
         }`}
       >
@@ -255,9 +297,9 @@ const Header = () => {
         className={`bg-white border-b border-gray-200 ${isScrolled ? "py-2" : "py-3"}`}
       >
         {/* Container: 3-column layout - Logo | Menu Center | Icons */}
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 grid grid-cols-3 items-center">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex items-center justify-between gap-3">
           {/* LEFT: Logo */}
-          <div className="flex items-center justify-start">
+          <div className="flex items-center justify-start shrink-0">
             <Link to={path.home}>
               <img
                 src={logo}
@@ -268,7 +310,7 @@ const Header = () => {
           </div>
 
           {/* CENTER: Navigation Links - Simplified */}
-          <nav className="flex justify-center">
+          <nav className="hidden lg:flex flex-1 justify-center">
             <ul className="flex gap-4 md:gap-6 text-sm font-medium text-gray-900 whitespace-nowrap">
               {/* Home */}
               <li>
@@ -291,7 +333,7 @@ const Header = () => {
                 </div>
 
                 {/* Dropdown Menu - Simplified */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[700px] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[700px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-4">
                     {/* Grid Layout for Categories - Simplified */}
                     <div className="grid grid-cols-4 gap-4">
@@ -513,7 +555,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/deals"
-                  className="hover:text-purple-300 transition-colors relative"
+                  className="hover:text-purple-600 transition-colors relative"
                 >
                   {t("nav.deals")}
                   <span className="absolute -top-1 -right-6 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
@@ -540,7 +582,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/blog"
-                  className="hover:text-purple-300 transition-colors"
+                  className="hover:text-purple-600 transition-colors"
                 >
                   {t("nav.blog")}
                 </Link>
@@ -548,7 +590,7 @@ const Header = () => {
 
               {/* Support Dropdown - Simplified */}
               <li className="relative group">
-                <div className="flex items-center gap-1 hover:text-purple-300 cursor-pointer transition-colors">
+                <div className="flex items-center gap-1 hover:text-purple-600 cursor-pointer transition-colors">
                   <span>{t("nav.support")}</span>
                   <FaChevronDown
                     size={12}
@@ -557,7 +599,7 @@ const Header = () => {
                 </div>
 
                 {/* Support Dropdown Menu - Simplified */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[240px] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[240px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
                     <h3 className="text-gray-900 font-semibold text-sm mb-2">
                       {t("support.helpCenter")}
@@ -612,7 +654,7 @@ const Header = () => {
           </nav>
 
           {/* RIGHT: Icons - Simplified */}
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
             {/* Language Switcher */}
             <LanguageSwitcher />
 
@@ -642,7 +684,7 @@ const Header = () => {
 
             {/* User Account - chỉ dùng text, không icon emoji */}
             <div
-              className="relative"
+              className="relative hidden sm:block"
               ref={dropdownRef}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -741,9 +783,426 @@ const Header = () => {
                 </div>
               )}
             </div>
+
+            <button
+              type="button"
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors"
+              onClick={() => setIsMobileMenuOpen(prev => !prev)}
+              aria-label={isMobileMenuOpen ? "Đóng menu" : "Mở menu"}
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? (
+                <FaTimes className="text-base" />
+              ) : (
+                <FaBars className="text-base" />
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      {isMobileMenuOpen && (
+        <>
+          <button
+            type="button"
+            className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-[1px]"
+            onClick={closeMobileMenu}
+            aria-label="Đóng menu"
+          />
+          <div className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-200 bg-white shadow-2xl z-10">
+            <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-4 py-4 space-y-3">
+              <Link
+                to={path.home}
+                onClick={closeMobileMenu}
+                className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-900 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+              >
+                {t("nav.home")}
+              </Link>
+
+              <div className="rounded-2xl border border-gray-200 overflow-hidden">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowMobileProducts(prev => !prev)}
+                >
+                  <span>{t("nav.products")}</span>
+                  <FaChevronDown
+                    size={12}
+                    className={`transition-transform ${
+                      showMobileProducts ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {showMobileProducts && (
+                  <div className="border-t border-gray-200 bg-gray-50/70 px-3 py-3 space-y-3">
+                    <div>
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                        {t("categories.laptops")}
+                      </h3>
+                      <button
+                        onClick={() =>
+                          handleMobileNavigate("/products", {
+                            list: [45, 46, 47, 48, 49, 50, 51],
+                          })
+                        }
+                        disabled={isNavigating}
+                        className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                      >
+                        {isNavigating ? "Đang tải..." : t("categories.allLaptops")}
+                      </button>
+                    </div>
+
+                    <div>
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                        {t("categories.gamingGear")}
+                      </h3>
+                      <div className="space-y-1">
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [6, 7, 8, 9, 10],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.mouse")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [1, 2, 3, 4, 5],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.keyboard")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [14, 15, 16],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.gameGear")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [11, 12, 13],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.mousePad")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", { list: [42, 43] })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.headphone")}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                        {t("categories.pcParts")}
+                      </h3>
+                      <div className="space-y-1">
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [36, 37, 38, 39],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.monitor")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", { list: [17] })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.case")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", { list: [18, 19] })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.cpu")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [20, 21, 22],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.mainboard")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [23, 24, 25, 26],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.psu")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [27, 28, 29],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.storage")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [30, 31, 32],
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.ram")}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                        {t("categories.smartDevice")}
+                      </h3>
+                      <div className="space-y-1">
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [52, 53, 54],
+                              brand: "iPhone",
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.iphone")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [52, 53, 54],
+                              brand: "Samsung",
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.samsung")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", {
+                              list: [52, 53, 54],
+                              brand: "Xiaomi",
+                            })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.xiaomi")}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleMobileNavigate("/products", { list: [44] })
+                          }
+                          disabled={isNavigating}
+                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        >
+                          {isNavigating ? "Đang tải..." : t("categories.ipad")}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                to="/deals"
+                onClick={closeMobileMenu}
+                className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-gray-900 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+              >
+                <span>{t("nav.deals")}</span>
+                <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                  {t("nav.hotBadge")}
+                </span>
+              </Link>
+
+              <Link
+                to="/blog"
+                onClick={closeMobileMenu}
+                className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-900 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+              >
+                {t("nav.blog")}
+              </Link>
+
+              <div className="rounded-2xl border border-gray-200 overflow-hidden">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowMobileSupport(prev => !prev)}
+                >
+                  <span>{t("nav.support")}</span>
+                  <FaChevronDown
+                    size={12}
+                    className={`transition-transform ${
+                      showMobileSupport ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {showMobileSupport && (
+                  <div className="border-t border-gray-200 bg-gray-50/70 p-3 space-y-1">
+                    <Link
+                      to="/track-order"
+                      onClick={closeMobileMenu}
+                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                    >
+                      {t("support.trackOrder")}
+                    </Link>
+                    <Link
+                      to="/faq"
+                      onClick={closeMobileMenu}
+                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                    >
+                      {t("support.faq")}
+                    </Link>
+                    <Link
+                      to="/contact"
+                      onClick={closeMobileMenu}
+                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                    >
+                      {t("support.contactUs")}
+                    </Link>
+                    <Link
+                      to="/warranty"
+                      onClick={closeMobileMenu}
+                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                    >
+                      {t("support.warranty")}
+                    </Link>
+                    <Link
+                      to="/returns"
+                      onClick={closeMobileMenu}
+                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                    >
+                      {t("support.returns")}
+                    </Link>
+                    {isCustomerService && (
+                      <Link
+                        to="/customer-service"
+                        onClick={closeMobileMenu}
+                        className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                      >
+                        {t("support.customerService")}
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-gray-200 bg-white p-3">
+                <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  {user ? t("account.myAccount") : t("account.loginRegister")}
+                </p>
+                <div className="space-y-1">
+                  {user ? (
+                    <>
+                      {isCustomer && (
+                        <Link
+                          to="/userProfile"
+                          onClick={closeMobileMenu}
+                          className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          {t("account.myAccount")}
+                        </Link>
+                      )}
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          onClick={closeMobileMenu}
+                          className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          {t("account.manage")}
+                        </Link>
+                      )}
+                      {isCustomerService && (
+                        <Link
+                          to="/customer-service"
+                          onClick={closeMobileMenu}
+                          className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        >
+                          {t("account.staff")}
+                        </Link>
+                      )}
+                      <Link
+                        to="/favorites"
+                        onClick={closeMobileMenu}
+                        className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                      >
+                        Yêu thích
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeMobileMenu();
+                          handleLogoutConfirm();
+                        }}
+                        className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        {t("account.signOut")}
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      to="/login"
+                      onClick={() => {
+                        closeMobileMenu();
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      className="block rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                    >
+                      {t("account.loginRegister")}
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </header>
     </>
   );
