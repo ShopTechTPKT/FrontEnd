@@ -16,7 +16,7 @@ export default function LoginWave() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-violet-50 to-white flex items-center justify-center py-12 px-4 pt-40">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 pt-40">
         <AuthCard />
       </div>
       <Footer />
@@ -366,8 +366,8 @@ function AuthCard() {
       {/* Global loading overlay cho cả đăng nhập và đăng ký */}
       {loading && (
         <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-2xl px-8 py-6 flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <div className="bg-white rounded-xl shadow-md px-8 py-6 flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-gray-700 border-t-transparent rounded-full animate-spin" />
             <div className="text-gray-900 font-semibold">
               Đang xử lý, vui lòng đợi trong giây lát...
             </div>
@@ -424,7 +424,7 @@ function AuthCard() {
               <button
                 onClick={handleRequestUnlock}
                 disabled={isSendingEmail || emailSent}
-                className="w-full py-2.5 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSendingEmail ? t('common.auth.sending') : emailSent ? t('common.auth.unlock_request_sent_status') : t('common.auth.request_unlock')}
               </button>
@@ -448,7 +448,7 @@ function AuthCard() {
       )}
 
       <div className="w-full max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Left Side - Form */}
           <div className="p-8 lg:p-12">
@@ -506,13 +506,13 @@ function AuthCard() {
 
                 <div className="flex items-center justify-between">
                   <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500" />
+                    <input type="checkbox" className="w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-400" />
                     <span className="ml-2 text-sm text-gray-600">{t('common.remember_me')}</span>
                   </label>
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-sm text-purple-700 hover:text-purple-900 font-medium"
+                    className="text-sm text-violet-700 hover:text-violet-800 font-medium"
                   >
                     {t('common.forgot_password')}
                   </button>
@@ -605,9 +605,9 @@ function AuthCard() {
                 />
 
                 <div className="flex items-start">
-                  <input type="checkbox" className="w-4 h-4 text-sky-600 border-gray-300 rounded focus:ring-sky-500 mt-1" />
+                  <input type="checkbox" className="w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-400 mt-1" />
                   <span className="ml-2 text-sm text-gray-600">
-                    {t('common.i_agree_to')} <a href="#" className="text-purple-700 hover:text-purple-900 font-medium">{t('common.terms_conditions')}</a>{t('common.and')}<a href="#" className="text-purple-700 hover:text-purple-900 font-medium">{t('common.privacy_policy')}</a>
+                    {t('common.i_agree_to')} <a href="#" className="text-violet-700 hover:text-violet-800 font-medium">{t('common.terms_conditions')}</a>{t('common.and')}<a href="#" className="text-violet-700 hover:text-violet-800 font-medium">{t('common.privacy_policy')}</a>
                   </span>
                 </div>
 
@@ -638,7 +638,7 @@ function AuthCard() {
           </div>
 
           {/* Right Side - Promo Banner (now light theme) */}
-          <div className="bg-gradient-to-b from-white via-violet-50/40 to-white p-8 lg:p-12 text-gray-900 flex flex-col justify-center relative overflow-hidden border-l border-gray-100">
+          <div className="bg-gray-50 p-8 lg:p-12 text-gray-900 flex flex-col justify-center relative overflow-hidden border-l border-gray-200">
             <div className="relative z-10">
               <div className="mb-8">
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm ring-1 ring-gray-200">
@@ -724,7 +724,7 @@ const ModernButton = ({ text, onClick, type = "button", disabled, variant = "pri
   const base =
     "w-full py-3 font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ring-1 ring-transparent";
   const primary =
-    "bg-violet-600 hover:bg-violet-600 text-white ring-violet-600/10";
+    "bg-violet-600 hover:bg-violet-700 text-white ring-violet-600/10";
   const secondary = "bg-slate-800 text-slate-100 hover:bg-slate-700";
   const classes = `${base} ${variant === "secondary" ? secondary : primary}`;
 
@@ -754,7 +754,7 @@ const SocialButton = ({ icon, onClick }) => (
 // Feature Component
 const Feature = ({ text }) => (
   <div className="flex items-center gap-3">
-    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+    <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
     <span className="text-gray-700">{text}</span>
   </div>
 );

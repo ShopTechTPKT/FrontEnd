@@ -227,3 +227,65 @@ html {
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
+/* Global minimalist purple theme (applies across pages/components) */
+.text-violet-700,
+.text-violet-600,
+.text-violet-500,
+.text-purple-700,
+.text-purple-600,
+.text-purple-500,
+.text-fuchsia-500 {
+  color: #6d28d9 !important;
+}
+
+.bg-violet-50,
+.bg-violet-100,
+.bg-purple-50,
+.bg-purple-100,
+.hover\:bg-violet-50:hover,
+.hover\:bg-violet-100:hover,
+.hover\:bg-purple-50:hover {
+  background-color: #f5f3ff !important;
+}
+
+.bg-violet-600,
+.bg-violet-700,
+.bg-purple-600,
+.bg-purple-700,
+.hover\:bg-violet-600:hover,
+.hover\:bg-violet-700:hover,
+.hover\:bg-purple-600:hover,
+.hover\:bg-purple-700:hover {
+  background-color: #6d28d9 !important;
+}
+
+.from-purple-700,
+.from-purple-600,
+.from-violet-700,
+.from-violet-600,
+.via-purple-500,
+.via-violet-500,
+.to-fuchsia-500,
+.to-purple-700,
+.to-violet-700 {
+  --tw-gradient-from: #7c3aed var(--tw-gradient-from-position) !important;
+  --tw-gradient-via: #8b5cf6 var(--tw-gradient-via-position) !important;
+  --tw-gradient-to: #a855f7 var(--tw-gradient-to-position) !important;
+}
+
+.focus\:ring-violet-500\/25:focus,
+.focus\:ring-violet-500\/20:focus,
+.focus\:ring-purple-500\/25:focus,
+.focus\:ring-purple-500\/20:focus,
+.focus\:ring-purple-200:focus,
+.focus\:ring-violet-200:focus {
+  --tw-ring-color: rgb(139 92 246 / 0.28) !important;
+}
+
+.focus\:border-violet-400:focus,
+.focus\:border-violet-500:focus,
+.focus\:border-purple-400:focus,
+.focus\:border-purple-500:focus {
+  border-color: #8b5cf6 !important;
+}
+

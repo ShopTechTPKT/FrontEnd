@@ -24,10 +24,10 @@ const DropdownControls = ({
           value={sortOption}
           onChange={handleChangeSortOption}
         >
-          <option value="name-asc">{t('common.name_az')} A-Z</option>
-          <option value="name-desc">{t('common.name_za')} Z-A</option>
-          <option value="price-asc">{t('common.price_low_to_high')} Low to High</option>
-          <option value="price-desc">{t('common.price_high_to_low')} High to Low</option>
+          <option value="name-asc">{t('common.name_az')}</option>
+          <option value="name-desc">{t('common.name_za')}</option>
+          <option value="price-asc">{t('common.price_low_to_high')}</option>
+          <option value="price-desc">{t('common.price_high_to_low')}</option>
           <option value="date-desc">{t('common.newest')}</option>
           <option value="date-asc">{t('common.oldest')}</option>
           <option value="stock-desc">{t('common.stock_high_to_low')}</option>

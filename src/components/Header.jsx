@@ -1,57 +1,93 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import logo from "../assets/shop.svg";
-import { FaShoppingCart, FaFacebookF, FaBars, FaTimes } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import path from "../constant/path";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../context/UserContext";
-import { FaChevronDown } from "react-icons/fa";
 import CartDropdown from "./CartDropdown";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { loadCartItems } from "../utils/redux/cartSlice";
 import notify from "../utils/notify";
 
+const IconChevronDown = ({ className = "" }) => (
+  <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M5 7.5L10 12.5L15 7.5"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const IconCart = ({ className = "" }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M3 4H5L7.2 14.5C7.3 15 7.8 15.4 8.3 15.4H17.8C18.3 15.4 18.8 15 18.9 14.5L20.3 8.5H6.2"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="9.2" cy="19" r="1.4" fill="currentColor" />
+    <circle cx="17.2" cy="19" r="1.4" fill="currentColor" />
+  </svg>
+);
+
+const IconMenu = ({ className = "" }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M4 7H20M4 12H20M4 17H20"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconClose = ({ className = "" }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M6 6L18 18M18 6L6 18"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconFacebook = ({ className = "" }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M13.5 22V13.8H16.2L16.6 10.7H13.5V8.7C13.5 7.8 13.8 7.2 15.1 7.2H16.7V4.4C16.4 4.3 15.5 4.3 14.5 4.3C12.4 4.3 11 5.6 11 8V10.7H8.5V13.8H11V22H13.5Z" />
+  </svg>
+);
+
 const Header = () => {
   const { t } = useTranslation();
-
-  const { carts, cartSummary, loading } = useSelector(state => state.cart);
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const cartDropdownRef = useRef(null);
-  const [isNavigating, setIsNavigating] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMobileProducts, setShowMobileProducts] = useState(false);
   const [showMobileSupport, setShowMobileSupport] = useState(false);
   const dispatch = useDispatch();
-  // Access UserContext
+
   const { user, logout, isCustomer, isAdmin, isCustomerService } =
     useContext(UserContext);
 
-  // Define navigate
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Handler cho navigation với loading
-  const handleNavigateWithLoading = (path, state) => {
-    setIsNavigating(true);
-    // Scroll to top khi navigate
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    navigate(path, { state });
-    
-    // Reset loading sau một khoảng thời gian ngắn
-    setTimeout(() => {
-      setIsNavigating(false);
-    }, 500);
+  const handleNavigate = (targetPath, state) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    navigate(targetPath, { state });
   };
 
-  const handleMouseEnter = () => {
-    setShowDropdown(true);
-  };
+  const handleMouseEnter = () => setShowDropdown(true);
 
   const handleMouseLeave = () => {
     setTimeout(() => {
@@ -60,16 +96,11 @@ const Header = () => {
       }
     }, 100);
   };
-  useEffect(() => {
-    console.log("CartDropdown - Cart state changed:", {
-      carts,
-      cartSummary,
-      loading,
-    });
-  }, [carts, cartSummary, loading]);
+
   useEffect(() => {
     dispatch(loadCartItems());
   }, [dispatch]);
+
   useEffect(() => {
     const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -84,96 +115,26 @@ const Header = () => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleMenuItemClick = action => {
-    console.log(`Selected action: ${action}`);
-    setShowDropdown(false);
-  };
+  const handleMenuItemClick = () => setShowDropdown(false);
 
-  // Handle logout
   const handleLogoutConfirm = () => {
-    logout(); // Call logout from UserContext
+    logout();
     setShowDropdown(false);
     notify.success("Đăng xuất thành công!");
-    // navigate("/login"); // Redirect to login page
   };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // Scroll effect for sticky header
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const getFormattedDate = () => {
-    const days = [
-      t("header.sunday"),
-      t("header.monday"),
-      t("header.tuesday"),
-      t("header.wednesday"),
-      t("header.thursday"),
-      t("header.friday"),
-      t("header.saturday"),
-    ];
-    const months = [
-      t("header.jan"),
-      t("header.feb"),
-      t("header.mar"),
-      t("header.apr"),
-      t("header.may"),
-      t("header.jun"),
-      t("header.jul"),
-      t("header.aug"),
-      t("header.sep"),
-      t("header.oct"),
-      t("header.nov"),
-      t("header.dec"),
-    ];
+  const handleClickCart = () => setShowCartDropdown(!showCartDropdown);
 
-    const day = days[currentDateTime.getDay()];
-    const date = currentDateTime.getDate();
-    const month = months[currentDateTime.getMonth()];
-    const year = currentDateTime.getFullYear();
-
-    return `${day}, ${date} ${month} ${year}`;
-  };
-
-  const formatTime = () => {
-    let hours = currentDateTime.getHours();
-    const minutes = currentDateTime.getMinutes().toString().padStart(2, "0");
-    const seconds = currentDateTime.getSeconds().toString().padStart(2, "0");
-    const ampm = hours >= 12 ? t("common.pm") : t("common.am");
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    return `${hours}:${minutes}:${seconds} ${ampm}`;
-  };
-
-  const handleClickCart = () => {
-    setShowCartDropdown(!showCartDropdown);
-  };
-
-  const handleCartMouseEnter = () => {
-    setShowCartDropdown(true);
-  };
+  const handleCartMouseEnter = () => setShowCartDropdown(true);
 
   const handleCartMouseLeave = () => {
     setTimeout(() => {
@@ -194,7 +155,7 @@ const Header = () => {
 
   const handleMobileNavigate = (targetPath, state) => {
     closeMobileMenu();
-    handleNavigateWithLoading(targetPath, state);
+    handleNavigate(targetPath, state);
   };
 
   const cartQuantity = useSelector(state =>
@@ -207,343 +168,306 @@ const Header = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        closeMobileMenu();
-      }
+      if (window.innerWidth >= 1024) closeMobileMenu();
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
-
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    }
-
+    if (isMobileMenuOpen) document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = originalOverflow;
     };
   }, [isMobileMenuOpen]);
 
-  return (
-    <>
-      {/* Loading Overlay khi navigate */}
-      {isNavigating && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center animate-fadeIn">
-          <div className="bg-white rounded-2xl p-8 shadow-2xl flex flex-col items-center">
-            {/* Spinner */}
-            <div className="relative w-16 h-16 mb-4">
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-purple-200 rounded-full"></div>
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <p className="text-lg font-semibold text-purple-950 animate-pulse">
-              Đang tải...
-            </p>
-            <p className="text-sm text-gray-500 mt-2">
-              Vui lòng đợi trong giây lát
-            </p>
-          </div>
-        </div>
-      )}
-      
-      <header
-        className={`font-sans fixed top-0 left-0 right-0 z-50 ${
-          isScrolled ? "shadow-md" : ""
-        }`}
-      >
-      {/* Top Bar - Simplified (white background, dark text) */}
-      <div
-        className={`hidden md:flex bg-white text-xs justify-between items-center px-4 md:px-8 py-2 border-b border-gray-100 transition-all duration-300 ${
-          isScrolled ? "hidden" : ""
-        }`}
-      >
-        {/* Date & Time - Simplified */}
-        <div className="flex items-center gap-3 text-gray-700">
-          <span className="hidden sm:inline">{getFormattedDate()}</span>
-          <span className="hidden md:inline">{formatTime()}</span>
-        </div>
+  const isActive = targetPath => location.pathname === targetPath;
 
-        {/* Store Location - Simplified */}
-        <div className="hidden lg:flex items-center gap-2 text-sm text-gray-700">
-          <span>📍</span>
+  const dropdownItemClass =
+    "block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors";
+
+  const mobileItemClass =
+    "block w-full text-left rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-gray-900 transition-colors";
+
+  return (
+    <header
+      className={`font-sans fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${
+        isScrolled ? "shadow-sm" : ""
+      }`}
+    >
+      {/* Top Bar */}
+      <div
+        className={`hidden md:flex bg-white text-xs items-center justify-between px-4 md:px-8 py-1.5 border-b border-gray-100 transition-all duration-300 ${
+          isScrolled ? "!hidden" : ""
+        }`}
+      >
+        <div className="flex items-center gap-2 text-gray-500">
           <span>{t("header.visitShop")}</span>
+          <span className="text-gray-300">|</span>
           <Link
             to="/contact"
-            className="text-sky-600 hover:text-sky-700 underline"
+            className="text-gray-700 hover:text-gray-900 transition-colors"
           >
             {t("header.contactUs")}
           </Link>
         </div>
-
-        {/* Contact Info - Simplified */}
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-gray-700">
-            {t("header.call")} <strong>{t("header.inContactUs")}</strong>
+          <span className="text-gray-500">
+            {t("header.call")}{" "}
+            <strong className="text-gray-700">{t("header.inContactUs")}</strong>
           </span>
           <a
             href="#"
-            className="w-7 h-7 flex items-center justify-center text-sky-600 hover:text-sky-700 transition-colors"
+            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors"
           >
-            <FaFacebookF className="w-4 h-4" />
+            <IconFacebook className="w-3.5 h-3.5" />
           </a>
         </div>
       </div>
 
-      {/* Main Navigation Bar - Simplified (white background, dark text) */}
+      {/* Main Navigation */}
       <div
-        className={`bg-white border-b border-gray-200 ${isScrolled ? "py-2" : "py-3"}`}
+        className={`bg-white border-b border-gray-200 transition-all duration-300 ${
+          isScrolled ? "py-2" : "py-3"
+        }`}
       >
-        {/* Container: 3-column layout - Logo | Menu Center | Icons */}
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex items-center justify-between gap-3">
-          {/* LEFT: Logo */}
-          <div className="flex items-center justify-start shrink-0">
-            <Link to={path.home}>
-              <img
-                src={logo}
-                alt={t("remaining.logo")}
-                className={`rounded-lg ${isScrolled ? "h-9" : "h-11"}`}
-              />
-            </Link>
-          </div>
+          {/* Logo */}
+          <Link to={path.home} className="shrink-0">
+            <img
+              src={logo}
+              alt={t("remaining.logo")}
+              className={`transition-all duration-300 ${
+                isScrolled ? "h-8" : "h-10"
+              }`}
+            />
+          </Link>
 
-          {/* CENTER: Navigation Links - Simplified */}
+          {/* Desktop Navigation */}
           <nav className="hidden lg:flex flex-1 justify-center">
-            <ul className="flex gap-4 md:gap-6 text-sm font-medium text-gray-900 whitespace-nowrap">
+            <ul className="flex items-center gap-1 text-sm font-medium">
               {/* Home */}
               <li>
-              <Link
+                <Link
                   to={path.home}
-                  className="hover:text-purple-600 transition-colors"
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    isActive(path.home)
+                      ? "text-violet-700 bg-violet-50"
+                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
                   {t("nav.home")}
                 </Link>
               </li>
 
-              {/* Products Dropdown - Simplified */}
+              {/* Products Dropdown */}
               <li className="relative group">
-                <div className="flex items-center gap-1 hover:text-purple-600 cursor-pointer transition-colors">
+                <button
+                  className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                    location.pathname === "/products"
+                      ? "text-violet-700 bg-violet-50"
+                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
                   <span>{t("nav.products")}</span>
-                  <FaChevronDown
-                    size={12}
-                    className="transition-transform group-hover:rotate-180"
-                  />
-                </div>
+                  <IconChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
 
-                {/* Dropdown Menu - Simplified */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[700px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-4">
-                    {/* Grid Layout for Categories - Simplified */}
-                    <div className="grid grid-cols-4 gap-4">
-                      {/* Column 1: Laptops */}
+                {/* Mega Menu */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[680px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 p-5">
+                    <div className="grid grid-cols-4 gap-5">
+                      {/* Laptops */}
                       <div>
-                        <h3 className="text-gray-900 font-semibold text-sm mb-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
                           {t("categories.laptops")}
                         </h3>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [45, 46, 47, 48, 49, 50, 51],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.allLaptops")}
+                          {t("categories.allLaptops")}
                         </button>
                       </div>
 
-                      {/* Column 2: Gaming Gear */}
+                      {/* Gaming Gear */}
                       <div>
-                        <h3 className="text-gray-900 font-semibold text-sm mb-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
                           {t("categories.gamingGear")}
                         </h3>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [6, 7, 8, 9, 10],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.mouse")}
+                          {t("categories.mouse")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [1, 2, 3, 4, 5],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.keyboard")}
+                          {t("categories.keyboard")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [14, 15, 16],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.gameGear")}
+                          {t("categories.gameGear")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [11, 12, 13],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.mousePad")}
+                          {t("categories.mousePad")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", { list: [42, 43] })
+                            handleNavigate("/products", { list: [42, 43] })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.headphone")}
+                          {t("categories.headphone")}
                         </button>
                       </div>
 
-                      {/* Column 3: PC Parts */}
+                      {/* PC Parts */}
                       <div>
-                        <h3 className="text-gray-900 font-semibold text-sm mb-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
                           {t("categories.pcParts")}
                         </h3>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [36, 37, 38, 39],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.monitor")}
+                          {t("categories.monitor")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", { list: [17] })
+                            handleNavigate("/products", { list: [17] })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.case")}
+                          {t("categories.case")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", { list: [18, 19] })
+                            handleNavigate("/products", { list: [18, 19] })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.cpu")}
+                          {t("categories.cpu")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [20, 21, 22],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.mainboard")}
+                          {t("categories.mainboard")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [23, 24, 25, 26],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.psu")}
+                          {t("categories.psu")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [27, 28, 29],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.storage")}
+                          {t("categories.storage")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [30, 31, 32],
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.ram")}
+                          {t("categories.ram")}
                         </button>
                       </div>
 
-                      {/* Column 4: Smart Devices */}
+                      {/* Smart Devices */}
                       <div>
-                        <h3 className="text-gray-900 font-semibold text-sm mb-2">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
                           {t("categories.smartDevice")}
                         </h3>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [52, 53, 54],
                               brand: "iPhone",
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.iphone")}
+                          {t("categories.iphone")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [52, 53, 54],
                               brand: "Samsung",
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.samsung")}
+                          {t("categories.samsung")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", {
+                            handleNavigate("/products", {
                               list: [52, 53, 54],
                               brand: "Xiaomi",
                             })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.xiaomi")}
+                          {t("categories.xiaomi")}
                         </button>
                         <button
                           onClick={() =>
-                            handleNavigateWithLoading("/products", { list: [44] })
+                            handleNavigate("/products", { list: [44] })
                           }
-                          disabled={isNavigating}
-                          className="block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-white hover:bg-purple-950 rounded transition-colors disabled:opacity-50 disabled:cursor-wait"
+                          className={dropdownItemClass}
                         >
-                          {isNavigating ? "Đang tải..." : t("categories.ipad")}
+                          {t("categories.ipad")}
                         </button>
                       </div>
                     </div>
@@ -555,110 +479,94 @@ const Header = () => {
               <li>
                 <Link
                   to="/deals"
-                  className="hover:text-purple-600 transition-colors relative"
+                  className={`relative px-3 py-2 rounded-lg transition-colors ${
+                    isActive("/deals")
+                      ? "text-gray-900 bg-gray-100"
+                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
                   {t("nav.deals")}
-                  <span className="absolute -top-1 -right-6 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                  <span className="absolute -top-1 -right-3 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">
                     {t("nav.hotBadge")}
                   </span>
                 </Link>
               </li>
 
-              {/* New Arrivals - hidden as per request */}
-              {/* <li className="group relative">
-              <Link to="/new-arrivals" className="flex items-center gap-1.5 hover:text-purple-400 transition-all duration-300">
-                <span className="relative whitespace-nowrap">
-                  {t('nav.new')}
-                  <span className="absolute -top-2 -right-10 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">{t('nav.newBadge')}</span>
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600 group-hover:w-full transition-all duration-300"></span>
-                </span>
-              </Link>
-            </li> */}
-
-              {/* Brands Dropdown - hidden as per request */}
-              {/* <li className="relative group"> ... </li> */}
-
               {/* Blog */}
               <li>
                 <Link
                   to="/blog"
-                  className="hover:text-purple-600 transition-colors"
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    isActive("/blog")
+                      ? "text-gray-900 bg-gray-100"
+                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
                   {t("nav.blog")}
                 </Link>
               </li>
 
-              {/* Support Dropdown - Simplified */}
+              {/* Support Dropdown */}
               <li className="relative group">
-                <div className="flex items-center gap-1 hover:text-purple-600 cursor-pointer transition-colors">
+                <button className="flex items-center gap-1 px-3 py-2 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors">
                   <span>{t("nav.support")}</span>
-                  <FaChevronDown
-                    size={12}
-                    className="transition-transform group-hover:rotate-180"
-                  />
-                </div>
+                  <IconChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
 
-                {/* Support Dropdown Menu - Simplified */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[240px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-                    <h3 className="text-gray-900 font-semibold text-sm mb-2">
-                      {t("support.helpCenter")}
-                    </h3>
-                    <div className="space-y-1">
-                      <Link
-                        to="/track-order"
-                        className="block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                      >
-                        {t("support.trackOrder")}
-                      </Link>
-                      <Link
-                        to="/faq"
-                        className="block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                      >
-                        {t("support.faq")}
-                      </Link>
-                      <Link
-                        to="/contact"
-                        className="block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                      >
-                        {t("support.contactUs")}
-                      </Link>
-                      <Link
-                        to="/warranty"
-                        className="block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                      >
-                        {t("support.warranty")}
-                      </Link>
-                      <Link
-                        to="/returns"
-                        className="block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                      >
-                        {t("support.returns")}
-                      </Link>
-                      {isCustomerService && (
-                        <>
-                          <div className="border-t border-gray-200 my-1"></div>
-                          <Link
-                            to="/customer-service"
-                            className="block px-2 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
-                          >
-                            {t("support.customerService")}
-                          </Link>
-                        </>
-                      )}
-                    </div>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[220px] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 py-2">
+                    <Link
+                      to="/track-order"
+                      className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                    >
+                      {t("support.trackOrder")}
+                    </Link>
+                    <Link
+                      to="/faq"
+                      className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                    >
+                      {t("support.faq")}
+                    </Link>
+                    <Link
+                      to="/contact"
+                      className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                    >
+                      {t("support.contactUs")}
+                    </Link>
+                    <Link
+                      to="/warranty"
+                      className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                    >
+                      {t("support.warranty")}
+                    </Link>
+                    <Link
+                      to="/returns"
+                      className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                    >
+                      {t("support.returns")}
+                    </Link>
+                    {isCustomerService && (
+                      <>
+                        <div className="my-1 border-t border-gray-100"></div>
+                        <Link
+                          to="/customer-service"
+                          className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                        >
+                          {t("support.customerService")}
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
               </li>
             </ul>
           </nav>
 
-          {/* RIGHT: Icons - Simplified */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
-            {/* Language Switcher */}
+          {/* Right: Icons */}
+          <div className="flex items-center gap-2 shrink-0">
             <LanguageSwitcher />
 
-            {/* Shopping Cart - Simplified */}
+            {/* Cart */}
             <div
               className="relative"
               ref={cartDropdownRef}
@@ -666,12 +574,12 @@ const Header = () => {
               onMouseLeave={handleCartMouseLeave}
             >
               <button
-                className="relative w-9 h-9 flex items-center justify-center text-gray-900 hover:text-white hover:bg-purple-700 rounded-md transition-colors"
+                className="relative w-9 h-9 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={handleClickCart}
               >
-                <FaShoppingCart className="text-lg" />
+                <IconCart className="w-[18px] h-[18px]" />
                 {cartQuantity > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                     {cartQuantity}
                   </span>
                 )}
@@ -682,7 +590,7 @@ const Header = () => {
               />
             </div>
 
-            {/* User Account - chỉ dùng text, không icon emoji */}
+            {/* User Account */}
             <div
               className="relative hidden sm:block"
               ref={dropdownRef}
@@ -690,153 +598,151 @@ const Header = () => {
               onMouseLeave={handleMouseLeave}
             >
               <button
-                className="px-3 h-9 flex items-center justify-center text-gray-900 hover:text-purple-600 text-sm font-medium rounded-md border border-purple-400 hover:bg-purple-50 transition-colors"
+                className="px-3 h-9 flex items-center justify-center text-sm font-medium rounded-lg text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
                 {user ? t("account.myAccount") : t("account.loginRegister")}
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 w-64 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-10 overflow-hidden">
-                  {/* User Header - Simplified */}
-                  <div className="p-4 bg-gradient-to-r from-purple-50 via-fuchsia-50 to-white border-b border-gray-200">
-                    <p className="text-sm text-gray-900 font-semibold">
+                <div className="absolute right-0 w-60 mt-2 bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 z-10 overflow-hidden animate-fadeIn">
+                  {/* User Info */}
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-semibold text-gray-900">
                       {user
                         ? `${t("header.hello")}, ${user.fullName}`
                         : t("header.welcomeBack")}
                     </p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-gray-500 mt-0.5">
                       {user
                         ? t("header.manageAccount")
                         : t("header.pleaseLogin")}
                     </p>
                   </div>
 
-                  <ul className="py-2">
+                  <div className="py-1">
                     {user ? (
                       <>
-                        {/* Show profile link for customers */}
                         {isCustomer && (
-                          <li onClick={() => handleMenuItemClick("profile")}>
-                            <Link
-                              to="/userProfile"
-                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
-                            >
-                              {t("account.myAccount")}
-                            </Link>
-                          </li>
-                        )}
-                        {/* Show admin link for admins */}
-                        {isAdmin && (
-                          <li onClick={() => handleMenuItemClick("admin")}>
-                            <Link
-                              to="/admin"
-                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
-                            >
-                              {t("account.manage")}
-                            </Link>
-                          </li>
-                        )}
-                        {/* Show customer service link for customer service staff */}
-                        {isCustomerService && (
-                          <li onClick={() => handleMenuItemClick("employee")}>
-                            <Link
-                              to="/customer-service"
-                              className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
-                            >
-                              {t("account.staff")}
-                            </Link>
-                          </li>
-                        )}
-                        {/* Favorites */}
-                        <li onClick={() => handleMenuItemClick("favorites")}>
                           <Link
-                            to="/favorites"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                            to="/userProfile"
+                            onClick={handleMenuItemClick}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors"
                           >
-                            Yêu thích
+                            {t("account.myAccount")}
                           </Link>
-                        </li>
-                        {/* Divider */}
-                        <div className="my-1 border-t border-gray-200"></div>
-                        {/* Sign Out */}
-                        <li onClick={handleLogoutConfirm}>
-                          <button className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                            {t("account.signOut")}
-                          </button>
-                        </li>
+                        )}
+                        {isAdmin && (
+                          <Link
+                            to="/admin"
+                            onClick={handleMenuItemClick}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                          >
+                            {t("account.manage")}
+                          </Link>
+                        )}
+                        {isCustomerService && (
+                          <Link
+                            to="/customer-service"
+                            onClick={handleMenuItemClick}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                          >
+                            {t("account.staff")}
+                          </Link>
+                        )}
+                        <Link
+                          to="/favorites"
+                          onClick={handleMenuItemClick}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                        >
+                          Yêu thích
+                        </Link>
+                        <div className="my-1 border-t border-gray-100"></div>
+                        <button
+                          onClick={handleLogoutConfirm}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          {t("account.signOut")}
+                        </button>
                       </>
                     ) : (
-                      <li onClick={() => handleMenuItemClick("login")}>
-                        <Link
-                          to="/login"
-                          onClick={() =>
-                            window.scrollTo({ top: 0, behavior: "smooth" })
-                          }
-                          className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors font-medium"
-                        >
-                          {t("account.loginRegister")}
-                        </Link>
-                      </li>
+                      <Link
+                        to="/login"
+                        onClick={() => {
+                          handleMenuItemClick();
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="block px-4 py-2 text-sm font-medium text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+                      >
+                        {t("account.loginRegister")}
+                      </Link>
                     )}
-                  </ul>
+                  </div>
                 </div>
               )}
             </div>
 
+            {/* Mobile Menu Toggle */}
             <button
               type="button"
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-md border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors"
+              className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
               onClick={() => setIsMobileMenuOpen(prev => !prev)}
               aria-label={isMobileMenuOpen ? "Đóng menu" : "Mở menu"}
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
-                <FaTimes className="text-base" />
+                <IconClose className="w-4 h-4" />
               ) : (
-                <FaBars className="text-base" />
+                <IconMenu className="w-4 h-4" />
               )}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <>
           <button
             type="button"
-            className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-[1px]"
+            className="lg:hidden fixed inset-0 bg-black/20"
             onClick={closeMobileMenu}
             aria-label="Đóng menu"
           />
-          <div className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-200 bg-white shadow-2xl z-10">
-            <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-4 py-4 space-y-3">
+          <div className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-200 bg-white shadow-lg z-10">
+            <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-4 py-3 space-y-1">
+              {/* Home */}
               <Link
                 to={path.home}
                 onClick={closeMobileMenu}
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-900 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+                  isActive(path.home)
+                    ? "text-violet-700 bg-violet-50"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
               >
                 {t("nav.home")}
               </Link>
 
-              <div className="rounded-2xl border border-gray-200 overflow-hidden">
+              {/* Products Accordion */}
+              <div className="rounded-lg border border-gray-100 overflow-hidden">
                 <button
                   type="button"
-                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   onClick={() => setShowMobileProducts(prev => !prev)}
                 >
                   <span>{t("nav.products")}</span>
-                  <FaChevronDown
-                    size={12}
-                    className={`transition-transform ${
+                  <IconChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
                       showMobileProducts ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {showMobileProducts && (
-                  <div className="border-t border-gray-200 bg-gray-50/70 px-3 py-3 space-y-3">
+                  <div className="border-t border-gray-100 bg-gray-50/50 px-3 py-3 space-y-3">
+                    {/* Laptops */}
                     <div>
-                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">
                         {t("categories.laptops")}
                       </h3>
                       <button
@@ -845,286 +751,206 @@ const Header = () => {
                             list: [45, 46, 47, 48, 49, 50, 51],
                           })
                         }
-                        disabled={isNavigating}
-                        className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        className={mobileItemClass}
                       >
-                        {isNavigating ? "Đang tải..." : t("categories.allLaptops")}
+                        {t("categories.allLaptops")}
                       </button>
                     </div>
 
+                    {/* Gaming Gear */}
                     <div>
-                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">
                         {t("categories.gamingGear")}
                       </h3>
-                      <div className="space-y-1">
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [6, 7, 8, 9, 10],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.mouse")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [1, 2, 3, 4, 5],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.keyboard")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [14, 15, 16],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.gameGear")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [11, 12, 13],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.mousePad")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", { list: [42, 43] })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.headphone")}
-                        </button>
+                      <div className="space-y-0.5">
+                        {[
+                          {
+                            list: [6, 7, 8, 9, 10],
+                            label: t("categories.mouse"),
+                          },
+                          {
+                            list: [1, 2, 3, 4, 5],
+                            label: t("categories.keyboard"),
+                          },
+                          {
+                            list: [14, 15, 16],
+                            label: t("categories.gameGear"),
+                          },
+                          {
+                            list: [11, 12, 13],
+                            label: t("categories.mousePad"),
+                          },
+                          {
+                            list: [42, 43],
+                            label: t("categories.headphone"),
+                          },
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() =>
+                              handleMobileNavigate("/products", {
+                                list: item.list,
+                              })
+                            }
+                            className={mobileItemClass}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
+                    {/* PC Parts */}
                     <div>
-                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">
                         {t("categories.pcParts")}
                       </h3>
-                      <div className="space-y-1">
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [36, 37, 38, 39],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.monitor")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", { list: [17] })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.case")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", { list: [18, 19] })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.cpu")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [20, 21, 22],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.mainboard")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [23, 24, 25, 26],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.psu")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [27, 28, 29],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.storage")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [30, 31, 32],
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.ram")}
-                        </button>
+                      <div className="space-y-0.5">
+                        {[
+                          {
+                            list: [36, 37, 38, 39],
+                            label: t("categories.monitor"),
+                          },
+                          { list: [17], label: t("categories.case") },
+                          { list: [18, 19], label: t("categories.cpu") },
+                          {
+                            list: [20, 21, 22],
+                            label: t("categories.mainboard"),
+                          },
+                          {
+                            list: [23, 24, 25, 26],
+                            label: t("categories.psu"),
+                          },
+                          {
+                            list: [27, 28, 29],
+                            label: t("categories.storage"),
+                          },
+                          { list: [30, 31, 32], label: t("categories.ram") },
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() =>
+                              handleMobileNavigate("/products", {
+                                list: item.list,
+                              })
+                            }
+                            className={mobileItemClass}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
+                    {/* Smart Devices */}
                     <div>
-                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                      <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">
                         {t("categories.smartDevice")}
                       </h3>
-                      <div className="space-y-1">
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [52, 53, 54],
-                              brand: "iPhone",
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.iphone")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [52, 53, 54],
-                              brand: "Samsung",
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.samsung")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", {
-                              list: [52, 53, 54],
-                              brand: "Xiaomi",
-                            })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.xiaomi")}
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleMobileNavigate("/products", { list: [44] })
-                          }
-                          disabled={isNavigating}
-                          className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                        >
-                          {isNavigating ? "Đang tải..." : t("categories.ipad")}
-                        </button>
+                      <div className="space-y-0.5">
+                        {[
+                          {
+                            list: [52, 53, 54],
+                            brand: "iPhone",
+                            label: t("categories.iphone"),
+                          },
+                          {
+                            list: [52, 53, 54],
+                            brand: "Samsung",
+                            label: t("categories.samsung"),
+                          },
+                          {
+                            list: [52, 53, 54],
+                            brand: "Xiaomi",
+                            label: t("categories.xiaomi"),
+                          },
+                          { list: [44], label: t("categories.ipad") },
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() =>
+                              handleMobileNavigate("/products", {
+                                list: item.list,
+                                ...(item.brand && { brand: item.brand }),
+                              })
+                            }
+                            className={mobileItemClass}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
                 )}
               </div>
 
+              {/* Deals */}
               <Link
                 to="/deals"
                 onClick={closeMobileMenu}
-                className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-gray-900 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                className={`flex items-center justify-between rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+                  isActive("/deals")
+                    ? "text-violet-700 bg-violet-50"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
               >
                 <span>{t("nav.deals")}</span>
-                <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                   {t("nav.hotBadge")}
                 </span>
               </Link>
 
+              {/* Blog */}
               <Link
                 to="/blog"
                 onClick={closeMobileMenu}
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-900 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+                  isActive("/blog")
+                    ? "text-violet-700 bg-violet-50"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
               >
                 {t("nav.blog")}
               </Link>
 
-              <div className="rounded-2xl border border-gray-200 overflow-hidden">
+              {/* Support Accordion */}
+              <div className="rounded-lg border border-gray-100 overflow-hidden">
                 <button
                   type="button"
-                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   onClick={() => setShowMobileSupport(prev => !prev)}
                 >
                   <span>{t("nav.support")}</span>
-                  <FaChevronDown
-                    size={12}
-                    className={`transition-transform ${
+                  <IconChevronDown
+                    className={`w-3 h-3 transition-transform duration-200 ${
                       showMobileSupport ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {showMobileSupport && (
-                  <div className="border-t border-gray-200 bg-gray-50/70 p-3 space-y-1">
-                    <Link
-                      to="/track-order"
-                      onClick={closeMobileMenu}
-                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                    >
-                      {t("support.trackOrder")}
-                    </Link>
-                    <Link
-                      to="/faq"
-                      onClick={closeMobileMenu}
-                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                    >
-                      {t("support.faq")}
-                    </Link>
-                    <Link
-                      to="/contact"
-                      onClick={closeMobileMenu}
-                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                    >
-                      {t("support.contactUs")}
-                    </Link>
-                    <Link
-                      to="/warranty"
-                      onClick={closeMobileMenu}
-                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                    >
-                      {t("support.warranty")}
-                    </Link>
-                    <Link
-                      to="/returns"
-                      onClick={closeMobileMenu}
-                      className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
-                    >
-                      {t("support.returns")}
-                    </Link>
+                  <div className="border-t border-gray-100 bg-gray-50/50 p-2 space-y-0.5">
+                    {[
+                      { to: "/track-order", label: t("support.trackOrder") },
+                      { to: "/faq", label: t("support.faq") },
+                      { to: "/contact", label: t("support.contactUs") },
+                      { to: "/warranty", label: t("support.warranty") },
+                      { to: "/returns", label: t("support.returns") },
+                    ].map(item => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={closeMobileMenu}
+                        className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-violet-700 transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
                     {isCustomerService && (
                       <Link
                         to="/customer-service"
                         onClick={closeMobileMenu}
-                        className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-white hover:text-purple-700 transition-colors"
+                        className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-violet-700 transition-colors"
                       >
                         {t("support.customerService")}
                       </Link>
@@ -1133,18 +959,19 @@ const Header = () => {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-3">
-                <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+              {/* Account Section */}
+              <div className="rounded-lg border border-gray-100 p-3 mt-2">
+                <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
                   {user ? t("account.myAccount") : t("account.loginRegister")}
                 </p>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {user ? (
                     <>
                       {isCustomer && (
                         <Link
                           to="/userProfile"
                           onClick={closeMobileMenu}
-                          className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                          className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
                         >
                           {t("account.myAccount")}
                         </Link>
@@ -1153,7 +980,7 @@ const Header = () => {
                         <Link
                           to="/admin"
                           onClick={closeMobileMenu}
-                          className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                          className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
                         >
                           {t("account.manage")}
                         </Link>
@@ -1162,7 +989,7 @@ const Header = () => {
                         <Link
                           to="/customer-service"
                           onClick={closeMobileMenu}
-                          className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                          className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
                         >
                           {t("account.staff")}
                         </Link>
@@ -1170,7 +997,7 @@ const Header = () => {
                       <Link
                         to="/favorites"
                         onClick={closeMobileMenu}
-                        className="block rounded-xl px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                        className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
                       >
                         Yêu thích
                       </Link>
@@ -1180,7 +1007,7 @@ const Header = () => {
                           closeMobileMenu();
                           handleLogoutConfirm();
                         }}
-                        className="block w-full text-left rounded-xl px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        className="block w-full text-left rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                       >
                         {t("account.signOut")}
                       </button>
@@ -1192,7 +1019,7 @@ const Header = () => {
                         closeMobileMenu();
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
-                      className="block rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                      className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
                     >
                       {t("account.loginRegister")}
                     </Link>
@@ -1204,12 +1031,7 @@ const Header = () => {
         </>
       )}
     </header>
-    </>
   );
 };
 
 export default Header;
-
-
-
-// Updated: 2025-10-12T16:09:08.637Z

@@ -1,12 +1,8 @@
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
 import { Outlet } from "react-router-dom";
-import ChatWidget from "../../components/ChatWidget";
-import { useTranslation } from 'react-i18next';
 
 function Layout() {
-  const { t } = useTranslation();
-
     return (
         <>
             <Header />
@@ -15,7 +11,7 @@ function Layout() {
                 <Outlet></Outlet>
             </main>
             <Footer />
-            <ChatWidget />
+            {/* Chat: dùng ChatBox toàn cục trong App.jsx — tránh 2 nút chat trùng lặp */}
         </>
     )
 }

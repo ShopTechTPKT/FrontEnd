@@ -769,72 +769,76 @@ const ShoppingCardItem = () => {
 
   return (
     <>
-      <div className="container mx-auto p-6">
-        <div className="mt-2 flex items-center text-sm text-gray-500">
-          <Link to={path.home} className="text-blue-500 hover:underline mr-1">
+      <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/90 pb-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
+          <Link
+            to={path.home}
+            className="text-violet-600 hover:text-violet-700 transition-colors"
+          >
             {t("product.home")}
           </Link>
-          <span className="mr-1">/</span>
-          <Link to={path.card} className="text-blue-500 hover:underline mr-1">
-            Shopping Cart
+          <span className="text-gray-300">/</span>
+          <Link
+            to={path.card}
+            className="text-violet-600 hover:text-violet-700 transition-colors"
+          >
+            {t("cart.title")}
           </Link>
-          <span className="mr-1">/</span>
-          <span>{t("cart.purchase")}</span>
-        </div>
-        <div className="mt-4 grid grid-cols-2 items-center">
-          <div className=""></div>
-          <div className="mt-4 flex items-center justify-center space-x-8">
-            {/* Step 1: Shipping - completed */}
-            <div className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-gray-300 text-white flex items-center justify-center text-xs font-semibold">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <span className="ml-2 text-sm font-medium text-gray-500">
-                {t("payment.checkout.step_shipping")}
-              </span>
-            </div>
+          <span className="text-gray-300">/</span>
+          <span className="font-medium text-gray-700">{t("cart.purchase")}</span>
+        </nav>
 
-            {/* Divider line */}
-            <div className="border-t-2 border-indigo-600 w-24"></div>
-
-            {/* Step 2: Payment & Review - current step */}
-            <div className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold">
-                2
-              </div>
-              <span className="ml-2 text-sm font-semibold text-indigo-600">
-                {t("payment.checkout.step_payment_review")}
-              </span>
+        <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-8">
+          <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100 text-violet-700">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
+            <span className="text-sm font-medium">
+              {t("payment.checkout.step_shipping")}
+            </span>
+          </div>
+          <div className="hidden h-px w-10 bg-gray-200 sm:block" />
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-xs font-semibold text-white shadow-sm">
+              2
+            </div>
+            <span className="text-sm font-medium text-violet-700">
+              {t("payment.checkout.step_payment_review")}
+            </span>
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold mb-4">
+        <h1 className="mt-8 text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
           {t("payment.checkout.complete_purchase")}
         </h1>
 
         {!customerInfo ? (
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-            <div className="flex">
-              <div className="flex-shrink-0">
+          <div
+            role="alert"
+            className="mb-8 rounded-2xl border border-amber-100 bg-amber-50/80 px-4 py-4 sm:px-5"
+          >
+            <div className="flex gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                 <svg
-                  className="h-5 w-5 text-yellow-400"
+                  className="h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
+                  aria-hidden
                 >
                   <path
                     fillRule="evenodd"
@@ -843,12 +847,12 @@ const ShoppingCardItem = () => {
                   />
                 </svg>
               </div>
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">
+              <div>
+                <p className="text-sm text-amber-900/90 leading-relaxed">
                   {t("payment.checkout.please_complete_shipping")}{" "}
                   <Link
                     to={path.shopping_card_checkout}
-                    className="font-medium underline text-yellow-700 hover:text-yellow-600"
+                    className="font-medium text-violet-700 underline decoration-violet-200 underline-offset-2 hover:text-violet-800"
                   >
                     {t("payment.checkout.go_to_shipping")}
                   </Link>
@@ -857,10 +861,10 @@ const ShoppingCardItem = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-10">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="rounded-2xl border border-gray-100 bg-white p-5 sm:p-6 shadow-sm">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900">
                   {t("payment.payment_summary.title")}
                 </h2>
                 {carts.length === 0 ? (
@@ -895,8 +899,8 @@ const ShoppingCardItem = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">
+              <div className="rounded-2xl border border-gray-100 bg-white p-5 sm:p-6 shadow-sm">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900">
                   {t("payment.checkout.shipping_information")}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -927,8 +931,8 @@ const ShoppingCardItem = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">
+              <div className="sticky top-28 rounded-2xl border border-gray-100 bg-white p-5 sm:p-6 shadow-sm">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900">
                   {t("payment.payment_summary.title")}
                 </h2>
 
@@ -943,7 +947,7 @@ const ShoppingCardItem = () => {
                   <button
                     type="button"
                     id="paymentMethod"
-                    className="w-full border rounded-md p-2 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full cursor-pointer rounded-xl border border-gray-200 bg-white p-3 text-left text-sm text-gray-800 shadow-sm transition-colors hover:border-violet-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
                     onClick={() => setIsPaymentOptionsOpen(s => !s)}
                   >
                     {selectedPaymentName ||
@@ -951,12 +955,12 @@ const ShoppingCardItem = () => {
                   </button>
 
                   {isPaymentOptionsOpen && (
-                    <div className="absolute top-full left-0 right-0 bg-white shadow-md rounded-md mt-1 z-10">
+                    <div className="absolute top-full left-0 right-0 z-10 mt-1 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
                       {getDisplayedPaymentMethods().map(method => (
                         <button
                           key={method.id}
                           type="button"
-                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                          className="w-full px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-violet-50 hover:text-violet-800"
                           onClick={() => handlePaymentMethodSelect(method)}
                         >
                           {method.name}
@@ -1043,7 +1047,7 @@ const ShoppingCardItem = () => {
                       )}
                       value={note}
                       onChange={e => setNote(e.target.value)}
-                      className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/30"
                     />
                   </div>
 
@@ -1060,12 +1064,12 @@ const ShoppingCardItem = () => {
                           value={enteredDiscountCode}
                           onChange={e => setEnteredDiscountCode(e.target.value)}
                           placeholder={t("payment.payment_summary.enter_discount_code") || "Nhập mã giảm giá"}
-                          className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/30"
                         />
                         <button
                           type="button"
                           onClick={handleApplyDiscountCode}
-                          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2"
                         >
                           {t("payment.payment_summary.apply") || "Áp dụng"}
                         </button>
@@ -1121,7 +1125,7 @@ const ShoppingCardItem = () => {
                       <button
                         // **FIX: This is the click handler that opens the modal**
                         onClick={() => setIsDiscountModalOpen(true)}
-                        className="w-full py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
+                        className="w-full rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:border-violet-200 hover:bg-violet-50/50"
                       >
                         {t("payment.payment_summary.select_discount")}
                       </button>
@@ -1155,7 +1159,7 @@ const ShoppingCardItem = () => {
                   </div>
                   <div className="flex justify-between pt-4 border-t text-lg font-bold">
                     <span>{t("order.total")}</span>
-                    <span className="text-indigo-600">
+                    <span className="text-violet-700 tabular-nums">
                       {formatCurrency(discountedTotal)}
                     </span>
                   </div>
@@ -1164,7 +1168,7 @@ const ShoppingCardItem = () => {
                 {/* Hiển thị nút thanh toán dựa trên phương thức được chọn */}
                 {!paymentMethod ? (
                   <button
-                    className="w-full bg-gray-300 text-gray-500 py-3 px-6 rounded-md mt-4 cursor-not-allowed"
+                    className="mt-4 w-full cursor-not-allowed rounded-xl bg-gray-200 py-3 px-6 text-sm font-medium text-gray-500"
                     disabled
                   >
                     {t("payment.buttons.select_payment_first")}
@@ -1172,7 +1176,7 @@ const ShoppingCardItem = () => {
                 ) : paymentMethod === "ONLINE_BANKING" &&
                   selectedPaymentName === "VNPAY" ? (
                   <button
-                    className="w-full bg-yellow-400 text-black py-3 px-6 rounded-md mt-4 hover:bg-yellow-500 font-semibold"
+                    className="mt-4 w-full rounded-xl bg-amber-400 py-3 px-6 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:bg-amber-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                     onClick={handleVNPAYPayment}
                   >
                     {t("payment.buttons.pay_with_vnpay")}
@@ -1180,7 +1184,7 @@ const ShoppingCardItem = () => {
                 ) : (
                   <button
                     onClick={handleCompleteOrder}
-                    className="w-full bg-indigo-600 text-white py-3 px-6 rounded-md mt-4 hover:bg-indigo-700 font-semibold"
+                    className="mt-4 w-full rounded-xl bg-violet-600 py-3 px-6 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2"
                   >
                     {t("payment.buttons.complete_order")}
                   </button>
@@ -1189,6 +1193,7 @@ const ShoppingCardItem = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       <ConfirmModal

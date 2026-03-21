@@ -1,68 +1,73 @@
-import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 const LanguageSwitcher = () => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const languages = [
-    { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'jp', name: '日本語', flag: '🇯🇵' }
+    { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
+    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "jp", name: "日本語", flag: "🇯🇵" },
   ];
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const currentLanguage =
+    languages.find(lang => lang.code === i18n.language) || languages[0];
 
-  const changeLanguage = (langCode) => {
+  const changeLanguage = langCode => {
     i18n.changeLanguage(langCode);
     setIsOpen(false);
   };
 
   return (
     <div className="relative">
-      {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 hover:border-purple-500 hover:shadow-md transition-all duration-300"
+        className="inline-flex items-center justify-center gap-1.5 min-w-[108px] h-9 px-2.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
       >
-        <span className="text-xl group-hover:scale-110 transition-transform duration-200">{currentLanguage.flag}</span>
-        <span className="text-sm font-medium text-gray-700 group-hover:text-purple-600 group-hover:font-semibold hidden sm:block transition-all duration-200">
+        <span className="text-base">{currentLanguage.flag}</span>
+        <span className="text-sm font-medium hidden sm:block whitespace-nowrap leading-none">
           {currentLanguage.name}
         </span>
         <svg
-          className={`w-4 h-4 text-gray-500 group-hover:text-purple-600 transition-all duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          viewBox="0 0 20 20"
           fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            d="M5 7.5L10 12.5L15 7.5"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
 
-      {/* Dropdown Menu */}
       {isOpen && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-
-          {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-[40]">
-            {languages.map((lang) => (
+          <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-md shadow-gray-200/40 border border-gray-200 py-1 z-[40] animate-fadeIn">
+            {languages.map(lang => (
               <button
                 key={lang.code}
                 onClick={() => changeLanguage(lang.code)}
-                className={`group w-full flex items-center gap-3 px-4 py-2.5 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200 ${
-                  currentLanguage.code === lang.code ? 'bg-purple-50 text-purple-600' : 'text-gray-700'
+                className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
+                  currentLanguage.code === lang.code
+                    ? "bg-gray-100 text-gray-900 font-medium"
+                    : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform duration-200">{lang.flag}</span>
-                <span className="text-sm font-medium group-hover:font-semibold transition-all duration-200">{lang.name}</span>
+                <span className="text-base">{lang.flag}</span>
+                <span>{lang.name}</span>
                 {currentLanguage.code === lang.code && (
                   <svg
-                    className="w-4 h-4 ml-auto text-purple-600"
+                    className="w-4 h-4 ml-auto text-gray-800"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >

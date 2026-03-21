@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaSearch, FaMapMarkerAlt, FaChevronDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 
@@ -233,7 +232,9 @@ const HeroSearchSection = ({ product = [] }) => {
           {/* Product Search Input */}
           <div className="flex-1 relative" ref={searchInputRef}>
             <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
+              <svg viewBox="0 0 24 24" fill="none" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 w-4 h-4">
+                <path d="M11 19a8 8 0 1 1 5.3-14l.2.2A8 8 0 0 1 11 19Zm10 2-4.4-4.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
               <input
                 type="text"
                 placeholder={t('search.search_for_products')}
@@ -241,7 +242,7 @@ const HeroSearchSection = ({ product = [] }) => {
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onKeyPress={handleKeyPress}
-                className="w-full h-[42px] pl-10 pr-10 py-2.5 text-gray-900 text-base rounded-md border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white"
+                className="w-full h-[42px] pl-10 pr-10 py-2.5 text-gray-900 text-base rounded-md border border-gray-300 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white"
               />
               {searchTerm && (
                 <button
@@ -265,8 +266,8 @@ const HeroSearchSection = ({ product = [] }) => {
                   // Loading State
                   <div className="py-8 px-4 flex flex-col items-center justify-center">
                     <div className="relative w-12 h-12 mb-3">
-                      <div className="absolute inset-0 border-4 border-purple-200 rounded-full"></div>
-                      <div className="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
+                      <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+                      <div className="absolute inset-0 border-4 border-gray-700 rounded-full border-t-transparent animate-spin"></div>
                     </div>
                     <p className="text-sm text-gray-600">Đang tìm kiếm...</p>
                   </div>
@@ -311,7 +312,7 @@ const HeroSearchSection = ({ product = [] }) => {
                   {filteredProducts.length > 8 && (
                     <button
                       onClick={handleSearch}
-                      className="w-full px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 font-medium text-center border-t border-gray-200"
+                      className="w-full px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 font-medium text-center border-t border-gray-200"
                     >
                       Xem tất cả {filteredProducts.length} kết quả
                     </button>
@@ -337,23 +338,28 @@ const HeroSearchSection = ({ product = [] }) => {
               className="w-full h-[42px] px-3 py-2.5 text-gray-700 text-base rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white flex items-center justify-between gap-2"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <FaMapMarkerAlt className="text-gray-500 flex-shrink-0" />
+                <svg viewBox="0 0 24 24" fill="none" className="text-gray-500 flex-shrink-0 w-4 h-4">
+                  <path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8" />
+                </svg>
                 <span className="truncate">{location}</span>
               </div>
-              <FaChevronDown 
-                className={`w-3 h-3 text-gray-400 flex-shrink-0 transition-transform ${
+              <svg viewBox="0 0 20 20" fill="none" className={`w-3 h-3 text-gray-400 flex-shrink-0 transition-transform ${
                   isLocationModalOpen ? 'rotate-180' : ''
-                }`}
-              />
+                }`}>
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
           </div>
 
           {/* Search Button - Match primary gradient */}
           <button
             onClick={handleSearch}
-            className="h-[42px] px-6 py-2.5 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white text-base rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 flex items-center justify-center gap-2 transition-opacity whitespace-nowrap"
+            className="h-[42px] px-6 py-2.5 bg-gray-900 text-white text-base rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
           >
-            <FaSearch />
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
+              <path d="M11 19a8 8 0 1 1 5.3-14l.2.2A8 8 0 0 1 11 19Zm10 2-4.4-4.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             <span>{t('search.search')}</span>
           </button>
         </div>
@@ -400,9 +406,12 @@ const HeroSearchSection = ({ product = [] }) => {
                     }`}
                   >
                     {/* Icon */}
-                    <FaMapMarkerAlt className={`mt-0.5 flex-shrink-0 ${
+                    <svg viewBox="0 0 24 24" fill="none" className={`mt-0.5 flex-shrink-0 w-4 h-4 ${
                       location === loc.name ? 'text-gray-900' : 'text-gray-400'
-                    }`} />
+                    }`}>
+                      <path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8" />
+                    </svg>
                     
                     {/* Content */}
                     <div className="flex-1 min-w-0">

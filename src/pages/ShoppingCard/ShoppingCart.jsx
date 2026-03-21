@@ -10,7 +10,6 @@ import {
   updateCartItemQuantity,
   clearCart,
   loadCartItems,
-  // triggerCartRefresh,
 } from "../../utils/redux/cartSlice";
 import { useState, useEffect } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
@@ -20,19 +19,16 @@ const ShoppingCart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Lấy dữ liệu giỏ hàng từ Redux
   const {
     carts: cartItems,
     cartSummary,
     loading,
     error,
-    // needsRefresh,
   } = useSelector(state => state.cart);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const [confirmAction, setConfirmAction] = useState(() => () => {});
 
-  // Lấy user ID từ localStorage
   const getCurrentUserId = () => {
     try {
       const savedUser = localStorage.getItem("user");
@@ -45,40 +41,12 @@ const ShoppingCart = () => {
     }
   };
 
-  // Load cart items khi component mount
   useEffect(() => {
     const userId = getCurrentUserId();
     if (userId) {
       dispatch(loadCartItems(userId));
     }
   }, [dispatch]);
-
-  // 🔄 Listen needsRefresh để tự động reload khi CartDropdown update
-  const [isInitialMount, setIsInitialMount] = useState(true);
-
-  // useEffect(() => {
-  //   // Skip lần mount đầu tiên
-  //   if (isInitialMount) {
-  //     setIsInitialMount(false);
-  //     return;
-  //   }
-
-  //   const userId = getCurrentUserId();
-  //   if (userId) {
-  //     console.log(
-  //       "🔄 ShoppingCart: needsRefresh triggered, reloading cart...",
-  //       { needsRefresh }
-  //     );
-  //     dispatch(loadCartItems(userId))
-  //       .unwrap()
-  //       .then(res => {
-  //         console.log("✅ ShoppingCart: Cart reloaded successfully", res);
-  //       })
-  //       .catch(err => {
-  //         console.error("❌ ShoppingCart: Failed to reload cart:", err);
-  //       });
-  //   }
-  // }, [needsRefresh]);
 
   const openConfirm = (message, action) => {
     setConfirmMessage(message);
@@ -97,27 +65,19 @@ const ShoppingCart = () => {
 
   const handleConfirmCancel = () => setConfirmOpen(false);
 
-  // Xử lý cập nhật giỏ hàng
   const handleRemove = async productId => {
     const userId = getCurrentUserId();
     await dispatch(removeFromCart({ userId, productId }))
       .unwrap()
-      .then(() => {
-        // dispatch(triggerCartRefresh()); // ✅ Gửi tín hiệu reload cho dropdown
-      })
       .catch(err => console.error(err));
   };
 
-  // CartPage.jsx
   const handleQuantityChange = (productId, newQuantity) => {
     const userId = getCurrentUserId();
     dispatch(
       updateCartItemQuantity({ userId, productId, quantity: newQuantity })
     )
       .unwrap()
-      .then(() => {
-        // dispatch(triggerCartRefresh()); // ✅ Gửi tín hiệu reload cho dropdown
-      })
       .catch(err => console.error(err));
   };
 
@@ -125,6 +85,7 @@ const ShoppingCart = () => {
     const userId = getCurrentUserId();
     openConfirm(t("cart.remove"), () => dispatch(clearCart(userId)));
   };
+
   const [loginConfirmOpen, setLoginConfirmOpen] = useState(false);
   const handleCheckout = () => {
     const userId = getCurrentUserId();
@@ -138,7 +99,6 @@ const ShoppingCart = () => {
     }
   };
 
-  // Tính tổng tiền từ cartSummary hoặc từ cartItems
   const subtotal = cartSummary
     ? cartSummary.totalAmount
     : cartItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
@@ -150,109 +110,176 @@ const ShoppingCart = () => {
     }).format(value);
 
   return (
-    <div className="container mx-auto p-6">
-      {/* Breadcrumb */}
-      <div className="mt-2 flex items-center text-sm text-gray-500">
-        <Link to={path.home} className="text-blue-500 hover:underline mr-1">
-          {t("product.home")}
-        </Link>
-        <span className="mr-1">/</span>
-        <span>{t("cart.title")}</span>
-      </div>
-
-      <h1 className="text-2xl font-bold mb-4 mt-4">{t("cart.title")}</h1>
-
-      {loading && (
-        <div className="bg-white rounded-lg shadow-md p-6 text-center">
-          <p>{t("common.loading")}</p>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <p>
-            {t("common.error")}: {error}
-          </p>
-        </div>
-      )}
-
-      {!loading && cartItems.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-600">
-          <p>{t("cart.gi_hng_trng")}</p>
-          <Link to={path.home}>
-            <button className="mt-4 bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition">
-              {t("cart.tip_tc_mua_sm")}
-            </button>
+    <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/80 pb-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        {/* Breadcrumb — tối giản */}
+        <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
+          <Link
+            to={path.home}
+            className="text-violet-600 hover:text-violet-700 transition-colors"
+          >
+            {t("product.home")}
           </Link>
-        </div>
-      ) : (
-        <>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            {cartItems.map(item => (
-              <CartItem
-                key={item.id}
-                item={{
-                  productID: item.product.id,
-                  name: item.product.name,
-                  price: item.unitPrice,
-                  imageUrl: item.product.imageUrl,
-                  quantity: item.quantity,
-                  totalPrice: item.totalPrice,
-                }}
-                onQuantityChange={handleQuantityChange}
-                onRemove={() => handleRemove(item.product.id)}
-              />
+          <span className="text-gray-300" aria-hidden>
+            /
+          </span>
+          <span className="text-gray-700 font-medium">{t("cart.title")}</span>
+        </nav>
+
+        <header className="mb-8">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
+            {t("cart.title")}
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {t("payment.checkout.step_shipping")} →{" "}
+            {t("payment.checkout.step_payment_review")}
+          </p>
+        </header>
+
+        {loading && (
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 sm:p-8 shadow-sm space-y-4">
+            <div className="h-4 w-32 bg-gray-100 rounded-md animate-pulse" />
+            {[1, 2, 3].map(i => (
+              <div
+                key={i}
+                className="flex gap-4 py-4 border-b border-gray-50 last:border-0"
+              >
+                <div className="w-20 h-20 bg-gray-100 rounded-xl animate-pulse shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse" />
+                  <div className="h-3 bg-gray-50 rounded w-1/2 animate-pulse" />
+                </div>
+              </div>
             ))}
-
-            <div className="flex justify-between mt-6">
-              <button
-                onClick={handleClearCart}
-                className="bg-gray-800 text-white py-2 px-6 rounded-lg hover:bg-red-600 transition"
-              >
-                {t("cart.xa_gi_hng")}
-              </button>
-              <button
-                onClick={handleCheckout}
-                className="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition"
-              >
-                {t("cart.checkout")}
-              </button>
-            </div>
           </div>
+        )}
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between text-lg font-semibold">
-              <span>{t("order.subtotal")}</span>
-              <span className="text-indigo-600">
-                {formatCurrency(subtotal)}
+        {error && (
+          <div
+            role="alert"
+            className="rounded-xl border border-red-100 bg-red-50 text-red-800 px-4 py-3 text-sm mb-6"
+          >
+            {t("common.error")}: {error}
+          </div>
+        )}
+
+        {!loading && cartItems.length === 0 ? (
+          <div className="rounded-2xl border border-gray-100 bg-white px-6 py-14 sm:py-16 text-center shadow-sm">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-violet-50 text-violet-600">
+              <svg
+                className="h-7 w-7"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218a1.5 1.5 0 001.421-1.004l3.75-12a1.5 1.5 0 00-1.421-1.996H6.257m-3.75 9V6.75A2.25 2.25 0 016 4.5h6.75"
+                />
+              </svg>
+            </div>
+            <p className="text-gray-700 font-medium">{t("cart.gi_hng_trng")}</p>
+            <p className="mt-1 text-sm text-gray-500 max-w-sm mx-auto">
+              {t("common.catalog_no_products_hint")}
+            </p>
+            <Link to={path.home} className="inline-block mt-8">
+              <span className="inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors">
+                {t("cart.tip_tc_mua_sm")}
               </span>
-            </div>
+            </Link>
           </div>
-        </>
-      )}
+        ) : (
+          !loading && (
+            <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
+              <div className="lg:col-span-8">
+                <div className="rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm">
+                  <div className="divide-y divide-gray-100">
+                    {cartItems.map(item => (
+                      <CartItem
+                        key={item.id}
+                        item={{
+                          productID: item.product.id,
+                          name: item.product.name,
+                          price: item.unitPrice,
+                          imageUrl: item.product.imageUrl,
+                          quantity: item.quantity,
+                          totalPrice: item.totalPrice,
+                        }}
+                        onQuantityChange={handleQuantityChange}
+                        onRemove={() => handleRemove(item.product.id)}
+                      />
+                    ))}
+                  </div>
 
-      {/* Confirm Modal */}
-      <ConfirmModal
-        isOpen={confirmOpen}
-        title={t("cart.remove")}
-        message={confirmMessage}
-        onConfirm={handleConfirmOk}
-        onCancel={handleConfirmCancel}
-        confirmText={t("common.confirm")}
-        cancelText={t("common.cancel")}
-      />
-      <ConfirmModal
-        isOpen={loginConfirmOpen}
-        title={t("header.pleaseLogin")}
-        message={t("cart.please_login_to_checkout")}
-        onConfirm={() => {
-          setLoginConfirmOpen(false);
-          navigate(path.login);
-        }}
-        onCancel={() => setLoginConfirmOpen(false)}
-        confirmText={t("header.login")}
-        cancelText={t("common.cancel")}
-      />
+                  <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={handleClearCart}
+                      className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors"
+                    >
+                      {t("cart.xa_gi_hng")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCheckout}
+                      className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors"
+                    >
+                      {t("cart.checkout")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <aside className="mt-8 lg:mt-0 lg:col-span-4">
+                <div className="rounded-2xl border border-violet-100/80 bg-white p-5 sm:p-6 shadow-sm lg:sticky lg:top-28">
+                  <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    {t("order.subtotal")}
+                  </h2>
+                  <p className="mt-2 text-2xl font-semibold text-violet-700 tabular-nums">
+                    {formatCurrency(subtotal)}
+                  </p>
+                  <p className="mt-3 text-xs text-gray-500 leading-relaxed">
+                    {t("payment.checkout.shipping")} —{" "}
+                    {t("payment.checkout.step_payment_review").toLowerCase()}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleCheckout}
+                    className="mt-6 w-full rounded-xl bg-violet-600 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors lg:hidden"
+                  >
+                    {t("cart.checkout")}
+                  </button>
+                </div>
+              </aside>
+            </div>
+          )
+        )}
+
+        <ConfirmModal
+          isOpen={confirmOpen}
+          title={t("cart.remove")}
+          message={confirmMessage}
+          onConfirm={handleConfirmOk}
+          onCancel={handleConfirmCancel}
+          confirmText={t("common.confirm")}
+          cancelText={t("common.cancel")}
+        />
+        <ConfirmModal
+          isOpen={loginConfirmOpen}
+          title={t("header.pleaseLogin")}
+          message={t("cart.please_login_to_checkout")}
+          onConfirm={() => {
+            setLoginConfirmOpen(false);
+            navigate(path.login);
+          }}
+          onCancel={() => setLoginConfirmOpen(false)}
+          confirmText={t("header.login")}
+          cancelText={t("common.cancel")}
+        />
+      </div>
     </div>
   );
 };

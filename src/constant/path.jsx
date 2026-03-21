@@ -1,5 +1,7 @@
 const path = {
   home: "/",
+  /** Giỏ hàng (route thực tế: shopping_card_item → ShoppingCart) */
+  card: "/shopping_card_item",
   contact: "/contact",
   login: "/login",
   laptops: "/laptops",

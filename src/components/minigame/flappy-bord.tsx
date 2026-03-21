@@ -314,8 +314,6 @@ export default function FlappyBird() {
   const pointSound = useRef<HTMLAudioElement | null>(null);
   const hitSound = useRef<HTMLAudioElement | null>(null);
   const wingSound = useRef<HTMLAudioElement | null>(null);
-  const backgroundMusic = useRef<HTMLAudioElement | null>(null);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [shieldActive, setShieldActive] = useState(false);
   const [boostActive, setBoostActive] = useState(false);
@@ -645,21 +643,6 @@ export default function FlappyBird() {
         audio.src = url;
       });
     
-    const loadBackgroundMusic = () =>
-      new Promise<HTMLAudioElement>((resolve, reject) => {
-        const audio = new Audio();
-        audio.loop = true;
-        audio.volume = 0.3; // Volume thấp để không làm phiền
-        audio.oncanplaythrough = () => resolve(audio);
-        audio.onerror = reject;
-        // Sử dụng nhạc lo-fi chill miễn phí từ Pixabay
-        audio.src = "https://pixabay.com/music/download/?id=7526976&af=transparent"; // Lo-fi chill beat
-        // Fallback URL nếu Pixabay không hoạt động
-        if (audio.onerror) {
-          audio.src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; // Fallback
-        }
-      });
-
     const loadAssets = async () => {
       try {
         const loadedAssets = await Promise.all([
@@ -695,36 +678,6 @@ export default function FlappyBird() {
         wingSound.current = loadedAssets[21] as HTMLAudioElement;
         itemSound.current = loadedAssets[22] as HTMLAudioElement;
 
-        // Load background music separately (không chặn loading nếu lỗi)
-        try {
-          // Sử dụng nhạc lo-fi chill thiên nhiên miễn phí - đơn giản, 1 bài loop
-          const music = new Audio();
-          music.loop = true;
-          music.volume = 0.25; // Volume 25% để chill
-          
-          // URL nhạc lo-fi chill thiên nhiên
-          const musicUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3";
-          
-          music.src = musicUrl;
-          music.preload = "auto";
-          
-          // Thử load và lưu vào ref khi ready
-          music.addEventListener("canplaythrough", () => {
-            backgroundMusic.current = music;
-            console.log("✅ Background music loaded successfully");
-          });
-          
-          // Error handler
-          music.addEventListener("error", (e) => {
-            console.log("⚠️ Background music failed to load, continuing without music");
-            backgroundMusic.current = null;
-          });
-          
-          music.load();
-        } catch (musicError) {
-          console.log("❌ Error setting up background music:", musicError);
-        }
-
         // Delay 5 giây trước khi vào game và phát nhạc
         setTimeout(() => {
           setAssetsLoaded(true);
@@ -741,99 +694,6 @@ export default function FlappyBird() {
     };
 
     loadAssets();
-  }, []);
-
-  // Auto play background music khi vào game (assetsLoaded = true) hoặc khi user tương tác
-  useEffect(() => {
-    if (assetsLoaded && backgroundMusic.current && !isMusicPlaying && !isPaused) {
-      // Thử phát nhạc
-      const playPromise = backgroundMusic.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsMusicPlaying(true);
-            console.log("🎵 Background music started playing");
-          })
-          .catch(err => {
-            console.log("⚠️ Auto-play prevented, waiting for user interaction:", err);
-            // Nhạc sẽ phát sau khi user click/jump lần đầu
-          });
-      }
-    }
-  }, [assetsLoaded, isMusicPlaying, isPaused]);
-
-  // Phát nhạc khi user bắt đầu chơi (click/jump)
-  useEffect(() => {
-    if (gameStarted && assetsLoaded && backgroundMusic.current && !isMusicPlaying && !isPaused) {
-      backgroundMusic.current.play()
-        .then(() => {
-          setIsMusicPlaying(true);
-          console.log("🎵 Background music started after user interaction");
-        })
-        .catch(err => {
-          console.log("⚠️ Still cannot play music:", err);
-        });
-    }
-  }, [gameStarted, assetsLoaded, isMusicPlaying, isPaused]);
-
-  // Pause music when game is paused
-  useEffect(() => {
-    if (backgroundMusic.current) {
-      if (isPaused) {
-        backgroundMusic.current.pause();
-        setIsMusicPlaying(false);
-      } else if (!isPaused && assetsLoaded && gameStarted && !isMusicPlaying && !gameOver) {
-        // Resume nhạc khi game resume (chỉ khi game đang chạy)
-        backgroundMusic.current.play().catch(() => {});
-        setIsMusicPlaying(true);
-      }
-    }
-  }, [isPaused, assetsLoaded, isMusicPlaying, gameStarted, gameOver]);
-
-  // Cleanup: Tắt nhạc khi component unmount hoặc khi thoát khỏi game
-  useEffect(() => {
-    const stopMusic = () => {
-      if (backgroundMusic.current) {
-        try {
-          backgroundMusic.current.pause();
-          backgroundMusic.current.currentTime = 0; // Reset về đầu
-          setIsMusicPlaying(false);
-          console.log("🔇 Background music stopped");
-        } catch (error) {
-          console.error("Error stopping music:", error);
-        }
-      }
-    };
-
-    // Tắt nhạc khi tab/window không active
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        stopMusic();
-      }
-    };
-
-    // Tắt nhạc khi đóng tab/trình duyệt
-    const handleBeforeUnload = () => {
-      stopMusic();
-    };
-
-    // Tắt nhạc khi navigate away
-    const handlePopState = () => {
-      stopMusic();
-    };
-
-    // Đăng ký event listeners
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('popstate', handlePopState);
-
-    // Cleanup khi component unmount
-    return () => {
-      stopMusic();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
-    };
   }, []);
 
   const handlePause = () => {

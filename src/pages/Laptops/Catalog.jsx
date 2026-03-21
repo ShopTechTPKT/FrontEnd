@@ -7,7 +7,7 @@ import listIcon from "../../assets/svg/list.png";
 import SidebarFilters from "../../components/option/SidebarFilters";
 
 import FilterTagsBar from "../../components/product/catalog/FilterTagsBar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BrandFilter from "../../components/option/BrandFilter";
 import WishList from "../../components/option/WishList";
 import CompareProducts from "../../components/option/CompareProducts";
@@ -22,6 +22,59 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../../apis/productApi";
 import { useTranslation } from 'react-i18next';
 
+/** Sort toàn bộ danh sách trước khi phân trang (tránh sort chỉ trong 1 trang). */
+function sortCatalogProducts(products, sortOption) {
+  const sorted = [...products];
+  const nameOf = (p) => p.name || p.productName || "";
+  const brandOf = (p) => p.brandName || p.brand?.name || "";
+  const priceOf = (p) => {
+    const v = p.unitPrice ?? p.price ?? 0;
+    return typeof v === "string"
+      ? parseFloat(String(v).replace(/[₫,]/g, "")) || 0
+      : Number(v) || 0;
+  };
+  const stockOf = (p) => {
+    const s = p.stockQuantity ?? p.stock ?? 0;
+    return Number(s) || 0;
+  };
+
+  switch (sortOption) {
+    case "name-asc":
+      sorted.sort((a, b) => nameOf(a).localeCompare(nameOf(b)));
+      break;
+    case "name-desc":
+      sorted.sort((a, b) => nameOf(b).localeCompare(nameOf(a)));
+      break;
+    case "price-asc":
+      sorted.sort((a, b) => priceOf(a) - priceOf(b));
+      break;
+    case "price-desc":
+      sorted.sort((a, b) => priceOf(b) - priceOf(a));
+      break;
+    case "date-desc":
+      sorted.sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      );
+      break;
+    case "date-asc":
+      sorted.sort(
+        (a, b) =>
+          new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+      );
+      break;
+    case "brand-asc":
+      sorted.sort((a, b) => brandOf(a).localeCompare(brandOf(b)));
+      break;
+    case "stock-desc":
+      sorted.sort((a, b) => stockOf(b) - stockOf(a));
+      break;
+    default:
+      break;
+  }
+  return sorted;
+}
+
 export default function Catalog() {
 
   const location = useLocation()
@@ -33,12 +86,6 @@ export default function Catalog() {
   const { list, brand } = location.state || {};
 
   const { t } = useTranslation();
-
-  // Debug logs
-  console.log("Catalog - location.state:", location.state);
-  console.log("Catalog - list:", list);
-  console.log("Catalog - brand:", brand);
-  console.log("Catalog - textSearch:", textSearch);
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,12 +120,10 @@ export default function Catalog() {
 
         // Xử lý theo list từ location.state
         if (list && Array.isArray(list)) {
-          console.log("Filtering by list:", list);
           let filteredByCategory = rawProducts.filter((item) => list.includes(item.categoryId));
           
           // Nếu có brand, filter thêm theo brand
           if (brand) {
-            console.log("Filtering by brand:", brand);
             filteredByCategory = filteredByCategory.filter((item) => {
               const itemBrandName = (item.brandName || item.brand?.name || item.brand || "").toLowerCase();
               const productName = (item.name || item.productName || "").toLowerCase();
@@ -87,21 +132,18 @@ export default function Catalog() {
               // Check brand name hoặc tên sản phẩm chứa brand
               return itemBrandName.includes(searchBrand) || productName.includes(searchBrand);
             });
-            console.log("Products found after brand filter:", filteredByCategory.length);
           }
           
           formattedProducts = filteredByCategory.map((item) => ({
             ...item,
             inStock: item.stock > 0,
           }));
-          console.log("Products found for list:", formattedProducts.length);
         } else {
           // Xử lý theo textSearch
           if (textSearch) {
             const search = removeVietnameseTones(textSearch.toLowerCase());
 
             if (search === "gaming") {
-              console.log("Gaming search:", rawProducts[0]);
               formattedProducts = rawProducts.filter((item) => (item.categoryId === 46 && item.name.includes("Gaming"))).map((item) => ({
                 ...item,
                 inStock: item.stock > 0,
@@ -128,8 +170,6 @@ export default function Catalog() {
           }
         }
 
-        console.log("Formatted products:", formattedProducts.length);
-
           setProducts(formattedProducts);
           setFilteredProducts(formattedProducts);
       } catch (error) {
@@ -143,7 +183,6 @@ export default function Catalog() {
 
     fetchProducts();
   }, [textSearch, list, brand]);
-  console.log(products);
   // Trong function Catalog():
   const [filters, setFilters] = useState([
     { label: "CUSTOM PCS (24)" },
@@ -157,9 +196,6 @@ export default function Catalog() {
   const handleClearFilters = () => {
     setFilters([]);
   };
-  console.log(handleClearFilters);
-  console.log(handleRemoveFilter);
-
   const SupportCard = ({ icon, title, description }) => {
     return (
       <div className="flex flex-col items-center text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 max-w-xs mx-auto">
@@ -236,22 +272,36 @@ export default function Catalog() {
   const [currentPage, setCurrentPage] = useState(1);
   // const totalPages = 15;
 
-  const handlePageChange = page => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      // Load dữ liệu tương ứng tại đây
-    }
-  };
-
   const [productsPerPage, setProductsPerPage] = useState(20); // Số sản phẩm trên mỗi trang
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
+  const [sortOption, setSortOption] = useState("name-asc");
+
+  const sortedAll = useMemo(
+    () => sortCatalogProducts(filteredProducts, sortOption),
+    [filteredProducts, sortOption]
   );
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalCount = sortedAll.length;
+  const totalPages = Math.ceil(totalCount / productsPerPage) || 0;
+
+  useEffect(() => {
+    if (totalPages === 0) {
+      setCurrentPage(1);
+      return;
+    }
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [totalPages, currentPage]);
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const sortedProducts = sortedAll.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const displayStart = totalCount === 0 ? 0 : indexOfFirstProduct + 1;
+  const displayEnd = totalCount === 0 ? 0 : Math.min(indexOfLastProduct, totalCount);
+
+  const handlePageChange = (page) => {
+    if (totalPages === 0) return;
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
 
   // Xử lý đổi số lượng sản phẩm trên một trang
   const handleProductsPerPageChange = event => {
@@ -259,54 +309,20 @@ export default function Catalog() {
     setCurrentPage(1); // Reset về trang đầu tiên khi thay đổi số lượng sản phẩm trên trang
   };
 
-  const [sortOption, setSortOption] = useState("name-asc");
   const handleSortOptionChange = event => {
     setSortOption(event.target.value);
     setCurrentPage(1); // Optional: Reset về page 1 khi đổi sort
   };
 
-  const getSortedProducts = (filteredProducts, sortOption) => {
-    const sorted = [...filteredProducts]; // Clone mảng gốc để không mutate
-
-    switch (sortOption) {
-      case "name-asc":
-        sorted.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "name-desc":
-        sorted.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "price-asc":
-        sorted.sort((a, b) => parseFloat(a.unitPrice) - parseFloat(b.unitPrice));
-        break;
-      case "price-desc":
-        sorted.sort((a, b) => parseFloat(b.unitPrice) - parseFloat(a.unitPrice));
-        break;
-      case "date-desc":
-        sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-      case "date-asc":
-        sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        break;
-      case "brand-asc":
-        sorted.sort((a, b) => a.brandName.localeCompare(b.brandName));
-        break;
-      case "stock-desc":
-        sorted.sort((a, b) => b.stockQuantity - a.stockQuantity);
-        break;
-      default:
-        break;
-    }
-
-    return sorted;
-  };
-
-  const sortedProducts = getSortedProducts(currentProducts, sortOption);
-
   return (
     <>
       {" "}
-      <div className="py-6 max-w-screen-xl mx-auto">
-        <img src={banner1} alt="" className="mb-2" />
+      <div className="py-4 max-w-screen-xl mx-auto px-4 sm:px-6">
+        <img
+          src={banner1}
+          alt=""
+          className="mb-2 w-full max-h-[200px] sm:max-h-[240px] object-cover rounded-xl border border-violet-100/80 shadow-sm"
+        />
         {/* <Breadcrumb
           items={[
             { label: "Trang chủ", url: "/" },
@@ -319,13 +335,13 @@ export default function Catalog() {
         <p className="text-4xl font-bold">{t('common.msi_ps_series_20')}</p>
       </div> */}
       {/* Phần header danh sách */}
-      <div className="py-6 max-w-screen-xl mx-auto grid grid-cols-4 items-center gap-4">
+      <div className="py-4 max-w-screen-xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
         <div className="">
           <button
             type="button"
-            className="w-full py-3 px-6 text-xl font-semibold text-gray-400 hover:text-black
-            transition-all duration-300 ease-in-out flex items-center justify-start
-            hover:bg-gray-50 rounded-lg border border-transparent hover:border-gray-200 cursor-pointer"
+            className="w-full py-2.5 px-4 text-base font-semibold text-gray-600 hover:text-violet-700
+            transition-all duration-300 ease-in-out flex items-center justify-start md:justify-start
+            hover:bg-violet-50/60 rounded-lg border border-transparent hover:border-violet-100 cursor-pointer"
             onClick={() => navigate("/")}
           >
             <svg
@@ -344,15 +360,17 @@ export default function Catalog() {
           </button>
         </div>
 
-        <div className="px-2 py-1 flex justify-items-start text-[#A2A6B0]">
-          {t('common.items_range', {
-            start: indexOfFirstProduct + 1,
-            end: indexOfLastProduct,
-            total: filteredProducts.length
-          })}
+        <div className="px-2 py-1 flex justify-center md:justify-start text-sm text-gray-500 order-first md:order-none">
+          {totalCount === 0
+            ? t("common.items_empty")
+            : t("common.items_range", {
+                start: displayStart,
+                end: displayEnd,
+                total: totalCount,
+              })}
         </div>
 
-        <div className="col-span-2 flex justify-end">
+        <div className="md:col-span-2 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-end gap-3">
           <DropdownControls
             handleChangePerPage={handleProductsPerPageChange}
             productsPerPage={productsPerPage}
@@ -380,7 +398,7 @@ export default function Catalog() {
         </div>
       </div>
       {/*  */}
-      <div className="max-w-screen-xl mx-auto grid grid-cols-4 gap-4">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Phần filter */}
         <div className="">
           <SidebarFilters
@@ -405,7 +423,7 @@ export default function Catalog() {
           <img src={productImageQR} alt="" className="w-full" />
         </div>
         {/* Phần hiển thị danh sách */}
-        <div className="col-span-3 flex flex-col min-h-[80vh]">
+        <div className="lg:col-span-3 flex flex-col min-h-[50vh] lg:min-h-[80vh]">
           {/* Thanh filter tag */}
           {/* <FilterTagsBar
             filters={filters}
@@ -460,8 +478,11 @@ export default function Catalog() {
                     </svg>
 
                     {/* Thông báo */}
-                    <p className="text-lg font-semibold">
-                        Không tìm thấy sản phẩm nào
+                    <p className="text-lg font-semibold text-gray-800">
+                        {t("common.catalog_no_products")}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2 max-w-md text-center">
+                        {t("common.catalog_no_products_hint")}
                     </p>
                 </div>
             )}
@@ -496,8 +517,11 @@ export default function Catalog() {
                     </svg>
 
                     {/* Thông báo */}
-                    <p className="text-lg font-semibold">
-                        Không tìm thấy sản phẩm nào
+                    <p className="text-lg font-semibold text-gray-800">
+                        {t("common.catalog_no_products")}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2 max-w-md text-center">
+                        {t("common.catalog_no_products_hint")}
                     </p>
                 </div>
             )}

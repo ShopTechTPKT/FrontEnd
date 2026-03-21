@@ -9,7 +9,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axiosInstance from "../../custom/axios";
 import { UserContext } from "../../context/UserContext";
-import Header from "../../components/Header";
 import { useTranslation } from 'react-i18next';
 
 const App = () => {
@@ -42,8 +41,8 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-200 to-indigo-100 font-[Montserrat]">
-      <div className="relative w-[768px] max-w-full min-h-[480px] bg-white rounded-[30px] shadow-lg overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 font-[Montserrat]">
+      <div className="relative w-[768px] max-w-full min-h-[480px] bg-white rounded-[30px] shadow-md overflow-hidden border border-gray-200">
         {/* Sign Up Form */}
         <div
           className={`absolute top-0 h-full transition-all duration-500 ease-in-out w-1/2 ${
@@ -85,7 +84,7 @@ const App = () => {
             />
             <button
               type="submit"
-              className="bg-indigo-700 text-white px-8 py-2 rounded-md uppercase text-sm font-semibold mt-2"
+              className="bg-gray-900 text-white px-8 py-2 rounded-md uppercase text-sm font-semibold mt-2 hover:bg-gray-800 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 console.log("Sign Up");
@@ -131,7 +130,7 @@ const App = () => {
             <a href="#" className="text-xs text-gray-500 mt-2 hover:underline">{t('common.forgot_your_password')}</a>
             <button
               type="button"
-              className="bg-indigo-700 text-white px-8 py-2 rounded-md uppercase text-sm font-semibold mt-3"
+              className="bg-gray-900 text-white px-8 py-2 rounded-md uppercase text-sm font-semibold mt-3 hover:bg-gray-800 transition-colors"
               onClick={handleSignIn}
             >{t('cart.sign_in')}</button>
           </form>
@@ -143,7 +142,7 @@ const App = () => {
             isSignUp ? "-translate-x-full" : "translate-x-0"
           }`}
         >
-          <div className="bg-gradient-to-r from-indigo-500 to-indigo-700 h-full flex items-center justify-center text-white text-center px-6">
+          <div className="bg-gray-900 h-full flex items-center justify-center text-white text-center px-6">
             <div>
               {isSignUp ? (
                 <>

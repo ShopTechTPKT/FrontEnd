@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { FaStar, FaHeart, FaShoppingCart, FaEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -102,7 +101,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="group relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300 cursor-pointer"
+      className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer"
       onClick={handleClick}
     >
       {/* Stock Status Badge */}
@@ -121,7 +120,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Action Buttons */}
-      <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <div className="flex flex-col gap-2">
           <button
             onClick={handleAddToWishlist}
@@ -129,10 +128,12 @@ const ProductCard = ({ product }) => {
             disabled={isCheckingFavorite}
             title={isFavorited ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
           >
-            <FaHeart className={`w-4 h-4 transition-all ${isFavorited ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
+            <svg viewBox="0 0 24 24" fill={isFavorited ? "currentColor" : "none"} className={`w-4 h-4 transition-all ${isFavorited ? 'text-red-500' : 'text-gray-600'}`}>
+              <path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             {isCheckingFavorite && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-3 h-3 border border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-3 h-3 border border-gray-700 border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
           </button>
@@ -140,7 +141,11 @@ const ProductCard = ({ product }) => {
             onClick={handleAddToCart}
             className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
           >
-            <FaShoppingCart className="w-4 h-4 text-gray-600 hover:text-blue-500" />
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-600">
+              <path d="M3 4H5L7.2 14.5C7.3 15 7.8 15.4 8.3 15.4H17.8C18.3 15.4 18.8 15 18.9 14.5L20.3 8.5H6.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="9.2" cy="19" r="1.4" fill="currentColor" />
+              <circle cx="17.2" cy="19" r="1.4" fill="currentColor" />
+            </svg>
           </button>
         </div>
       </div>
@@ -160,7 +165,9 @@ const ProductCard = ({ product }) => {
         <div className="flex items-center mb-2">
           <div className="flex items-center">
             {[...Array(5)].map((_, index) => (
-              <FaStar key={index} className="text-yellow-400 w-3 h-3 mr-0.5" />
+              <svg key={index} viewBox="0 0 20 20" fill="currentColor" className="text-yellow-400 w-3 h-3 mr-0.5">
+                <path d="M10 2.8l2.2 4.4 4.9.7-3.5 3.4.8 4.8L10 14.7 5.6 16l.8-4.8L2.9 7.9l4.9-.7L10 2.8Z" />
+              </svg>
             ))}
           </div>
           <span className="text-xs text-gray-500 ml-1">(4.8)</span>
@@ -194,9 +201,12 @@ const ProductCard = ({ product }) => {
               e.stopPropagation();
               handleClick();
             }}
-            className="opacity-0 group-hover:opacity-100 p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-300"
+            className="opacity-0 group-hover:opacity-100 p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-200"
           >
-            <FaEye className="w-4 h-4" />
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
+              <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="12" cy="12" r="2.5" stroke="currentColor" strokeWidth="1.8" />
+            </svg>
           </button>
         </div>
       </div>

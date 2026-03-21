@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next';
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
   const { t } = useTranslation();
 
+  if (!totalPages || totalPages <= 1) {
+    return null;
+  }
+
   const getPageNumbers = () => {
     const pages = [];
 
@@ -27,8 +31,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <div className="flex gap-3 justify-center items-center my-6">
       <button
+        type="button"
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        disabled={currentPage <= 1}
         className="w-10 h-10 rounded-full border border-gray-400 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
       >
         ‹
@@ -58,8 +63,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
       )}
 
       <button
+        type="button"
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        disabled={currentPage >= totalPages}
         className="w-10 h-10 rounded-full border border-gray-400 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
       >
         ›

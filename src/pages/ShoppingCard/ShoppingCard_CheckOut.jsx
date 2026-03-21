@@ -44,8 +44,8 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
   const total = subtotal + selectedShippingCost;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h2 className="text-base font-semibold text-gray-800 mb-3">
+    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <h2 className="mb-3 text-base font-semibold text-gray-900">
         {t("payment.thank_you.order_summary")}
       </h2>
       <div className="space-y-3">
@@ -124,7 +124,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
             <span className="text-sm font-semibold text-gray-800">
               {t("payment.checkout.total")}
             </span>
-            <span className="text-base font-bold text-indigo-600">
+            <span className="text-base font-bold text-violet-700">
               {new Intl.NumberFormat("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -316,66 +316,62 @@ function ShoppingCard_CheckOut() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans py-10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/90 font-sans py-8 sm:py-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="mt-2 flex items-center text-sm text-gray-500">
-            <Link to={path.home} className="text-blue-500 hover:underline mr-1">
+          <nav className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
+            <Link
+              to={path.home}
+              className="text-violet-600 hover:text-violet-700 transition-colors"
+            >
               {t("payment.checkout.breadcrumb_home")}
             </Link>
-            <span className="mr-1">/</span>
-            <Link to={path.card} className="text-blue-500 hover:underline mr-1">
+            <span className="text-gray-300">/</span>
+            <Link
+              to={path.card}
+              className="text-violet-600 hover:text-violet-700 transition-colors"
+            >
               {t("payment.checkout.breadcrumb_cart")}
             </Link>
-            <span className="mr-1">/</span>
-            <span>{t("payment.checkout.breadcrumb_checkout")}</span>
-          </div>
-          <div className="flex items-center">
-            {" "}
-            {/* Sử dụng flex để xếp hàng ngang và căn chỉnh dọc */}
-            <h1 className="text-2xl font-bold mb-4 mr-4 mt-4">
-              {t("payment.checkout.checkout_title")}
-            </h1>{" "}
-            {/* Thêm margin-right */}
-            {/* Nút Sign In */}
-            {/* <Link to={path.login}>
-              <button className="bg-white border border-blue-500 text-blue-500 font-semibold py-2 px-4 rounded-full hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">{t('cart.sign_in')}</button>
-            </Link> */}
-          </div>
-          <div className="mt-4 grid grid-cols-2 items-center">
-            <div className=""></div>
-            <div className="mt-4 flex items-center justify-center space-x-8">
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-semibold">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <span className="ml-2 text-sm font-semibold text-indigo-600">
-                  {t("payment.checkout.step_shipping")}
-                </span>
+            <span className="text-gray-300">/</span>
+            <span className="font-medium text-gray-700">
+              {t("payment.checkout.breadcrumb_checkout")}
+            </span>
+          </nav>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
+            {t("payment.checkout.checkout_title")}
+          </h1>
+          <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-xs font-semibold text-white shadow-sm">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
               </div>
-              <div className="border-t-2 border-gray-300 w-24"></div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full border-2 border-gray-300 text-gray-500 flex items-center justify-center text-xs font-semibold">
-                  2
-                </div>
-                <span className="ml-2 text-sm text-gray-500">
-                  {t("payment.checkout.step_payment_review")}
-                </span>
+              <span className="text-sm font-medium text-violet-700">
+                {t("payment.checkout.step_shipping")}
+              </span>
+            </div>
+            <div className="hidden h-px w-12 bg-gray-200 sm:block" />
+            <div className="flex items-center gap-2 text-gray-500">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-200 text-xs font-semibold">
+                2
               </div>
+              <span className="text-sm">
+                {t("payment.checkout.step_payment_review")}
+              </span>
             </div>
           </div>
         </div>
@@ -383,8 +379,8 @@ function ShoppingCard_CheckOut() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Shipping Address Form */}
-          <div className="bg-white rounded-md shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h2 className="mb-5 text-lg font-semibold text-gray-900">
               {t("payment.checkout.shipping_information")}
             </h2>
             <form className="space-y-4">
@@ -400,7 +396,7 @@ function ShoppingCard_CheckOut() {
                   id="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 ${
+                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
                     errors.email ? "border-red-500" : ""
                   }`}
                 />
@@ -420,7 +416,7 @@ function ShoppingCard_CheckOut() {
                   id="firstName"
                   value={firstName}
                   onChange={e => setFirstName(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 ${
+                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
                     errors.firstName ? "border-red-500" : ""
                   }`}
                 />
@@ -442,7 +438,7 @@ function ShoppingCard_CheckOut() {
                   id="lastName"
                   value={lastName}
                   onChange={e => setLastName(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 ${
+                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
                     errors.lastName ? "border-red-500" : ""
                   }`}
                 />
@@ -463,7 +459,7 @@ function ShoppingCard_CheckOut() {
                   id="streetAddress"
                   value={streetAddress}
                   onChange={e => setStreetAddress(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 ${
+                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
                     errors.streetAddress ? "border-red-500" : ""
                   }`}
                 />
@@ -483,7 +479,7 @@ function ShoppingCard_CheckOut() {
                 <input
                   type="text"
                   id="city"
-                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30"
                   onChange={e => setCity(e.target.value)}
                   value={city}
                 />
@@ -497,7 +493,7 @@ function ShoppingCard_CheckOut() {
                 </label>
                 <select
                   id="stateProvince"
-                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm focus:border-violet-500 focus:ring-violet-500/30"
                   onChange={e => setState({ selectedOption: e.target.value })}
                   value={stateProvince.selectedOption}
                 >
@@ -578,7 +574,7 @@ function ShoppingCard_CheckOut() {
                 </label>
                 <select
                   id="country"
-                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm focus:border-violet-500 focus:ring-violet-500/30"
                   onChange={e => setCountry({ selectedOption: e.target.value })}
                   value={country.selectedOption}
                 >
@@ -616,7 +612,7 @@ function ShoppingCard_CheckOut() {
                   id="phone"
                   value={phoneNumber}
                   onChange={e => setPhoneNumber(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 ${
+                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
                     errors.phoneNumber ? "border-red-500" : ""
                   }`}
                 />
@@ -637,8 +633,8 @@ function ShoppingCard_CheckOut() {
             />
 
             {/* Shipping Options */}
-            <div className="bg-white rounded-md shadow-md p-4 mt-6">
-              <h2 className="text-base font-semibold text-gray-800 mb-2">
+            <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <h2 className="mb-3 text-base font-semibold text-gray-900">
                 {t("payment.checkout.shipping_options")}
               </h2>
               <div className="space-y-2">
@@ -648,7 +644,7 @@ function ShoppingCard_CheckOut() {
                       type="radio"
                       name="shipping"
                       id="standard"
-                      className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                      className="form-radio h-4 w-4 border-gray-300 text-violet-600 focus:ring-violet-400"
                       value="standard"
                       checked={selectedShippingOption === "standard"}
                       onChange={handleShippingChange}
@@ -673,7 +669,7 @@ function ShoppingCard_CheckOut() {
                       type="radio"
                       name="shipping"
                       id="pickup"
-                      className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                      className="form-radio h-4 w-4 border-gray-300 text-violet-600 focus:ring-violet-400"
                       value="pickup"
                       checked={selectedShippingOption === "pickup"}
                       onChange={handleShippingChange}
@@ -695,7 +691,7 @@ function ShoppingCard_CheckOut() {
         </div>
 
         {/* Next Button */}
-        <div className="mt-8 flex justify-end">
+        <div className="mt-10 flex justify-end">
           <button
             type="button"
             onClick={e => {
@@ -706,10 +702,10 @@ function ShoppingCard_CheckOut() {
               handleNext();
             }}
             disabled={isCartEmpty}
-            className={`font-semibold py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            className={`rounded-xl px-8 py-3 text-sm font-medium shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 ${
               isCartEmpty
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500"
+                ? "cursor-not-allowed bg-gray-200 text-gray-500"
+                : "bg-violet-600 text-white hover:bg-violet-700"
             }`}
           >
             {t("payment.checkout.next_button")}

@@ -4,9 +4,7 @@ import {
   removeFromCart,
   updateCartItemQuantity,
   loadCartItems,
-  // triggerCartRefresh,
 } from "../utils/redux/cartSlice";
-import { FaTrash, FaPlus, FaMinus, FaShoppingBag } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -14,18 +12,8 @@ const CartDropdown = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { carts, cartSummary, loading } = useSelector(state => state.cart);
+  const { carts, cartSummary } = useSelector(state => state.cart);
 
-  // Debug: Log cart state changes
-  useEffect(() => {
-    console.log("CartDropdown - Cart state changed:", {
-      carts,
-      cartSummary,
-      loading,
-    });
-  }, [carts, cartSummary, loading]);
-
-  // Lấy user ID (Long) từ localStorage
   const getCurrentUserId = () => {
     try {
       const savedUser = localStorage.getItem("user");
@@ -40,52 +28,15 @@ const CartDropdown = ({ isOpen, onClose }) => {
       if (raw == null) return null;
       const idNum = typeof raw === "number" ? raw : Number(raw);
       return Number.isFinite(idNum) ? idNum : null;
-    } catch (e) {
-      console.error("Lỗi khi đọc user từ localStorage:", e);
+    } catch {
       return null;
     }
   };
 
   useEffect(() => {
-    // Chỉ load khi dropdown được MỞ
     dispatch(loadCartItems());
   }, [dispatch]);
 
-  // Load cart items khi component mount
-  // useEffect(() => {
-  //   const userId = getCurrentUserId();
-
-  //   if (!userId) {
-  //     // 🧳 Nếu chưa đăng nhập → kiểm tra giỏ hàng local
-  //     const guestCart = localStorage.getItem("guestCart");
-  //     if (guestCart) {
-  //       try {
-  //         const parsed = JSON.parse(guestCart);
-  //         const hasInvalidPrice = parsed.some(
-  //           item =>
-  //             typeof item.unitPrice === "string" && item.unitPrice.includes("₫")
-  //         );
-
-  //         if (hasInvalidPrice) {
-  //           console.warn("🧹 Clearing invalid guest cart data");
-  //           localStorage.removeItem("guestCart");
-  //         }
-  //       } catch (e) {
-  //         localStorage.removeItem("guestCart");
-  //       }
-  //     }
-  //   } else {
-  //     // 👤 Nếu đã đăng nhập → load giỏ hàng từ server
-  //     console.log("📦 Loading cart for userId:", userId);
-  //   }
-
-  //   // 🧠 Dù có hay không userId, hàm loadCartItems sẽ xử lý logic trong thunk
-  //   dispatch(loadCartItems(userId)).catch(err => {
-  //     console.error("❌ Failed to load cart:", err);
-  //   });
-  // }, [dispatch]);
-
-  // Calculate total từ cartSummary hoặc từ carts
   const totalAmount = cartSummary
     ? cartSummary.totalAmount
     : carts.reduce((total, item) => {
@@ -105,17 +56,15 @@ const CartDropdown = ({ isOpen, onClose }) => {
         productId,
         quantity: currentQuantity + 1,
       })
-    ).catch(error => console.error("❌ Error updating quantity:", error));
+    );
   };
 
   const handleDecrement = async (productId, currentQuantity) => {
     const userId = getCurrentUserId();
     try {
       if (currentQuantity <= 1) {
-        // `removeFromCart` giờ cũng tự fetch lại
         await dispatch(removeFromCart({ userId, productId })).unwrap();
       } else {
-        // `updateCartItemQuantity` cũng tự fetch lại
         await dispatch(
           updateCartItemQuantity({
             userId,
@@ -125,15 +74,13 @@ const CartDropdown = ({ isOpen, onClose }) => {
         ).unwrap();
       }
     } catch (error) {
-      console.error("❌ Error updating quantity:", error);
+      console.error("Error updating quantity:", error);
     }
   };
 
   const handleRemove = async productId => {
     const userId = getCurrentUserId();
-    dispatch(removeFromCart({ userId, productId })).catch(error =>
-      console.error("❌ Error removing item:", error)
-    );
+    dispatch(removeFromCart({ userId, productId }));
   };
 
   const handleCheckout = () => {
@@ -149,36 +96,42 @@ const CartDropdown = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-200 rounded-lg shadow-2xl z-[100] overflow-hidden animate-fadeIn">
+    <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 z-[100] overflow-hidden animate-fadeIn">
       {/* Header */}
-      <div className="p-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 border-b border-slate-800">
-        <h3 className="text-white font-bold text-lg flex items-center gap-2">
-          <FaShoppingBag className="text-purple-400" />
+      <div className="px-4 py-3 border-b border-gray-100">
+        <h3 className="text-gray-900 font-semibold text-base flex items-center gap-2">
+          <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-700">
+            <path d="M6 8h12l-1 11H7L6 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M9 9V7a3 3 0 1 1 6 0v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
           {t("cart.title")} ({carts.length})
         </h3>
       </div>
 
       {/* Cart Items */}
-      <div className="max-h-96 overflow-y-auto bg-gray-50">
+      <div className="max-h-80 overflow-y-auto">
         {carts.length === 0 ? (
           <div className="p-8 text-center">
-            <FaShoppingBag className="text-6xl text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 mb-2 font-medium">
+            <svg viewBox="0 0 24 24" fill="none" className="w-12 h-12 text-gray-200 mx-auto mb-3">
+              <path d="M6 8h12l-1 11H7L6 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 9V7a3 3 0 1 1 6 0v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+            <p className="text-gray-600 mb-1 font-medium text-sm">
               {t("cart.your_cart_is_empty")}
             </p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-xs">
               {t("cart.add_some_products_to")}
             </p>
           </div>
         ) : (
-          <div className="p-4 space-y-3">
+          <div className="p-3 space-y-2">
             {carts.map((item, index) => (
               <div
                 key={item.id || `cart-item-${index}`}
-                className="flex gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all group"
+                className="flex gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100/80 transition-colors group"
               >
                 {/* Product Image */}
-                <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
+                <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
                   <img
                     src={item.product?.imageUrl || item.imageUrl || ""}
                     alt={item.product?.name || item.name || ""}
@@ -188,10 +141,10 @@ const CartDropdown = ({ isOpen, onClose }) => {
 
                 {/* Product Info */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-gray-800 font-medium text-sm mb-1 truncate group-hover:text-purple-700 transition-colors">
+                  <h4 className="text-gray-800 font-medium text-sm mb-0.5 truncate">
                     {item.product?.name || item.name || ""}
                   </h4>
-                  <p className="text-purple-700 font-semibold text-sm mb-2">
+                  <p className="text-gray-900 font-semibold text-sm mb-2">
                     {new Intl.NumberFormat("vi-VN", {
                       style: "currency",
                       currency: "VND",
@@ -204,7 +157,7 @@ const CartDropdown = ({ isOpen, onClose }) => {
                   </p>
 
                   {/* Quantity Controls */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={() =>
                         handleDecrement(
@@ -212,11 +165,13 @@ const CartDropdown = ({ isOpen, onClose }) => {
                           item.quantity
                         )
                       }
-                      className="w-6 h-6 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 transition-colors"
+                      className="w-6 h-6 flex items-center justify-center bg-white hover:bg-gray-100 text-gray-600 rounded border border-gray-200 transition-colors"
                     >
-                      <FaMinus size={10} />
+                      <svg viewBox="0 0 20 20" fill="none" className="w-2 h-2">
+                        <path d="M4 10h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
                     </button>
-                    <span className="text-gray-800 font-medium text-sm w-8 text-center">
+                    <span className="text-gray-800 font-medium text-sm w-7 text-center">
                       {item.quantity}
                     </span>
                     <button
@@ -226,9 +181,11 @@ const CartDropdown = ({ isOpen, onClose }) => {
                           item.quantity
                         )
                       }
-                      className="w-6 h-6 flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 transition-colors"
+                      className="w-6 h-6 flex items-center justify-center bg-white hover:bg-gray-100 text-gray-600 rounded border border-gray-200 transition-colors"
                     >
-                      <FaPlus size={10} />
+                      <svg viewBox="0 0 20 20" fill="none" className="w-2 h-2">
+                        <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -236,10 +193,12 @@ const CartDropdown = ({ isOpen, onClose }) => {
                 {/* Remove Button */}
                 <button
                   onClick={() => handleRemove(item.product?.id || item.id)}
-                  className="text-red-500 hover:text-red-600 hover:bg-red-50 p-2 rounded transition-all"
+                  className="text-gray-400 hover:text-red-500 p-1.5 rounded transition-colors self-start"
                   title={t("cart.remove_from_cart")}
                 >
-                  <FaTrash size={14} />
+                  <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3">
+                    <path d="M4 7h16M10 11v6M14 11v6M9 7l1-2h4l1 2M7 7l1 12h8l1-12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </button>
               </div>
             ))}
@@ -247,15 +206,12 @@ const CartDropdown = ({ isOpen, onClose }) => {
         )}
       </div>
 
-      {/* Footer with Total and Actions */}
+      {/* Footer */}
       {carts.length > 0 && (
-        <div className="p-4 border-t border-gray-200 bg-white">
-          {/* Subtotal */}
-          <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-200">
-            <span className="text-gray-600 font-medium">
-              {t("cart.subtotal")}
-            </span>
-            <span className="text-gray-900 font-bold text-lg">
+        <div className="p-4 border-t border-gray-100">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-sm text-gray-500">{t("cart.subtotal")}</span>
+            <span className="text-gray-900 font-bold text-base">
               {new Intl.NumberFormat("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -263,17 +219,16 @@ const CartDropdown = ({ isOpen, onClose }) => {
             </span>
           </div>
 
-          {/* Action Buttons */}
           <div className="space-y-2">
             <button
               onClick={handleViewCart}
-              className="w-full py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg border border-gray-300 transition-all"
+              className="w-full py-2 text-sm bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg border border-gray-200 transition-colors"
             >
               {t("cart.view_cart")}
             </button>
             <button
               onClick={handleCheckout}
-              className="w-full py-2.5 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 transform hover:scale-105 border border-purple-500"
+              className="w-full py-2 text-sm bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
             >
               {t("cart.checkout")}
             </button>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import logoRoccat from "../../assets/images/logo/logo_roccat.svg";
 import logoMsi from "../../assets/images/logo/logo_msi.svg";
@@ -19,6 +19,31 @@ const brands = [
   { name: "GIGABYTE", img: logoGigabyte },
 ];
 
+function BrandLogoButton({ brand, onSelect }) {
+  const [broken, setBroken] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(brand.name)}
+      className="flex items-center justify-center border border-transparent hover:border-violet-200 rounded-md p-2 bg-white transition min-h-[48px]"
+    >
+      {broken ? (
+        <span className="text-[11px] font-semibold text-violet-700 text-center leading-tight px-1">
+          {brand.name}
+        </span>
+      ) : (
+        <img
+          src={brand.img}
+          alt=""
+          className="max-h-10 object-contain"
+          onError={() => setBroken(true)}
+        />
+      )}
+    </button>
+  );
+}
+
 export default function BrandFilter({ allProducts, onSelectBrand }) {
   const { t } = useTranslation();
 
@@ -28,7 +53,6 @@ export default function BrandFilter({ allProducts, onSelectBrand }) {
       // Nếu chọn "All Brands" thì trả hết sản phẩm
       onSelectBrand(allProducts);
     } else {
-      console.log("Selected brand:", brandName);
       const filtered = allProducts.filter(
         (product) => product.brandName === brandName
       );
@@ -49,17 +73,7 @@ export default function BrandFilter({ allProducts, onSelectBrand }) {
 
       <div className="grid grid-cols-2 gap-4">
         {brands.map((brand) => (
-          <button
-            key={brand.name}
-            onClick={() => handleBrandSelect(brand.name)}
-            className="flex items-center justify-center border border-transparent hover:border-gray-300 rounded-md p-2 bg-white transition"
-          >
-            <img
-              src={brand.img}
-              alt={brand.name}
-              className="max-h-10 object-contain"
-            />
-          </button>
+          <BrandLogoButton key={brand.name} brand={brand} onSelect={handleBrandSelect} />
         ))}
       </div>
     </div>

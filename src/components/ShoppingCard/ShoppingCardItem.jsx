@@ -125,9 +125,9 @@ function CartItem({ item, onQuantityChange, onRemove }) {
   };
 
   return (
-    <div className="flex items-center py-4 border-b border-gray-200">
+    <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:gap-5">
       {/* Hình ảnh sản phẩm */}
-      <div className="w-24 h-24 mr-4">
+      <div className="mx-auto w-24 h-24 shrink-0 sm:mx-0 sm:mr-0">
         <img
           src={item.image || item.imageUrl || item.product?.imageUrl || ""}
           alt={item.productName || item.name || item.product?.name || "Product"}
@@ -147,8 +147,8 @@ function CartItem({ item, onQuantityChange, onRemove }) {
       </div>
 
       {/* Thông tin sản phẩm */}
-      <div className="flex-grow">
-        <h3 className="text-sm font-semibold text-gray-700">
+      <div className="min-w-0 flex-1 text-center sm:text-left">
+        <h3 className="text-sm font-semibold text-gray-900">
           {item.productName ||
             item.name ||
             item.product?.name ||
@@ -166,10 +166,11 @@ function CartItem({ item, onQuantityChange, onRemove }) {
       </div> */}
 
       {/* Số lượng */}
-      <div className="flex items-center space-x-1 mr-4">
+      <div className="flex items-center justify-center gap-1 sm:mr-4">
         {/* Decrease button */}
         <button
-          className="bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-full w-8 h-8 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200"
+          type="button"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
           onClick={handleDecreaseClick}
         >
           <svg
@@ -196,13 +197,14 @@ function CartItem({ item, onQuantityChange, onRemove }) {
               handleQuantityChange(Math.max(1, value));
             }}
             min="1"
-            className="w-12 h-8 border border-gray-300 rounded-md text-center font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="h-9 w-12 rounded-lg border border-gray-200 text-center text-sm font-medium text-gray-800 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/30"
           />
         </div>
 
         {/* Increase button */}
         <button
-          className="bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-full w-8 h-8 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200"
+          type="button"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
           onClick={() => handleQuantityChange(quantity + 1)}
         >
           <svg
@@ -221,7 +223,7 @@ function CartItem({ item, onQuantityChange, onRemove }) {
       </div>
 
       {/* Tổng tiền sản phẩm */}
-      <div className="mr-4 text-sm font-semibold text-gray-700">
+      <div className="text-center text-sm font-semibold text-gray-900 tabular-nums sm:mr-4 sm:text-right">
         {new Intl.NumberFormat("vi-VN", {
           style: "currency",
           currency: "VND",
@@ -230,8 +232,10 @@ function CartItem({ item, onQuantityChange, onRemove }) {
 
       {/* Nút xóa sản phẩm */}
       <button
+        type="button"
         onClick={handleRemove}
-        className="text-gray-500 hover:text-gray-700 focus:outline-none"
+        className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300 sm:mx-0"
+        aria-label={t("payment.cart_item.remove")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -251,28 +255,31 @@ function CartItem({ item, onQuantityChange, onRemove }) {
 
       {/* Confirm remove modal */}
       {showConfirmRemove && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black opacity-50"
+            className="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px]"
             onClick={handleCancelRemove}
+            role="presentation"
           />
-          <div className="bg-white rounded-lg shadow-lg z-10 max-w-sm w-full p-6">
-            <h3 className="text-lg font-semibold mb-2">
+          <div className="relative z-10 w-full max-w-sm rounded-2xl border border-gray-100 bg-white p-6 shadow-lg">
+            <h3 className="text-base font-semibold text-gray-900 mb-1">
               {t("payment.cart_item.remove_product")}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-500 mb-5">
               {t("payment.cart_item.confirm_remove")}
             </p>
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end gap-2">
               <button
+                type="button"
                 onClick={handleCancelRemove}
-                className="px-4 py-2 rounded bg-gray-100 hover:bg-gray-200"
+                className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 {t("payment.cart_item.cancel")}
               </button>
               <button
+                type="button"
                 onClick={handleConfirmRemove}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
               >
                 {t("payment.cart_item.remove")}
               </button>

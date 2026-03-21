@@ -1,12 +1,7 @@
 import React from 'react';
 import ProfileCard from './ProfileCard';
 import './TeamProfiles.css';
-import nguyen from "../../../assets/nguyen.jpg";
-import nghia from "../../../assets/nghia.jpg";
-import dang from "../../../assets/dang.jpg";
-import phu from "../../../assets/thach.jpg";
-import thach from "../../../assets/phu.jpg";
-import vu from "../../../assets/vu.jpg";
+import thach from "../../../assets/thach.jpg";
 import { FaTools, FaUser, FaMoneyBillWave } from 'react-icons/fa';
 import { MdLocationOn, MdPhone, MdAccessTime, MdEmail } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
@@ -17,89 +12,11 @@ const TeamProfiles = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Thach ",
+      name: "Thach",
       role: "Full stack developers",
       masterRole: "Master in Frontend Developer",
       location: "VietNam",
-      image: phu,
-      socialLinks: {
-        linkedin: "https://www.linkedin.com/",
-        dribbble: "https://dribbble.com/",
-        github: "https://github.com/"
-      }
-    },
-    {
-      id: 2,
-      name: "Nghia",
-      role: "Full stack developers",
-      masterRole: "Master in Backend Architecture",
-      location: "VietNam",
-      image: nghia,
-      socialLinks: {
-        linkedin: "https://www.linkedin.com/",
-        dribbble: "https://dribbble.com/",
-        github: "https://github.com/"
-      }
-    },
-    {
-      id: 3,
-      name: "Dang",
-      role: "Full stack developers",
-      masterRole: "Master in User Experience",
-      location: "VietNam",
-      image: dang,
-      socialLinks: {
-        linkedin: "https://www.linkedin.com/",
-        dribbble: "https://dribbble.com/",
-        github: "https://github.com/"
-      }
-    },
-    {
-      id: 4,
-      name: "Phu",
-      role: "Full stack developers",
-      masterRole: "Master in Database Design",
-      location: "VietNam",
       image: thach,
-      socialLinks: {
-        linkedin: "https://www.linkedin.com/",
-        dribbble: "https://dribbble.com/",
-        github: "https://github.com/"
-      }
-    },
-    {
-      id: 5,
-      name: "K.Nguyen",
-      role: "Full stack developers",
-      masterRole: "Master in DevOps",
-      location: "VietNam",
-      image: nguyen,
-      socialLinks: {
-        linkedin: "https://www.linkedin.com/",
-        dribbble: "https://dribbble.com/",
-        github: "https://github.com/"
-      }
-    },
-    {
-      id: 6,
-      name: "Son Nguyen",
-      role: "Full stack developers",
-      masterRole: "Master in Mobile Development",
-      location: "VietNam",
-      image: "/assets/img/member6.png",
-      socialLinks: {
-        linkedin: "https://www.linkedin.com/",
-        dribbble: "https://dribbble.com/",
-        github: "https://github.com/"
-      }
-    },
-    {
-      id: 7,
-      name: "Nguyen Vu",
-      role: "Full stack developers",
-      masterRole: "Master in AI/ML",
-      location: "VietNam",
-      image: vu,
       socialLinks: {
         linkedin: "https://www.linkedin.com/",
         dribbble: "https://dribbble.com/",
@@ -112,7 +29,6 @@ const TeamProfiles = () => {
     <>
       {/* Team Section */}
       <div className="teamContainer">
-        <h2 className="teamTitle">{"Team 10"}</h2>
         <div className="teamProfiles">
           {teamMembers.map((member) => (
             <ProfileCard key={member.id} memberData={member} />
