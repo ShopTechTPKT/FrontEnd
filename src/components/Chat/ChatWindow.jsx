@@ -137,7 +137,7 @@ const ChatWindow = ({
   return (
     <>
       {/* Header */}
-      <div className="px-6 py-4 bg-white border-b border-gray-100 flex justify-between items-center">
+      <div className="px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 flex justify-between items-center sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-800 to-purple-900 text-white flex items-center justify-center font-semibold text-lg">
             {selectedSession.guestName?.charAt(0)?.toUpperCase() || "?"}
@@ -258,9 +258,9 @@ const ChatWindow = ({
           <button
             type="submit"
             disabled={!connected || isUploading || (!input.trim() && !selectedFile)}
-            className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shadow-md ${
+            className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 shadow-md ${
               connected && !isUploading && (input.trim() || selectedFile)
-                ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white hover:opacity-90"
+                ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white hover:opacity-90 hover:-translate-y-0.5 hover:shadow-lg"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >

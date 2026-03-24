@@ -165,16 +165,12 @@ import ShoppingCartItem from "../pages/ShoppingCard/ShoppingCardItem";
 import ShoppingCard_CheckOut from "../pages/ShoppingCard/ShoppingCard_CheckOut";
 import ProductDetail from "../components/product/ProductDetail";
 import ProductSpeccs from "../components/product/ProductSpecss";
-import Admin from "../pages/AdminLayout/AdminLayout";
+import AdminLayout from "../pages/AdminLayout/AdminLayout";
 import ProductAbout from "../components/product/ProductAbout";
 import Product from "../components/product/Product";
 import ScrollToTop from "../components/option/ScrollToTop";
 import VIPCalendar from "../pages/Calendar/VIPCalendar";
 import ThankYouPage from "../pages/ShoppingCard/ThankForShopping";
-import ReviewsPage from "../pages/Reviews/ReviewsPage";
-import MessagesPage from "../pages/Messages/MessagesPage";
-import DiscountsPage from "../pages/Discounts/DiscountsPage";
-import PermissionsPage from "../pages/Permissions/PermissionsPage";
 import ShoppingCardItem from "../pages/ShoppingCard/ShoppingCardItem";
 import ShoppingCart from "../pages/ShoppingCard/ShoppingCart";
 // New 2025 Ecommerce Pages
@@ -198,6 +194,7 @@ import UserProfile from "../pages/UserProfile/UserProfile";
 import FlappyBird from "../components/minigame/flappy-bord";
 import Favorites from "../pages/Favorites/Favorites";
 import NotFound from "../pages/NotFound/NotFound";
+import AuditLogsPage from "../pages/AuditLogs/AuditLogsPage";
 
 const AppRouter = () => {
   const { getUserRole, loading: _loading } = useContext(UserContext);
@@ -231,12 +228,13 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Admin />} /> {/* /admin */}
+          <Route index element={<AdminLayout />} /> {/* /admin */}
           <Route path="calendar" element={<VIPCalendar />} /> {/* /admin/calendar */}
-          <Route path="reviews" element={<ReviewsPage />} /> {/* /admin/reviews */}
-          <Route path="messages" element={<MessagesPage />} /> {/* /admin/messages */}
-          <Route path="discounts" element={<DiscountsPage />} /> {/* /admin/discounts */}
-          <Route path="permissions" element={<PermissionsPage />} /> {/* /admin/permissions */}
+          <Route path="reviews" element={<AdminLayout />} /> {/* /admin/reviews */}
+          <Route path="messages" element={<AdminLayout />} /> {/* /admin/messages */}
+          <Route path="discounts" element={<AdminLayout />} /> {/* /admin/discounts */}
+          <Route path="permissions" element={<AdminLayout />} /> {/* /admin/permissions */}
+          <Route path="audit-logs" element={<AuditLogsPage />} /> {/* /admin/audit-logs */}
         </Route>
         {/* Customer/public routes */}
         <Route path="/" element={<Layout />}>

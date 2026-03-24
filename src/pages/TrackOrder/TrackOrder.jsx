@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaSearch, FaMapMarkerAlt, FaPhoneAlt, FaClock, FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import OrderMapTracking from '../../components/Orders/OrderMapTracking';
 
 const TrackOrder = () => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ const TrackOrder = () => {
         status: 'In Transit',
         estimatedDelivery: 'Oct 15, 2025',
         currentLocation: 'Distribution Center - Los Angeles',
+        deliveryAddress: '12 Nguyễn Văn Bảo, Phường 4, Gò Vấp, Hồ Chí Minh',
         timeline: [
           { status: 'Order Placed', date: 'Oct 10, 2025 14:30', completed: true, icon: '📝' },
           { status: 'Payment Confirmed', date: 'Oct 10, 2025 14:35', completed: true, icon: '💳' },
@@ -133,6 +135,14 @@ const TrackOrder = () => {
                   <span>Est. Delivery: {trackingResult.estimatedDelivery}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Map Tracking Visualization */}
+            <div className="mb-8">
+              <OrderMapTracking 
+                deliveryAddress={trackingResult.deliveryAddress} 
+                status={trackingResult.status} 
+              />
             </div>
 
             {/* Timeline */}

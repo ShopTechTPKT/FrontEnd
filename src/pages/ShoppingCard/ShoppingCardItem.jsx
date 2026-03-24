@@ -59,6 +59,7 @@ const ShoppingCardItem = () => {
   const [discountValue, setDiscountValue] = useState(0);
   const [appliedVoucher, setAppliedVoucher] = useState(null);
   const [vouchers, setVouchers] = useState([]);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPaymentOptionsOpen, setIsPaymentOptionsOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState(null);
@@ -687,8 +688,10 @@ const ShoppingCardItem = () => {
       // Chuyển hướng sang trang thanh toán VNPAY KHÔNG tạo order trước
       // Sau khi thanh toán thành công, VNPAY (sandbox) sẽ redirect về: /thank_you_shopping?vnp_ResponseCode=00&vnp_Amount=...
       openConfirm("Bạn có chắc chắn muốn thanh toán qua VNPAY?", () => {
-        // Tạo form để POST đến service VNPay NodeJS (vnpay_nodejs)
-        const form = document.createElement("form");
+        setIsProcessingPayment(true);
+        setTimeout(() => {
+          // Tạo form để POST đến service VNPay NodeJS (vnpay_nodejs)
+          const form = document.createElement("form");
         form.method = "POST";
         form.action = "http://localhost:8888/order/create_payment_url";
 
@@ -716,9 +719,10 @@ const ShoppingCardItem = () => {
           form.appendChild(input);
         });
 
-        document.body.appendChild(form);
-        console.log("🔄 Submitting VNPAY payment form:", fields);
-        form.submit();
+          document.body.appendChild(form);
+          console.log("🔄 Submitting VNPAY payment form:", fields);
+          form.submit();
+        }, 1500); // UI delay 1.5s then redirect
       });
     } catch (error) {
       console.error(
@@ -769,6 +773,27 @@ const ShoppingCardItem = () => {
 
   return (
     <>
+      {/* VNPAY Processing Overlay */}
+      {isProcessingPayment && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300">
+          <div className="relative flex flex-col items-center">
+            <div className="w-20 h-20 mb-6 bg-white rounded-full shadow-xl flex items-center justify-center border border-gray-100 flex-shrink-0 relative">
+              <svg className="w-10 h-10 text-blue-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <svg className="absolute inset-0 w-full h-full animate-spin text-blue-500" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1" fill="none"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Chuyển hướng đến VNPAY...</h3>
+            <p className="text-sm text-gray-500 text-center max-w-sm">
+              Vui lòng không đóng trình duyệt.<br/>Hệ thống đang thiết lập kết nối mã hóa an toàn.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/90 pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <nav className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500">

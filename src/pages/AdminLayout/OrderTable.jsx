@@ -1,6 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
-import { ImageOff, Search } from 'lucide-react';
+import { ImageOff, Search, FileDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { downloadInvoice } from '../../components/Orders/InvoiceExport';
 
 // OrderTable - Displays a list of orders with search and status update functionality
 const OrderTable = memo(({ orders = [], theme = 'dark', updateOrderStatus, getOrderById }) => {
@@ -196,6 +197,7 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
                 <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.order_date')}</th>
                 <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.total_amount')}</th>
                 <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.status')}</th>
+                <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Hóa Đơn</th>
               </tr>
             </thead>
             <tbody>
@@ -240,6 +242,16 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
                       ))}
                       <option value="">-- Select Status --</option>
                     </select>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
+                    <button
+                      onClick={() => downloadInvoice(order, customerNames[order.userId])}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg transition-colors border border-indigo-200"
+                      title="Xuất PDF"
+                    >
+                      <FileDown size={16} />
+                      Xuất
+                    </button>
                   </td>
                 </tr>
               ))}

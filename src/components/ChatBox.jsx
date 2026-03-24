@@ -74,15 +74,11 @@ const ChatBox = () => {
     return null;
   }
 
-  // Ẩn ChatBox trên trang admin, employee và customer-service
-  if (currentPath.startsWith('/admin') || 
+  // Ẩn ChatBox trên toàn bộ trang admin, employee và customer-service
+  if (currentPath.startsWith('/admin') ||
       currentPath.startsWith('/employee') || 
-      currentPath.startsWith('/customer-service')) {
-    return null;
-  }
-
-  // Ẩn ChatBox nếu user là admin
-  if (isAdmin) {
+      currentPath.startsWith('/customer-service') ||
+      currentPath.startsWith('/admin/audit-logs')) {
     return null;
   }
 

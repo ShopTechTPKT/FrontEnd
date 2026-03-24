@@ -210,7 +210,7 @@ const CustomerServiceDashboard = () => {
               {/* Nút Đặt lịch hẹn (Booking Form) */}
               <button
                 onClick={() => setShowAppointmentForm(true)}
-                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-sm"
+                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2 shadow-sm"
               >
                 <svg
                   className="w-4 h-4"
@@ -231,7 +231,7 @@ const CustomerServiceDashboard = () => {
               {/* Nút Lịch trình (Schedule Form - cho session hiện tại) */}
               <button
                 onClick={() => setShowScheduleForm(true)}
-                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 border border-purple-200 shadow-sm"
+                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center gap-2 border border-purple-200 shadow-sm"
               >
                 <svg
                   className="w-4 h-4"
@@ -252,7 +252,7 @@ const CustomerServiceDashboard = () => {
               {/* Nút Hỏi đáp sản phẩm */}
               <button
                 onClick={() => navigate("/products")}
-                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 border border-purple-200 shadow-sm"
+                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center gap-2 border border-purple-200 shadow-sm"
               >
                 <svg
                   className="w-4 h-4"

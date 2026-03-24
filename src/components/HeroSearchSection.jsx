@@ -9,7 +9,6 @@ const HeroSearchSection = ({ product = [] }) => {
   const [location, setLocation] = useState("Tuy Hoa, Phu Yen");
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const modalRef = useRef(null);
   const searchInputRef = useRef(null);
   const suggestionsRef = useRef(null);
@@ -166,20 +165,11 @@ const HeroSearchSection = ({ product = [] }) => {
     }
   };
 
-  // Handle input change with debounce for better UX
+  // Handle input change for immediate local filtering
   useEffect(() => {
     if (searchTerm.trim() !== "") {
-      setIsSearching(true);
       setShowSuggestions(true);
-      
-      // Debounce search - show loading for at least 200ms for better UX
-      const timer = setTimeout(() => {
-        setIsSearching(false);
-      }, 200);
-      
-      return () => clearTimeout(timer);
     } else {
-      setIsSearching(false);
       setShowSuggestions(false);
     }
   }, [searchTerm]);
@@ -242,7 +232,7 @@ const HeroSearchSection = ({ product = [] }) => {
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onKeyPress={handleKeyPress}
-                className="w-full h-[42px] pl-10 pr-10 py-2.5 text-gray-900 text-base rounded-md border border-gray-300 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200 bg-white"
+                className="w-full h-[42px] pl-10 pr-10 py-2.5 text-gray-900 text-base rounded-md border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white"
               />
               {searchTerm && (
                 <button
@@ -262,16 +252,7 @@ const HeroSearchSection = ({ product = [] }) => {
             {/* Product Suggestions Dropdown */}
             {showSuggestions && searchTerm.trim() !== "" && (
               <div ref={suggestionsRef} className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
-                {isSearching ? (
-                  // Loading State
-                  <div className="py-8 px-4 flex flex-col items-center justify-center">
-                    <div className="relative w-12 h-12 mb-3">
-                      <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                      <div className="absolute inset-0 border-4 border-gray-700 rounded-full border-t-transparent animate-spin"></div>
-                    </div>
-                    <p className="text-sm text-gray-600">Đang tìm kiếm...</p>
-                  </div>
-                ) : filteredProducts.length > 0 ? (
+                {filteredProducts.length > 0 ? (
                   // Results State
                   <div className="py-2">
                     {filteredProducts.slice(0, 8).map((product, index) => {
@@ -312,7 +293,7 @@ const HeroSearchSection = ({ product = [] }) => {
                   {filteredProducts.length > 8 && (
                     <button
                       onClick={handleSearch}
-                      className="w-full px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 font-medium text-center border-t border-gray-200"
+                      className="w-full px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 font-medium text-center border-t border-gray-200"
                     >
                       Xem tất cả {filteredProducts.length} kết quả
                     </button>
@@ -335,7 +316,7 @@ const HeroSearchSection = ({ product = [] }) => {
           <div className="relative w-full sm:w-auto sm:min-w-[240px]">
             <button 
               onClick={toggleLocationModal}
-              className="w-full h-[42px] px-3 py-2.5 text-gray-700 text-base rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white flex items-center justify-between gap-2"
+              className="w-full h-[42px] px-3 py-2.5 text-gray-700 text-base rounded-md border border-gray-300 hover:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white flex items-center justify-between gap-2"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <svg viewBox="0 0 24 24" fill="none" className="text-gray-500 flex-shrink-0 w-4 h-4">
@@ -355,7 +336,7 @@ const HeroSearchSection = ({ product = [] }) => {
           {/* Search Button - Match primary gradient */}
           <button
             onClick={handleSearch}
-            className="h-[42px] px-6 py-2.5 bg-gray-900 text-white text-base rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+            className="h-[42px] px-6 py-2.5 bg-purple-600 text-white text-base rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
           >
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
               <path d="M11 19a8 8 0 1 1 5.3-14l.2.2A8 8 0 0 1 11 19Zm10 2-4.4-4.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -401,13 +382,13 @@ const HeroSearchSection = ({ product = [] }) => {
                     onClick={() => handleLocationSelect(loc)}
                     className={`w-full p-3 text-left rounded-md border flex items-start gap-3 transition-colors ${
                       location === loc.name 
-                        ? 'border-gray-900 bg-gray-50' 
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        ? 'border-purple-500 bg-purple-50' 
+                        : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50'
                     }`}
                   >
                     {/* Icon */}
                     <svg viewBox="0 0 24 24" fill="none" className={`mt-0.5 flex-shrink-0 w-4 h-4 ${
-                      location === loc.name ? 'text-gray-900' : 'text-gray-400'
+                      location === loc.name ? 'text-purple-600' : 'text-gray-400'
                     }`}>
                       <path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                       <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8" />
@@ -416,7 +397,7 @@ const HeroSearchSection = ({ product = [] }) => {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className={`font-medium text-sm ${
-                        location === loc.name ? 'text-gray-900' : 'text-gray-700'
+                        location === loc.name ? 'text-purple-700' : 'text-gray-700'
                       }`}>
                         {loc.name}
                       </div>

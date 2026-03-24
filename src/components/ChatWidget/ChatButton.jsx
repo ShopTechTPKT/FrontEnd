@@ -7,6 +7,7 @@ const ChatButton = () => {
   const { isOpen, toggle } = useContext(ChatContext);
   const { isCustomerService } = useContext(UserContext);
   const { t } = useTranslation("translation");
+  const isAdminPage = window.location.pathname.startsWith("/admin");
 
   // Ẩn ChatButton nếu user là nhân viên chăm sóc khách hàng
   if (isCustomerService) {
@@ -33,7 +34,7 @@ const ChatButton = () => {
         }
       `}</style>
 
-      <div className="fixed bottom-6 left-6 z-50">
+      <div className={`fixed bottom-6 z-50 ${isAdminPage ? "left-72" : "left-6"}`}>
         <div className="relative group">
           {/* Pulse rings - màu tím như header */}
           {!isOpen && (

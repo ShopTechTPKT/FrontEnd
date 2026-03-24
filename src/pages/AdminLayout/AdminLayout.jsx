@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, useMemo } from "react";
 
 import {
   FaChartPie,
@@ -145,6 +145,8 @@ const CATEGORY_STATE_MAP = {
   headphone: "headphones",
   mousepad: "mousepads",
 };
+const ADMIN_DASHBOARD_CACHE_KEY = "admin-dashboard-cache-v1";
+const ADMIN_DASHBOARD_CACHE_TTL_MS = 2 * 60 * 1000;
 import { UserContext } from "../../context/UserContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
@@ -214,9 +216,16 @@ export default function ComputerStoreAdminLayout() {
   const [insightTab, setInsightTab] = useState("orders"); // 'orders' | 'revenue'
   const [showAdvanced] = useState(false);
   // Dark mode disabled - always light mode
+  const lastFetchKeyRef = useRef("");
+  const hasHydratedCacheRef = useRef(false);
 
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
+  const currentFetchKey = useMemo(
+    () =>
+      `${timeframe}|${spendersTimeframe}|${dateRange.start}|${dateRange.end}|${productIdForRating}`,
+    [timeframe, spendersTimeframe, dateRange.start, dateRange.end, productIdForRating]
+  );
 
   // Normalize object maps from BE to array of {name, value} for charts/lists
   const toPairs = obj => {
@@ -1298,14 +1307,184 @@ export default function ComputerStoreAdminLayout() {
   };
 
   useEffect(() => {
+    if (!hasHydratedCacheRef.current) {
+      try {
+        const raw = sessionStorage.getItem(ADMIN_DASHBOARD_CACHE_KEY);
+        if (raw) {
+          const cache = JSON.parse(raw);
+          const isFresh = Date.now() - (cache.timestamp || 0) < ADMIN_DASHBOARD_CACHE_TTL_MS;
+          if (isFresh && cache.fetchKey === currentFetchKey) {
+            setUsersStats(cache.usersStats ?? null);
+            setProductsStats(cache.productsStats ?? null);
+            setOrdersStats(cache.ordersStats ?? null);
+            setTopProducts(cache.topProducts ?? []);
+            setTopCustomers(cache.topCustomers ?? []);
+            setOrdersTrend(cache.ordersTrend ?? []);
+            setRevenueByDay(cache.revenueByDay ?? []);
+            setRevenueByMonth(cache.revenueByMonth ?? []);
+            setRevenueByQuarter(cache.revenueByQuarter ?? []);
+            setRevenueByYear(cache.revenueByYear ?? []);
+            setReturningCustomers(cache.returningCustomers ?? []);
+            setRfm(cache.rfm ?? []);
+            setAbcInventory(cache.abcInventory ?? []);
+            setFrequentlyBought(cache.frequentlyBought ?? []);
+            setRetentionRate(cache.retentionRate ?? []);
+            setCustomerLtv(cache.customerLtv ?? []);
+            setWeekdayRevenue(cache.weekdayRevenue ?? []);
+            setRatingDistribution(cache.ratingDistribution ?? []);
+            setTopRatedProducts(cache.topRatedProducts ?? []);
+            setMostFavoritedProducts(cache.mostFavoritedProducts ?? []);
+            setLowStockList(cache.lowStockList ?? []);
+            setSalesData(cache.salesData ?? []);
+            setCategorySales(cache.categorySales ?? []);
+            setRecentOrdersWithDetails(cache.recentOrdersWithDetails ?? []);
+            setComputers(cache.computers ?? []);
+            setPhones(cache.phones ?? []);
+            setMouses(cache.mouses ?? []);
+            setKeyboards(cache.keyboards ?? []);
+            setMonitors(cache.monitors ?? []);
+            setProcessors(cache.processors ?? []);
+            setRam(cache.ram ?? []);
+            setStorage(cache.storage ?? []);
+            setCases(cache.cases ?? []);
+            setMainboards(cache.mainboards ?? []);
+            setPsus(cache.psus ?? []);
+            setPcs(cache.pcs ?? []);
+            setHeadphones(cache.headphones ?? []);
+            setMousepads(cache.mousepads ?? []);
+            setTablets(cache.tablets ?? []);
+            setGamingGear(cache.gamingGear ?? []);
+            setCustomers(cache.customers ?? []);
+            setOrders(cache.orders ?? []);
+            setTopSpenders(cache.topSpenders ?? []);
+            setAllImages(cache.allImages ?? {});
+            setInsightTab(cache.insightTab ?? "orders");
+            setError(null);
+            setLoading(false);
+            lastFetchKeyRef.current = currentFetchKey;
+          }
+        }
+      } catch (cacheError) {
+        console.log("Admin cache read failed:", cacheError);
+      } finally {
+        hasHydratedCacheRef.current = true;
+      }
+    }
+
+    if (lastFetchKeyRef.current === currentFetchKey) {
+      return;
+    }
+    lastFetchKeyRef.current = currentFetchKey;
     fetchDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    timeframe,
-    spendersTimeframe,
-    dateRange.start,
-    dateRange.end,
-    productIdForRating,
+    currentFetchKey,
+  ]);
+
+  useEffect(() => {
+    if (loading) return;
+    const payload = {
+      timestamp: Date.now(),
+      fetchKey: currentFetchKey,
+      usersStats,
+      productsStats,
+      ordersStats,
+      topProducts,
+      topCustomers,
+      ordersTrend,
+      revenueByDay,
+      revenueByMonth,
+      revenueByQuarter,
+      revenueByYear,
+      returningCustomers,
+      rfm,
+      abcInventory,
+      frequentlyBought,
+      retentionRate,
+      customerLtv,
+      weekdayRevenue,
+      ratingDistribution,
+      topRatedProducts,
+      mostFavoritedProducts,
+      lowStockList,
+      salesData,
+      categorySales,
+      recentOrdersWithDetails,
+      computers,
+      phones,
+      mouses,
+      keyboards,
+      monitors,
+      processors,
+      ram,
+      storage,
+      cases,
+      mainboards,
+      psus,
+      pcs,
+      headphones,
+      mousepads,
+      tablets,
+      gamingGear,
+      customers,
+      orders,
+      topSpenders,
+      allImages,
+      insightTab,
+    };
+    try {
+      sessionStorage.setItem(ADMIN_DASHBOARD_CACHE_KEY, JSON.stringify(payload));
+    } catch (cacheError) {
+      console.log("Admin cache write failed:", cacheError);
+    }
+  }, [
+    loading,
+    currentFetchKey,
+    usersStats,
+    productsStats,
+    ordersStats,
+    topProducts,
+    topCustomers,
+    ordersTrend,
+    revenueByDay,
+    revenueByMonth,
+    revenueByQuarter,
+    revenueByYear,
+    returningCustomers,
+    rfm,
+    abcInventory,
+    frequentlyBought,
+    retentionRate,
+    customerLtv,
+    weekdayRevenue,
+    ratingDistribution,
+    topRatedProducts,
+    mostFavoritedProducts,
+    lowStockList,
+    salesData,
+    categorySales,
+    recentOrdersWithDetails,
+    computers,
+    phones,
+    mouses,
+    keyboards,
+    monitors,
+    processors,
+    ram,
+    storage,
+    cases,
+    mainboards,
+    psus,
+    pcs,
+    headphones,
+    mousepads,
+    tablets,
+    gamingGear,
+    customers,
+    orders,
+    topSpenders,
+    allImages,
+    insightTab,
   ]);
 
   const handleTimeframeChange = event => setTimeframe(event.target.value);
@@ -1574,15 +1753,22 @@ export default function ComputerStoreAdminLayout() {
           </div>
           <div className="flex items-center space-x-2">
             <button
+              onClick={() => navigate("/admin/audit-logs")}
+              className="px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium"
+              title="Audit Logs"
+            >
+              Audit Logs
+            </button>
+            <button
               onClick={() => navigate("/")}
-              className="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors"
               title={t("admin.go_to_homepage")}
             >
               <FaHome size={18} />
             </button>
             <button
               onClick={() => navigate("/admin/calendar")}
-              className="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors"
               title={t("admin.view_calendar")}
             >
               <FaCalendar size={18} />

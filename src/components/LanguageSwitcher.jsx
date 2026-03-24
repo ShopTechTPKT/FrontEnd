@@ -23,7 +23,7 @@ const LanguageSwitcher = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center gap-1.5 min-w-[108px] h-9 px-2.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+        className="inline-flex items-center justify-center gap-1.5 min-w-[108px] h-9 px-2.5 rounded-lg text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
       >
         <span className="text-base">{currentLanguage.flag}</span>
         <span className="text-sm font-medium hidden sm:block whitespace-nowrap leading-none">
@@ -59,15 +59,15 @@ const LanguageSwitcher = () => {
                 onClick={() => changeLanguage(lang.code)}
                 className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
                   currentLanguage.code === lang.code
-                    ? "bg-gray-100 text-gray-900 font-medium"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-violet-50 text-violet-700 font-medium"
+                    : "text-gray-700 hover:bg-violet-50 hover:text-violet-700"
                 }`}
               >
                 <span className="text-base">{lang.flag}</span>
                 <span>{lang.name}</span>
                 {currentLanguage.code === lang.code && (
                   <svg
-                    className="w-4 h-4 ml-auto text-gray-800"
+                    className="w-4 h-4 ml-auto text-violet-700"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >

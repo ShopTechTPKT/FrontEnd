@@ -7,6 +7,8 @@ import store from "./utils/redux/store";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatBox from "./components/ChatBox";
+import ChatWidget from "./components/ChatWidget";
+import GlobalWebSocketNotification from "./components/Notifications/GlobalWebSocketNotification";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Provider store={store}>
           <AppRouter />
           <ChatBox />
+          <ChatWidget />
+          <GlobalWebSocketNotification />
           <ToastContainer
             position="top-right"
             autoClose={3000}

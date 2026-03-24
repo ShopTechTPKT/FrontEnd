@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserContext"; // Đảm bảo đường dẫn chính xác
 import DiscountModal from "../../components/DiscountModal";
+import AddressAutocomplete from "../../components/Orders/AddressAutocomplete";
 // import { getActiveDiscounts } from "../../apis/discountApi";
 
 // Component tượng trưng cho Order Summary (đã chỉnh sửa để nhận prop và hiển thị dữ liệu thật)
@@ -454,11 +455,10 @@ function ShoppingCard_CheckOut() {
                 >
                   {t("payment.checkout.street_address")}
                 </label>
-                <input
-                  type="text"
-                  id="streetAddress"
+                <AddressAutocomplete
                   value={streetAddress}
-                  onChange={e => setStreetAddress(e.target.value)}
+                  onChange={setStreetAddress}
+                  placeholder="Nhập số nhà, tên đường..."
                   className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
                     errors.streetAddress ? "border-red-500" : ""
                   }`}
