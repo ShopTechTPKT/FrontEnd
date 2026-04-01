@@ -12,15 +12,28 @@ const GlobalWebSocketNotification = () => {
     let isIntentionalClose = false;
     let retryCount = 0;
 
+    const resolveSockJsUrl = () => {
+      const configuredBase = import.meta.env.VITE_HOST_API_BACKEND_SERVICE || "/api";
+      const pageProtocol = window.location.protocol;
+      const base = configuredBase.replace(/\/$/, "");
+
+      if (/^https?:\/\//i.test(base)) {
+        // Prevent mixed-content: upgrade http -> https when current page is https.
+        if (pageProtocol === "https:" && base.startsWith("http://")) {
+          return `${base.replace(/^http:\/\//i, "https://")}/ws`;
+        }
+        return `${base}/ws`;
+      }
+
+      // Relative path works safely for both http and https deployments.
+      return `${base}/ws`;
+    };
+
     const connectWebSocket = () => {
       if (isUnmounted) return;
       isIntentionalClose = false;
 
-      // Assuming your backend runs on localhost:8080 or is proxied via vite
-      // Check your environment variables or config for the correct WS URL.
-      const socketUrl = import.meta.env.VITE_HOST_API_BACKEND_SERVICE
-        ? `${import.meta.env.VITE_HOST_API_BACKEND_SERVICE}/ws`
-        : 'http://localhost:8083/ws'; // fallback direct backend-service
+      const socketUrl = resolveSockJsUrl();
 
       socket = new SockJS(socketUrl);
       stompClient = Stomp.over(socket);

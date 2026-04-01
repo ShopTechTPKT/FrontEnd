@@ -12,8 +12,15 @@ import ScheduleForm from "../../components/Schedule/ScheduleForm";
 import AppointmentBookingForm from "../../components/AppointmentBookingForm"; // Import form mới
 
 const CustomerServiceDashboard = () => {
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
-  const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:8081/ws";
+  const API_URL = import.meta.env.VITE_API_URL || "/api";
+  const WS_URL = (() => {
+    const configured = import.meta.env.VITE_WS_URL || "/ws";
+    const pageProtocol = window.location.protocol;
+    if (pageProtocol === "https:" && configured.startsWith("http://")) {
+      return configured.replace(/^http:\/\//i, "https://");
+    }
+    return configured;
+  })();
 
   const navigate = useNavigate();
 

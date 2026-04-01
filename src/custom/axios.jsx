@@ -2,10 +2,10 @@ import axios from "axios";
 import { isTokenExpired } from "../utils/jwtUtils";
 
 // Dev (Vite): use proxy "/api" to avoid CORS.
-// Prod/build: allow overriding via VITE_API_URL; fallback to api-gateway.
+// Prod/build: allow overriding via VITE_API_URL; fallback to same-origin "/api".
 const API_BASE_URL = import.meta.env.DEV
   ? "/api"
-  : (import.meta.env.VITE_API_URL || "http://localhost:8081/api");
+  : (import.meta.env.VITE_API_URL || "/api");
 
 const axiosInstance = axios.create({ baseURL: API_BASE_URL });
 

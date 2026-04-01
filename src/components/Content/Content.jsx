@@ -71,12 +71,14 @@ function Content() {
 
   const [homeProducts, setHomeProducts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   
   // Get products from Mock Data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setLoadError("");
         const data = await getHomeProducts();
 
         const normalize = (list) =>
@@ -116,6 +118,7 @@ function Content() {
         });
       } catch (error) {
         console.error("Error fetching products:", error);
+        setLoadError("Không load được data từ server. Vui lòng thử lại sau.");
       } finally {
         setLoading(false);
       }
@@ -215,6 +218,14 @@ function Content() {
     <div className="pt-4">
       {/* Hero Search Section */}
       <HeroSearchSection product = {products}/>
+
+      {loadError ? (
+        <div className="max-w-screen-xl mx-auto mt-4">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
+            {loadError}
+          </div>
+        </div>
+      ) : null}
 
       {/* Banner */}
       <Slideshow /> {/* Assuming you have a Slideshow component */}
