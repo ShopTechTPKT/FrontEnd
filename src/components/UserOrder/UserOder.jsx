@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getOrdersByUser } from "../../apis/orderApi";
 import OrderDetailModal from "./OrderDetailModal";
+import ProductGridSkeleton from "../ui/ProductGridSkeleton";
+import StatusNotice from "../ui/StatusNotice";
+import EmptyState from "../ui/EmptyState";
+import Button from "../ui/Button";
 
 const UserOrders = ({ userId }) => {
   const { t } = useTranslation();
@@ -11,20 +15,21 @@ const UserOrders = ({ userId }) => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const orderData = await getOrdersByUser(userId);
-        setOrders(orderData);
-      } catch (err) {
-        setError("Không thể tải danh sách đơn hàng");
-        console.error("Error fetching orders:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const orderData = await getOrdersByUser(userId);
+      setOrders(orderData);
+    } catch (err) {
+      setError("Không thể tải danh sách đơn hàng");
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (userId) {
       fetchOrders();
     }
@@ -95,17 +100,22 @@ const UserOrders = ({ userId }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span className="ml-2">Đang tải...</span>
+      <div className="py-6">
+        <ProductGridSkeleton count={4} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500">{error}</p>
+      <div className="py-6">
+        <StatusNotice
+          tone="error"
+          title="Không tải được đơn hàng"
+          message={error}
+          actionText="Thử lại"
+          onAction={fetchOrders}
+        />
       </div>
     );
   }
@@ -113,7 +123,7 @@ const UserOrders = ({ userId }) => {
   if (orders.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Bạn chưa có đơn hàng nào.</p>
+        <EmptyState title="Bạn chưa có đơn hàng nào." />
       </div>
     );
   }
@@ -176,50 +186,56 @@ const UserOrders = ({ userId }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button
+                      <Button
                         onClick={() => handleViewOrder(order.id)}
-                        className="text-blue-600 hover:text-blue-900"
+                        variant="ghost"
+                        size="sm"
                         title={t("my_order.view_details")}
+                        icon={
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        }
                       >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </button>
+                      </Button>
 
-                      <button
-                        className="text-green-600 hover:text-green-900"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         title={t("my_order.download_invoice")}
+                        icon={
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                        }
                       >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>

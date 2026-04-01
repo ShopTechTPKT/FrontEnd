@@ -22,7 +22,6 @@ import logo7 from "../../assets/images/logo/logo_gigabytes.svg";
 import CardNews from "../info/CardNews";
 import TestimonialSlider from "../info/TestimonialSlider";
 import HeroSearchSection from "../HeroSearchSection";
-import Loading from "../Loading";
 
 // import product1 from "../../assets/images/banner.png";
 // import product2 from "../../assets/images/banner.png";
@@ -31,6 +30,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getHomeProducts } from "../../apis/productApi";
 import { useTranslation } from 'react-i18next';
+import StatusNotice from "../ui/StatusNotice";
+import ProductGridSkeleton from "../ui/ProductGridSkeleton";
 
 const ID_CUSTOM_BUILD = Array.from({ length: 35 - 18 + 1 }, (_, i) => i + 18);
 const ID_LAPTOP = Array.from({ length: 7 }, (_, i) => i + 45);
@@ -200,7 +201,9 @@ function Content() {
   if (loading) {
     return (
       <div className="pt-4 min-h-screen">
-        <Loading fullScreen={false} size="lg" text="Đang tải sản phẩm..." className="py-20" />
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-6">
+          <ProductGridSkeleton count={8} />
+        </div>
       </div>
     );
   }
@@ -221,9 +224,7 @@ function Content() {
 
       {loadError ? (
         <div className="max-w-screen-xl mx-auto mt-4">
-          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">
-            {loadError}
-          </div>
+          <StatusNotice tone="warning" message={loadError} />
         </div>
       ) : null}
 

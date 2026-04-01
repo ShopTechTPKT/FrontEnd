@@ -3,6 +3,8 @@ import { ImageOff, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import axiosInstance from '../../custom/axios';
 import { useToast } from '../../components/Toast';
+import EmptyState from '../../components/ui/EmptyState';
+import Button from '../../components/ui/Button';
 
 // Simplified CustomerTable - read-only with search functionality
 const CustomerTable = memo(
@@ -111,15 +113,13 @@ const CustomerTable = memo(
         {/* Empty States - Modern design */}
         {customers.length === 0 && (
           <div className={`flex flex-col justify-center items-center h-64 rounded-lg ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50'} ${currentTheme.emptyState}`}>
-            <ImageOff className="mb-3" size={48} />
-            <span className="text-lg font-medium">{t('admin.khng_tm_thy_khch')}</span>
+            <EmptyState title={t('admin.khng_tm_thy_khch')} className="py-0" />
           </div>
         )}
 
         {customers.length > 0 && filteredCustomers.length === 0 && (
           <div className={`flex flex-col justify-center items-center h-64 rounded-lg ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50'} ${currentTheme.emptyState}`}>
-            <ImageOff className="mb-3" size={48} />
-            <span className="text-lg font-medium">{t('remaining.khong_tim_thay_khach_hang_phu_hop')}</span>
+            <EmptyState title={t('remaining.khong_tim_thay_khach_hang_phu_hop')} className="py-0" />
           </div>
         )}
 
@@ -183,16 +183,13 @@ const CustomerTable = memo(
                             }`}>
                               {customer.status || 'ACTIVE'}
                             </span>
-                            <button
+                            <Button
                               onClick={() => setEditingStatus({ ...editingStatus, [customerKey]: true })}
-                              className={`text-xs px-2 py-1 rounded hover:opacity-80 transition ${
-                                theme === 'dark' 
-                                  ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' 
-                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                              }`}
+                              variant="ghost"
+                              size="sm"
                             >
                               Sửa
-                            </button>
+                            </Button>
                           </div>
                         );
                       })()}

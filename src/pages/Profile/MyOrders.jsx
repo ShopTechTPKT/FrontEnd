@@ -5,6 +5,10 @@ import {
   getUserOrdersWithDetails,
   getOrderProductDetails,
 } from "../../apis/userApi";
+import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
+import StatusNotice from "../../components/ui/StatusNotice";
+import EmptyState from "../../components/ui/EmptyState";
+import Button from "../../components/ui/Button";
 
 function MyOrders() {
   const { t } = useTranslation();
@@ -14,39 +18,36 @@ function MyOrders() {
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [orderDetails, setOrderDetails] = useState(null);
+  const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+
+      if (!userId) {
+        console.error("User ID not found in user object:", user);
+        setError("User ID not found");
+        setLoading(false);
+        return;
+      }
+
+      // Call API to get user orders with details
+      const response = await getUserOrdersWithDetails(userId);
+      setOrders(response || []);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("Failed to load orders");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        // Get userId from multiple possible fields (id, customerID, customerId, userId)
-        const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
-        
-        if (!userId) {
-          console.error("User ID not found in user object:", user);
-          setError("User ID not found");
-          setLoading(false);
-          return;
-        }
-
-        // Call API to get user orders with details
-        const response = await getUserOrdersWithDetails(userId);
-        setOrders(response || []);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError("Failed to load orders");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Check if user exists and has an ID
-    const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
     if (userId) {
       fetchOrders();
     }
-  }, [user]);
+  }, [userId]);
 
   const handleViewDetails = async orderId => {
     try {
@@ -68,16 +69,22 @@ function MyOrders() {
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-600">Loading...</p>
+      <div className="py-6">
+        <ProductGridSkeleton count={4} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-        {error}
+      <div className="py-6">
+        <StatusNotice
+          tone="error"
+          title="Không tải được đơn hàng"
+          message={error}
+          actionText="Thử lại"
+          onAction={fetchOrders}
+        />
       </div>
     );
   }
@@ -85,10 +92,11 @@ function MyOrders() {
   if (orders.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-        <p className="text-2xl font-light text-gray-900 mb-2">No Orders Yet</p>
-        <p className="text-gray-600">
-          You haven't placed any orders yet. Start shopping now!
-        </p>
+        <EmptyState
+          title="No Orders Yet"
+          description="You haven't placed any orders yet. Start shopping now!"
+          className="py-0"
+        />
       </div>
     );
   }
@@ -165,24 +173,26 @@ function MyOrders() {
                 </div>
 
                 <div className="flex gap-3">
-                  <button
+                  <Button
                     onClick={() => handleViewDetails(order.id)}
-                    className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition text-sm font-medium"
+                    variant="primary"
+                    size="sm"
                   >
                     {selectedOrder === order.id
                       ? "Hide Details"
                       : "View Details"}
-                  </button>
+                  </Button>
                   {(order.status === "SHIPPED" ||
                     order.status === "shipped") && (
-                    <button
+                    <Button
                       onClick={() =>
                         (window.location.href = `/profile/orders/tracking/${order.id}`)
                       }
-                      className="px-4 py-2 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
+                      variant="outline"
+                      size="sm"
                     >
                       Track Order
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

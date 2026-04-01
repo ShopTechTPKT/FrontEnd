@@ -1,6 +1,10 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import Button from '../../components/ui/Button';
+import StatusNotice from '../../components/ui/StatusNotice';
+import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
+import EmptyState from '../../components/ui/EmptyState';
 
 // Ánh xạ categoryID với tên hãng
 const CATEGORY_BRAND_MAPPING = {
@@ -459,28 +463,27 @@ const LaptopTable = memo(
     return (
       <div className={`p-6 ${currentTheme.container}`}>
         {error && (
-          <div className="bg-red-600 text-white p-3 rounded-lg mb-4 flex items-center">
-            <AlertCircle size={20} className="mr-2" />
-            {error}
-            <button
-              className="ml-auto text-white hover:text-gray-200"
-              onClick={() => setError(null)}
-            >
-              ✕
-            </button>
+          <div className="mb-4">
+            <StatusNotice
+              tone="error"
+              title="Không thể xử lý dữ liệu laptop"
+              message={error}
+              actionText="Đóng"
+              onAction={() => setError(null)}
+            />
           </div>
         )}
 
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-center">{t('admin.danh_sch_my_tnh')}</h2>
           <div className="flex items-center space-x-4">
-            <button
+            <Button
               onClick={handleAdd}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${currentTheme.buttonPrimary}`}
+              variant="primary"
+              icon={<Plus size={18} />}
             >
-              <Plus size={18} />
               <span>{t('admin.thm')}</span>
-            </button>
+            </Button>
             <div className="relative w-64">
               <input
                 type="text"
@@ -498,23 +501,20 @@ const LaptopTable = memo(
         </div>
 
         {isLoading && localComputers.length === 0 && (
-          <div className={`flex justify-center items-center h-64 ${currentTheme.secondaryText}`}>
-            <Loader2 className="animate-spin mr-2" size={24} />
-            <span>{t('admin.ang_ti_d_liu')}</span>
+          <div className="py-4">
+            <ProductGridSkeleton count={4} />
           </div>
         )}
 
         {!isLoading && localComputers.length === 0 && (
-          <div className={`flex justify-center items-center h-64 ${currentTheme.emptyState}`}>
-            <ImageOff className="mr-2" size={24} />
-            <span>{t('admin.khng_tm_thy_my')}</span>
+          <div className={`h-64 flex items-center justify-center ${currentTheme.emptyState}`}>
+            <EmptyState title={t('admin.khng_tm_thy_my')} className="py-0" />
           </div>
         )}
 
         {!isLoading && localComputers.length > 0 && filteredComputers.length === 0 && (
-          <div className={`flex justify-center items-center h-64 ${currentTheme.emptyState}`}>
-            <ImageOff className="mr-2" size={24} />
-            <span>{t('remaining.no_pc_match')}</span>
+          <div className={`h-64 flex items-center justify-center ${currentTheme.emptyState}`}>
+            <EmptyState title={t('remaining.no_pc_match')} className="py-0" />
           </div>
         )}
 
@@ -572,13 +572,13 @@ const LaptopTable = memo(
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex space-x-2">
-                        <button
+                        <Button
                           onClick={() => handleEdit(computer)}
-                          className={`transition-colors ${currentTheme.buttonIcon}`}
+                          variant="ghost"
+                          size="sm"
+                          icon={<Pencil size={16} />}
                           title={t('admin.chnh_sa')}
-                        >
-                          <Pencil size={16} />
-                        </button>
+                        />
                       </div>
                     </td>
                   </tr>

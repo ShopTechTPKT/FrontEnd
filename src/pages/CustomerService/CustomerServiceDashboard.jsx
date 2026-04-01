@@ -10,6 +10,8 @@ import ChatSidebar from "../../components/Chat/ChatSidebar";
 import ChatWindow from "../../components/Chat/ChatWindow";
 import ScheduleForm from "../../components/Schedule/ScheduleForm";
 import AppointmentBookingForm from "../../components/AppointmentBookingForm"; // Import form mới
+import StatusNotice from "../../components/ui/StatusNotice";
+import Button from "../../components/ui/Button";
 
 const CustomerServiceDashboard = () => {
   const API_URL = import.meta.env.VITE_API_URL || "/api";
@@ -30,6 +32,7 @@ const CustomerServiceDashboard = () => {
   const [input, setInput] = useState("");
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
+  const [sessionLoadError, setSessionLoadError] = useState("");
 
   // State quản lý Modal
   const [showScheduleForm, setShowScheduleForm] = useState(false); // Form Lịch trình (Internal/Detail)
@@ -42,8 +45,10 @@ const CustomerServiceDashboard = () => {
     try {
       const { data } = await axios.get(`${API_URL}/chat/active`);
       setSessions(Array.isArray(data) ? data : []);
+      setSessionLoadError("");
     } catch (err) {
       console.error("❌ Error loading sessions:", err);
+      setSessionLoadError("Không tải được danh sách hội thoại. Vui lòng thử lại.");
     }
   }, [API_URL]);
 
@@ -215,70 +220,88 @@ const CustomerServiceDashboard = () => {
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
               {/* Nút Đặt lịch hẹn (Booking Form) */}
-              <button
+              <Button
                 onClick={() => setShowAppointmentForm(true)}
-                className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2 shadow-sm"
+                variant="primary"
+                icon={
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                }
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
                 {t("dashboard.btn_book_appointment")}
-              </button>
+              </Button>
 
               {/* Nút Lịch trình (Schedule Form - cho session hiện tại) */}
-              <button
+              <Button
                 onClick={() => setShowScheduleForm(true)}
-                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center gap-2 border border-purple-200 shadow-sm"
+                variant="outline"
+                icon={
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                }
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
                 {t("dashboard.btn_schedule")}
-              </button>
+              </Button>
 
               {/* Nút Hỏi đáp sản phẩm */}
-              <button
+              <Button
                 onClick={() => navigate("/products")}
-                className="bg-white hover:bg-purple-50 text-purple-700 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center gap-2 border border-purple-200 shadow-sm"
+                variant="outline"
+                icon={
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 10h8M8 14h5M5 20l2-3h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v13z"
+                    />
+                  </svg>
+                }
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 10h8M8 14h5M5 20l2-3h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v13z"
-                  />
-                </svg>
                 Hỏi đáp sản phẩm
-              </button>
+              </Button>
             </div>
           </div>
         </div>
+
+        {sessionLoadError ? (
+          <div className="px-6 pt-4">
+            <StatusNotice
+              tone="warning"
+              title="Mất kết nối dữ liệu"
+              message={sessionLoadError}
+              actionText="Thử lại"
+              onAction={loadSessions}
+            />
+          </div>
+        ) : null}
 
         {/* Chat Area */}
         {selectedSession ? (

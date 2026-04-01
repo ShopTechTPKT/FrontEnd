@@ -3,12 +3,16 @@ import { FaStar, FaRegStar, FaThumbsUp, FaReply, FaFilter, FaSearch, FaEye, FaEd
 import { useTranslation } from 'react-i18next';
 import { fetchReviews, updateReview } from '../../apis/adminApi';
 import { useToast } from '../../components/Toast';
+import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
+import StatusNotice from '../../components/ui/StatusNotice';
+import EmptyState from '../../components/ui/EmptyState';
+import Button from '../../components/ui/Button';
 
 const ReviewsTable = ({ theme }) => {
   const { t } = useTranslation();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [_error, setError] = useState(null);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRating, setFilterRating] = useState('all');
   const [selectedReview, setSelectedReview] = useState(null);
@@ -33,6 +37,7 @@ const ReviewsTable = ({ theme }) => {
       const data = await fetchReviews();
       console.log('Reviews data:', data);
       setReviews(data);
+      setError(null);
     } catch (error) {
       console.error('Error fetching reviews:', error);
       setError(error.message);
@@ -111,8 +116,8 @@ const ReviewsTable = ({ theme }) => {
   if (loading) {
     return (
       <div className={`p-6 rounded-lg ${cardBg} border ${borderColor}`}>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <div className="py-4">
+          <ProductGridSkeleton count={4} />
         </div>
       </div>
     );
@@ -129,6 +134,16 @@ const ReviewsTable = ({ theme }) => {
           {t('admin.reviews_subtitle') || 'Quản lý và phản hồi đánh giá sản phẩm'}
         </p>
       </div>
+
+      {error ? (
+        <StatusNotice
+          tone="error"
+          title="Không tải được dữ liệu reviews"
+          message={error}
+          actionText="Thử lại"
+          onAction={fetchReviewsData}
+        />
+      ) : null}
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -258,13 +273,14 @@ const ReviewsTable = ({ theme }) => {
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center gap-2">
-                      <button
+                      <Button
                         onClick={() => handleReply(review)}
-                        className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                        variant="ghost"
+                        size="sm"
+                        icon={<FaReply />}
                       >
-                        <FaReply />
                         {t('admin.reply_button') || 'Phản hồi'}
-                      </button>
+                      </Button>
                       {/* Ẩn nút xóa theo yêu cầu */}
                       {/* <button
                         onClick={() => handleDeleteReview(review.id)}
@@ -283,13 +299,11 @@ const ReviewsTable = ({ theme }) => {
 
         {filteredReviews.length === 0 && (
           <div className="text-center py-8">
-            <FaStar className="mx-auto text-gray-400 text-4xl mb-4" />
-            <h3 className={`text-lg font-medium ${textColor} mb-2`}>
-              {t('admin.no_reviews_found') || 'Không tìm thấy review nào'}
-            </h3>
-            <p className={secondaryTextColor}>
-              {t('admin.try_adjust_filters') || 'Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm'}
-            </p>
+            <EmptyState
+              title={t('admin.no_reviews_found') || 'Không tìm thấy review nào'}
+              description={t('admin.try_adjust_filters') || 'Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm'}
+              className="py-2"
+            />
           </div>
         )}
       </div>
@@ -353,28 +367,22 @@ const ReviewsTable = ({ theme }) => {
 
             {/* Buttons */}
             <div className="flex justify-end gap-3">
-              <button
+              <Button
                 onClick={handleCloseReplyModal}
                 disabled={isSubmittingReply}
-                className={`px-5 py-2 rounded-lg font-medium transition-colors ${
-                  theme === 'dark' 
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                } ${isSubmittingReply ? 'opacity-50 cursor-not-allowed' : ''}`}
+                variant="outline"
               >
                 {t('common.cancel') || t('admin.cancel') || 'Hủy'}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSubmitReply}
                 disabled={isSubmittingReply || !replyText.trim()}
-                className={`px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors ${
-                  isSubmittingReply || !replyText.trim() ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                variant="primary"
               >
                 {isSubmittingReply
                   ? t('admin.sending') || 'Đang gửi...'
                   : t('admin.send_reply') || 'Gửi phản hồi'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

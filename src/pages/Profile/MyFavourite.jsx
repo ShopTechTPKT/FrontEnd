@@ -5,6 +5,10 @@ import { UserContext } from "../../context/UserContext";
 import { getUserFavorites, removeFromFavorites } from "../../apis/userApi";
 import { addToCart } from "../../utils/redux/cartSlice";
 import notify from "../../utils/notify";
+import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
+import StatusNotice from "../../components/ui/StatusNotice";
+import EmptyState from "../../components/ui/EmptyState";
+import Button from "../../components/ui/Button";
 
 function MyFavourite() {
   const { user } = useContext(UserContext);
@@ -13,6 +17,7 @@ function MyFavourite() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
 
   // Helper: lấy userId từ localStorage
   const getCurrentUserId = () => {
@@ -27,38 +32,33 @@ function MyFavourite() {
     }
   };
 
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        setLoading(true);
-        // Get userId from multiple possible fields (id, customerID, customerId, userId)
-        const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
-        
-        if (!userId) {
-          console.error("User ID not found in user object:", user);
-          setError("User ID not found");
-          setLoading(false);
-          return;
-        }
-
-        // Call API to get user favorites
-        const response = await getUserFavorites(userId);
-        setFavorites(response || []);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching favorites:", err);
-        setError("Failed to load favorites");
-      } finally {
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true);
+      if (!userId) {
+        console.error("User ID not found in user object:", user);
+        setError("User ID not found");
         setLoading(false);
+        return;
       }
-    };
 
-    // Check if user exists and has an ID
-    const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
+      // Call API to get user favorites
+      const response = await getUserFavorites(userId);
+      setFavorites(response || []);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching favorites:", err);
+      setError("Failed to load favorites");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (userId) {
       fetchFavorites();
     }
-  }, [user]);
+  }, [userId]);
 
   const handleRemoveFavorite = async favoriteId => {
     try {
@@ -66,7 +66,7 @@ function MyFavourite() {
       setFavorites(favorites.filter(fav => fav.id !== favoriteId));
     } catch (err) {
       console.error("Error removing favorite:", err);
-      alert("Failed to remove favorite");
+      notify.error("Lỗi khi xóa khỏi yêu thích!");
     }
   };
 
@@ -101,16 +101,22 @@ function MyFavourite() {
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-600">Loading...</p>
+      <div className="py-6">
+        <ProductGridSkeleton count={6} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-        {error}
+      <div className="py-6">
+        <StatusNotice
+          tone="error"
+          title="Không tải được danh sách yêu thích"
+          message={error}
+          actionText="Thử lại"
+          onAction={fetchFavorites}
+        />
       </div>
     );
   }
@@ -118,19 +124,19 @@ function MyFavourite() {
   if (favorites.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-        <p className="text-2xl font-light bg-gradient-to-r from-gray-900 to-purple-950 bg-clip-text text-transparent mb-2">
-          No Favourites Yet
-        </p>
-        <p className="text-gray-600">
-          You haven't added any favorite products yet. Start exploring!
-        </p>
+        <EmptyState
+          title="No Favourites Yet"
+          description="You haven't added any favorite products yet. Start exploring!"
+          className="py-0"
+        />
         <div className="mt-6 flex justify-center">
-          <button
+          <Button
             onClick={() => navigate("/")}
-            className="px-6 py-3 bg-gradient-to-r from-gray-900 to-purple-950 text-white font-semibold rounded-lg hover:from-gray-800 hover:to-purple-900 transition-all duration-200 shadow-sm"
+            variant="primary"
+            size="lg"
           >
             Khám phá sản phẩm
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -254,27 +260,30 @@ function MyFavourite() {
 
               {/* Action Buttons */}
               <div className="flex flex-col gap-2 mt-auto">
-                <button
+                <Button
                   onClick={() => handleAddToCart(product.productId, product)}
-                  className="w-full px-4 py-2.5 bg-gradient-to-r from-gray-900 to-purple-950 text-white font-semibold rounded-lg hover:from-gray-800 hover:to-purple-900 active:scale-95 transition-all duration-200 text-sm"
+                  className="w-full justify-center"
+                  variant="primary"
                   title="Add to cart"
                 >
                   Add to Cart
-                </button>
+                </Button>
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={() => handleViewProduct(product.productId)}
-                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-gray-900 to-purple-950 text-white font-semibold rounded-lg hover:from-gray-800 hover:to-purple-900 active:scale-95 transition-all duration-200 text-sm"
+                    className="flex-1 justify-center"
+                    variant="primary"
                   >
                     View
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleRemoveFavorite(product.id)}
-                    className="flex-1 px-4 py-2.5 border-2 border-gray-200 text-gray-900 font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-50 active:scale-95 transition-all duration-200 text-sm"
+                    className="flex-1 justify-center"
+                    variant="outline"
                     title="Remove from favorites"
                   >
                     Remove
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -6,12 +6,17 @@ import { getFavoritesByUser, removeFavorite, countFavoritesByUser } from "../../
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import ProductCard from "../../components/product/ProductCard";
+import Button from "../../components/ui/Button";
+import EmptyState from "../../components/ui/EmptyState";
+import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
+import StatusNotice from "../../components/ui/StatusNotice";
 
 const Favorites = () => {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favoriteCount, setFavoriteCount] = useState(0);
+  const [loadError, setLoadError] = useState("");
 
   const getCurrentUserId = () => {
     try {
@@ -38,6 +43,7 @@ const Favorites = () => {
   const fetchFavorites = async () => {
     try {
       setLoading(true);
+      setLoadError("");
       const [data, count] = await Promise.all([
         getFavoritesByUser(userId),
         countFavoritesByUser(userId)
@@ -46,6 +52,7 @@ const Favorites = () => {
       setFavoriteCount(count || 0);
     } catch {
       toast.error("Cannot load favorites");
+      setLoadError("Không load được danh sách yêu thích. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -69,12 +76,9 @@ const Favorites = () => {
           <FaHeart className="text-6xl text-gray-300 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-700 mb-2">Please login</h2>
           <p className="text-gray-500 mb-6">You need to login to view favorites</p>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
-          >
+          <Button onClick={() => navigate("/login")} variant="primary" size="lg">
             Login now
-          </button>
+          </Button>
         </div>
         <Footer />
       </div>
@@ -108,23 +112,38 @@ const Favorites = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12">
+        {loadError ? (
+          <div className="mb-6">
+            <StatusNotice
+              tone="warning"
+              title="Mất kết nối dữ liệu"
+              message={loadError}
+              actionText="Thử lại"
+              onAction={fetchFavorites}
+            />
+          </div>
+        ) : null}
+
         {loading ? (
-          <div className="flex items-center justify-center py-32">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600"></div>
+          <div className="py-6">
+            <ProductGridSkeleton count={8} />
           </div>
         ) : favorites.length === 0 ? (
           <div className="text-center py-32">
-            <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FaHeart className="text-6xl text-gray-300" />
-            </div>
-            <h3 className="text-3xl font-bold text-gray-800 mb-3">No favorite products yet</h3>
-            <p className="text-gray-600 mb-8 text-lg">Start adding products to your favorites</p>
-            <button
+            <EmptyState
+              title="No favorite products yet"
+              description="Start adding products to your favorites"
+              className="py-0"
+            />
+            <div className="mt-8">
+              <Button
               onClick={() => navigate("/products")}
-              className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all transform hover:scale-105"
+              variant="primary"
+              size="lg"
             >
-              Explore Products
-            </button>
+                Explore Products
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

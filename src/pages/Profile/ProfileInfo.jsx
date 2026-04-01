@@ -1,57 +1,79 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback } from "react";
 import { UserContext } from "../../context/UserContext";
-import { useTranslation } from 'react-i18next';
 import { getUserInfo } from "../../apis/userApi";
+import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
+import StatusNotice from "../../components/ui/StatusNotice";
+import EmptyState from "../../components/ui/EmptyState";
 
 function ProfileInfo() {
-    const { t } = useTranslation();
     const { user } = useContext(UserContext);
     const [userInfo, setUserInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
+
+    const fetchUserInfo = useCallback(async () => {
+        try {
+            setLoading(true);
+            if (!userId) {
+                console.error("User ID not found in user object:", user);
+                setError("User ID not found");
+                setLoading(false);
+                return;
+            }
+
+            // Call API to get full user info from database
+            const response = await getUserInfo(userId);
+            setUserInfo(response);
+            setError(null);
+        } catch (err) {
+            console.error("Error fetching user info:", err);
+            setError("Failed to load user information");
+        } finally {
+            setLoading(false);
+        }
+    }, [user, userId]);
 
     useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                setLoading(true);
-                // Get userId from multiple possible fields (id, customerID, customerId, userId)
-                const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
-                
-                if (!userId) {
-                    console.error("User ID not found in user object:", user);
-                    setError("User ID not found");
-                    setLoading(false);
-                    return;
-                }
-
-                // Call API to get full user info from database
-                const response = await getUserInfo(userId);
-                setUserInfo(response);
-                setError(null);
-            } catch (err) {
-                console.error("Error fetching user info:", err);
-                setError("Failed to load user information");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        // Check if user exists and has an ID
-        const userId = user?.id || user?.customerID || user?.customerId || user?.userId;
         if (userId) {
             fetchUserInfo();
         }
-    }, [user]);
+    }, [userId, fetchUserInfo]);
 
     if (loading) {
-        return <div className="text-center py-12"><p className="text-gray-600">Loading...</p></div>;
+        return (
+            <div className="py-6">
+                <ProductGridSkeleton count={3} />
+            </div>
+        );
     }
 
     if (error) {
-        return <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">{error}</div>;
+        return (
+            <div className="py-6">
+                <StatusNotice
+                    tone="error"
+                    title="Không tải được thông tin cá nhân"
+                    message={error}
+                    actionText="Thử lại"
+                    onAction={fetchUserInfo}
+                />
+            </div>
+        );
     }
 
     const info = userInfo || user;
+    if (!info) {
+        return (
+            <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+                <EmptyState
+                    title="Không có dữ liệu người dùng"
+                    description="Vui lòng đăng nhập lại để xem thông tin tài khoản."
+                    className="py-0"
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">

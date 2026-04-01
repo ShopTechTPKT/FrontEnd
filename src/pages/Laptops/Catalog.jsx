@@ -21,6 +21,9 @@ import ProductCardList from "../../components/product/catalog/ProductCardList";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAllProducts } from "../../apis/productApi";
 import { useTranslation } from 'react-i18next';
+import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
+import EmptyState from "../../components/ui/EmptyState";
+import Button from "../../components/ui/Button";
 
 /** Sort toàn bộ danh sách trước khi phân trang (tránh sort chỉ trong 1 trang). */
 function sortCatalogProducts(products, sortOption) {
@@ -337,27 +340,27 @@ export default function Catalog() {
       {/* Phần header danh sách */}
       <div className="py-4 max-w-screen-xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
         <div className="">
-          <button
-            type="button"
-            className="w-full py-2.5 px-4 text-base font-semibold text-gray-600 hover:text-violet-700
-            transition-all duration-300 ease-in-out flex items-center justify-start md:justify-start
-            hover:bg-violet-50/60 rounded-lg border border-transparent hover:border-violet-100 cursor-pointer"
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-gray-600 hover:text-violet-700"
             onClick={() => navigate("/")}
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            }
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
             {t('common.back')}
-          </button>
+          </Button>
         </div>
 
         <div className="px-2 py-1 flex justify-center md:justify-start text-sm text-gray-500 order-first md:order-none">
@@ -435,19 +438,9 @@ export default function Catalog() {
           <div className="flex-grow">
     {/* Loading Indicator */}
     {loading && (
-        <div className="flex flex-col items-center justify-center py-20 min-h-[400px]">
-            {/* Spinner */}
-            <div className="relative w-16 h-16 mb-4">
-                <div className="absolute top-0 left-0 w-full h-full border-4 border-purple-200 rounded-full"></div>
-                <div className="absolute top-0 left-0 w-full h-full border-4 border-purple-950 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <p className="text-lg font-semibold text-purple-950 animate-pulse">
-                Đang tải sản phẩm...
-            </p>
-            <p className="text-sm text-gray-500 mt-2">
-                Vui lòng đợi trong giây lát
-            </p>
-        </div>
+      <div className="py-6 min-h-[400px]">
+        <ProductGridSkeleton count={8} />
+      </div>
     )}
 
     {/* Dạng Grid */}
@@ -459,32 +452,10 @@ export default function Catalog() {
                     <ProductCard key={product.id || product.productID} product={product} /> 
                 ))
             ) : (
-                // Hiển thị thông báo nếu không có sản phẩm trong chế độ Grid
-                <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
-                    {/* Icon */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-16 w-16 mb-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M9.75 9.75L14.25 14.25M14.25 9.75L9.75 14.25M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
-                        />
-                    </svg>
-
-                    {/* Thông báo */}
-                    <p className="text-lg font-semibold text-gray-800">
-                        {t("common.catalog_no_products")}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-2 max-w-md text-center">
-                        {t("common.catalog_no_products_hint")}
-                    </p>
-                </div>
+              <EmptyState
+                title={t("common.catalog_no_products")}
+                description={t("common.catalog_no_products_hint")}
+              />
             )}
         </div>
     )}
@@ -498,32 +469,10 @@ export default function Catalog() {
                     <ProductCardList key={product.id || product.productID} product={product} />
                 ))
             ) : (
-                // HIỂN THỊ THÔNG BÁO TƯƠNG TỰ TRONG CHẾ ĐỘ LIST
-                <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
-                    {/* Icon */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-16 w-16 mb-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M9.75 9.75L14.25 14.25M14.25 9.75L9.75 14.25M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
-                        />
-                    </svg>
-
-                    {/* Thông báo */}
-                    <p className="text-lg font-semibold text-gray-800">
-                        {t("common.catalog_no_products")}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-2 max-w-md text-center">
-                        {t("common.catalog_no_products_hint")}
-                    </p>
-                </div>
+              <EmptyState
+                title={t("common.catalog_no_products")}
+                description={t("common.catalog_no_products_hint")}
+              />
             )}
         </div>
     )}

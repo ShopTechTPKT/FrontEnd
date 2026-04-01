@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import axiosInstance from "../../custom/axios";
 import { useNavigate } from "react-router-dom";
+import Button from "../../components/ui/Button";
+import StatusNotice from "../../components/ui/StatusNotice";
 
 const defaultFilters = {
   actorEmail: "",
@@ -19,6 +21,7 @@ export default function AuditLogsPage() {
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
@@ -38,6 +41,10 @@ export default function AuditLogsPage() {
       const response = await axiosInstance.get(`/audit-logs?${queryString}`);
       setData(response.data?.content || []);
       setTotalPages(response.data?.totalPages || 0);
+      setError("");
+    } catch (err) {
+      console.error("Error fetching audit logs:", err);
+      setError("Không tải được dữ liệu nhật ký kiểm toán. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -97,21 +104,31 @@ export default function AuditLogsPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 onClick={() => navigate("/admin")}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                variant="outline"
               >
                 Quay lại Admin
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={exportCsv}
-                className="rounded-lg bg-gray-900 px-4 py-2 text-white text-sm hover:bg-gray-800 transition-colors"
+                variant="primary"
               >
                 Xuất CSV
-              </button>
+              </Button>
             </div>
           </div>
         </div>
+
+        {error ? (
+          <StatusNotice
+            tone="error"
+            title="Lỗi tải dữ liệu"
+            message={error}
+            actionText="Thử lại"
+            onAction={fetchLogs}
+          />
+        ) : null}
 
         <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
@@ -154,18 +171,20 @@ export default function AuditLogsPage() {
               value={filters.to}
               onChange={(e) => onChangeFilter("to", e.target.value)}
             />
-            <button
+            <Button
               onClick={() => setFilters(defaultFilters)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50 transition-colors"
+              variant="outline"
+              size="sm"
             >
               Đặt lại bộ lọc
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={fetchLogs}
-              className="rounded-lg border border-gray-900 px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 transition-colors"
+              variant="ghost"
+              size="sm"
             >
               Áp dụng
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -222,23 +241,25 @@ export default function AuditLogsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <button
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+          <Button
+            variant="outline"
+            size="sm"
             disabled={page <= 0}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
           >
             Trước
-          </button>
+          </Button>
           <span className="text-sm text-gray-700">
             Trang {page + 1} / {Math.max(totalPages, 1)}
           </span>
-          <button
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+          <Button
+            variant="outline"
+            size="sm"
             disabled={page + 1 >= totalPages}
             onClick={() => setPage((p) => p + 1)}
           >
             Sau
-          </button>
+          </Button>
           <select
             className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
             value={size}

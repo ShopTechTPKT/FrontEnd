@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaEdit, FaSearch, FaFilter, FaTicketAlt, FaCalendarAlt, FaPercent, FaToggleOn, FaToggleOff, FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../components/Toast';
+import Button from '../../components/ui/Button';
+import StatusNotice from '../../components/ui/StatusNotice';
+import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
+import EmptyState from '../../components/ui/EmptyState';
 import { 
   fetchDiscounts, 
   fetchProducts, 
@@ -28,7 +32,7 @@ const DiscountsTable = ({ theme }) => {
   const [discounts, setDiscounts] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [_error, setError] = useState(null);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showForm, setShowForm] = useState(false);
@@ -99,6 +103,7 @@ const DiscountsTable = ({ theme }) => {
 
       console.log('Discounts data:', data);
       setDiscounts(data);
+      setError(null);
     } catch (error) {
       console.error('Error fetching discounts:', error);
       setError(error.message);
@@ -446,8 +451,8 @@ const DiscountsTable = ({ theme }) => {
   if (loading) {
     return (
       <div className={`p-6 rounded-lg ${cardBg} border ${borderColor}`}>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <div className="py-4">
+          <ProductGridSkeleton count={4} />
         </div>
       </div>
     );
@@ -467,22 +472,34 @@ const DiscountsTable = ({ theme }) => {
             </p>
           </div>
           <div className="flex gap-2">
-            <button
+            <Button
               onClick={handleBulkDeactivateExpired}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              variant="primary"
+              icon={<FaCalendarAlt />}
             >
-              <FaCalendarAlt />
               {t('admin.deactivate_expired') || 'Vô hiệu hóa hết hạn'}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setShowForm(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              variant="primary"
+              icon={<FaPlus />}
             >
-              <FaPlus />
               {t('admin.add_discount') || 'Thêm Discount'}
-            </button>
+            </Button>
           </div>
         </div>
+
+        {error ? (
+          <div className="mb-4">
+            <StatusNotice
+              tone="error"
+              title="Không tải được dữ liệu discount"
+              message={error}
+              actionText="Thử lại"
+              onAction={fetchDiscountsData}
+            />
+          </div>
+        ) : null}
 
         {/* View Mode Tabs */}
         <div className="flex flex-wrap gap-2 mb-4">
@@ -839,9 +856,11 @@ const DiscountsTable = ({ theme }) => {
 
         {filteredDiscounts.length === 0 && (
           <div className="text-center py-8">
-            <FaTicketAlt className="mx-auto text-gray-400 text-4xl mb-4" />
-            <h3 className={`text-lg font-medium ${textColor} mb-2`}>Không tìm thấy discount nào</h3>
-            <p className={secondaryTextColor}>Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm</p>
+            <EmptyState
+              title="Không tìm thấy discount nào"
+              description="Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm"
+              className="py-2"
+            />
           </div>
         )}
       </div>
