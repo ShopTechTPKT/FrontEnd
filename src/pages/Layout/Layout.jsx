@@ -6,9 +6,11 @@ function Layout() {
     return (
         <>
             <Header />
-            {/* Add padding-top to prevent content from being hidden behind fixed header */}
-            <main className="pt-[88px] md:pt-[108px]">
-                <Outlet></Outlet>
+            {/* Content area — uses header-height CSS var instead of magic numbers */}
+            <main className="pt-[var(--header-height)]">
+                <div className="animate-pageIn">
+                    <Outlet></Outlet>
+                </div>
             </main>
             <Footer />
             {/* Chat: dùng ChatBox toàn cục trong App.jsx — tránh 2 nút chat trùng lặp */}

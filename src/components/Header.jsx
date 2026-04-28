@@ -124,10 +124,10 @@ const Header = () => {
 
   // ── Shared style classes ───────────────────────────────────
   const navLinkClass = (active) =>
-    `px-3 py-2 rounded-lg transition-colors ${
+    `px-3 py-2 rounded-lg transition-colors font-medium ${
       active
-        ? "text-violet-700 bg-violet-50"
-        : "text-gray-700 hover:text-violet-700 hover:bg-violet-50"
+        ? "text-violet-700 bg-violet-50 border-b-2 border-violet-700"
+        : "text-gray-600 hover:text-violet-700 hover:bg-violet-50/60"
     }`;
 
   const supportLinks = getSupportLinks();
@@ -135,13 +135,13 @@ const Header = () => {
   // ── Render ─────────────────────────────────────────────────
   return (
     <header
-      className={`font-sans fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${
-        isScrolled ? "shadow-sm" : ""
+      className={`font-sans fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "shadow-md" : ""
       }`}
     >
       {/* ── Top Bar ────────────────────────────────────────── */}
       <div
-        className={`hidden md:flex bg-white text-xs items-center justify-between px-4 md:px-8 py-1.5 border-b border-gray-100 transition-all duration-300 ${
+        className={`hidden md:flex bg-white text-xs items-center justify-between px-4 md:px-8 py-1 border-b border-gray-100/80 transition-all duration-300 ${
           isScrolled ? "!hidden" : ""
         }`}
       >
@@ -165,8 +165,8 @@ const Header = () => {
 
       {/* ── Main Navigation Bar ────────────────────────────── */}
       <div
-        className={`bg-white border-b border-gray-200 transition-all duration-300 ${
-          isScrolled ? "py-2" : "py-3"
+        className={`border-b border-gray-200/80 transition-all duration-300 ${
+          isScrolled ? "py-2 bg-white/85 backdrop-blur-xl" : "py-3 bg-white"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex items-center justify-between gap-3">
@@ -243,7 +243,7 @@ const Header = () => {
               >
                 <IconCart className="w-[18px] h-[18px]" />
                 {cartQuantity > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-violet-700 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                  <span className="absolute -top-1 -right-1 bg-violet-700 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 animate-pulse-subtle">
                     {cartQuantity}
                   </span>
                 )}
@@ -269,7 +269,7 @@ const Header = () => {
               </button>
 
               {showDropdown && (
-                <div className="absolute right-0 w-60 mt-2 bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 z-10 overflow-hidden animate-fadeIn">
+                <div className="absolute right-0 w-60 mt-2 bg-white border border-gray-100 rounded-2xl shadow-lg shadow-gray-200/50 z-10 overflow-hidden animate-fadeIn">
                   {/* User Info */}
                   <div className="px-4 py-3 border-b border-gray-100">
                     <p className="text-sm font-semibold text-gray-900">

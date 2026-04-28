@@ -82,14 +82,14 @@ const Footer = () => {
     "p-2 rounded-lg flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors duration-200";
 
   return (
-    <footer className="bg-white text-gray-600 border-t border-gray-200">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-10">
+    <footer className="bg-gray-50 text-gray-600 border-t border-gray-200">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-14">
         {/* ── Newsletter ── */}
-        <div className="mb-10 text-center">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+        <div className="mb-12 text-center bg-white rounded-2xl shadow-xs border border-gray-100 p-8 sm:p-10">
+          <h3 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">
             {t("footer.newsletter.title")}
           </h3>
-          <p className="text-sm text-gray-500 mb-5">
+          <p className="text-sm text-gray-500 mb-6">
             {t("footer.newsletter.subtitle")}
           </p>
           <form
@@ -124,7 +124,7 @@ const Footer = () => {
         </div>
 
         {/* ── Link Columns ── */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.titleKey}>
               <h4 className="text-sm font-semibold text-gray-900 mb-3">
@@ -141,13 +141,15 @@ const Footer = () => {
               </ul>
             </div>
           ))}
+        </div>
 
-          {/* Contact Column */}
-          <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">
-              {t("footer.address.title")}
-            </h4>
-            <address className="not-italic text-sm space-y-2">
+        {/* ── Contact Info — Separate card ── */}
+        <div className="mb-10 bg-white rounded-2xl border border-gray-100 shadow-xs p-5 sm:p-6">
+          <h4 className="text-sm font-semibold text-gray-900 mb-3">
+            {t("footer.address.title")}
+          </h4>
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8">
+            <address className="not-italic text-sm space-y-1.5 flex-1">
               <p>{t("footer.address.street")}</p>
               <p>
                 {t("footer.address.phone")}{" "}
@@ -155,12 +157,6 @@ const Footer = () => {
                   {t("footer.address.phoneNumber")}
                 </span>
               </p>
-              <p className="font-medium">{t("footer.address.openHours")}</p>
-              <ul className="space-y-0.5 text-gray-500">
-                <li>{t("footer.address.mondayThursday")}</li>
-                <li>{t("footer.address.friday")}</li>
-                <li>{t("footer.address.saturday")}</li>
-              </ul>
               <p>
                 {t("footer.address.email")}{" "}
                 <span className="text-violet-700 font-medium">
@@ -168,11 +164,19 @@ const Footer = () => {
                 </span>
               </p>
             </address>
+            <div className="text-sm">
+              <p className="font-medium text-gray-900 mb-1.5">{t("footer.address.openHours")}</p>
+              <ul className="space-y-0.5 text-gray-500">
+                <li>{t("footer.address.mondayThursday")}</li>
+                <li>{t("footer.address.friday")}</li>
+                <li>{t("footer.address.saturday")}</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         {/* ── Bottom Bar ── */}
-        <div className="border-t border-gray-100 pt-6">
+        <div className="pt-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Social */}
             <div className="flex gap-2">
