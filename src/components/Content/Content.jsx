@@ -10,6 +10,7 @@ import CardNews from "../info/CardNews";
 import TestimonialSlider from "../info/TestimonialSlider";
 import HeroSearchSection from "../HeroSearchSection";
 import { Laptop, Monitor, Mouse, Smartphone, Tv2, Headphones } from "lucide-react";
+import RecentlyViewed from "../product/RecentlyViewed";
 
 // Brand logos
 import logo1 from "../../assets/images/logo/logo_roccat.svg";
@@ -340,6 +341,9 @@ function Content() {
           </div>
         </div>
       </section>
+
+      {/* ════ 15. Recently Viewed ════ */}
+      <RecentlyViewed />
     </div>
   );
 }
