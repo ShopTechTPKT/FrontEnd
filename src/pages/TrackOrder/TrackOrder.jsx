@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FaSearch, FaMapMarkerAlt, FaPhoneAlt, FaClock, FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import OrderMapTracking from '../../components/Orders/OrderMapTracking';
@@ -45,12 +45,12 @@ const TrackOrder = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-20">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-transparent to-purple-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 via-transparent to-violet-600/10"></div>
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center">
             <div className="text-6xl mb-4">{t('order.unknown')}</div>
             <h1 className="text-6xl font-bold mb-4">{t('order.track_your_order')}</h1>
-            <p className="text-xl text-purple-300">
+            <p className="text-xl text-violet-300">
               Enter your order details to track your shipment in real-time
             </p>
           </div>
@@ -70,7 +70,7 @@ const TrackOrder = () => {
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
                   placeholder={t('order.eg_ord2025123456')}
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-purple-600 text-lg"
+                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-violet-400 focus:border-violet-600 text-lg"
                   required
                 />
               </div>
@@ -85,7 +85,7 @@ const TrackOrder = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('common.youremailcom')}
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-400 focus:border-purple-600 text-lg"
+                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-violet-400 focus:border-violet-600 text-lg"
                   required
                 />
               </div>
@@ -94,7 +94,7 @@ const TrackOrder = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-purple-900 to-purple-950 text-white rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg disabled:opacity-50 disabled:scale-100"
+              className="w-full py-4 bg-gradient-to-r from-violet-800 to-violet-900 text-white rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg disabled:opacity-50 disabled:scale-100"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -121,13 +121,13 @@ const TrackOrder = () => {
                 </h2>
                 <div className="flex items-center gap-4 text-gray-600">
                   <div className="flex items-center gap-2">
-                    <FaMapMarkerAlt className="text-purple-600" />
+                    <FaMapMarkerAlt className="text-violet-600" />
                     <span>{trackingResult.currentLocation}</span>
                   </div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="inline-block px-6 py-3 bg-gradient-to-r from-purple-900 to-purple-950 text-white rounded-xl font-bold text-lg mb-2">
+                <div className="inline-block px-6 py-3 bg-gradient-to-r from-violet-800 to-violet-900 text-white rounded-xl font-bold text-lg mb-2">
                   {trackingResult.status}
                 </div>
                 <div className="text-gray-600 flex items-center gap-2 justify-end">
@@ -154,7 +154,7 @@ const TrackOrder = () => {
                     <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-2xl ${
                       step.completed 
                         ? step.current 
-                          ? 'bg-gradient-to-r from-purple-900 to-purple-950 shadow-lg ring-4 ring-purple-300' 
+                          ? 'bg-gradient-to-r from-violet-800 to-violet-900 shadow-lg ring-4 ring-violet-300' 
                           : 'bg-green-500'
                         : 'bg-gray-200'
                     }`}>
@@ -177,7 +177,7 @@ const TrackOrder = () => {
 
                     {/* Status Badge */}
                     {step.current && (
-                      <div className="px-4 py-2 bg-purple-100 text-purple-900 rounded-lg font-semibold">
+                      <div className="px-4 py-2 bg-violet-100 text-violet-900 rounded-lg font-semibold">
                         Current Status
                       </div>
                     )}
@@ -226,21 +226,21 @@ const TrackOrder = () => {
             <div className="text-4xl mb-4">📞</div>
             <h3 className="font-bold text-xl text-gray-900 mb-2">{t('order.call_us')}</h3>
             <p className="text-gray-600 mb-4">{t('order.monfri_9am_6pm')}</p>
-            <a href="tel:1800123456" className="text-purple-600 font-bold hover:underline">{t('order.1800123456')}</a>
+            <a href="tel:1800123456" className="text-violet-600 font-bold hover:underline">{t('order.1800123456')}</a>
           </div>
 
           <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-4xl mb-4">💬</div>
             <h3 className="font-bold text-xl text-gray-900 mb-2">{t('order.live_chat')}</h3>
             <p className="text-gray-600 mb-4">{t('order.get_instant_support')}</p>
-            <button className="text-purple-600 font-bold hover:underline">{t('order.start_chat')}</button>
+            <button className="text-violet-600 font-bold hover:underline">{t('order.start_chat')}</button>
           </div>
 
           <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-4xl mb-4">✉️</div>
             <h3 className="font-bold text-xl text-gray-900 mb-2">{t('order.email_us')}</h3>
             <p className="text-gray-600 mb-4">{t('order.well_reply_within_24h')}</p>
-            <a href="mailto:support@store.com" className="text-purple-600 font-bold hover:underline">{t('order.supportstorecom')}</a>
+            <a href="mailto:support@store.com" className="text-violet-600 font-bold hover:underline">{t('order.supportstorecom')}</a>
           </div>
         </div>
       </div>
@@ -249,10 +249,10 @@ const TrackOrder = () => {
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-4">{t('order.need_help_with_your')}</h2>
-          <p className="text-xl text-purple-300 mb-8">
+          <p className="text-xl text-violet-300 mb-8">
             Our support team is here to help you 24/7
           </p>
-          <button className="px-12 py-4 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg">{t('order.contact_support')}</button>
+          <button className="px-12 py-4 bg-gradient-to-r from-violet-700 to-violet-600 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg">{t('order.contact_support')}</button>
         </div>
       </div>
     </div>

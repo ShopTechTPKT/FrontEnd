@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+﻿import { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserContext";
@@ -611,7 +611,7 @@ function UserProfile() {
                     <button
                       className={`px-4 py-2 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 cursor-pointer ${
                         resolvedUserId
-                          ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 focus:ring-purple-500"
+                          ? "bg-gradient-to-r from-violet-700 to-violet-600 hover:opacity-90 focus:ring-violet-500"
                           : "bg-gray-400 cursor-not-allowed"
                       }`}
                       onClick={handleSaveAccountInfo}
@@ -704,7 +704,7 @@ function UserProfile() {
                           <div className="flex gap-3">
                             <button
                               onClick={handleChangePasswordSubmit}
-                              className="px-6 py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
+                              className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
                             >
                               {t("account.lu_thay_i")}
                             </button>

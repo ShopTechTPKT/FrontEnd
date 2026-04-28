@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { removeFavoriteById } from "../../services/FavoriteServices";
 import { useFavorites } from "../../hooks/useFavorites";
@@ -281,7 +281,7 @@ const UserFavorites = ({ userId: propUserId }) => {
                   <div className="flex gap-2">
                     <Link
                       to={`/product/${favorite.productId}/productAbout`}
-                      className="relative z-20 flex-1 bg-gradient-to-r from-gray-900 to-purple-950 hover:from-gray-800 hover:to-purple-900 text-white text-sm font-medium py-2.5 px-4 rounded-lg text-center transition-all"
+                      className="relative z-20 flex-1 bg-gradient-to-r from-gray-900 to-purple-950 hover:from-gray-800 hover:to-violet-900 text-white text-sm font-medium py-2.5 px-4 rounded-lg text-center transition-all"
                     >
                       {t("my_favourite.view_details")}
                     </Link>
@@ -390,7 +390,7 @@ const UserFavorites = ({ userId: propUserId }) => {
                       <div className="flex items-center gap-2 ml-4">
                         <Link
                           to={`/product/${favorite.productId}/productAbout`}
-                          className="relative z-20 bg-gradient-to-r from-gray-900 to-purple-950 hover:from-gray-800 hover:to-purple-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                          className="relative z-20 bg-gradient-to-r from-gray-900 to-purple-950 hover:from-gray-800 hover:to-violet-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
                         >
                           Xem chi tiết
                         </Link>
