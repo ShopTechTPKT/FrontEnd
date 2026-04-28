@@ -30,6 +30,8 @@ import { toast } from "react-toastify";
 import logo from "../../assets/logo-text.png";
 import notify from "../../utils/notify.js";
 import { useFavorites } from "../../hooks/useFavorites";
+import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
+import ImageZoom from "./ImageZoom";
 // Component cải thiện cho Bộ chọn số lượng - Đơn giản và UX tốt hơn
 const QuantitySelector = ({ quantity, setQuantity }) => {
   const handleDecrease = () => {
@@ -111,6 +113,14 @@ export default function ProductDetail() {
     loading: favoriteLoading,
     handleToggleFavorite,
   } = useFavorites(id);
+  const { addItem: addToRecentlyViewed } = useRecentlyViewed();
+
+  // Track recently viewed product
+  useEffect(() => {
+    if (product && Object.keys(product).length > 0) {
+      addToRecentlyViewed(product);
+    }
+  }, [product?.productID]);
 
 // 🟡 Lấy review khi có productId
 useEffect(() => {
@@ -405,8 +415,12 @@ const handleSubmitReview = async () => {
             )}
           </button>
           <button
-            title="Chia sẻ"
-            className="text-gray-500 hover:text-blue-500 transition p-2 hover:bg-gray-100 rounded-full"
+            title="Copy link sản phẩm"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              notify.success("Đã copy link sản phẩm!");
+            }}
+            className="text-gray-500 hover:text-violet-600 transition p-2 hover:bg-violet-50 rounded-full"
           >
             <AiOutlineShareAlt className="w-5 h-5" />
           </button>
@@ -417,11 +431,10 @@ const handleSubmitReview = async () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-white p-6 rounded-lg border border-gray-100">
           {/* Column 1: Product Image & Gallery */}
           <div className="col-span-1 lg:col-span-1">
-            <div className="relative rounded-lg p-6 bg-gray-50 border border-gray-200 hover:border-gray-300 transition">
-              <img
+            <div className="relative rounded-xl p-6 bg-gray-50 border border-gray-200 hover:border-gray-300 transition">
+              <ImageZoom
                 src={product.image}
                 alt={product.productName}
-                className="w-full h-auto object-contain rounded-lg max-h-96 mx-auto"
               />
             </div>
             {/* Gallery Thumbnails */}
