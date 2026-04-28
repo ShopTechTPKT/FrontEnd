@@ -48,7 +48,7 @@ const ProductSlider = ({
           <button
             onClick={goToPrev}
             disabled={currentIndex === 0}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white shadow-lg border border-gray-200 hover:bg-gray-50 hover:shadow-xl transition-all duration-300 ${
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 ${
               currentIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
             }`}
           >
@@ -70,7 +70,7 @@ const ProductSlider = ({
           <button
             onClick={goToNext}
             disabled={currentIndex >= maxIndex}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white shadow-lg border border-gray-200 hover:bg-gray-50 hover:shadow-xl transition-all duration-300 ${
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 ${
               currentIndex >= maxIndex ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
             }`}
           >
@@ -124,8 +124,8 @@ const ProductSlider = ({
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? "bg-gray-900 w-8"
-                  : "bg-gray-300 hover:bg-gray-400"
+                  ? "bg-violet-700 w-6"
+                  : "bg-gray-200 hover:bg-gray-300"
               }`}
             />
           ))}

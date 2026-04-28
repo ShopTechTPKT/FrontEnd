@@ -96,7 +96,7 @@ const CartDropdown = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 z-[100] overflow-hidden animate-fadeIn">
+    <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-100 rounded-2xl shadow-lg shadow-gray-200/50 z-[100] overflow-hidden animate-fadeIn">
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-100">
         <h3 className="text-gray-900 font-semibold text-base flex items-center gap-2">
@@ -128,7 +128,7 @@ const CartDropdown = ({ isOpen, onClose }) => {
             {carts.map((item, index) => (
               <div
                 key={item.id || `cart-item-${index}`}
-                className="flex gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100/80 transition-colors group"
+                className="flex gap-3 p-2.5 bg-gray-50/70 rounded-lg hover:bg-gray-100/60 transition-colors group"
               >
                 {/* Product Image */}
                 <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
@@ -222,13 +222,13 @@ const CartDropdown = ({ isOpen, onClose }) => {
           <div className="space-y-2">
             <button
               onClick={handleViewCart}
-              className="w-full py-2 text-sm bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg border border-gray-200 transition-colors"
+              className="w-full py-2 text-sm bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg border border-gray-200 hover:border-violet-200 transition-colors"
             >
               {t("cart.view_cart")}
             </button>
             <button
               onClick={handleCheckout}
-              className="w-full py-2 text-sm bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
+              className="w-full py-2 text-sm bg-violet-700 hover:bg-violet-800 text-white font-medium rounded-lg transition-colors"
             >
               {t("cart.checkout")}
             </button>

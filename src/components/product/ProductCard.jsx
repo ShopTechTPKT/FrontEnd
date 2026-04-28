@@ -87,7 +87,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer"
+      className="group relative bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer"
       onClick={handleClick}
     >
       {/* Stock Badge — uses shared Badge component */}
@@ -154,11 +154,11 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Product Image */}
-      <div className="aspect-square bg-gray-50 flex items-center justify-center p-4">
+      <div className="aspect-square bg-gray-50/50 flex items-center justify-center p-6">
         <img
           src={product.image}
           alt={product.productName}
-          className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+          className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-[1.08]"
           loading="lazy"
         />
       </div>
@@ -178,7 +178,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Product Name */}
-        <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
+        <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight tracking-tight">
           {product.productName}
         </h3>
 
@@ -188,7 +188,7 @@ const ProductCard = ({ product }) => {
             <p className="text-xs text-gray-400 line-through">
               {formatCurrency(product.price * 1.25)}
             </p>
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-base font-bold text-violet-700">
               {formatCurrency(product.price)}
             </p>
           </div>
@@ -199,7 +199,7 @@ const ProductCard = ({ product }) => {
               e.stopPropagation();
               handleClick();
             }}
-            className="opacity-0 group-hover:opacity-100 p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-200"
+            className="opacity-0 group-hover:opacity-100 p-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800 transition-all duration-200"
           >
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
               <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
