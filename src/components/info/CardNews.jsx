@@ -44,7 +44,7 @@ const CardNews = ({
 
       {/* Nội dung */}
       <div className="flex flex-col flex-1 p-5">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 hover:text-blue-600 transition-colors cursor-pointer leading-snug">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2 hover:text-violet-700 transition-colors cursor-pointer leading-snug">
           {displayTitle}
         </h3>
 

@@ -7,7 +7,7 @@ function Layout() {
         <>
             <Header />
             {/* Add padding-top to prevent content from being hidden behind fixed header */}
-            <main className="pt-[120px]">
+            <main className="pt-[88px] md:pt-[108px]">
                 <Outlet></Outlet>
             </main>
             <Footer />

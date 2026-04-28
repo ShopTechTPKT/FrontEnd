@@ -1,18 +1,30 @@
 import React from "react";
 
+/**
+ * Button — Unified button component for the entire app.
+ *
+ * Variants: primary | outline | ghost | danger
+ * Sizes:    sm | md | lg
+ * Props:    loading, icon, fullWidth, children
+ */
+
 const variantClasses = {
   primary:
-    "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white shadow-sm hover:opacity-90 hover:shadow-lg",
+    "bg-violet-700 text-white hover:bg-violet-800 focus-visible:ring-violet-700/30",
   outline:
-    "bg-white text-purple-700 border border-purple-200 shadow-sm hover:bg-purple-50 hover:shadow-md",
+    "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus-visible:ring-gray-400/20",
   ghost:
-    "bg-transparent text-purple-700 border border-transparent hover:bg-purple-50",
+    "bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-400/20",
+  danger:
+    "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600/30",
+  success:
+    "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-600/30",
 };
 
 const sizeClasses = {
-  sm: "px-3 py-2 text-sm rounded-lg",
-  md: "px-4 py-2.5 text-sm rounded-xl",
-  lg: "px-5 py-3 text-base rounded-xl",
+  sm: "h-8 px-3 text-xs gap-1.5 rounded-lg",
+  md: "h-10 px-4 text-sm gap-2 rounded-[10px]",
+  lg: "h-12 px-6 text-base gap-2 rounded-xl",
 };
 
 function Button({
@@ -22,21 +34,35 @@ function Button({
   className = "",
   onClick,
   disabled = false,
+  loading = false,
   icon,
+  fullWidth = false,
   children,
 }) {
-  const variantClass = variantClasses[variant] || variantClasses.primary;
-  const sizeClass = sizeClasses[size] || sizeClasses.md;
+  const isDisabled = disabled || loading;
 
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
-      className={`inline-flex items-center gap-2 font-medium transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 ${variantClass} ${sizeClass} ${className}`}
+      disabled={isDisabled}
+      className={[
+        "inline-flex items-center justify-center font-medium",
+        "transition-colors duration-200",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        variantClasses[variant] || variantClasses.primary,
+        sizeClasses[size] || sizeClasses.md,
+        fullWidth ? "w-full" : "",
+        className,
+      ].filter(Boolean).join(" ")}
     >
-      {icon ? <span className="flex h-4 w-4 items-center justify-center">{icon}</span> : null}
-      <span>{children}</span>
+      {loading ? (
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      ) : icon ? (
+        <span className="flex h-4 w-4 items-center justify-center shrink-0">{icon}</span>
+      ) : null}
+      {children && <span>{children}</span>}
     </button>
   );
 }

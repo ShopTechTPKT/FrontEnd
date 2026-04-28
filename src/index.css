@@ -1,102 +1,180 @@
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Shop Tech
+   Single source of truth for colors, typography, spacing, shadows.
+   All components should reference these variables.
+   ═══════════════════════════════════════════════════════════════ */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+:root {
+  /* ── Color Palette ─────────────────────────────────────────── */
+  /* Primary: Violet-700 — the ONE accent color */
+  --color-primary:        #6d28d9;
+  --color-primary-hover:  #5b21b6;
+  --color-primary-light:  #ede9fe;
+  --color-primary-subtle: #f5f3ff;
+  --color-primary-ring:   rgb(109 40 217 / 0.2);
+
+  /* Backgrounds */
+  --color-bg:             #ffffff;
+  --color-bg-subtle:      #f9fafb;
+  --color-bg-muted:       #f3f4f6;
+
+  /* Text */
+  --color-text:           #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted:     #9ca3af;
+  --color-text-inverse:   #ffffff;
+
+  /* Borders */
+  --color-border:         #e5e7eb;
+  --color-border-hover:   #d1d5db;
+  --color-border-focus:   #8b5cf6;
+
+  /* Semantic */
+  --color-success:        #059669;
+  --color-success-light:  #ecfdf5;
+  --color-danger:         #dc2626;
+  --color-danger-light:   #fef2f2;
+  --color-warning:        #d97706;
+  --color-warning-light:  #fffbeb;
+  --color-info:           #2563eb;
+  --color-info-light:     #eff6ff;
+
+  /* ── Typography ────────────────────────────────────────────── */
+  --font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ── Border Radius ─────────────────────────────────────────── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ───────────────────────────────────────────────── */
+  --shadow-xs:   0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-sm:   0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md:   0 4px 12px rgb(0 0 0 / 0.07);
+  --shadow-lg:   0 10px 24px rgb(0 0 0 / 0.1);
+
+  /* ── Transitions ───────────────────────────────────────────── */
+  --transition-fast:   150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow:   300ms ease;
+
+  /* ── Layout ────────────────────────────────────────────────── */
+  --header-height:          72px;
+  --header-height-scrolled: 60px;
+  --content-max-width:      1280px;
+  --content-padding:        1rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --content-padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --content-padding: 2rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL RESETS & BASE STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding-top: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
-@import "tailwindcss";
-
-/* Custom animations */
+/* Fade in — dropdowns, modals, page transitions */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
-/* Ensure content is not hidden behind fixed header */
-body {
-  padding-top: 0;
+/* Fade in up — cards, content sections */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+.animate-fadeInUp {
+  animation: fadeInUp 0.35s ease-out;
 }
 
-/* Default scrollbar - browser default colors */
+/* Shimmer — skeleton loading */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Gradient shift — subtle background animations */
+@keyframes gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 4s ease infinite;
+}
+
+/* Subtle pulse — attention indicators */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.02); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Slide in from right — mobile menus, drawers */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.25s ease-out;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR — Subtle, non-intrusive
+   ═══════════════════════════════════════════════════════════════ */
+
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -104,49 +182,46 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 6px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-text-muted);
 }
 
-/* Light mode scrollbar for admin section - default colors */
-.admin-layout ::-webkit-scrollbar {
-  width: 12px;
+/* Admin layout scrollbar — same subtle style */
+.admin-layout ::-webkit-scrollbar        { width: 8px; }
+.admin-layout ::-webkit-scrollbar-track   { background: transparent; }
+.admin-layout ::-webkit-scrollbar-thumb   { background: var(--color-border); border-radius: var(--radius-full); }
+.admin-layout ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   GLASSMORPHISM & EFFECTS
+   ═══════════════════════════════════════════════════════════════ */
+
+.glass-overlay {
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.3);
+  box-shadow: var(--shadow-md);
 }
 
-.admin-layout ::-webkit-scrollbar-track {
-  background: transparent;
-}
 
-.admin-layout ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 6px;
-}
+/* ═══════════════════════════════════════════════════════════════
+   MAP MARKER ANIMATIONS (Leaflet)
+   ═══════════════════════════════════════════════════════════════ */
 
-.admin-layout ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Vietnamese Territory Marker Pulse Animation */
 @keyframes territorypulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.9;
-  }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.15); opacity: 0.9; }
 }
 
 .leaflet-marker-icon.territory-marker {
   animation: territorypulse 2s ease-in-out infinite;
 }
 
-/* Vietnamese flag colors glow effect */
 @keyframes vn-glow {
   0%, 100% {
     box-shadow: 0 0 10px rgba(220, 38, 38, 0.5), 0 0 20px rgba(251, 191, 36, 0.3);
@@ -156,136 +231,72 @@ html {
   }
 }
 
-/* 2025 Modern Animations */
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY CLASSES — Used across components
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Container with consistent max-width and padding */
+.container-app {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--content-padding);
+  padding-right: var(--content-padding);
 }
 
-.animate-shimmer {
-  animation: shimmer 3s ease-in-out infinite;
+/* Primary button base — use via @apply or class composition */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-normal),
+              box-shadow var(--transition-normal);
 }
 
-@keyframes gradient {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
-/* Appointment form animations */
-@keyframes pulse-subtle {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.02);
-  }
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 2s ease-in-out infinite;
+/* Ghost/outline button */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-normal),
+              background-color var(--transition-normal);
 }
 
-/* Backdrop blur effects */
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
+.btn-outline:hover {
+  border-color: var(--color-border-hover);
+  background-color: var(--color-bg-subtle);
 }
-
-.backdrop-blur-md {
-  backdrop-filter: blur(8px);
-}
-
-.backdrop-blur-lg {
-  backdrop-filter: blur(12px);
-}
-
-.backdrop-blur-xl {
-  backdrop-filter: blur(16px);
-}
-
-.backdrop-blur-2xl {
-  backdrop-filter: blur(24px);
-}
-
-/* Glassmorphism effect */
-.glass-overlay {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-/* Global minimalist purple theme (applies across pages/components) */
-.text-violet-700,
-.text-violet-600,
-.text-violet-500,
-.text-purple-700,
-.text-purple-600,
-.text-purple-500,
-.text-fuchsia-500 {
-  color: #6d28d9 !important;
-}
-
-.bg-violet-50,
-.bg-violet-100,
-.bg-purple-50,
-.bg-purple-100,
-.hover\:bg-violet-50:hover,
-.hover\:bg-violet-100:hover,
-.hover\:bg-purple-50:hover {
-  background-color: #f5f3ff !important;
-}
-
-.bg-violet-600,
-.bg-violet-700,
-.bg-purple-600,
-.bg-purple-700,
-.hover\:bg-violet-600:hover,
-.hover\:bg-violet-700:hover,
-.hover\:bg-purple-600:hover,
-.hover\:bg-purple-700:hover {
-  background-color: #6d28d9 !important;
-}
-
-.from-purple-700,
-.from-purple-600,
-.from-violet-700,
-.from-violet-600,
-.via-purple-500,
-.via-violet-500,
-.to-fuchsia-500,
-.to-purple-700,
-.to-violet-700 {
-  --tw-gradient-from: #7c3aed var(--tw-gradient-from-position) !important;
-  --tw-gradient-via: #8b5cf6 var(--tw-gradient-via-position) !important;
-  --tw-gradient-to: #a855f7 var(--tw-gradient-to-position) !important;
-}
-
-.focus\:ring-violet-500\/25:focus,
-.focus\:ring-violet-500\/20:focus,
-.focus\:ring-purple-500\/25:focus,
-.focus\:ring-purple-500\/20:focus,
-.focus\:ring-purple-200:focus,
-.focus\:ring-violet-200:focus {
-  --tw-ring-color: rgb(139 92 246 / 0.28) !important;
-}
-
-.focus\:border-violet-400:focus,
-.focus\:border-violet-500:focus,
-.focus\:border-purple-400:focus,
-.focus\:border-purple-500:focus {
-  border-color: #8b5cf6 !important;
-}
-

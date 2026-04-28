@@ -13,6 +13,9 @@ import {
 } from "../../utils/redux/cartSlice";
 import { useState, useEffect } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
+import { Breadcrumb, Button } from "../../components/ui";
+import formatCurrency from "../../utils/formatCurrency";
+import getCurrentUserId from "../../utils/getCurrentUserId";
 
 const ShoppingCart = () => {
   const { t } = useTranslation();
@@ -29,17 +32,7 @@ const ShoppingCart = () => {
   const [confirmMessage, setConfirmMessage] = useState("");
   const [confirmAction, setConfirmAction] = useState(() => () => {});
 
-  const getCurrentUserId = () => {
-    try {
-      const savedUser = localStorage.getItem("user");
-      if (!savedUser) return null;
-      const parsed = JSON.parse(savedUser);
-      return parsed?.customerID ?? parsed?.id ?? parsed?.customerId ?? null;
-    } catch (e) {
-      console.error("Lỗi khi đọc user từ localStorage:", e);
-      return null;
-    }
-  };
+
 
   useEffect(() => {
     const userId = getCurrentUserId();
@@ -103,28 +96,18 @@ const ShoppingCart = () => {
     ? cartSummary.totalAmount
     : cartItems.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
-  const formatCurrency = value =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/80 pb-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Breadcrumb — tối giản */}
-        <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6">
-          <Link
-            to={path.home}
-            className="text-violet-600 hover:text-violet-700 transition-colors"
-          >
-            {t("product.home")}
-          </Link>
-          <span className="text-gray-300" aria-hidden>
-            /
-          </span>
-          <span className="text-gray-700 font-medium">{t("cart.title")}</span>
-        </nav>
+        <Breadcrumb
+          items={[
+            { label: t("product.home"), to: path.home },
+            { label: t("cart.title") },
+          ]}
+        />
 
         <header className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
@@ -215,20 +198,18 @@ const ShoppingCart = () => {
                   </div>
 
                   <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-100">
-                    <button
-                      type="button"
+                    <Button
+                      variant="outline"
                       onClick={handleClearCart}
-                      className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors"
                     >
                       {t("cart.xa_gi_hng")}
-                    </button>
-                    <button
-                      type="button"
+                    </Button>
+                    <Button
+                      variant="primary"
                       onClick={handleCheckout}
-                      className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors"
                     >
                       {t("cart.checkout")}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

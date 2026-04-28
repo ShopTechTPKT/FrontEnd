@@ -23,8 +23,8 @@ const SeriesNav = ({
                 className={`font-medium transition-colors duration-200 whitespace-nowrap
                   ${
                     activeIndex === index
-                      ? "text-blue-600 underline underline-offset-4 decoration-2"
-                      : "text-gray-300 hover:text-blue-600 hover:underline"
+                      ? "text-violet-700 underline underline-offset-4 decoration-2"
+                      : "text-gray-300 hover:text-violet-700 hover:underline"
                   }
                 `}
               >

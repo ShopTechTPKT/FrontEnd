@@ -1,0 +1,82 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { getMegaMenuSections } from "./navData";
+import { IconChevronDown } from "./HeaderIcons";
+
+/**
+ * HeaderMegaMenu — Desktop product mega menu (4-column grid).
+ * Pure presentational component.
+ */
+function HeaderMegaMenu({ onNavigate }) {
+  const { t } = useTranslation();
+  const sections = getMegaMenuSections();
+
+  const itemClass =
+    "block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors";
+
+  return (
+    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[680px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 p-5">
+        <div className="grid grid-cols-4 gap-5">
+          {sections.map((section) => (
+            <div key={section.titleKey}>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
+                {t(section.titleKey)}
+              </h3>
+              {section.items.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() =>
+                    onNavigate("/products", {
+                      list: item.list,
+                      ...(item.brand && { brand: item.brand }),
+                    })
+                  }
+                  className={itemClass}
+                >
+                  {t(item.labelKey)}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * HeaderSupportMenu — Desktop support dropdown.
+ */
+function HeaderSupportMenu({ links, isCustomerService }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[220px] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 py-2">
+        {links.map((link) => (
+          <a
+            key={link.to}
+            href={link.to}
+            className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+          >
+            {t(link.labelKey)}
+          </a>
+        ))}
+        {isCustomerService && (
+          <>
+            <div className="my-1 border-t border-gray-100" />
+            <a
+              href="/customer-service"
+              className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+            >
+              {t("support.customerService")}
+            </a>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export { HeaderMegaMenu, HeaderSupportMenu };
