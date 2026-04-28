@@ -9,6 +9,7 @@ import slide from "../../assets/images/slide.png";
 import CardNews from "../info/CardNews";
 import TestimonialSlider from "../info/TestimonialSlider";
 import HeroSearchSection from "../HeroSearchSection";
+import { Laptop, Monitor, Mouse, Smartphone, Tv2, Headphones } from "lucide-react";
 
 // Brand logos
 import logo1 from "../../assets/images/logo/logo_roccat.svg";
@@ -38,12 +39,12 @@ const HOME_PRODUCT_LIMIT = 15;
 
 /* ── Quick category icons (SVG inline) ── */
 const QUICK_CATEGORIES = [
-  { icon: "💻", labelKey: "categories.laptops", list: CATEGORY_IDS.laptop },
-  { icon: "🖥️", labelKey: "categories.pcParts", list: CATEGORY_IDS.pc },
-  { icon: "🖱️", labelKey: "categories.gamingGear", list: [...CATEGORY_IDS.mouse, ...CATEGORY_IDS.keyboard, ...CATEGORY_IDS.gamingGear] },
-  { icon: "📱", labelKey: "categories.smartDevice", list: CATEGORY_IDS.phone },
-  { icon: "🖲️", labelKey: "categories.monitor", list: CATEGORY_IDS.monitor },
-  { icon: "🎧", labelKey: "categories.headphone", list: CATEGORY_IDS.headphone },
+  { icon: Laptop, labelKey: "categories.laptops", list: CATEGORY_IDS.laptop },
+  { icon: Monitor, labelKey: "categories.pcParts", list: CATEGORY_IDS.pc },
+  { icon: Mouse, labelKey: "categories.gamingGear", list: [...CATEGORY_IDS.mouse, ...CATEGORY_IDS.keyboard, ...CATEGORY_IDS.gamingGear] },
+  { icon: Smartphone, labelKey: "categories.smartDevice", list: CATEGORY_IDS.phone },
+  { icon: Tv2, labelKey: "categories.monitor", list: CATEGORY_IDS.monitor },
+  { icon: Headphones, labelKey: "categories.headphone", list: CATEGORY_IDS.headphone },
 ];
 
 const BRAND_LOGOS = [logo1, logo2, logo3, logo4, logo5, logo6, logo7];
@@ -140,22 +141,25 @@ function Content() {
       )}
 
       {/* ════ 2. Category Quick Links ════ */}
-      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
+      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 py-10">
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-          {QUICK_CATEGORIES.map((cat, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleCategoryClick(cat.list)}
-              className="group flex flex-col items-center gap-2 py-4 px-2 rounded-xl border border-gray-100 bg-white hover:border-violet-200 hover:bg-violet-50/50 transition-all duration-200"
-            >
-              <span className="text-2xl group-hover:scale-110 transition-transform duration-200">
-                {cat.icon}
-              </span>
-              <span className="text-xs font-medium text-gray-700 group-hover:text-violet-700 text-center leading-tight">
-                {t(cat.labelKey)}
-              </span>
-            </button>
-          ))}
+          {QUICK_CATEGORIES.map((cat, idx) => {
+            const IconComp = cat.icon;
+            return (
+              <button
+                key={idx}
+                onClick={() => handleCategoryClick(cat.list)}
+                className="group flex flex-col items-center gap-2.5 py-5 px-2 rounded-2xl border border-gray-100 bg-white shadow-xs hover:border-violet-200 hover:bg-violet-50/50 hover:shadow-sm transition-all duration-200"
+              >
+                <span className="text-gray-600 group-hover:text-violet-700 group-hover:scale-110 transition-all duration-200">
+                  <IconComp className="w-6 h-6" strokeWidth={1.5} />
+                </span>
+                <span className="text-xs font-medium text-gray-700 group-hover:text-violet-700 text-center leading-tight">
+                  {t(cat.labelKey)}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </section>
 
@@ -202,7 +206,7 @@ function Content() {
         <img
           src={slide}
           alt="Promotion banner"
-          className="w-full rounded-xl object-cover"
+          className="w-full rounded-2xl object-cover shadow-xs hover:shadow-md transition-shadow duration-300"
           loading="lazy"
         />
       </div>
@@ -288,17 +292,19 @@ function Content() {
       </section>
 
       {/* ════ 11. Brand Logos ════ */}
-      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex items-center justify-center gap-8 flex-wrap">
-          {BRAND_LOGOS.map((logo, idx) => (
-            <img
-              key={idx}
-              src={logo}
-              alt={`Brand ${idx + 1}`}
-              className="h-10 object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-              loading="lazy"
-            />
-          ))}
+      <section className="max-w-screen-xl mx-auto px-4 sm:px-6 py-10">
+        <div className="bg-white rounded-2xl py-10 px-8 shadow-xs border border-gray-100">
+          <div className="flex items-center justify-center gap-8 flex-wrap">
+            {BRAND_LOGOS.map((logo, idx) => (
+              <img
+                key={idx}
+                src={logo}
+                alt={`Brand ${idx + 1}`}
+                className="h-10 object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                loading="lazy"
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -325,7 +331,7 @@ function Content() {
       </section>
 
       {/* ════ 14. Support Cards ════ */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-gradient-to-b from-violet-50/30 to-white">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {SUPPORT_ITEMS.map((item, index) => (
@@ -345,15 +351,16 @@ function Content() {
 /** Section header with optional "See all" link */
 function SectionHeader({ title, linkTo, linkState, t }) {
   return (
-    <div className="flex items-center justify-between mb-5">
-      <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+    <div className="flex items-center justify-between mb-6">
+      <h2 className="text-xl font-semibold text-gray-900 tracking-tight">{title}</h2>
       {linkTo && (
         <Link
           to={linkTo}
           state={linkState}
-          className="text-sm text-violet-700 hover:text-violet-800 font-medium transition-colors"
+          className="text-sm text-violet-700 hover:text-violet-800 font-medium transition-colors flex items-center gap-1"
         >
-          {t?.("common.view_all") || "Xem tất cả"} →
+          {t?.("common.view_all") || "Xem tất cả"}
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
         </Link>
       )}
     </div>
