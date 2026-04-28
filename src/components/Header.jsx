@@ -9,6 +9,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { loadCartItems } from "../utils/redux/cartSlice";
 import notify from "../utils/notify";
+import ThemeToggle from "./ui/ThemeToggle";
 
 // Sub-components
 import { IconChevronDown, IconCart, IconMenu, IconClose, IconFacebook } from "./header/HeaderIcons";
@@ -229,6 +230,7 @@ const Header = () => {
           {/* Right: Actions */}
           <div className="flex items-center gap-2 shrink-0">
             <LanguageSwitcher />
+            <ThemeToggle />
 
             {/* Cart */}
             <div
