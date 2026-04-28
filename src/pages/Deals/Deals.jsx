@@ -1,9 +1,124 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo, useCallback } from "react";
 import { FaFire, FaClock, FaTag, FaStar, FaFilter, FaSearch, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { getAllDiscounts } from "../../apis/discountApi";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { useTranslation } from "react-i18next";
+
+/* ── Real-time countdown helper ────────────────────────── */
+const useCountdown = (endDate) => {
+  const calc = () => {
+    const diff = new Date(endDate) - new Date();
+    if (!endDate || diff <= 0) return null;
+    return {
+      h: Math.floor(diff / 3_600_000),
+      m: Math.floor((diff % 3_600_000) / 60_000),
+      s: Math.floor((diff % 60_000) / 1_000),
+    };
+  };
+  const [tl, setTl] = useState(calc);
+  useEffect(() => {
+    const id = setInterval(() => setTl(calc()), 1_000);
+    return () => clearInterval(id);
+  }, [endDate]);
+  return tl;
+};
+
+const pad = (n) => String(n).padStart(2, "0");
+
+/* ── Deal card (extracted for cleanliness) ────────────── */
+const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
+  const tl = useCountdown(deal.endDate);
+  const stockTotal = deal.stockTotal || 50;
+  const stockLeft = deal.stock;
+  const soldPct = Math.min(100, Math.round(((stockTotal - stockLeft) / stockTotal) * 100));
+
+  return (
+    <div
+      className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+      onClick={() => onNavigate(deal.id)}
+    >
+      <div className="relative">
+        {/* Discount Badge */}
+        <div className="absolute top-2 left-2 z-10 bg-discount-badge text-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm">
+          -{deal.discount}%
+        </div>
+        {/* Fav */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleFav(deal.id); }}
+          className="absolute top-2 right-2 z-10 p-1.5 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+        >
+          <FaHeart className={`text-sm ${isFav ? "text-red-500" : "text-gray-300"}`} />
+        </button>
+        {/* Countdown overlay */}
+        <div className="absolute bottom-2 left-2 z-10 bg-black/60 text-white px-2 py-1 rounded-lg text-[10px] flex items-center gap-1">
+          <FaClock className="text-yellow-300 shrink-0" />
+          {tl ? (
+            <span className="tabular-nums font-mono">{pad(tl.h)}:{pad(tl.m)}:{pad(tl.s)}</span>
+          ) : (
+            <span>Hết hạn</span>
+          )}
+        </div>
+        {/* Image */}
+        <div className="aspect-square bg-gray-50 overflow-hidden">
+          <img
+            src={deal.image}
+            alt={deal.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => { e.target.src = "https://via.placeholder.com/400x400?text=No+Image"; }}
+          />
+        </div>
+      </div>
+
+      <div className="p-3">
+        <div className="text-xs text-violet-600 font-medium mb-1 truncate">{deal.brand}</div>
+        <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
+
+        {/* Rating */}
+        <div className="flex items-center gap-1 mb-2">
+          <div className="flex text-yellow-400">
+            {[...Array(5)].map((_, i) => (
+              <FaStar key={i} className={`text-xs ${i < Math.floor(deal.rating) ? "text-yellow-400" : "text-gray-200"}`} />
+            ))}
+          </div>
+          <span className="text-xs text-gray-400">{deal.rating}</span>
+        </div>
+
+        {/* Price */}
+        <div className="mb-2">
+          <div className="text-base font-bold text-violet-700">{deal.salePrice.toLocaleString("vi-VN")} ₫</div>
+          <div className="text-xs text-gray-400 line-through">{deal.originalPrice.toLocaleString("vi-VN")} ₫</div>
+        </div>
+
+        {/* Stock progress bar */}
+        <div className="mb-3">
+          <div className="flex justify-between text-[10px] text-gray-400 mb-0.5">
+            <span>Đã bán {soldPct}%</span>
+            {stockLeft < 10 && <span className="text-red-500 font-medium">Còn {stockLeft}!</span>}
+          </div>
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${soldPct}%`,
+                background: soldPct >= 80 ? "#dc2626" : soldPct >= 50 ? "#f59e0b" : "#6d28d9",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onNavigate(deal.id); }}
+          className="w-full py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg font-medium hover:opacity-90 transition-colors text-sm flex items-center justify-center gap-2"
+        >
+          <FaShoppingCart className="text-xs" />
+          {t("deals.buyNow")}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const Deals = () => {
   const { t } = useTranslation();
@@ -302,7 +417,7 @@ const Deals = () => {
                 onClick={() => setSelectedTab(tab.id)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 text-sm ${
                   selectedTab === tab.id
-                    ? "bg-sky-600 text-white shadow-sm"
+                    ? "bg-violet-700 text-white shadow-sm"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -329,7 +444,7 @@ const Deals = () => {
                   placeholder={t('deals.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm bg-white"
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm bg-white"
                 />
               </div>
             </div>
@@ -342,7 +457,7 @@ const Deals = () => {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-3 py-1.5 rounded-md font-medium transition-all duration-200 flex items-center gap-1.5 text-xs whitespace-nowrap ${
                   selectedCategory === cat.id
-                    ? "bg-sky-600 text-white"
+                    ? "bg-violet-700 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
                 >
@@ -358,7 +473,7 @@ const Deals = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap ${
                   showFilters 
-                    ? "bg-sky-600 text-white" 
+                    ? "bg-violet-700 text-white" 
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -373,7 +488,7 @@ const Deals = () => {
                   setSortBy(newSortBy);
                   setSortOrder(newSortOrder);
                 }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent text-sm bg-white"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm bg-white"
               >
                 <option value="discount-desc">{t('deals.sort.highDiscount')}</option>
                 <option value="price-asc">{t('deals.sort.lowPrice')}</option>
@@ -403,14 +518,14 @@ const Deals = () => {
                     placeholder={t('deals.filters.from')}
                     value={priceRange.min || ''}
                     onChange={(e) => setPriceRange({...priceRange, min: Number(e.target.value) || 0})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
                   />
                   <input
                     type="number"
                     placeholder={t('deals.filters.to')}
                     value={priceRange.max === 100000000 ? '' : priceRange.max}
                     onChange={(e) => setPriceRange({...priceRange, max: Number(e.target.value) || 100000000})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
                   />
                 </div>
               </div>
@@ -425,14 +540,14 @@ const Deals = () => {
                     placeholder={t('deals.filters.from')}
                     value={discountRange.min || ''}
                     onChange={(e) => setDiscountRange({...discountRange, min: Number(e.target.value) || 0})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
                   />
                   <input
                     type="number"
                     placeholder={t('deals.filters.to')}
                     value={discountRange.max === 100 ? '' : discountRange.max}
                     onChange={(e) => setDiscountRange({...discountRange, max: Number(e.target.value) || 100})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
                   />
                 </div>
               </div>
@@ -469,7 +584,7 @@ const Deals = () => {
             <p className="text-sm text-gray-500 mb-4">{t('deals.empty.description')}</p>
           <button
             onClick={resetFilters}
-            className="bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white px-5 py-2 rounded-lg hover:opacity-90 transition-colors text-sm"
+            className="bg-gradient-to-r from-violet-700 to-violet-600 text-white px-5 py-2 rounded-lg hover:opacity-90 transition-colors text-sm"
             >
               {t('deals.empty.resetFilters')}
             </button>
@@ -477,107 +592,14 @@ const Deals = () => {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredAndSortedDeals.map(deal => (
-              <div
+              <DealCard
                 key={deal.id}
-                className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer"
-                onClick={() => viewProductDetails(deal.id)}
-              >
-                <div className="relative">
-                  {/* Discount Badge - Simplified */}
-                  <div className="absolute top-2 left-2 z-10 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-                    -{deal.discount}%
-                  </div>
-                  
-                  {/* Favorite Button - Simplified */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(deal.id);
-                    }}
-                    className="absolute top-2 right-2 z-10 p-1.5 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
-                  >
-                    <FaHeart 
-                      className={`text-sm ${favorites.has(deal.id) ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} 
-                    />
-                  </button>
-                  
-                  {/* Time Left - Simplified */}
-                  <div className="absolute bottom-2 left-2 z-10 bg-black/60 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
-                    <FaClock className="text-yellow-300" />
-                    <span>{deal.timeLeft}</span>
-                  </div>
-                  
-                  {/* Product Image - Simplified */}
-                  <div className="aspect-square bg-gray-100 overflow-hidden">
-                    <img
-                      src={deal.image}
-                      alt={deal.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={e => {
-                        e.target.src = "https://via.placeholder.com/400x400?text=No+Image";
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="p-3">
-                  {/* Brand - Simplified */}
-                  <div className="text-xs text-purple-600 font-medium mb-1 truncate">
-                    {deal.brand}
-                  </div>
-                  
-                  {/* Product Title - Simplified */}
-                  <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[2.5rem]">
-                    {deal.title}
-                  </h3>
-
-                  {/* Rating - Simplified */}
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="flex text-yellow-400">
-                      {[...Array(5)].map((_, i) => (
-                        <FaStar
-                          key={i}
-                          className={`text-xs ${i < Math.floor(deal.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-500">
-                      {deal.rating}
-                    </span>
-                  </div>
-
-                  {/* Price - Simplified */}
-                  <div className="mb-3">
-                    <div className="text-base font-bold text-purple-600">
-                      {deal.salePrice.toLocaleString('vi-VN')} ₫
-                    </div>
-                    <div className="text-xs text-gray-400 line-through">
-                      {deal.originalPrice.toLocaleString('vi-VN')} ₫
-                    </div>
-                  </div>
-
-                  {/* Stock Warning - Simplified */}
-                  {deal.stock < 10 && (
-                    <div className="mb-2 p-2 bg-red-50 rounded text-xs">
-                      <p className="text-red-600 font-medium">
-                        {t('deals.stockWarning', { count: deal.stock })}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Action Button - Simplified */}
-              <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      viewProductDetails(deal.id);
-                    }}
-                    className="w-full py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg font-medium hover:opacity-90 transition-colors text-sm flex items-center justify-center gap-2"
-                  >
-                    <FaShoppingCart className="text-xs" />
-                    {t('deals.buyNow')}
-                  </button>
-                </div>
-              </div>
+                deal={deal}
+                isFav={favorites.has(deal.id)}
+                onToggleFav={toggleFavorite}
+                onNavigate={viewProductDetails}
+                t={t}
+              />
             ))}
           </div>
         )}
