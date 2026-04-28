@@ -8,6 +8,7 @@ import { addFavorite, removeFavorite, checkIsFavorited } from "../../apis/favori
 import { Badge } from "../ui";
 import formatCurrency from "../../utils/formatCurrency";
 import getCurrentUserId from "../../utils/getCurrentUserId";
+import QuickViewModal from "./QuickViewModal";
 
 /**
  * ProductCard — Product display card used in grids and sliders.
@@ -19,6 +20,7 @@ const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const [isFavorited, setIsFavorited] = useState(false);
   const [isCheckingFavorite, setIsCheckingFavorite] = useState(false);
+  const [showQuickView, setShowQuickView] = useState(false);
 
 
 
@@ -86,6 +88,7 @@ const ProductCard = ({ product }) => {
 
 
   return (
+    <>
     <div
       className="group relative bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer"
       onClick={handleClick}
@@ -197,7 +200,7 @@ const ProductCard = ({ product }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleClick();
+              setShowQuickView(true);
             }}
             className="opacity-0 group-hover:opacity-100 p-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800 transition-all duration-200"
           >
@@ -209,6 +212,14 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
     </div>
+
+    {/* Quick View Modal */}
+    <QuickViewModal
+      product={product}
+      isOpen={showQuickView}
+      onClose={() => setShowQuickView(false)}
+    />
+    </>
   );
 };
 
