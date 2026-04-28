@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import {
   AiOutlineHeart,
   AiFillHeart,
@@ -32,6 +32,8 @@ import notify from "../../utils/notify.js";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
 import ImageZoom from "./ImageZoom";
+import StickyBuyBar from "./StickyBuyBar";
+import axiosInstance from "../../custom/axios";
 // Component cải thiện cho Bộ chọn số lượng - Đơn giản và UX tốt hơn
 const QuantitySelector = ({ quantity, setQuantity }) => {
   const handleDecrease = () => {
@@ -114,6 +116,34 @@ export default function ProductDetail() {
     handleToggleFavorite,
   } = useFavorites(id);
   const { addItem: addToRecentlyViewed } = useRecentlyViewed();
+
+  // Ref for sticky buy bar detection
+  const buyBoxRef = useRef(null);
+
+  // Delivery estimate state
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+
+  // Fetch delivery estimate once product loads
+  useEffect(() => {
+    if (!product || !product.productID) return;
+    const fetchDelivery = async () => {
+      try {
+        setDeliveryLoading(true);
+        // Get city from user profile or default to HCM
+        const savedUser = localStorage.getItem("user");
+        const user = savedUser ? JSON.parse(savedUser) : null;
+        const city = user?.city || user?.address?.city || "Ho Chi Minh";
+        const res = await axiosInstance.get(`/delivery/estimate?city=${encodeURIComponent(city)}`);
+        setDeliveryInfo(res.data);
+      } catch {
+        setDeliveryInfo({ minDays: 2, maxDays: 4, earliestDate: null, latestDate: null });
+      } finally {
+        setDeliveryLoading(false);
+      }
+    };
+    fetchDelivery();
+  }, [product?.productID]);
 
   // Track recently viewed product
   useEffect(() => {
@@ -367,11 +397,12 @@ const handleSubmitReview = async () => {
   const originalPrice = price * 1.25; // Giả định giá gốc cao hơn 25%
 
   return (
+    <>
     <div className="bg-transparent">
       {/* Breadcrumb & Social Icons */}
       <div className="flex justify-between items-center text-sm mb-6">
         <div className="text-gray-600">
-          <span className="hover:text-purple-600 transition cursor-pointer">
+          <span className="hover:text-violet-600 transition cursor-pointer">
             {t("product.home")} / {product.categoryName} /{" "}
           </span>
           <span className="text-gray-400">{product.seriesName}</span>
@@ -439,9 +470,9 @@ const handleSubmitReview = async () => {
             </div>
             {/* Gallery Thumbnails */}
             <div className="flex space-x-2 mt-4 overflow-x-auto justify-center">
-              <div className="w-16 h-16 border-2 border-purple-500 rounded-lg cursor-pointer bg-gray-100 hover:border-purple-600 transition"></div>
-              <div className="w-16 h-16 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 hover:border-purple-400 transition"></div>
-              <div className="w-16 h-16 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 hover:border-purple-400 transition"></div>
+              <div className="w-16 h-16 border-2 border-violet-500 rounded-lg cursor-pointer bg-gray-100 hover:border-violet-600 transition"></div>
+              <div className="w-16 h-16 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 hover:border-violet-400 transition"></div>
+              <div className="w-16 h-16 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 hover:border-violet-400 transition"></div>
             </div>
           </div>
 
@@ -479,19 +510,19 @@ const handleSubmitReview = async () => {
               <div>
                 <p className="text-sm font-semibold text-gray-700 mb-3">
                   Màu sắc:{" "}
-                  <span className="font-normal text-purple-600">Xanh dương</span>
+                  <span className="font-normal text-violet-600">Xanh dương</span>
                 </p>
                 <div className="flex space-x-3">
                   <div
-                    className="w-10 h-10 rounded-full bg-blue-900 border-2 border-purple-500 cursor-pointer ring-2 ring-purple-200 shadow-sm"
+                    className="w-10 h-10 rounded-full bg-blue-900 border-2 border-violet-500 cursor-pointer ring-2 ring-violet-200 shadow-sm"
                     title="Blue"
                   ></div>
                   <div
-                    className="w-10 h-10 rounded-full bg-red-600 border-2 border-gray-300 hover:border-purple-400 cursor-pointer transition"
+                    className="w-10 h-10 rounded-full bg-red-600 border-2 border-gray-300 hover:border-violet-400 cursor-pointer transition"
                     title="Red"
                   ></div>
                   <div
-                    className="w-10 h-10 rounded-full bg-gray-700 border-2 border-gray-300 hover:border-purple-400 cursor-pointer transition"
+                    className="w-10 h-10 rounded-full bg-gray-700 border-2 border-gray-300 hover:border-violet-400 cursor-pointer transition"
                     title="Gray"
                   ></div>
                 </div>
@@ -514,7 +545,7 @@ const handleSubmitReview = async () => {
           {/* Column 3: Buy Box & Service/Payment Info */}
           <div className="col-span-1 lg:col-span-1 space-y-5">
             {/* Quantity and Action Buttons - Simplified */}
-            <div className="bg-white rounded-lg p-5 border border-gray-200">
+            <div ref={buyBoxRef} className="bg-white rounded-lg p-5 border border-gray-200">
               <div className="flex items-center justify-between mb-5">
                 <label htmlFor="quantity-selector" className="text-gray-700 font-medium text-sm cursor-pointer">
                   {t("product.quantity")}:
@@ -526,7 +557,7 @@ const handleSubmitReview = async () => {
               </div>
 
               <button
-              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
+              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
                 onClick={() => handleAddToCart(product, quantity)}
               >
                 <FaShoppingCart className="w-5 h-5" />
@@ -543,8 +574,8 @@ const handleSubmitReview = async () => {
             <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <FaHeadset className="w-5 h-5 text-purple-600" />
+                  <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <FaHeadset className="w-5 h-5 text-violet-600" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{t("product.free_support")}</p>
@@ -553,8 +584,8 @@ const handleSubmitReview = async () => {
                 </div>
                 
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <FaPercentage className="w-5 h-5 text-purple-600" />
+                  <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <FaPercentage className="w-5 h-5 text-violet-600" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{t("product.best_price_guarantee")}</p>
@@ -563,6 +594,24 @@ const handleSubmitReview = async () => {
                 </div>
               </div>
             </div>
+
+            {/* Delivery Estimate */}
+            {deliveryInfo && (
+              <div className="bg-green-50 rounded-lg px-4 py-3 border border-green-100 flex items-start gap-2.5">
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-green-600 mt-0.5 shrink-0">
+                  <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  <path d="M1 1h11l2.68 6.39a1 1 0 01.07.36L16 13h5l-2 4H9M1 1L3 7h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div>
+                  <p className="text-xs font-semibold text-green-800">
+                    {deliveryInfo.earliestDate && deliveryInfo.latestDate
+                      ? `Giao hàng ${deliveryInfo.earliestDate} - ${deliveryInfo.latestDate}`
+                      : `Giao trong ${deliveryInfo.minDays}-${deliveryInfo.maxDays} ngày`}
+                  </p>
+                  <p className="text-[11px] text-green-700 mt-0.5">Miễn phí vận chuyển</p>
+                </div>
+              </div>
+            )}
 
             {/* Zip Payment */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
@@ -575,7 +624,7 @@ const handleSubmitReview = async () => {
                 {t("product.own_it_now")}{" "}
                 <a
                   href="#"
-                  className="text-purple-600 font-medium hover:underline"
+                  className="text-violet-600 font-medium hover:underline"
                 >
                   {t("product.learn_more")}
                 </a>
@@ -647,8 +696,8 @@ const handleSubmitReview = async () => {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                          <span className="text-purple-600 font-semibold text-sm">
+                        <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
+                          <span className="text-violet-600 font-semibold text-sm">
                             {(review.reviewerName || "A")[0].toUpperCase()}
                           </span>
                         </div>
@@ -680,14 +729,14 @@ const handleSubmitReview = async () => {
                       {review.comment}
                     </p>
                     {review.reply && (
-                      <div className="mt-3 ml-8 pl-4 border-l-2 border-purple-200 bg-purple-50 rounded-r-lg p-3">
+                      <div className="mt-3 ml-8 pl-4 border-l-2 border-violet-200 bg-violet-50 rounded-r-lg p-3">
                         <div className="flex items-center space-x-2 mb-2">
                           <img
                             src={logo}
                             alt="Shop Solid Phere"
                             className="w-6 h-6 rounded object-contain"
                           />
-                          <span className="font-semibold text-purple-700 text-sm">
+                          <span className="font-semibold text-violet-700 text-sm">
                             Shop Solid Phere
                           </span>
                         </div>
@@ -728,7 +777,7 @@ const handleSubmitReview = async () => {
                     className={`w-full p-3 border rounded-lg text-sm focus:ring-1 outline-none transition-all ${
                       validationError
                         ? "border-red-300 focus:border-red-400 focus:ring-red-200"
-                        : "border-gray-200 focus:border-purple-400 focus:ring-purple-200"
+                        : "border-gray-200 focus:border-violet-400 focus:ring-violet-200"
                     }`}
                     rows="3"
                     placeholder={t("reviews.placeholder_comment")}
@@ -754,7 +803,7 @@ const handleSubmitReview = async () => {
 
                   <button
                     onClick={handleSubmitReview}
-                    className="mt-3 px-4 py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors"
+                    className="mt-3 px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors"
                   >
                     {t("reviews.submit_button")}
                   </button>
@@ -764,7 +813,7 @@ const handleSubmitReview = async () => {
                   <p className="text-sm text-gray-600">
                     <a
                       href="/login"
-                      className="text-purple-600 font-medium hover:underline"
+                      className="text-violet-600 font-medium hover:underline"
                     >
                       {t("product.login")}
                     </a>{" "}
@@ -775,7 +824,7 @@ const handleSubmitReview = async () => {
 
               {reviews.length > 3 && (
                 <button
-                  className="w-full py-2 text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center justify-center space-x-1 transition-colors"
+                  className="w-full py-2 text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center justify-center space-x-1 transition-colors"
                   onClick={() => setShowAll(!showAll)}
                 >
                   <span>
@@ -796,5 +845,13 @@ const handleSubmitReview = async () => {
           )}
         </div>
       </div>
+
+      {/* Sticky Buy Bar — appears when user scrolls past the buy box */}
+      <StickyBuyBar
+        product={product}
+        quantity={quantity}
+        anchorRef={buyBoxRef}
+      />
+    </>
   );
 }
