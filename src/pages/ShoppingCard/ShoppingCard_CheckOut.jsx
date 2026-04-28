@@ -6,9 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import path from "../../constant/path";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../context/UserContext"; // Đảm bảo đường dẫn chính xác
+import { UserContext } from "../../context/UserContext";
 import DiscountModal from "../../components/DiscountModal";
 import AddressAutocomplete from "../../components/Orders/AddressAutocomplete";
+import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
 // import { getActiveDiscounts } from "../../apis/discountApi";
 
 // Component tượng trưng cho Order Summary (đã chỉnh sửa để nhận prop và hiển thị dữ liệu thật)
@@ -171,6 +172,7 @@ function ShoppingCard_CheckOut() {
   const [city, setCity] = useState("");
   // State để lưu lỗi
   const [errors, setErrors] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const isCartEmpty = !cartItems || cartItems.length === 0;
 
   // --- Auto-detect city/province/country from shipping address ---
@@ -308,6 +310,7 @@ function ShoppingCard_CheckOut() {
       phoneNumber,
     };
     localStorage.setItem("customerInfo", JSON.stringify(customerInfo));
+    localStorage.setItem("paymentMethod", paymentMethod);
 
     navigate(path.shopping_payment);
   };
@@ -686,6 +689,21 @@ function ShoppingCard_CheckOut() {
                   {t("payment.checkout.pickup_address")}
                 </p>
               </div>
+            </div>
+
+            {/* Payment Method */}
+            <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <h2 className="mb-4 text-base font-semibold text-gray-900 flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-violet-600">
+                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+                  <path d="M2 10h20" stroke="currentColor" strokeWidth="1.8"/>
+                </svg>
+                Phương thức thanh toán
+              </h2>
+              <PaymentMethodSelector
+                selected={paymentMethod}
+                onChange={setPaymentMethod}
+              />
             </div>
           </div>
         </div>
