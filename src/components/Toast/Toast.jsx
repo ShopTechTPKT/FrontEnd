@@ -1,6 +1,28 @@
 import { useState, useEffect } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaCheckCircle, FaTimesCircle, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+
+// Icon mapping per toast type
+const TOAST_ICONS = {
+  success: FaCheckCircle,
+  error: FaTimesCircle,
+  warning: FaExclamationTriangle,
+  info: FaInfoCircle,
+};
+
+const ICON_COLORS = {
+  success: 'text-green-500',
+  error: 'text-red-500',
+  warning: 'text-amber-500',
+  info: 'text-blue-500',
+};
+
+const PROGRESS_COLORS = {
+  success: 'bg-green-500',
+  error: 'bg-red-500',
+  warning: 'bg-amber-500',
+  info: 'bg-blue-500',
+};
 
 // message supports string or JSX (ReactNode)
 const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position = 'top-right' }) => {
@@ -33,6 +55,7 @@ const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position 
   };
 
   const config = toastConfig[type] || toastConfig.info;
+  const IconComponent = TOAST_ICONS[type] || FaInfoCircle;
 
   const positionClasses = {
     'top-right': 'top-4 right-4',
@@ -50,8 +73,9 @@ const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position 
     <div
       className={`fixed ${positionClasses[position]} z-[9999] transition-opacity duration-150 ease-out ${animationClasses}`}
     >
-      <div className={`${config.bg} min-w-[240px] max-w-sm rounded-md border ${config.accent} border-opacity-20 px-3 py-2 shadow-sm`}>
-        <div className="flex items-center gap-2">
+      <div className={`${config.bg} min-w-[240px] max-w-sm rounded-md border ${config.accent} border-opacity-20 shadow-sm overflow-hidden`}>
+        <div className="flex items-center gap-2 px-3 py-2">
+          <IconComponent className={`${ICON_COLORS[type]} text-base shrink-0`} />
           <div className={`flex-1 ${config.text} text-sm leading-snug`}>
             {message}
           </div>
@@ -63,9 +87,25 @@ const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position 
             <FaTimes className="text-[10px]" />
           </button>
         </div>
+        {/* Progress bar: shrinks from 100% to 0% over duration */}
+        <div className="h-0.5 w-full bg-gray-100">
+          <div
+            className={`h-full ${PROGRESS_COLORS[type]} opacity-60`}
+            style={{
+              animation: `toast-progress ${duration}ms linear forwards`,
+            }}
+          />
+        </div>
       </div>
+      <style>{`
+        @keyframes toast-progress {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+      `}</style>
     </div>
   );
 };
 
 export default Toast;
+
