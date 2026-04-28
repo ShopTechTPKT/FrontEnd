@@ -199,6 +199,24 @@ const Header = () => {
                 <HeaderMegaMenu onNavigate={handleNavigate} />
               </li>
 
+              {/* PC Builder — signature feature */}
+              <li>
+                <Link
+                  to="/pc-builder"
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+                    isActive("/pc-builder")
+                      ? "text-white bg-violet-700"
+                      : "text-violet-700 hover:text-white hover:bg-violet-700"
+                  }`}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                  </svg>
+                  <span>Xây PC</span>
+                </Link>
+              </li>
+
               {/* Deals */}
               <li>
                 <Link to="/deals" className={`relative ${navLinkClass(isActive("/deals"))}`}>
