@@ -195,6 +195,7 @@ import FlappyBird from "../components/minigame/flappy-bord";
 import Favorites from "../pages/Favorites/Favorites";
 import NotFound from "../pages/NotFound/NotFound";
 import AuditLogsPage from "../pages/AuditLogs/AuditLogsPage";
+import PCBuilder from "../pages/PCBuilder/PCBuilder";
 
 const AppRouter = () => {
   const { getUserRole, loading: _loading } = useContext(UserContext);
@@ -270,6 +271,8 @@ const AppRouter = () => {
           <Route path="track-order" element={<TrackOrder />} />
           <Route path="blog" element={<Blog />} />
           <Route path="favorites" element={<Favorites />} />
+          <Route path="pc-builder" element={<PCBuilder />} />
+          <Route path="pc-builder/:presetId" element={<PCBuilder />} />
 
           {/* Management Pages - Protected by roles */}
           <Route 
