@@ -30,10 +30,10 @@ const Loading = ({
     <div className={`flex flex-col items-center justify-center ${className}`}>
       <div className="relative mb-3">
         {/* Outer ring */}
-        <div className={`${sizeClasses[size]} border-4 border-purple-200 rounded-full`}></div>
+        <div className={`${sizeClasses[size]} border-4 border-violet-200 rounded-full`}></div>
         {/* Spinning ring */}
         <div 
-          className={`absolute inset-0 ${sizeClasses[size]} border-4 border-purple-600 rounded-full border-t-transparent animate-spin`}
+          className={`absolute inset-0 ${sizeClasses[size]} border-4 border-violet-600 rounded-full border-t-transparent animate-spin`}
         ></div>
       </div>
       {text && (

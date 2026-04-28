@@ -10,7 +10,7 @@ import React from "react";
 
 const variantClasses = {
   primary:
-    "bg-violet-700 text-white hover:bg-violet-800 focus-visible:ring-violet-700/30",
+    "bg-violet-700 text-white shadow-xs hover:bg-violet-800 hover:shadow-sm focus-visible:ring-violet-700/30",
   outline:
     "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus-visible:ring-gray-400/20",
   ghost:
@@ -48,7 +48,8 @@ function Button({
       disabled={isDisabled}
       className={[
         "inline-flex items-center justify-center font-medium",
-        "transition-colors duration-200",
+        "transition-all duration-200",
+        "active:scale-[0.98]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         variantClasses[variant] || variantClasses.primary,

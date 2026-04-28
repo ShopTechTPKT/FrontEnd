@@ -10,15 +10,15 @@ import React from "react";
  */
 
 const variantClasses = {
-  default:     "bg-white border border-gray-200 shadow-xs",
-  flat:        "bg-white border border-gray-200",
-  interactive: "bg-white border border-gray-200 shadow-xs hover:shadow-md hover:border-gray-300 transition-shadow duration-200 cursor-pointer",
+  default:     "bg-white border border-gray-100 shadow-xs",
+  flat:        "bg-white border border-gray-100",
+  interactive: "bg-white border border-gray-100 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer active:scale-[0.995]",
 };
 
 function Card({
   variant = "default",
   padding = "p-5",
-  rounded = "rounded-xl",
+  rounded = "rounded-2xl",
   className = "",
   onClick,
   children,

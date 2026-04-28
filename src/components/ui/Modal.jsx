@@ -66,7 +66,7 @@ function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 transition-opacity"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
         aria-hidden
       />
@@ -78,7 +78,7 @@ function Modal({
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
         className={[
-          "relative bg-white rounded-xl shadow-lg w-full animate-fadeIn",
+          "relative bg-white rounded-2xl shadow-lg w-full animate-fadeIn",
           "max-h-[90vh] overflow-y-auto",
           sizeClasses[size] || sizeClasses.md,
           className,
