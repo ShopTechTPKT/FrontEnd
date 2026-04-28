@@ -29,7 +29,7 @@ function ProfileLayout() {
   return (
     <div className="bg-gray-50/30 min-h-screen font-sans">
       {/* Header Banner */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-gradient-to-r from-white to-violet-50/30 border-b border-gray-200">
         <div className="max-w-screen-xl mx-auto py-6 px-4 sm:px-6">
           <Breadcrumb
             items={[
@@ -37,7 +37,7 @@ function ProfileLayout() {
               { label: t("account.myAccount") },
             ]}
           />
-          <h1 className="mt-3 text-2xl font-semibold text-gray-900">
+          <h1 className="mt-3 text-2xl font-semibold text-gray-900 tracking-tight">
             {t("account.myAccount")}
           </h1>
         </div>
@@ -48,16 +48,16 @@ function ProfileLayout() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <aside className="lg:col-span-1">
-            <nav className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <nav className="bg-white rounded-2xl shadow-xs overflow-hidden">
               {NAV_ITEMS.map((item, idx) => (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center px-4 py-3 text-sm font-medium transition-colors border-l-2 ${
+                  className={`flex items-center px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${
                     isActive(item)
                       ? "border-violet-700 bg-violet-50 text-violet-700"
                       : "border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  } ${idx > 0 ? "border-t border-t-gray-100" : ""}`}
+                  } ${idx > 0 ? "border-t border-t-gray-50" : ""}`}
                 >
                   {t(item.labelKey)}
                 </Link>
