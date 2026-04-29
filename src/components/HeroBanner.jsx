@@ -44,7 +44,9 @@ const HeroBanner = ({ products = [] }) => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const intervalRef = useRef(null);
   const searchRef = useRef(null);
@@ -87,24 +89,69 @@ const HeroBanner = ({ products = [] }) => {
       .replace(/Đ/g, "D");
 
   const filteredProducts = products.filter((p) => {
-    if (!searchTerm.trim()) return false;
-    const q = removeVietnameseTones(searchTerm.toLowerCase());
+    if (!debouncedSearchTerm.trim()) return false;
+    const q = removeVietnameseTones(debouncedSearchTerm.toLowerCase());
     const name = removeVietnameseTones(
       (p.productName || p.item?.productName || "").toLowerCase()
     );
     return name.includes(q);
   });
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 220);
+    return () => window.clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+  const visibleSuggestions = filteredProducts.slice(0, 7);
+
   const handleSearch = () => {
     if (searchTerm.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
       setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleSearch();
-    if (e.key === "Escape") setShowSuggestions(false);
+    if (e.key === "Escape") {
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!showSuggestions && visibleSuggestions.length > 0) {
+        setShowSuggestions(true);
+      }
+      setSelectedSuggestionIndex((prev) =>
+        Math.min(prev + 1, visibleSuggestions.length - 1)
+      );
+      return;
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) => Math.max(prev - 1, 0));
+      return;
+    }
+
+    if (e.key === "Enter") {
+      if (showSuggestions && selectedSuggestionIndex >= 0) {
+        const picked = visibleSuggestions[selectedSuggestionIndex];
+        const id = picked?.productID || picked?.item?.productID;
+        if (id) {
+          navigate(`/product/${id}/productAbout`);
+          setShowSuggestions(false);
+          setSearchTerm("");
+          setSelectedSuggestionIndex(-1);
+          return;
+        }
+      }
+      handleSearch();
+    }
   };
 
   // Close suggestions on outside click
@@ -115,6 +162,7 @@ const HeroBanner = ({ products = [] }) => {
         suggestionsRef.current && !suggestionsRef.current.contains(e.target)
       ) {
         setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -203,9 +251,10 @@ const HeroBanner = ({ products = [] }) => {
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setShowSuggestions(e.target.value.trim().length > 0);
+                  setSelectedSuggestionIndex(-1);
                 }}
                 onFocus={() => {
-                  if (searchTerm.trim()) setShowSuggestions(true);
+                  if (debouncedSearchTerm.trim()) setShowSuggestions(true);
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder={t("search.search_for_products") || "Tìm laptop, PC, linh kiện..."}
@@ -237,7 +286,7 @@ const HeroBanner = ({ products = [] }) => {
               >
                 {filteredProducts.length > 0 ? (
                   <div className="py-1.5">
-                    {filteredProducts.slice(0, 7).map((p, i) => {
+                    {visibleSuggestions.map((p, i) => {
                       const id = p.productID || p.item?.productID || i;
                       const name = p.productName || p.item?.productName || "";
                       const img = p.image || p.imageUrl || p.item?.imageUrl || "";
@@ -249,8 +298,13 @@ const HeroBanner = ({ products = [] }) => {
                             navigate(`/product/${id}/productAbout`);
                             setShowSuggestions(false);
                             setSearchTerm("");
+                            setSelectedSuggestionIndex(-1);
                           }}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-violet-50 text-left transition-colors"
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                            i === selectedSuggestionIndex
+                              ? "bg-violet-50"
+                              : "hover:bg-violet-50"
+                          }`}
                         >
                           {img && (
                             <img src={img} alt={name} className="w-10 h-10 object-contain rounded-lg bg-gray-50" />

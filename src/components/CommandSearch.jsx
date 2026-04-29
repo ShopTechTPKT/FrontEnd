@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import formatCurrency from "../utils/formatCurrency";
+import { getAllProducts } from "../apis/productApi";
 
 /**
  * CommandSearch — Global command palette search (Ctrl+K / Cmd+K).
@@ -17,16 +18,28 @@ export default function CommandSearch() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [allProducts, setAllProducts] = useState([]);
 
-  // Load products from the mock service
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  // Load products from backend API
   useEffect(() => {
-    import("../services/MockProductService").then((mod) => {
-      if (mod.getAllProducts) {
-        mod.getAllProducts().then((res) => {
-          if (res?.DT) setAllProducts(res.DT);
-        });
+    const loadProducts = async () => {
+      try {
+        const res = await getAllProducts();
+        if (res?.DT) setAllProducts(res.DT);
+      } catch (error) {
+        console.error("Failed to load products for command search:", error);
+        setAllProducts([]);
       }
-    });
+    };
+    loadProducts();
   }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 180);
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
   // Global keyboard shortcut
   useEffect(() => {
@@ -53,7 +66,22 @@ export default function CommandSearch() {
     }
   }, [isOpen]);
 
-  // Search logic
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setResults([]);
+      return;
+    }
+    const q = debouncedQuery.toLowerCase();
+    const filtered = allProducts
+      .filter(
+        (p) =>
+          (p.productName || p.name || "").toLowerCase().includes(q) ||
+          (p.categoryName || "").toLowerCase().includes(q)
+      )
+      .slice(0, 8);
+    setResults(filtered);
+  }, [debouncedQuery, allProducts]);
+
   const handleSearch = useCallback(
     (value) => {
       setQuery(value);
