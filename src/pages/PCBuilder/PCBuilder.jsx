@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { addToCart } from "../../utils/redux/cartSlice";
@@ -13,8 +13,13 @@ import {
   checkCompatibility,
   calcTotalWatt,
   resolvePreset,
+  savePCBuild,
+  getSharedPCBuild,
 } from "../../apis/pcBuilderApi";
 import PCBuilderModal from "./PCBuilderModal";
+
+const PC_BUILDER_LOCAL_KEY = "pc_builder_save";
+const PC_BUILDER_RECENTS_KEY = "pc_builder_recent";
 
 /* ── SVG Icon map ─────────────────────────────────────────── */
 const CAT_ICONS = {
@@ -185,6 +190,7 @@ const ComponentRow = ({ cat, selected, onOpen, onRemove }) => (
 export default function PCBuilder() {
   const { presetId } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -194,6 +200,7 @@ export default function PCBuilder() {
   const [loading, setLoading] = useState(true);
   const [addingAll, setAddingAll] = useState(false);
   const [buildName, setBuildName] = useState("Cấu hình của tôi");
+  const [recentLocalBuilds, setRecentLocalBuilds] = useState([]);
 
   // Load all components
   useEffect(() => {
@@ -202,6 +209,89 @@ export default function PCBuilder() {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (!Object.keys(allComponents).length) return;
+    const selectedFromUrl = {};
+    for (const cat of PC_CATEGORIES) {
+      const compId = searchParams.get(cat.id);
+      if (!compId) continue;
+      const comp = (allComponents[cat.id] || []).find((item) => String(item.id) === String(compId));
+      if (comp) selectedFromUrl[cat.id] = comp;
+    }
+    if (Object.keys(selectedFromUrl).length) {
+      setSelected(selectedFromUrl);
+    }
+  }, [allComponents, searchParams]);
+
+  useEffect(() => {
+    const shareCode = searchParams.get("build");
+    if (!shareCode || !Object.keys(allComponents).length) return;
+    const loadSharedBuild = async () => {
+      try {
+        const payload = await getSharedPCBuild(shareCode);
+        const data = payload?.result || payload?.DT || payload?.data || payload;
+        const componentsMap = data?.components || {};
+        const resolved = {};
+        for (const [catId, compId] of Object.entries(componentsMap)) {
+          const comp = (allComponents[catId] || []).find((item) => String(item.id) === String(compId));
+          if (comp) resolved[catId] = comp;
+        }
+        if (Object.keys(resolved).length) {
+          setSelected(resolved);
+          if (data?.name) setBuildName(data.name);
+        }
+      } catch {
+        notify.warning("Không tải được cấu hình chia sẻ từ hệ thống.");
+      }
+    };
+    loadSharedBuild();
+  }, [allComponents, searchParams]);
+
+  useEffect(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem(PC_BUILDER_RECENTS_KEY) || "[]");
+      setRecentLocalBuilds(Array.isArray(raw) ? raw.slice(0, 5) : []);
+    } catch {
+      setRecentLocalBuilds([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!Object.keys(allComponents).length) return;
+    const hasBuildCode = searchParams.get("build");
+    const hasAnyUrlComponent = PC_CATEGORIES.some((cat) => Boolean(searchParams.get(cat.id)));
+    if (hasBuildCode || hasAnyUrlComponent) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem(PC_BUILDER_LOCAL_KEY) || "null");
+      if (!saved?.components) return;
+      const restored = {};
+      for (const [catId, compId] of Object.entries(saved.components)) {
+        const comp = (allComponents[catId] || []).find((item) => String(item.id) === String(compId));
+        if (comp) restored[catId] = comp;
+      }
+      if (Object.keys(restored).length) {
+        setSelected(restored);
+        if (saved?.name) setBuildName(saved.name);
+      }
+    } catch {
+      // skip invalid local save
+    }
+  }, [allComponents, searchParams]);
+
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      for (const cat of PC_CATEGORIES) {
+        if (selected[cat.id]?.id) {
+          next.set(cat.id, String(selected[cat.id].id));
+        } else {
+          next.delete(cat.id);
+        }
+      }
+      return next;
+    }, { replace: true });
+  }, [selected, setSearchParams]);
 
   // Apply preset if presetId param
   useEffect(() => {
@@ -283,7 +373,7 @@ export default function PCBuilder() {
     }
   };
 
-  const handleSaveBuild = () => {
+  const handleSaveBuild = async () => {
     const buildData = {
       name: buildName,
       components: Object.fromEntries(
@@ -292,19 +382,92 @@ export default function PCBuilder() {
       totalPrice,
       savedAt: new Date().toISOString(),
     };
-    localStorage.setItem("pc_builder_save", JSON.stringify(buildData));
-    notify.success("Đã lưu cấu hình!");
+    try {
+      const userId = getCurrentUserId();
+      if (!userId) throw new Error("No user id");
+      const res = await savePCBuild({
+        userId,
+        name: buildData.name,
+        components: buildData.components,
+        totalPrice: buildData.totalPrice,
+      });
+      const saved = res?.result || res?.DT || res?.data || res;
+      const shareCode = saved?.shareCode;
+      if (shareCode) {
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("build", shareCode);
+          return next;
+        });
+      }
+      notify.success("Đã lưu cấu hình lên hệ thống.");
+      return;
+    } catch {
+      localStorage.setItem(PC_BUILDER_LOCAL_KEY, JSON.stringify(buildData));
+      const recentItem = {
+        id: Date.now(),
+        name: buildData.name || "Cấu hình chưa đặt tên",
+        components: buildData.components,
+        totalPrice: buildData.totalPrice,
+        savedAt: buildData.savedAt,
+      };
+      const updated = [recentItem, ...recentLocalBuilds].slice(0, 5);
+      setRecentLocalBuilds(updated);
+      localStorage.setItem(PC_BUILDER_RECENTS_KEY, JSON.stringify(updated));
+      notify.success("Đã lưu cấu hình cục bộ.");
+    }
   };
 
-  const handleShareBuild = () => {
+  const handleShareBuild = async () => {
+    let shareCode = searchParams.get("build");
+    if (!shareCode) {
+      try {
+        const userId = getCurrentUserId();
+        if (userId) {
+          const res = await savePCBuild({
+            userId,
+            name: buildName,
+            components: Object.fromEntries(
+              Object.entries(selected).map(([k, v]) => [k, v?.id])
+            ),
+            totalPrice,
+          });
+          const saved = res?.result || res?.DT || res?.data || res;
+          shareCode = saved?.shareCode;
+        }
+      } catch {
+        // fallback query-share below
+      }
+    }
     const params = new URLSearchParams(
       Object.fromEntries(
         Object.entries(selected).map(([k, v]) => [k, v?.id || ""])
       )
     );
+    if (shareCode) params.set("build", shareCode);
     const url = `${window.location.origin}/pc-builder?${params.toString()}`;
-    navigator.clipboard.writeText(url);
-    notify.success("Đã copy link cấu hình!");
+    try {
+      await navigator.clipboard.writeText(url);
+      notify.success("Đã copy link cấu hình!");
+    } catch {
+      window.prompt("Sao chép link cấu hình bên dưới:", url);
+      notify.info("Clipboard bị chặn, đã mở hộp sao chép thủ công.");
+    }
+  };
+
+  const handleLoadRecentBuild = (item) => {
+    const restored = {};
+    for (const [catId, compId] of Object.entries(item?.components || {})) {
+      const comp = (allComponents[catId] || []).find((x) => String(x.id) === String(compId));
+      if (comp) restored[catId] = comp;
+    }
+    if (Object.keys(restored).length) {
+      setSelected(restored);
+      if (item?.name) setBuildName(item.name);
+      notify.success(`Đã tải cấu hình "${item.name || "đã lưu"}"`);
+    } else {
+      notify.warning("Không tìm thấy linh kiện khớp với cấu hình đã lưu.");
+    }
   };
 
   const handleClearAll = () => {
@@ -419,6 +582,22 @@ export default function PCBuilder() {
                 className="w-full text-base font-semibold text-gray-900 border-0 border-b-2 border-violet-200 focus:border-violet-500 outline-none pb-1 transition-colors bg-transparent"
                 placeholder="Đặt tên cho cấu hình..."
               />
+              {recentLocalBuilds.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-[11px] text-gray-500 mb-2">Lưu gần đây (cục bộ)</p>
+                  <div className="flex flex-wrap gap-2">
+                    {recentLocalBuilds.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleLoadRecentBuild(item)}
+                        className="px-2.5 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors"
+                      >
+                        {item.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Component rows */}
