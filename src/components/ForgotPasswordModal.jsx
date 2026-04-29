@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { FaEnvelope, FaKey, FaLock, FaShieldAlt, FaTimes, FaCheckCircle } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import axiosInstance from "../custom/axios";
@@ -182,14 +182,14 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <div key={s} className="flex items-center">
               <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold ${
               step >= s
-                ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white'
+                ? 'bg-gradient-to-r from-violet-700 to-violet-600 text-white'
                 : 'bg-gray-200 text-gray-500'
             }`}>
                 {step > s ? <FaCheckCircle /> : s}
               </div>
               {s < 3 && (
                 <div className={`w-16 h-1 mx-2 ${
-                  step > s ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500' : 'bg-gray-200'
+                  step > s ? 'bg-gradient-to-r from-violet-700 to-violet-600' : 'bg-gray-200'
                 }`} />
               )}
             </div>
@@ -200,7 +200,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 1 && (
           <form onSubmit={handleSendOTP} className="space-y-5">
             <div className="text-center mb-6">
-              <FaEnvelope className="text-5xl text-sky-500 mx-auto mb-3" />
+              <FaEnvelope className="text-5xl text-violet-600 mx-auto mb-3" />
               <p className="text-gray-600">{t('forgotPassword.step1.description')}</p>
             </div>
 
@@ -219,7 +219,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.email
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
+                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
                 }`}
               />
             </div>
@@ -240,7 +240,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.confirmEmail
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
+                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
                 }`}
               />
             </div>
@@ -249,7 +249,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+              className="w-full py-3 bg-gradient-to-r from-violet-700 to-violet-600 hover:from-violet-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
             >
               {loading ? t('forgotPassword.sending') : t('forgotPassword.step1.send_otp')}
             </button>
@@ -260,7 +260,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 2 && (
           <form onSubmit={handleVerifyOTP} className="space-y-5">
             <div className="text-center mb-6">
-              <FaKey className="text-5xl text-sky-500 mx-auto mb-3" />
+              <FaKey className="text-5xl text-violet-600 mx-auto mb-3" />
               <p className="text-gray-600">{t('forgotPassword.step2.description', { email })}</p>
             </div>
 
@@ -281,7 +281,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all text-center text-2xl tracking-widest ${
                   errors.otp
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
+                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
                 }`}
               />
             </div>
@@ -298,7 +298,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="flex-1 py-3 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                className="flex-1 py-3 bg-gradient-to-r from-violet-700 to-violet-600 hover:from-violet-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
               >
                 {loading ? t('forgotPassword.verifying') : t('forgotPassword.step2.verify')}
               </button>
@@ -310,7 +310,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 3 && (
           <form onSubmit={handleResetPassword} className="space-y-5">
             <div className="text-center mb-6">
-              <FaLock className="text-5xl text-sky-500 mx-auto mb-3" />
+              <FaLock className="text-5xl text-violet-600 mx-auto mb-3" />
               <p className="text-gray-600">{t('forgotPassword.step3.description')}</p>
             </div>
 
@@ -329,7 +329,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.newPassword
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
+                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
                 }`}
               />
             </div>
@@ -350,7 +350,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.confirmPassword
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-sky-500 focus:border-sky-500'
+                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
                 }`}
               />
             </div>
@@ -367,7 +367,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                className="flex-1 py-3 bg-gradient-to-r from-violet-700 to-violet-600 hover:from-violet-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
               >
                 {loading ? t('forgotPassword.resetting') : t('forgotPassword.step3.reset_password')}
               </button>
