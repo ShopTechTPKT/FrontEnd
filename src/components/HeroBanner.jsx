@@ -1,0 +1,325 @@
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
+// Reuse existing banner images
+import banner1 from "../assets/1.jpg";
+import banner3 from "../assets/3.jpg";
+import banner4 from "../assets/4.jpg";
+
+const SLIDES = [
+  {
+    id: 1,
+    image: banner1,
+    title: "Laptop Gaming Cao Cấp",
+    subtitle: "RTX 4070 · 144Hz · 1 giờ giao hàng",
+    ctaLabel: "Khám phá ngay",
+    ctaPath: "/laptops",
+    accent: "from-violet-900/70 via-violet-800/40 to-transparent",
+  },
+  {
+    id: 3,
+    image: banner3,
+    title: "Flash Deal Hôm Nay",
+    subtitle: "Giảm đến 40% · Số lượng có hạn",
+    ctaLabel: "Săn deal ngay",
+    ctaPath: "/deals",
+    accent: "from-rose-900/70 via-rose-800/40 to-transparent",
+  },
+  {
+    id: 4,
+    image: banner4,
+    title: "Phụ Kiện Gaming",
+    subtitle: "Màn hình · Bàn phím · Chuột · Headset",
+    ctaLabel: "Mua ngay",
+    ctaPath: "/all_products",
+    accent: "from-emerald-900/70 via-emerald-800/40 to-transparent",
+  },
+];
+
+const AUTOPLAY_INTERVAL = 7000; // 7s — thoải mái hơn
+
+const HeroBanner = ({ products = [] }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [current, setCurrent] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const intervalRef = useRef(null);
+  const searchRef = useRef(null);
+  const suggestionsRef = useRef(null);
+
+  // ── Auto-play ──────────────────────────────────────────────
+  const startAutoplay = useCallback(() => {
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % SLIDES.length);
+    }, AUTOPLAY_INTERVAL);
+  }, []);
+
+  const stopAutoplay = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  }, []);
+
+  useEffect(() => {
+    startAutoplay();
+    return stopAutoplay;
+  }, [startAutoplay, stopAutoplay]);
+
+  const goTo = (idx) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    stopAutoplay();
+    setCurrent(idx);
+    startAutoplay();
+    setTimeout(() => setIsTransitioning(false), 600);
+  };
+
+  const goNext = () => goTo((current + 1) % SLIDES.length);
+  const goPrev = () => goTo((current - 1 + SLIDES.length) % SLIDES.length);
+
+  // ── Search ─────────────────────────────────────────────────
+  const removeVietnameseTones = (str) =>
+    str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D");
+
+  const filteredProducts = products.filter((p) => {
+    if (!searchTerm.trim()) return false;
+    const q = removeVietnameseTones(searchTerm.toLowerCase());
+    const name = removeVietnameseTones(
+      (p.productName || p.item?.productName || "").toLowerCase()
+    );
+    return name.includes(q);
+  });
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
+    if (e.key === "Escape") setShowSuggestions(false);
+  };
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (
+        searchRef.current && !searchRef.current.contains(e.target) &&
+        suggestionsRef.current && !suggestionsRef.current.contains(e.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const slide = SLIDES[current];
+
+  return (
+    <div
+      className="relative w-full overflow-hidden"
+      style={{ height: "clamp(320px, 52vw, 560px)" }}
+      onMouseEnter={stopAutoplay}
+      onMouseLeave={startAutoplay}
+    >
+      {/* ── Slides ── */}
+      {SLIDES.map((s, idx) => (
+        <div
+          key={s.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            idx === current ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
+        >
+          <img
+            src={s.image}
+            alt={s.title}
+            className="w-full h-full object-cover"
+            loading={idx === 0 ? "eager" : "lazy"}
+          />
+          {/* Gradient overlay */}
+          <div className={`absolute inset-0 bg-gradient-to-r ${s.accent}`} />
+        </div>
+      ))}
+
+      {/* ── Content overlay ── */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-between py-8 px-6 md:px-12 lg:px-16">
+        {/* Top: slide text */}
+        <div className="max-w-lg">
+          <p
+            key={`sub-${current}`}
+            className="text-white/80 text-sm font-medium tracking-wide mb-2 animate-fadeInUp"
+          >
+            {slide.subtitle}
+          </p>
+          <h1
+            key={`title-${current}`}
+            className="text-white text-3xl md:text-4xl lg:text-5xl font-bold leading-tight animate-fadeInUp"
+            style={{ animationDelay: "60ms" }}
+          >
+            {slide.title}
+          </h1>
+          <button
+            key={`cta-${current}`}
+            onClick={() => navigate(slide.ctaPath)}
+            className="mt-5 inline-flex items-center gap-2 bg-white text-violet-700 font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-violet-50 transition-colors shadow-md animate-fadeInUp"
+            style={{ animationDelay: "120ms" }}
+          >
+            {slide.ctaLabel}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Bottom: Search bar + dots */}
+        <div className="flex flex-col gap-4">
+          {/* Search bar */}
+          <div className="relative max-w-xl" ref={searchRef}>
+            <div className="flex items-center bg-white/95 backdrop-blur-md rounded-2xl shadow-lg overflow-visible">
+              <svg
+                className="absolute left-4 w-4 h-4 text-gray-400 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowSuggestions(e.target.value.trim().length > 0);
+                }}
+                onFocus={() => {
+                  if (searchTerm.trim()) setShowSuggestions(true);
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder={t("search.search_for_products") || "Tìm laptop, PC, linh kiện..."}
+                className="flex-1 pl-10 pr-4 py-3 text-gray-900 text-sm bg-transparent outline-none placeholder-gray-400"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => { setSearchTerm(""); setShowSuggestions(false); }}
+                  className="px-2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+              <button
+                onClick={handleSearch}
+                className="m-1.5 px-4 py-2 bg-violet-700 text-white text-sm font-medium rounded-xl hover:bg-violet-800 transition-colors whitespace-nowrap"
+              >
+                {t("search.search") || "Tìm kiếm"}
+              </button>
+            </div>
+
+            {/* Suggestions dropdown */}
+            {showSuggestions && searchTerm.trim() && (
+              <div
+                ref={suggestionsRef}
+                className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 max-h-80 overflow-y-auto animate-fadeIn"
+              >
+                {filteredProducts.length > 0 ? (
+                  <div className="py-1.5">
+                    {filteredProducts.slice(0, 7).map((p, i) => {
+                      const id = p.productID || p.item?.productID || i;
+                      const name = p.productName || p.item?.productName || "";
+                      const img = p.image || p.imageUrl || p.item?.imageUrl || "";
+                      const price = p.price ?? p.item?.unitPrice ?? 0;
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => {
+                            navigate(`/product/${id}/productAbout`);
+                            setShowSuggestions(false);
+                            setSearchTerm("");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-violet-50 text-left transition-colors"
+                        >
+                          {img && (
+                            <img src={img} alt={name} className="w-10 h-10 object-contain rounded-lg bg-gray-50" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
+                            <p className="text-xs text-violet-700 font-medium">
+                              {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price)}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                    {filteredProducts.length > 7 && (
+                      <button
+                        onClick={handleSearch}
+                        className="w-full py-2.5 text-sm text-violet-700 font-medium text-center hover:bg-violet-50 border-t border-gray-100 transition-colors"
+                      >
+                        Xem tất cả {filteredProducts.length} kết quả →
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="px-4 py-6 text-center text-sm text-gray-500">
+                    Không tìm thấy sản phẩm phù hợp
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Dots + slide count */}
+          <div className="flex items-center gap-3">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => goTo(idx)}
+                className={`hero-dot ${idx === current ? "active" : ""}`}
+                aria-label={`Slide ${idx + 1}`}
+              />
+            ))}
+            <span className="text-white/60 text-xs ml-2 tabular-nums">
+              {current + 1} / {SLIDES.length}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Prev / Next arrows ── */}
+      <button
+        onClick={goPrev}
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 flex items-center justify-center bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full transition-colors"
+        aria-label="Previous slide"
+      >
+        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button
+        onClick={goNext}
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 flex items-center justify-center bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full transition-colors"
+        aria-label="Next slide"
+      >
+        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  );
+};
+
+export default HeroBanner;
