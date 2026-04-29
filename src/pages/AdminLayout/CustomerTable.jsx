@@ -73,7 +73,7 @@ const CustomerTable = memo(
         const response = await axiosInstance.put(`/users/${userId}`, updatedData);
         
         if (response.data) {
-          showSuccess(`✅ Đã cập nhật trạng thái khách hàng thành ${newStatus === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}`, 3000, 'top-right');
+          showSuccess(`Đã cập nhật trạng thái khách hàng thành ${newStatus === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}`, 3000, 'top-right');
           const customerKey = customer.id || customer.customerID;
           setEditingStatus({ ...editingStatus, [customerKey]: false });
           
@@ -84,7 +84,7 @@ const CustomerTable = memo(
         }
       } catch (error) {
         console.error('Error updating customer status:', error);
-        showError('❌ Lỗi khi cập nhật trạng thái: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+        showError('Lỗi khi cập nhật trạng thái: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
       }
     };
 
@@ -92,7 +92,7 @@ const CustomerTable = memo(
       <div className={currentTheme.container}>
         {/* Header Section - Modern design */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
             {t('admin.danh_sch_khch_hng')}
           </h2>
           <div className="relative w-full md:w-80">

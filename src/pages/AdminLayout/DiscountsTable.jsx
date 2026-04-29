@@ -158,11 +158,11 @@ const DiscountsTable = ({ theme }) => {
   const handleBulkDeactivateExpired = async () => {
     try {
       const count = await deactivateExpiredDiscounts();
-      showSuccess(`✅ Đã vô hiệu hóa ${count} discount hết hạn`, 4000, 'top-right');
+      showSuccess(`Đã vô hiệu hóa ${count} discount hết hạn`, 4000, 'top-right');
       fetchDiscountsData();
     } catch (error) {
       console.error('Error deactivating expired discounts:', error);
-      showError('❌ Lỗi khi vô hiệu hóa discount hết hạn: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+      showError('Lỗi khi vô hiệu hóa discount hết hạn: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
     }
   };
 
@@ -308,7 +308,7 @@ const DiscountsTable = ({ theme }) => {
       productId: discount.productId ? String(discount.productId) : '' // Chuyển sang string để tránh lỗi trim()
     });
     setShowForm(true);
-    showSuccess('📝 Đã mở form chỉnh sửa discount', 2000, 'top-right');
+    showSuccess('Đã mở form chỉnh sửa discount', 2000, 'top-right');
   };
 
   // Ẩn function handleDelete vì không cho phép xóa discount
@@ -329,15 +329,15 @@ const DiscountsTable = ({ theme }) => {
     try {
       if (currentStatus) {
         await deactivateDiscount(discountId);
-        showSuccess('✅ Đã vô hiệu hóa discount thành công!', 3000, 'top-right');
+        showSuccess('Đã vô hiệu hóa discount thành công!', 3000, 'top-right');
       } else {
         await activateDiscount(discountId);
-        showSuccess('✅ Đã kích hoạt discount thành công!', 3000, 'top-right');
+        showSuccess('Đã kích hoạt discount thành công!', 3000, 'top-right');
       }
       fetchDiscountsData();
     } catch (error) {
       console.error('Error updating status:', error);
-      showError('❌ Lỗi khi cập nhật trạng thái: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+      showError('Lỗi khi cập nhật trạng thái: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
     }
   };
 
@@ -365,7 +365,7 @@ const DiscountsTable = ({ theme }) => {
       setCustomers(customersList);
     } catch (error) {
       console.error('Error fetching customers:', error);
-      showError('❌ Lỗi khi tải danh sách khách hàng', 3000, 'top-right');
+      showError('Lỗi khi tải danh sách khách hàng', 3000, 'top-right');
     } finally {
       setLoadingCustomers(false);
     }
@@ -429,11 +429,11 @@ const DiscountsTable = ({ theme }) => {
           selectedCustomers[0],
           customer?.fullName || customer?.name || 'Quý khách'
         );
-        showSuccess(response.message || '✅ Đã gửi email thành công!', 4000, 'top-right');
+        showSuccess(response.message || 'Đã gửi email thành công!', 4000, 'top-right');
       } else {
         // Gửi cho nhiều khách hàng
         const response = await sendBulkDiscountEmail(selectedDiscount.id, selectedCustomers);
-        showSuccess(response.message || `✅ Đã gửi email cho ${selectedCustomers.length} khách hàng!`, 4000, 'top-right');
+        showSuccess(response.message || `Đã gửi email cho ${selectedCustomers.length} khách hàng!`, 4000, 'top-right');
       }
       
       setShowEmailModal(false);
@@ -442,7 +442,7 @@ const DiscountsTable = ({ theme }) => {
       setShowCustomerSelector(false);
     } catch (error) {
       console.error('Error sending email:', error);
-      showError('❌ Lỗi khi gửi email: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+      showError('Lỗi khi gửi email: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
     } finally {
       setSendingEmail(false);
     }
@@ -739,7 +739,7 @@ const DiscountsTable = ({ theme }) => {
                   : '0%'}
               </p>
             </div>
-            <FaPercent className="text-purple-600 text-xl" />
+            <FaPercent className="text-violet-600 text-xl" />
           </div>
         </div>
       </div>
@@ -790,7 +790,7 @@ const DiscountsTable = ({ theme }) => {
                   </td>
                   <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
                     <div className="flex items-center gap-1">
-                      <FaPercent className="text-purple-600" />
+                      <FaPercent className="text-violet-600" />
                       <span className="font-medium">
                         {(discount.discountRate <= 1 ? discount.discountRate * 100 : discount.discountRate).toFixed(1)}%
                       </span>
@@ -833,7 +833,7 @@ const DiscountsTable = ({ theme }) => {
                       </button>
                       <button
                         onClick={() => handleSendEmailClick(discount)}
-                        className="text-purple-600 hover:text-purple-900 flex items-center gap-1"
+                        className="text-violet-600 hover:text-violet-900 flex items-center gap-1"
                       >
                         <FaEnvelope />
                         {t('admin.send_email') || 'Gửi Email'}
@@ -1152,7 +1152,7 @@ const DiscountsTable = ({ theme }) => {
                 >
                   {sendingEmail ? (
                     <>
-                      <span className="animate-spin">⏳</span>
+                      <span className="animate-spin">...</span>
                       Đang gửi...
                     </>
                   ) : (

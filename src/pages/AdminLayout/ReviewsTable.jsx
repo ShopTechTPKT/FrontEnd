@@ -90,12 +90,12 @@ const ReviewsTable = ({ theme }) => {
           : review
       ));
 
-      showSuccess('✅ Đã gửi phản hồi thành công!', 3000, 'top-right');
+      showSuccess('Đã gửi phản hồi thành công!', 3000, 'top-right');
       setShowReplyModal(false);
       setReplyText('');
     } catch (error) {
       console.error('Error submitting reply:', error);
-      showError('❌ Lỗi khi gửi phản hồi: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+      showError('Lỗi khi gửi phản hồi: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
     } finally {
       setIsSubmittingReply(false);
     }
@@ -155,7 +155,7 @@ const ReviewsTable = ({ theme }) => {
               </p>
               <p className={`text-2xl font-bold ${textColor}`}>{reviews.length}</p>
             </div>
-            <FaStar className="text-purple-600 text-xl" />
+            <FaStar className="text-violet-600 text-xl" />
           </div>
         </div>
 
