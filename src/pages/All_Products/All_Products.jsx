@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Loader2, Grid, List, SlidersHorizontal } from 'lucide-react';
 import ProductFilterSidebar from '../../components/product/ProductFilterSidebar';
 import ProductCard from '../../components/product/ProductCard';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { filterProducts } from '../../apis/productApi';
+import CategoryTabBar from '../../components/ui/CategoryTabBar';
 
 function All_Products() {
     const { t } = useTranslation();
     const location = useLocation();
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -18,6 +20,53 @@ function All_Products() {
     const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
     const [sortBy, setSortBy] = useState('default'); // 'default', 'price_asc', 'price_desc', 'name_asc'
     const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [activeCategoryTab, setActiveCategoryTab] = useState("all");
+
+    const categoryPathToId = {
+        "/all_products": "all",
+        "/laptops": "laptop",
+        "/desktops": "desktop",
+        "/pc_parts": "pc_parts",
+        "/printer_scanner": "printer_scanner",
+        "/networking_devices": "networking",
+    };
+
+    const getAppliedFilterChips = () => {
+        const chips = [];
+        if (currentFilters.categoryName) {
+            chips.push({ key: "categoryName", label: `Danh mục: ${currentFilters.categoryName}` });
+        }
+        if (currentFilters.brand) {
+            chips.push({ key: "brand", label: `Hãng: ${currentFilters.brand}` });
+        }
+        if (currentFilters.searchName) {
+            chips.push({ key: "searchName", label: `Từ khóa: ${currentFilters.searchName}` });
+        }
+        if (currentFilters.minPrice !== undefined || currentFilters.maxPrice !== undefined) {
+            const min = currentFilters.minPrice ?? 0;
+            const max = currentFilters.maxPrice ?? "∞";
+            chips.push({ key: "price", label: `Giá: ${min} - ${max}` });
+        }
+        if (currentFilters.status) {
+            chips.push({ key: "status", label: `Trạng thái: ${currentFilters.status}` });
+        }
+        if (currentFilters.categoryIds?.length) {
+            chips.push({ key: "categoryIds", label: `${currentFilters.categoryIds.length} danh mục từ điều hướng` });
+        }
+        return chips;
+    };
+
+    const clearSingleFilter = (key) => {
+        const next = { ...currentFilters };
+        if (key === "price") {
+            delete next.minPrice;
+            delete next.maxPrice;
+        } else {
+            delete next[key];
+        }
+        setCurrentFilters(next);
+        loadProducts(next);
+    };
 
     // Load products on mount with filters from navigation state
     useEffect(() => {
@@ -53,6 +102,11 @@ function All_Products() {
         setCurrentFilters(initialFilters);
         loadProducts(initialFilters);
     }, [location.key]); // Use location.key to trigger on every navigation
+
+    useEffect(() => {
+        const tab = categoryPathToId[location.pathname] || "all";
+        setActiveCategoryTab(tab);
+    }, [location.pathname]);
 
     const loadProducts = async (filters) => {
         setLoading(true);
@@ -148,6 +202,21 @@ function All_Products() {
     };
 
     const displayedProducts = sortProducts(products);
+    const appliedFilterChips = getAppliedFilterChips();
+    const categoryCounts = {
+        all: totalProducts || products.length,
+        laptop: products.filter((p) => (p.categoryName || "").toLowerCase().includes("laptop")).length,
+        desktop: products.filter((p) => (p.categoryName || "").toLowerCase().includes("desktop") || (p.categoryName || "").toLowerCase().includes("pc")).length,
+        pc_parts: products.filter((p) => (p.categoryName || "").toLowerCase().includes("linh kiện") || (p.categoryName || "").toLowerCase().includes("part")).length,
+        keyboard_mouse: products.filter((p) => {
+            const c = (p.categoryName || "").toLowerCase();
+            return c.includes("keyboard") || c.includes("bàn phím") || c.includes("chuột") || c.includes("mouse");
+        }).length,
+        mouse: products.filter((p) => (p.categoryName || "").toLowerCase().includes("chuột") || (p.categoryName || "").toLowerCase().includes("mouse")).length,
+        headset: products.filter((p) => (p.categoryName || "").toLowerCase().includes("headset") || (p.categoryName || "").toLowerCase().includes("tai nghe")).length,
+        printer_scanner: products.filter((p) => (p.categoryName || "").toLowerCase().includes("printer") || (p.categoryName || "").toLowerCase().includes("máy in")).length,
+        networking: products.filter((p) => (p.categoryName || "").toLowerCase().includes("network")).length,
+    };
 
     return (
         <ErrorBoundary>
@@ -167,15 +236,41 @@ function All_Products() {
                             ) : (
                                 <span>
                                     {t('product.showing_results') || 'Hiển thị'} <span className="font-semibold text-blue-600">{totalProducts}</span> {t('common.products') || 'sản phẩm'}
-                                    {Object.keys(currentFilters).length > 0 && (
+                                    {appliedFilterChips.length > 0 && (
                                         <span className="ml-2 text-sm text-gray-500">
-                                            ({Object.keys(currentFilters).length} bộ lọc đang áp dụng)
+                                            ({appliedFilterChips.length} bộ lọc đang áp dụng)
                                         </span>
                                     )}
                                 </span>
                             )}
                         </p>
+                        {appliedFilterChips.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {appliedFilterChips.map((chip) => (
+                                    <button
+                                        key={chip.key}
+                                        onClick={() => clearSingleFilter(chip.key)}
+                                        className="inline-flex items-center gap-1 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700 hover:bg-violet-100"
+                                        title="Bấm để bỏ bộ lọc này"
+                                    >
+                                        <span>{chip.label}</span>
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
+
+                    <CategoryTabBar
+                        activeId={activeCategoryTab}
+                        sticky
+                        counts={categoryCounts}
+                        onSelect={(_, path) => {
+                            if (path && location.pathname !== path) {
+                                navigate(path);
+                            }
+                        }}
+                    />
 
                     {/* Main Content */}
                     <div className="flex flex-col lg:flex-row gap-6">
@@ -192,7 +287,7 @@ function All_Products() {
                         {/* Mobile Filter Button */}
                         <button
                             onClick={() => setShowMobileFilters(!showMobileFilters)}
-                            className="lg:hidden fixed bottom-4 right-4 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 flex items-center gap-2"
+                            className="lg:hidden fixed bottom-4 right-4 z-50 bg-violet-600 text-white p-4 rounded-full shadow-lg hover:bg-violet-700 flex items-center gap-2"
                         >
                             <SlidersHorizontal size={20} />
                             <span className="font-semibold">Lọc</span>
@@ -201,13 +296,13 @@ function All_Products() {
                         {/* Mobile Filter Modal */}
                         {showMobileFilters && (
                             <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowMobileFilters(false)}>
-                                <div className="absolute right-0 top-0 h-full w-80 bg-white overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                                <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] rounded-t-2xl bg-white overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                                     <div className="p-4">
                                         <button
                                             onClick={() => setShowMobileFilters(false)}
                                             className="mb-4 text-gray-600 hover:text-gray-900"
                                         >
-                                            ✕ Đóng
+                                            Đóng
                                         </button>
                                         <ProductFilterSidebar
                                             onFilterChange={handleFilterChange}
@@ -267,12 +362,12 @@ function All_Products() {
                                         </div>
                                         <div className="ml-3">
                                             <h3 className="text-sm font-medium text-red-800">
-                                                ⚠️ Lỗi kết nối
+                                                Lỗi kết nối
                                             </h3>
                                             <div className="mt-2 text-sm text-red-700">
                                                 <p>{error}</p>
                                                 <p className="mt-2">
-                                                    💡 <strong>Cách khắc phục:</strong>
+                                                    <strong>Cách khắc phục:</strong>
                                                 </p>
                                                 <ul className="list-disc list-inside mt-1 space-y-1">
                                                     <li>Kiểm tra Backend đang chạy trên <code className="bg-red-100 px-1 rounded">http://localhost:8081</code></li>
@@ -291,7 +386,13 @@ function All_Products() {
                                 </div>
                             ) : displayedProducts.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="text-gray-400 text-6xl mb-4">📦</div>
+                                    <div className="mb-4 flex justify-center text-gray-300">
+                                        <svg viewBox="0 0 24 24" fill="none" className="w-12 h-12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M3 7l9 5 9-5-9-5-9 5z" />
+                                            <path d="M3 17l9 5 9-5" />
+                                            <path d="M3 12l9 5 9-5" />
+                                        </svg>
+                                    </div>
                                     <h3 className="text-xl font-semibold text-gray-700 mb-2">
                                         {t('product.no_products') || 'Không tìm thấy sản phẩm'}
                                     </h3>

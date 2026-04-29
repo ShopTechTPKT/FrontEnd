@@ -20,7 +20,7 @@ export default function CompareBar() {
         {/* Product thumbnails */}
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300 shrink-0">
-            {t("compare.title") || "So sánh"} ({items.length}/3)
+            {t("compare.title") || "So sánh"} ({items.length}/4)
           </span>
           <div className="flex gap-2">
             {items.map((product) => (

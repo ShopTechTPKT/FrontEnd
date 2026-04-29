@@ -73,10 +73,11 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
     };
 
     const handleCategorySelect = (category) => {
+        const isSelected = filters.categoryId === category.categoryId;
         const newFilters = {
             ...filters,
-            categoryId: category.categoryId,
-            categoryName: category.categoryName
+            categoryId: isSelected ? null : category.categoryId,
+            categoryName: isSelected ? "" : category.categoryName
         };
         setFilters(newFilters);
 
@@ -87,11 +88,13 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
 
     const handlePriceRangeSelect = (range) => {
         console.log("💰 Price range clicked:", range);
+        const isSelected =
+            filters.minPrice === range.minPrice && filters.maxPrice === range.maxPrice;
 
         const newFilters = {
             ...filters,
-            minPrice: range.minPrice,
-            maxPrice: range.maxPrice
+            minPrice: isSelected ? null : range.minPrice,
+            maxPrice: isSelected ? null : range.maxPrice
         };
 
         console.log("📝 New filters before clean:", newFilters);
@@ -309,10 +312,10 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
 
                 {/* Apply Filters Button */}
                 <button
-                    className="w-full bg-blue-600 text-white py-3 rounded-full font-bold hover:bg-blue-700 transition-colors shadow-sm"
+                    className="w-full bg-violet-600 text-white py-3 rounded-full font-bold hover:bg-violet-700 transition-colors shadow-sm"
                     onClick={handleApplyFilters}
                 >
-                    Apply Filters
+                    Áp dụng bộ lọc
                 </button>
             </div>
         </div>

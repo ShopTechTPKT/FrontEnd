@@ -90,6 +90,30 @@ export const filterByPrice = async (minPrice, maxPrice = null) => {
   }
 };
 
+export const getProductRecommendations = async (productId, limit = 8) => {
+  try {
+    const response = await axiosInstance.get("/products/recommendations", {
+      params: { productId, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy gợi ý sản phẩm:", error);
+    throw error;
+  }
+};
+
+export const getPopularProducts = async (limit = 8) => {
+  try {
+    const response = await axiosInstance.get("/products/recommendations/popular", {
+      params: { limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy sản phẩm phổ biến:", error);
+    throw error;
+  }
+};
+
 
 export default {
   getAllProducts,
@@ -99,4 +123,6 @@ export default {
   getFilterOptions,
   filterByCategory,
   filterByPrice,
+  getProductRecommendations,
+  getPopularProducts,
 };

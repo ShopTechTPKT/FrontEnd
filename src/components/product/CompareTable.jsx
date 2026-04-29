@@ -1,7 +1,12 @@
 import { useCompare } from "../../context/CompareContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../utils/redux/cartSlice";
 import formatCurrency from "../../utils/formatCurrency";
+import { fetchCompareProducts } from "../../apis/compareApi";
+import notify from "../../utils/notify";
 
 /**
  * CompareTable — Side-by-side product comparison page.
@@ -11,8 +16,42 @@ export default function CompareTable() {
   const { items, removeFromCompare, clearCompare } = useCompare();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [serverItems, setServerItems] = useState([]);
 
-  if (items.length < 2) {
+  const ids = useMemo(() => items.map((i) => i.productID || i.id).filter(Boolean), [items]);
+
+  useEffect(() => {
+    if (ids.length < 2) {
+      setServerItems([]);
+      return;
+    }
+    fetchCompareProducts(ids)
+      .then((data) => setServerItems(data))
+      .catch(() => setServerItems([]));
+  }, [ids]);
+
+  const mergedItems = useMemo(() => {
+    if (!serverItems.length) return items;
+    const byId = new Map(serverItems.map((s) => [s.id, s]));
+    return items.map((item) => {
+      const id = item.productID || item.id;
+      const server = byId.get(id);
+      if (!server) return item;
+      return {
+        ...item,
+        productID: server.id,
+        productName: server.name,
+        image: server.imageUrl || item.image,
+        price: server.price,
+        categoryName: server.categoryName || item.categoryName,
+        description: server.description || item.description,
+        quantity: server.quantity,
+      };
+    });
+  }, [items, serverItems]);
+
+  if (mergedItems.length < 2) {
     return (
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-20 text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
@@ -47,7 +86,28 @@ export default function CompareTable() {
   ];
 
   // Find lowest price for highlighting
-  const lowestPrice = Math.min(...items.map((p) => p.price || 0));
+  const lowestPrice = Math.min(...mergedItems.map((p) => p.price || 0));
+
+  const handleAddToCart = async (product) => {
+    try {
+      await dispatch(
+        addToCart({
+          userId: null,
+          productId: product.productID || product.id,
+          quantity: 1,
+          productData: {
+            id: product.productID || product.id,
+            name: product.productName || product.name,
+            unitPrice: product.price || 0,
+            imageUrl: product.image || "",
+          },
+        })
+      ).unwrap();
+      notify.success("Đã thêm sản phẩm vào giỏ hàng.");
+    } catch {
+      notify.error("Không thể thêm sản phẩm vào giỏ hàng.");
+    }
+  };
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-10">
@@ -68,7 +128,7 @@ export default function CompareTable() {
           <thead>
             <tr>
               <th className="w-40 p-4 text-left text-sm font-semibold text-gray-500 border-b border-gray-100" />
-              {items.map((product) => (
+              {mergedItems.map((product) => (
                 <th
                   key={product.productID}
                   className="p-4 text-center border-b border-gray-100 border-l"
@@ -90,6 +150,12 @@ export default function CompareTable() {
                     >
                       {t("common.remove") || "Xóa"}
                     </button>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="px-3 py-1.5 text-xs font-semibold rounded-md bg-violet-700 text-white hover:bg-violet-800"
+                    >
+                      Thêm vào giỏ
+                    </button>
                   </div>
                 </th>
               ))}
@@ -101,7 +167,7 @@ export default function CompareTable() {
                 <td className="p-4 text-sm font-medium text-gray-500">
                   {row.label}
                 </td>
-                {items.map((product) => {
+                {mergedItems.map((product) => {
                   const val = product[row.key];
                   const isBest = row.highlight && val === lowestPrice;
                   return (

@@ -1,128 +1,162 @@
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../../utils/redux/cartSlice";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ShoppingCart } from "lucide-react"; // Import ShoppingCart icon
+import { toast } from "react-toastify";
+import { addToCart } from "../../../utils/redux/cartSlice";
 
+/* ── SVG Icons ───────────────────────────────────────── */
+const CartIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+  </svg>
+);
+
+const HeartIcon = ({ filled = false }) => (
+  <svg viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} className="w-4 h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+  </svg>
+);
+
+const StarIcon = ({ filled }) => (
+  <svg viewBox="0 0 24 24" className={`w-3 h-3 ${filled ? "text-amber-400" : "text-gray-200"}`} fill="currentColor">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  </svg>
+);
+
+/* ── Helpers ─────────────────────────────────────────── */
+const getUserId = () => {
+  try {
+    const u = JSON.parse(localStorage.getItem("user") || "null");
+    return u?.customerID ?? u?.id ?? u?.customerId ?? null;
+  } catch { return null; }
+};
+
+const formatVND = (n) =>
+  parseInt(n || 0).toLocaleString("vi-VN") + "₫";
+
+const isNew = (createdAt) => {
+  if (!createdAt) return false;
+  return (Date.now() - new Date(createdAt).getTime()) < 30 * 24 * 3600 * 1000;
+};
+
+/* ══════════════════════════════════════════════════════
+   LIST VIEW CARD
+══════════════════════════════════════════════════════ */
 export default function ProductCardList({ product }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const getCurrentUserId = () => {
-    try {
-      const savedUser = localStorage.getItem("user");
-      if (!savedUser) return null;
-      const parsed = JSON.parse(savedUser);
-      return parsed?.customerID ?? parsed?.id ?? parsed?.customerId ?? null;
-    } catch (e) {
-      console.error("Lỗi khi đọc user từ localStorage:", e);
-      return null;
-    }
-  };
+  const pid  = product?.id || product?.productID;
+  const name = product?.name || product?.productName || "";
+  const img  = product?.imageUrl || product?.image || "";
+  const price     = product?.unitPrice || product?.price || 0;
+  const oldPrice  = product?.oldPrice;
+  const rating    = Math.min(5, Math.max(0, Math.round(product?.rating || 0)));
+  const reviews   = product?.reviews || product?.reviewCount || 0;
+  const badge     = isNew(product?.createdAt);
 
-  const handleAddToCart = () => {
-    const userId = getCurrentUserId();
+  const discountPct =
+    oldPrice && oldPrice > price
+      ? Math.round(((oldPrice - price) / oldPrice) * 100)
+      : null;
 
-    // Debug log để kiểm tra dữ liệu sản phẩm
-    console.log("Product data (List):", product);
-
-    // Đồng bộ cách lấy dữ liệu sản phẩm với ProductCard
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     dispatch(addToCart({
-      userId: userId,
-      productId: product.id || product.productID,
+      userId: getUserId(),
+      productId: pid,
       quantity: 1,
       productData: {
-        id: product.id || product.productID,
-        name: product.name || product.productName,
-        // Sử dụng unitPrice, price hoặc 0 và xử lý chuỗi như ProductCard
-        unitPrice: parseFloat(String(product.unitPrice || product.price || 0).replace(/[^\d.-]/g, '')) || 0,
-        imageUrl: product.imageUrl || product.image || '' // Sử dụng imageUrl hoặc image
-      }
+        id: pid,
+        name,
+        unitPrice: parseFloat(String(price).replace(/[^\d.-]/g, "")) || 0,
+        imageUrl: img,
+      },
     }));
-    
-    toast.success("Đã thêm sản phẩm vào giỏ hàng!");
+    toast.success("Đã thêm vào giỏ hàng!");
   };
 
-  const handleClick = () => {
-    // Đồng bộ cách lấy ID sản phẩm
-    navigate(`/product/${product.id || product.productID}/productAbout`);
+  const handleWishlist = (e) => {
+    e.stopPropagation();
+    toast.info("Đã thêm vào danh sách yêu thích!");
   };
 
   return (
     <div
-      className="border-none rounded-lg p-4 shadow-sm hover:shadow-lg transition bg-white flex gap-4 cursor-pointer"
-      onClick={handleClick}
+      className="group bg-white rounded-2xl border border-gray-100 p-4 flex gap-4 cursor-pointer
+                 hover:-translate-y-1 hover:shadow-lg hover:border-violet-100
+                 transition-all duration-300"
+      onClick={() => navigate(`/product/${pid}/productAbout`)}
     >
-      {/* Hình ảnh */}
-      <div className="w-1/4 flex-shrink-0">
+      {/* Image */}
+      <div className="relative w-32 sm:w-40 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden">
         <img
-          src={product.imageUrl || product.image} // Đồng bộ cách lấy ảnh
-          alt={product.name || product.productName}
-          className="w-full h-auto object-contain max-h-40" // Giảm kích thước ảnh
+          src={img}
+          alt={name}
+          className="w-full h-32 sm:h-40 object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => { e.target.src = "https://via.placeholder.com/200?text=SP"; }}
         />
-      </div>
-      {/* Thông tin chi tiết */}
-      <div className="flex-1 flex flex-col justify-between">
-        {/* Tên */}
-        <div>
-       
-          <h2 className="font-semibold text-base text-gray-800 mb-2">
-            {product.name || product.productName}
-          </h2>
-        </div>
-
-        {/* Giá */}
-        <div className="mb-2">
-          {product?.oldPrice && (product?.oldPrice !== (product?.unitPrice || product?.price)) && (
-            <span className="line-through text-sm text-gray-400 mr-2">
-              {parseInt(product?.oldPrice).toLocaleString("vi-VN")}₫
-            </span>
-          )}
-          <span className="text-lg font-bold text-black">
-            {parseInt(product?.unitPrice || product?.price).toLocaleString("vi-VN")}₫
+        {discountPct && (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+            -{discountPct}%
           </span>
+        )}
+        {badge && (
+          <span className="absolute top-2 right-2 bg-violet-700 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+            MỚI
+          </span>
+        )}
+
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300 flex items-end">
+          <div className="w-full flex gap-2 p-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+            <button
+              onClick={handleWishlist}
+              className="h-9 w-9 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 transition-colors"
+              aria-label="Thêm yêu thích"
+            >
+              <HeartIcon />
+            </button>
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-lg bg-violet-700 text-white text-xs font-semibold hover:bg-violet-800 transition-colors"
+              aria-label="Thêm vào giỏ hàng"
+            >
+              <CartIcon />
+              <span>{t("product.add_to_cart") || "Thêm giỏ"}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 flex flex-col justify-between min-w-0">
+        <div>
+          <h2 className="font-semibold text-sm text-gray-800 line-clamp-2 leading-snug mb-2">
+            {name}
+          </h2>
+          {/* Stars */}
+          <div className="flex items-center gap-1 mb-2">
+            {Array.from({ length: 5 }, (_, i) => (
+              <StarIcon key={i} filled={i < rating} />
+            ))}
+            {reviews > 0 && (
+              <span className="text-[11px] text-gray-400 ml-1">({reviews})</span>
+            )}
+          </div>
         </div>
 
-        {/* Đánh giá + trạng thái */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-yellow-500 text-sm">
-   
-            <span className="text-gray-500 ml-2 text-xs">
-              Reviews ({product?.reviews})
-            </span>
+        <div className="flex items-end justify-between flex-wrap gap-2">
+          {/* Price */}
+          <div>
+            {oldPrice && oldPrice > price && (
+              <p className="text-xs text-gray-400 line-through mb-0.5">{formatVND(oldPrice)}</p>
+            )}
+            <p className="text-base font-bold text-gray-900">{formatVND(price)}</p>
           </div>
-          {/* {product.inStock || product.availability === "In Stock" ? (
-            <span className="text-green-500 text-xs font-medium">
-              ● {t("product.in_stock")}
-            </span>
-          ) : (
-            <span className="text-red-500 text-xs font-medium">
-              ● {t("product.check_availability")}
-            </span>
-          )} */}
-        </div>
 
-
-
-        {/* Nút hành động */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={e => {
-              e.stopPropagation(); // Ngăn chặn click từ lan ra ngoài
-              handleAddToCart();
-            }}
-            className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white font-semibold text-sm hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-          >
-            <ShoppingCart className="w-4 h-4" /> {/* Sử dụng icon đồng bộ */}
-            {t("product.add_to_cart")}
-          </button>
-          <div className="flex gap-2 text-gray-400 text-lg">
-            <i className="far fa-envelope"></i>
-            <i className="far fa-exchange-alt"></i>
-            <i className="far fa-heart"></i>
-          </div>
+          <p className="text-xs text-gray-400">{reviews} đánh giá</p>
         </div>
       </div>
     </div>
