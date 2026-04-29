@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getUserDiscounts } from "../../apis/userApi";
 import {
@@ -193,7 +193,7 @@ const UserDiscounts = ({ userId }) => {
                       ? "bg-gray-400"
                       : expired
                       ? "bg-orange-400"
-                      : "bg-gradient-to-r from-purple-500 to-blue-500"
+                      : "bg-gradient-to-r from-violet-600 to-violet-500"
                   }`}
                 >
                   <div className="flex items-center justify-between">
