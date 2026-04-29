@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FaFolder, FaLaptop, FaDesktop, FaMobileAlt, FaKeyboard, FaMouse, FaHeadphones, FaPlus, FaEdit, FaTrash, FaBox, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -98,17 +98,17 @@ const CategoriesManagement = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaFolder className="text-6xl mb-4 text-purple-400" />
+              <FaFolder className="text-6xl mb-4 text-violet-400" />
               <h1 className="text-5xl font-bold mb-3">{t('category.categories_management')}</h1>
-              <p className="text-xl text-purple-300">{t('category.organize_your_product_catalog')}</p>
+              <p className="text-xl text-violet-300">{t('category.organize_your_product_catalog')}</p>
             </div>
             <div className="flex gap-4">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <p className="text-purple-300 text-sm mb-1">{t('category.categories')}</p>
+                <p className="text-violet-300 text-sm mb-1">{t('category.categories')}</p>
                 <p className="text-4xl font-bold">{categories.length}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <p className="text-purple-300 text-sm mb-1">{t('common.products')}</p>
+                <p className="text-violet-300 text-sm mb-1">{t('common.products')}</p>
                 <p className="text-4xl font-bold">{totalProducts}</p>
               </div>
             </div>
@@ -128,10 +128,10 @@ const CategoriesManagement = () => {
                 placeholder={t('category.search_categories')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
               />
             </div>
-            <button className="bg-gradient-to-r from-purple-900 to-purple-950 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            <button className="bg-gradient-to-r from-violet-800 to-violet-900 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
               <FaPlus />
               Add Category
             </button>
@@ -150,12 +150,12 @@ const CategoriesManagement = () => {
                 className="group bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-purple-900 to-purple-950 text-white p-6 relative overflow-hidden">
+                <div className="bg-gradient-to-r from-violet-800 to-violet-900 text-white p-6 relative overflow-hidden">
                   <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full"></div>
                   <div className="relative">
-                    <Icon className="text-5xl mb-4 text-purple-300" />
+                    <Icon className="text-5xl mb-4 text-violet-300" />
                     <h3 className="font-bold text-2xl mb-2">{category.name}</h3>
-                    <p className="text-sm text-purple-200">{category.id}</p>
+                    <p className="text-sm text-violet-200">{category.id}</p>
                   </div>
                 </div>
 
@@ -170,7 +170,7 @@ const CategoriesManagement = () => {
                   <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
                     <div>
                       <p className="text-xs text-gray-500 mb-1">{t('category.total_products')}</p>
-                      <p className="text-2xl font-bold text-purple-600">{category.productCount}</p>
+                      <p className="text-2xl font-bold text-violet-600">{category.productCount}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">{t('category.subcategories')}</p>
@@ -185,7 +185,7 @@ const CategoriesManagement = () => {
                       {category.subcategories.slice(0, 3).map((sub, index) => (
                         <span 
                           key={index}
-                          className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium"
+                          className="px-3 py-1 bg-violet-100 text-violet-800 rounded-full text-xs font-medium"
                         >
                           {sub}
                         </span>
@@ -235,7 +235,7 @@ const CategoriesManagement = () => {
           {categories.slice(0, 4).map((category, index) => {
             const Icon = category.icon;
             const colors = [
-              'from-purple-500 to-purple-600',
+              'from-violet-600 to-violet-700',
               'from-blue-500 to-blue-600',
               'from-green-500 to-green-600',
               'from-orange-500 to-orange-600'

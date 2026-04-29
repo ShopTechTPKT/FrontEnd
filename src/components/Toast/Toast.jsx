@@ -1,33 +1,21 @@
-import { useState, useEffect } from 'react';
-import { FaTimes, FaCheckCircle, FaTimesCircle, FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
-
-// Icon mapping per toast type
-const TOAST_ICONS = {
-  success: FaCheckCircle,
-  error: FaTimesCircle,
-  warning: FaExclamationTriangle,
-  info: FaInfoCircle,
-};
+import { useState, useEffect } from "react";
 
 const ICON_COLORS = {
-  success: 'text-green-500',
-  error: 'text-red-500',
-  warning: 'text-amber-500',
-  info: 'text-blue-500',
+  success: "text-green-500",
+  error: "text-red-500",
+  warning: "text-amber-500",
+  info: "text-blue-500",
 };
 
 const PROGRESS_COLORS = {
-  success: 'bg-green-500',
-  error: 'bg-red-500',
-  warning: 'bg-amber-500',
-  info: 'bg-blue-500',
+  success: "bg-green-500",
+  error: "bg-red-500",
+  warning: "bg-amber-500",
+  info: "bg-blue-500",
 };
 
 // message supports string or JSX (ReactNode)
-const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position = 'top-right' }) => {
-  const { t } = useTranslation();
-
+const Toast = ({ id, type = "info", message, duration = 3000, onClose }) => {
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
@@ -48,34 +36,45 @@ const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position 
   };
 
   const toastConfig = {
-    success: { bg: 'bg-white', text: 'text-gray-900', accent: 'border-green-500' },
-    error: { bg: 'bg-white', text: 'text-gray-900', accent: 'border-red-500' },
-    warning: { bg: 'bg-white', text: 'text-gray-900', accent: 'border-amber-500' },
-    info: { bg: 'bg-white', text: 'text-gray-900', accent: 'border-blue-500' },
+    success: { bg: "bg-white", text: "text-gray-900", accent: "border-green-500" },
+    error: { bg: "bg-white", text: "text-gray-900", accent: "border-red-500" },
+    warning: { bg: "bg-white", text: "text-gray-900", accent: "border-amber-500" },
+    info: { bg: "bg-white", text: "text-gray-900", accent: "border-blue-500" },
   };
 
   const config = toastConfig[type] || toastConfig.info;
-  const IconComponent = TOAST_ICONS[type] || FaInfoCircle;
-
-  const positionClasses = {
-    'top-right': 'top-4 right-4',
-    'top-left': 'top-4 left-4',
-    'bottom-right': 'bottom-4 right-4',
-    'bottom-left': 'bottom-4 left-4',
-    'top-center': 'top-4 left-1/2 -translate-x-1/2',
-    'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2'
-  };
 
   // Minimal motion: fade only for calmer UX
-  const animationClasses = isExiting ? 'opacity-0' : 'opacity-100';
+  const animationClasses = isExiting ? "opacity-0" : "opacity-100";
 
   return (
-    <div
-      className={`fixed ${positionClasses[position]} z-[9999] transition-opacity duration-150 ease-out ${animationClasses}`}
-    >
+    <div className={`transition-opacity duration-150 ease-out ${animationClasses}`}>
       <div className={`${config.bg} min-w-[240px] max-w-sm rounded-md border ${config.accent} border-opacity-20 shadow-sm overflow-hidden`}>
         <div className="flex items-center gap-2 px-3 py-2">
-          <IconComponent className={`${ICON_COLORS[type]} text-base shrink-0`} />
+          <span className={`${ICON_COLORS[type]} shrink-0`}>
+            {type === "success" && (
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            )}
+            {type === "error" && (
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            )}
+            {type === "warning" && (
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 9v4M12 17h.01" />
+                <path d="M10.29 3.86L1.82 18A2 2 0 003.53 21h16.94a2 2 0 001.71-3l-8.47-14.14a2 2 0 00-3.42 0z" />
+              </svg>
+            )}
+            {type === "info" && (
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 10v6M12 7h.01" />
+              </svg>
+            )}
+          </span>
           <div className={`flex-1 ${config.text} text-sm leading-snug`}>
             {message}
           </div>
@@ -84,7 +83,9 @@ const Toast = ({ id, type = 'info', message, duration = 2500, onClose, position 
             className="text-gray-400 hover:text-gray-600 transition-colors duration-100"
             aria-label="Close"
           >
-            <FaTimes className="text-[10px]" />
+            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+              <path d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
         {/* Progress bar: shrinks from 100% to 0% over duration */}

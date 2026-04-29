@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+﻿import React, { useEffect, useState, useCallback, useRef } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import axios from "axios";
@@ -196,7 +196,7 @@ const CustomerServiceDashboard = () => {
       <div className="bg-white border-b border-gray-200 text-gray-900 shadow-sm px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-purple-900 to-purple-600 text-white shadow-sm">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-violet-900 to-violet-600 text-white shadow-sm">
                 <span className="text-xl">💬</span>
               </div>
               <div>

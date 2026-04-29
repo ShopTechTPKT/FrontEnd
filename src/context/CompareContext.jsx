@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CompareContext = createContext();
-const MAX_COMPARE = 3;
+const MAX_COMPARE = 4;
 const STORAGE_KEY = "compare_products";
 
 /**

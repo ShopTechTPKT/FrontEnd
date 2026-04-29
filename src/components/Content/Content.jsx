@@ -8,7 +8,9 @@ import monitors from "../../assets/images/msi_monitor.jpg";
 import slide from "../../assets/images/slide.png";
 import CardNews from "../info/CardNews";
 import TestimonialSlider from "../info/TestimonialSlider";
-import HeroSearchSection from "../HeroSearchSection";
+import HeroBanner from "../HeroBanner";
+import FlashSaleStrip from "../FlashSaleStrip";
+import TrustBadges from "../TrustBadges";
 import { Laptop, Monitor, Mouse, Smartphone, Tv2, Headphones } from "lucide-react";
 import RecentlyViewed from "../product/RecentlyViewed";
 
@@ -131,8 +133,14 @@ function Content() {
   /* ── Render ── */
   return (
     <div className="space-y-0">
-      {/* ════ 1. Hero Search ════ */}
-      <HeroSearchSection product={products} />
+      {/* ════ 1. Hero Banner Slider ════ */}
+      <HeroBanner products={products} />
+
+      {/* ════ 2. Flash Sale Strip ════ */}
+      <FlashSaleStrip />
+
+      {/* ════ 3. Trust Badges ════ */}
+      <TrustBadges />
 
       {/* Error notice */}
       {loadError && (

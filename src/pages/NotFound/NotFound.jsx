@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -52,7 +52,7 @@ const NotFound = () => {
             <div className="mt-8 flex items-center justify-center">
               <button
                 onClick={() => window.history.back()}
-                className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 hover:opacity-90 transition-opacity"
+                className="px-6 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-violet-700 to-violet-600 hover:opacity-90 transition-opacity"
               >
                 {t("notfound.go_back") || "Quay lại"}
               </button>

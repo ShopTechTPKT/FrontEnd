@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FaUsers, FaUserShield, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaTrash, FaPlus, FaSearch, FaStar } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -109,7 +109,7 @@ const CustomerManagement = () => {
 
   const getTierBadge = (tier) => {
     const colors = {
-      VIP: 'bg-gradient-to-r from-purple-900 to-purple-950 text-white',
+      VIP: 'bg-gradient-to-r from-violet-800 to-violet-900 text-white',
       Gold: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white',
       Silver: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white',
       Regular: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
@@ -143,11 +143,11 @@ const CustomerManagement = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaUsers className="text-6xl mb-4 text-purple-400" />
+              <FaUsers className="text-6xl mb-4 text-violet-400" />
               <h1 className="text-5xl font-bold mb-3">{t('customer.customer_management')}</h1>
-              <p className="text-xl text-purple-300">{t('customer.manage_your_customer_database')}</p>
+              <p className="text-xl text-violet-300">{t('customer.manage_your_customer_database')}</p>
             </div>
-            <button className="bg-white text-purple-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            <button className="bg-white text-violet-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
               <FaPlus />
               Add New Customer
             </button>
@@ -168,8 +168,8 @@ const CustomerManagement = () => {
                   onClick={() => setFilterTier(key)}
                   className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                     filterTier === key
-                      ? 'bg-gradient-to-r from-purple-900 to-purple-950 text-white shadow-lg scale-105'
-                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-purple-600'
+                      ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
+                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600'
                   }`}
                 >
                   <Icon />
@@ -187,7 +187,7 @@ const CustomerManagement = () => {
               placeholder={t('customer.search_by_name_email')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
             />
           </div>
         </div>
@@ -198,7 +198,7 @@ const CustomerManagement = () => {
         <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-purple-900 to-purple-950 text-white">
+              <thead className="bg-gradient-to-r from-violet-800 to-violet-900 text-white">
                 <tr>
                   <th className="px-6 py-4 text-left font-semibold">{t('admin.customer_id')}</th>
                   <th className="px-6 py-4 text-left font-semibold">{t('customer.name')}</th>
@@ -214,16 +214,16 @@ const CustomerManagement = () => {
                 {filteredCustomers.map((customer, index) => (
                   <tr 
                     key={customer.id}
-                    className={`border-b border-gray-200 hover:bg-purple-50 transition-colors ${
+                    className={`border-b border-gray-200 hover:bg-violet-50 transition-colors ${
                       index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                     }`}
                   >
                     <td className="px-6 py-4">
-                      <span className="font-bold text-purple-600">{customer.id}</span>
+                      <span className="font-bold text-violet-600">{customer.id}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-violet-700 rounded-full flex items-center justify-center text-white font-bold">
                           {customer.name.charAt(0)}
                         </div>
                         <div>
@@ -235,11 +235,11 @@ const CustomerManagement = () => {
                     <td className="px-6 py-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <FaEnvelope className="text-purple-600" />
+                          <FaEnvelope className="text-violet-600" />
                           {customer.email}
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <FaPhone className="text-purple-600" />
+                          <FaPhone className="text-violet-600" />
                           {customer.phone}
                         </div>
                       </div>
@@ -289,10 +289,10 @@ const CustomerManagement = () => {
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-violet-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg">
             <FaUsers className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{customers.length}</p>
-            <p className="text-purple-100">{t('customer.total_customers')}</p>
+            <p className="text-violet-100">{t('customer.total_customers')}</p>
           </div>
           <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg">
             <FaUserShield className="text-4xl mb-3" />

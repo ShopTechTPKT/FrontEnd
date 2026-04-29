@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FaClock, FaUser, FaComment, FaArrowRight, FaSearch, FaEye } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -231,7 +231,7 @@ const Blog = () => {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white'
+                    ? 'bg-gradient-to-r from-violet-700 to-violet-600 text-white'
                     : 'bg-gray-100 text-gray-700'
                 }`}
               >
@@ -257,7 +257,7 @@ const Blog = () => {
                   e.target.src = 'https://via.placeholder.com/800x600?text=Featured+Post';
                 }}
               />
-              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded font-bold text-sm">
+              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded font-bold text-sm">
                 {t('blog.featured')}
               </div>
             </div>
@@ -362,7 +362,7 @@ const Blog = () => {
             <input 
               type="email" 
               placeholder={t('blog.email_placeholder')}
-              className="flex-1 px-4 py-3 rounded-lg text-gray-900 border border-gray-300 focus:outline-none focus:border-purple-600"
+              className="flex-1 px-4 py-3 rounded-lg text-gray-900 border border-gray-300 focus:outline-none focus:border-violet-600"
             />
             <button className="px-6 py-3 bg-white text-gray-900 rounded-lg font-medium">{t('blog.subscribe')}</button>
           </div>
