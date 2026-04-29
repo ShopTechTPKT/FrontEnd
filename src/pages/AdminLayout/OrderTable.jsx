@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+﻿import React, { memo, useState, useEffect } from 'react';
 import { ImageOff, Search, FileDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { downloadInvoice } from '../../components/Orders/InvoiceExport';
@@ -94,7 +94,7 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
       case 'shipped':
         return theme === 'dark' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-green-100 text-green-800 border-green-300';
       case 'delivered':
-        return theme === 'dark' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' : 'bg-purple-100 text-purple-800 border-purple-300';
+        return theme === 'dark' ? 'bg-violet-500/20 text-violet-400 border-violet-500/30' : 'bg-violet-100 text-violet-800 border-violet-300';
       case 'cancelled':
         return theme === 'dark' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-red-100 text-red-800 border-red-300';
       case 'returned':
@@ -151,7 +151,7 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
     <div className={currentTheme.container}>
       {/* Header Section - Modern design */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
           {t('admin.danh_sch_n_hng')}
         </h2>
         <div className="relative w-full md:w-80">

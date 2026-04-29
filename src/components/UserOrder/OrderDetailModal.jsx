@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import {
   getOrderById,
   getOrderProductDetails,
@@ -112,7 +112,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
         };
       case "SHIPPED":
         return {
-          color: "bg-purple-100 text-purple-800",
+          color: "bg-violet-100 text-violet-800",
           icon: <FaShippingFast className="w-3 h-3" />,
           text: t("my_order.shipped"),
         };

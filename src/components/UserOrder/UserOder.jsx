@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getOrdersByUser } from "../../apis/orderApi";
 import OrderDetailModal from "./OrderDetailModal";
@@ -123,7 +123,13 @@ const UserOrders = ({ userId }) => {
   if (orders.length === 0) {
     return (
       <div className="text-center py-8">
-        <EmptyState title="Bạn chưa có đơn hàng nào." />
+        <EmptyState
+          type="box"
+          title="Bạn chưa có đơn hàng nào"
+          description="Hãy mua sắm ngay để theo dõi đơn hàng của bạn tại đây."
+          ctaLabel="Mua sắm ngay"
+          ctaPath="/all_products"
+        />
       </div>
     );
   }

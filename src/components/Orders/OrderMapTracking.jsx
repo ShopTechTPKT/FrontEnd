@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -138,10 +138,10 @@ const OrderMapTracking = ({ deliveryAddress, status }) => {
       </MapContainer>
       
       {/* Overlay Status Badge */}
-      <div className="absolute top-4 right-4 z-[1000] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl shadow-md border border-gray-100 font-medium text-sm text-purple-800 flex items-center gap-2">
+      <div className="absolute top-4 right-4 z-[1000] bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl shadow-md border border-gray-100 font-medium text-sm text-violet-800 flex items-center gap-2">
         <span className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-600"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-violet-600"></span>
         </span>
         Live Tracking
       </div>
