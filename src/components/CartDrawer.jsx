@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { removeFromCart, updateQuantity } from "../utils/redux/cartSlice";
 import formatCurrency from "../utils/formatCurrency";
+import EmptyState from "./ui/EmptyState";
 
 /**
  * CartDrawer — Full-height slide-in panel from right replacing dropdown cart.
@@ -71,12 +72,18 @@ export default function CartDrawer({ isOpen, onClose }) {
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
           {cartItems.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <svg className="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
-              </svg>
-              <p>{t("cart.empty") || "Gio hang trong"}</p>
-            </div>
+            <EmptyState
+              type="cart"
+              size="sm"
+              title={t("cart.empty") || "Giỏ hàng trống"}
+              description="Thêm sản phẩm để bắt đầu thanh toán nhanh hơn."
+              ctaLabel="Mua sắm ngay"
+              ctaPath="/all_products"
+              ctaAction={() => {
+                onClose();
+                navigate("/all_products");
+              }}
+            />
           ) : (
             cartItems.map((item) => (
               <div
