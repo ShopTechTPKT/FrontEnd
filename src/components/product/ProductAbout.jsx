@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   AiOutlineHeart,
   AiFillHeart,
@@ -31,9 +31,18 @@ import logo from "../../assets/logo-text.png";
 import notify from "../../utils/notify.js";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
-import ImageZoom from "./ImageZoom";
+import ImageGallery from "./ImageGallery";
 import StickyBuyBar from "./StickyBuyBar";
 import axiosInstance from "../../custom/axios";
+import NotifyMeButton from "./NotifyMeButton";
+import RecommendationPanel from "./RecommendationPanel";
+import ProductBundlePanel from "./ProductBundlePanel";
+import InstallmentCalculatorPanel from "./InstallmentCalculatorPanel";
+import { getActiveBundles } from "../../apis/bundleApi";
+import {
+  getProductRecommendations,
+  getPopularProducts,
+} from "../../apis/productApi";
 // Component cải thiện cho Bộ chọn số lượng - Đơn giản và UX tốt hơn
 const QuantitySelector = ({ quantity, setQuantity }) => {
   const handleDecrease = () => {
@@ -97,6 +106,7 @@ const QuantitySelector = ({ quantity, setQuantity }) => {
 //define dispatch
 
 export default function ProductDetail() {
+  const REVIEW_PHOTO_STORAGE_KEY = "reviewPhotoByReviewId";
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -108,7 +118,10 @@ export default function ProductDetail() {
   const [showAll, setShowAll] = useState(false);
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState("");
+  const [newReviewPhotos, setNewReviewPhotos] = useState([]);
   const [validationError, setValidationError] = useState("");
+  const [verifiedUsers, setVerifiedUsers] = useState({});
+  const [reviewPhotoMap, setReviewPhotoMap] = useState({});
   const [activeTab, setActiveTab] = useState("reviews"); // "reviews" | "qa"
   const {
     isFavorited,
@@ -123,6 +136,11 @@ export default function ProductDetail() {
   // Delivery estimate state
   const [deliveryInfo, setDeliveryInfo] = useState(null);
   const [deliveryLoading, setDeliveryLoading] = useState(false);
+  const [recommendations, setRecommendations] = useState([]);
+  const [recommendationLoading, setRecommendationLoading] = useState(false);
+  const [bundle, setBundle] = useState(null);
+  const [bundleLoading, setBundleLoading] = useState(false);
+  const [addingBundle, setAddingBundle] = useState(false);
 
   // Fetch delivery estimate once product loads
   useEffect(() => {
@@ -143,6 +161,61 @@ export default function ProductDetail() {
       }
     };
     fetchDelivery();
+  }, [product?.productID]);
+
+  useEffect(() => {
+    if (!product?.productID) return;
+    const loadRecommendations = async () => {
+      setRecommendationLoading(true);
+      try {
+        const data = await getProductRecommendations(product.productID, 8);
+        const mapped = (data || []).map((p) => ({
+          productID: p.id,
+          productName: p.name,
+          price: p.unitPrice || 0,
+          image: p.imageUrl || "",
+        }));
+        setRecommendations(mapped.filter((x) => x.productID !== product.productID));
+      } catch {
+        try {
+          const fallback = await getPopularProducts(8);
+          const mapped = (fallback || []).map((p) => ({
+            productID: p.id,
+            productName: p.name,
+            price: p.unitPrice || 0,
+            image: p.imageUrl || "",
+          }));
+          setRecommendations(mapped.filter((x) => x.productID !== product.productID));
+        } catch {
+          setRecommendations([]);
+        }
+      } finally {
+        setRecommendationLoading(false);
+      }
+    };
+    loadRecommendations();
+  }, [product?.productID]);
+
+  useEffect(() => {
+    if (!product?.productID) return;
+    const loadBundle = async () => {
+      setBundleLoading(true);
+      try {
+        const bundles = await getActiveBundles();
+        const match = bundles.find((b) =>
+          (b?.items || []).some((item) => {
+            const pid = Number(item?.product?.id ?? item?.product?.productID ?? item?.productId ?? 0);
+            return pid === Number(product.productID);
+          })
+        );
+        setBundle(match || null);
+      } catch {
+        setBundle(null);
+      } finally {
+        setBundleLoading(false);
+      }
+    };
+    loadBundle();
   }, [product?.productID]);
 
   // Track recently viewed product
@@ -272,8 +345,7 @@ const handleSubmitReview = async () => {
 
           setValidationError(errorMsg);
           toast.warning(errorMsg, {
-              autoClose: 4000,
-              icon: "⚠️"
+              autoClose: 4000
           });
           return;
       }
@@ -295,8 +367,16 @@ const handleSubmitReview = async () => {
               allReviews.length;
           setAverageRating(avg);
 
+          if (newReviewPhotos.length > 0) {
+            setReviewPhotoMap((prev) => {
+              const next = { ...prev, [res.id]: newReviewPhotos };
+              localStorage.setItem(REVIEW_PHOTO_STORAGE_KEY, JSON.stringify(next));
+              return next;
+            });
+          }
           setNewRating(5);
           setNewComment("");
+          setNewReviewPhotos([]);
           setValidationError(""); // Clear error on success
           toast.success(t('reviews.thank_you_toast'));
       } else {
@@ -346,6 +426,43 @@ const handleSubmitReview = async () => {
       console.error("Lỗi khi thêm vào giỏ hàng:", err);
     }
   };
+
+  const handleAddBundleToCart = async (bundleData) => {
+    const items = Array.isArray(bundleData?.items) ? bundleData.items : [];
+    if (!items.length) return;
+    setAddingBundle(true);
+    try {
+      const savedUser = localStorage.getItem("user");
+      const parsed = savedUser ? JSON.parse(savedUser) : null;
+      const userId = parsed?.customerID ?? parsed?.id ?? parsed?.customerId ?? null;
+
+      for (const item of items) {
+        const productId = Number(
+          item?.product?.id ?? item?.product?.productID ?? item?.productId ?? 0
+        );
+        if (!productId) continue;
+        const qty = Number(item?.quantity || 1);
+        await dispatch(
+          addToCart({
+            userId,
+            productId,
+            quantity: qty,
+            productData: {
+              id: productId,
+              name: item?.product?.productName || item?.product?.name || "",
+              unitPrice: item?.product?.unitPrice || item?.product?.price || 0,
+              imageUrl: item?.product?.image || item?.product?.imageUrl || "",
+            },
+          })
+        );
+      }
+      notify.success("Đã thêm trọn bộ vào giỏ hàng");
+    } catch {
+      notify.error("Không thể thêm trọn bộ vào giỏ hàng");
+    } finally {
+      setAddingBundle(false);
+    }
+  };
   // Hàm mock để format tiền tệ (giả định dùng VND)
   const formatCurrency = value => {
     return new Intl.NumberFormat("vi-VN", {
@@ -376,6 +493,60 @@ const handleSubmitReview = async () => {
     fetchProduct(id);
   }, [id]);
 
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(REVIEW_PHOTO_STORAGE_KEY) || "{}"
+      );
+      setReviewPhotoMap(stored && typeof stored === "object" ? stored : {});
+    } catch {
+      setReviewPhotoMap({});
+    }
+  }, []);
+
+  useEffect(() => {
+    const loadVerifiedPurchaseMap = async () => {
+      const users = [...new Set((reviews || []).map((r) => r.userId).filter(Boolean))];
+      if (!users.length || !product?.productID) {
+        setVerifiedUsers({});
+        return;
+      }
+      const checks = await Promise.all(
+        users.map(async (userId) => {
+          try {
+            const response = await axiosInstance.get(`/order-details/user/${userId}`);
+            const details = Array.isArray(response?.data) ? response.data : [];
+            const purchased = details.some(
+              (detail) => Number(detail.productId) === Number(product.productID)
+            );
+            return [userId, purchased];
+          } catch {
+            return [userId, false];
+          }
+        })
+      );
+      setVerifiedUsers(Object.fromEntries(checks));
+    };
+    loadVerifiedPurchaseMap();
+  }, [reviews, product?.productID]);
+
+  const handleSelectReviewPhotos = async (event) => {
+    const files = Array.from(event.target.files || []).slice(0, 3);
+    if (!files.length) return;
+    const encoded = await Promise.all(
+      files.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+          })
+      )
+    );
+    setNewReviewPhotos(encoded.filter(Boolean));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen py-20">
@@ -395,6 +566,13 @@ const handleSubmitReview = async () => {
   // Sử dụng unitPrice trực tiếp từ API thay vì parse từ string
   const price = product.unitPrice || 0;
   const originalPrice = price * 1.25; // Giả định giá gốc cao hơn 25%
+  const stockValue = Number(
+    product.quantity ?? product.stock ?? product.stockQuantity ?? 1
+  );
+  const isOutOfStock =
+    product.inStock === false ||
+    String(product.availability || "").toLowerCase().includes("out") ||
+    stockValue <= 0;
 
   return (
     <>
@@ -463,16 +641,15 @@ const handleSubmitReview = async () => {
           {/* Column 1: Product Image & Gallery */}
           <div className="col-span-1 lg:col-span-1">
             <div className="relative rounded-xl p-6 bg-gray-50 border border-gray-200 hover:border-gray-300 transition">
-              <ImageZoom
-                src={product.image}
+              <ImageGallery
+                images={[
+                  product.image,
+                  product.imageUrl,
+                  ...(Array.isArray(product.images) ? product.images : []),
+                  ...(Array.isArray(product.gallery) ? product.gallery : []),
+                ].filter(Boolean)}
                 alt={product.productName}
               />
-            </div>
-            {/* Gallery Thumbnails */}
-            <div className="flex space-x-2 mt-4 overflow-x-auto justify-center">
-              <div className="w-16 h-16 border-2 border-violet-500 rounded-lg cursor-pointer bg-gray-100 hover:border-violet-600 transition"></div>
-              <div className="w-16 h-16 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 hover:border-violet-400 transition"></div>
-              <div className="w-16 h-16 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 hover:border-violet-400 transition"></div>
             </div>
           </div>
 
@@ -482,7 +659,8 @@ const handleSubmitReview = async () => {
               {product.productName}
             </h1>
             <p className="text-sm text-gray-500 mb-6">
-              SKU: {product.productID || "N/A"} | {t("product.in_stock")}
+              SKU: {product.productID || "N/A"} |{" "}
+              {isOutOfStock ? t("product.check_availability") : t("product.in_stock")}
             </p>
 
             {/* Price Section - Simplified */}
@@ -556,13 +734,17 @@ const handleSubmitReview = async () => {
                 />
               </div>
 
-              <button
-              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
-                onClick={() => handleAddToCart(product, quantity)}
-              >
-                <FaShoppingCart className="w-5 h-5" />
-                <span>{t("product.add_to_cart")}</span>
-              </button>
+              {isOutOfStock ? (
+                <NotifyMeButton productId={product.productID} className="mb-3" />
+              ) : (
+                <button
+                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
+                  onClick={() => handleAddToCart(product, quantity)}
+                >
+                  <FaShoppingCart className="w-5 h-5" />
+                  <span>{t("product.add_to_cart")}</span>
+                </button>
+              )}
               
               <button className="w-full flex items-center justify-center space-x-2 bg-yellow-400 text-gray-900 text-base font-semibold py-3 rounded-lg hover:bg-yellow-500 transition-all duration-200 shadow-sm hover:shadow-md">
                 <FaPaypal className="w-5 h-5" />
@@ -630,8 +812,20 @@ const handleSubmitReview = async () => {
                 </a>
               </p>
             </div>
+            <InstallmentCalculatorPanel price={price} />
           </div>
         </div>
+        <RecommendationPanel
+          title="Có thể bạn thích"
+          products={recommendations}
+          loading={recommendationLoading}
+        />
+        <ProductBundlePanel
+          bundle={bundle}
+          loading={bundleLoading}
+          adding={addingBundle}
+          onAddBundleToCart={handleAddBundleToCart}
+        />
         {/* Product Reviews & Q&A Section */}
         <div className="mt-8 bg-white rounded-lg p-6 border border-gray-200">
           {/* Tabs */}
@@ -704,6 +898,14 @@ const handleSubmitReview = async () => {
                         <span className="font-medium text-gray-700 text-sm">
                           {review.reviewerName || "Ẩn danh"}
                         </span>
+                        {verifiedUsers[review.userId] && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                            <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2">
+                              <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            Đã mua
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="flex">
@@ -728,6 +930,24 @@ const handleSubmitReview = async () => {
                     <p className="text-gray-600 text-sm leading-relaxed">
                       {review.comment}
                     </p>
+                    {((Array.isArray(review.imageUrls) && review.imageUrls.length > 0) ||
+                      (Array.isArray(reviewPhotoMap[review.id]) && reviewPhotoMap[review.id].length > 0)) && (
+                      <div className="mt-2 flex gap-2 overflow-x-auto">
+                        {(Array.isArray(review.imageUrls) && review.imageUrls.length > 0
+                          ? review.imageUrls
+                          : reviewPhotoMap[review.id] || []
+                        )
+                          .slice(0, 3)
+                          .map((img, idx) => (
+                            <img
+                              key={`${review.id}-${idx}`}
+                              src={img}
+                              alt="review"
+                              className="w-16 h-16 rounded-md border border-gray-200 object-cover"
+                            />
+                          ))}
+                      </div>
+                    )}
                     {review.reply && (
                       <div className="mt-3 ml-8 pl-4 border-l-2 border-violet-200 bg-violet-50 rounded-r-lg p-3">
                         <div className="flex items-center space-x-2 mb-2">
@@ -790,7 +1010,10 @@ const handleSubmitReview = async () => {
 
                   {validationError && (
                     <div className="mt-2 flex items-center space-x-2 text-xs text-red-600 bg-red-50 rounded px-3 py-2">
-                      <span>⚠️</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 shrink-0" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 9v4m0 4h.01" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M10.3 3.5 1.8 18a1.5 1.5 0 0 0 1.3 2.2h17.8a1.5 1.5 0 0 0 1.3-2.2L13.7 3.5a1.5 1.5 0 0 0-2.6 0Z" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                       <p>{validationError}</p>
                     </div>
                   )}
@@ -800,6 +1023,35 @@ const handleSubmitReview = async () => {
                       {t("reviews.guideline")}
                     </p>
                   )}
+
+                  <div className="mt-3">
+                    <label className="inline-flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+                      <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 8a2 2 0 0 1 2-2h2l1.2-1.4A2 2 0 0 1 10.7 4h2.6a2 2 0 0 1 1.5.6L16 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3.2" />
+                      </svg>
+                      Thêm ảnh đánh giá (tối đa 3 ảnh)
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handleSelectReviewPhotos}
+                      />
+                    </label>
+                    {newReviewPhotos.length > 0 && (
+                      <div className="mt-2 flex gap-2">
+                        {newReviewPhotos.map((photo, index) => (
+                          <img
+                            key={`preview-${index}`}
+                            src={photo}
+                            alt="preview"
+                            className="w-14 h-14 rounded border border-gray-200 object-cover"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   <button
                     onClick={handleSubmitReview}

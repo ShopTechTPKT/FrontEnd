@@ -4,7 +4,12 @@ import { useState, useRef } from "react";
  * ImageZoom — Hover-to-zoom image component for product detail pages.
  * CSS-only approach: scales image 2x with transform-origin following cursor.
  */
-export default function ImageZoom({ src, alt, className = "" }) {
+export default function ImageZoom({
+  src,
+  alt,
+  className = "",
+  onOpenLightbox = null,
+}) {
   const containerRef = useRef(null);
   const [zoomed, setZoomed] = useState(false);
   const [origin, setOrigin] = useState("center center");
@@ -23,6 +28,7 @@ export default function ImageZoom({ src, alt, className = "" }) {
       onMouseEnter={() => setZoomed(true)}
       onMouseLeave={() => setZoomed(false)}
       onMouseMove={handleMouseMove}
+      onClick={() => onOpenLightbox?.()}
     >
       <img
         src={src}
@@ -36,8 +42,20 @@ export default function ImageZoom({ src, alt, className = "" }) {
       />
       {/* Zoom hint */}
       {!zoomed && (
-        <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm pointer-events-none">
-          Hover to zoom
+        <div className="absolute bottom-3 right-3 bg-black/55 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm pointer-events-none inline-flex items-center gap-1.5">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            className="w-3.5 h-3.5"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-3.5-3.5" />
+          </svg>
+          Zoom
         </div>
       )}
     </div>

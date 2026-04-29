@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ImageZoom from "./ImageZoom";
 
 /**
@@ -12,9 +12,11 @@ import ImageZoom from "./ImageZoom";
 export default function ImageGallery({ images = [], alt = "" }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [fading, setFading] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   // Fallback to single empty image
   const imageList = images.length > 0 ? images : [""];
+  const canNavigate = imageList.length > 1;
 
   const switchImage = (idx) => {
     if (idx === activeIndex) return;
@@ -25,13 +27,40 @@ export default function ImageGallery({ images = [], alt = "" }) {
     }, 150);
   };
 
+  const goNext = () => {
+    if (!canNavigate) return;
+    setActiveIndex((prev) => (prev + 1) % imageList.length);
+  };
+
+  const goPrev = () => {
+    if (!canNavigate) return;
+    setActiveIndex((prev) => (prev - 1 + imageList.length) % imageList.length);
+  };
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handleKeydown = (event) => {
+      if (event.key === "Escape") setLightboxOpen(false);
+      if (event.key === "ArrowRight") goNext();
+      if (event.key === "ArrowLeft") goPrev();
+    };
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, [lightboxOpen, canNavigate, imageList.length]);
+
+  const mainImage = useMemo(() => imageList[activeIndex], [imageList, activeIndex]);
+
   return (
     <div className="space-y-3">
       {/* Main image with zoom */}
       <div
         className={`transition-opacity duration-150 ${fading ? "opacity-0" : "opacity-100"}`}
       >
-        <ImageZoom src={imageList[activeIndex]} alt={alt} />
+        <ImageZoom
+          src={mainImage}
+          alt={alt}
+          onOpenLightbox={() => setLightboxOpen(true)}
+        />
       </div>
 
       {/* Thumbnail strip */}
@@ -54,6 +83,65 @@ export default function ImageGallery({ images = [], alt = "" }) {
               />
             </button>
           ))}
+        </div>
+      )}
+
+      {lightboxOpen && (
+        <div className="fixed inset-0 z-[1200] bg-black/85 flex items-center justify-center p-4">
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(false)}
+            className="absolute inset-0"
+            aria-label="Close lightbox overlay"
+          />
+          <div className="relative max-w-5xl w-full z-10">
+            <div className="absolute right-2 top-2 z-20">
+              <button
+                type="button"
+                onClick={() => setLightboxOpen(false)}
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Close lightbox"
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            {canNavigate && (
+              <button
+                type="button"
+                onClick={goPrev}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Previous image"
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
+
+            <div className="bg-white rounded-xl overflow-hidden">
+              <img
+                src={mainImage}
+                alt={alt}
+                className="w-full max-h-[80vh] object-contain bg-gray-50"
+              />
+            </div>
+
+            {canNavigate && (
+              <button
+                type="button"
+                onClick={goNext}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Next image"
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
