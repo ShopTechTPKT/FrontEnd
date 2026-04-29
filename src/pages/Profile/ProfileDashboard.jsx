@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+﻿import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 import { useTranslation } from 'react-i18next';
 import { updateUserProfile, changePassword } from "../../apis/userApi";
@@ -148,7 +148,7 @@ function ProfileDashboard() {
                     <div className="flex flex-col gap-3">
                         <button
                             onClick={handleEditButtonClick}
-                            className="px-6 py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
+                            className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
                         >
                             {t('account.edit')}
                         </button>
@@ -225,7 +225,7 @@ function ProfileDashboard() {
                                         <button
                                             onClick={handleChangePasswordSubmit}
                                             disabled={passwordLoading}
-                                            className="px-6 py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {passwordLoading ? 'Đang lưu...' : t('account.lu_thay_i')}
                                         </button>
@@ -300,7 +300,7 @@ function ProfileDashboard() {
                         <button
                             onClick={handleSaveAccountInfo}
                             disabled={editLoading}
-                            className="px-6 py-2 bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {editLoading ? 'Đang lưu...' : t('common.save')}
                         </button>

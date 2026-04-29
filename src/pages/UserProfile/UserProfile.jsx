@@ -1,4 +1,4 @@
-﻿import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserContext";
@@ -8,6 +8,7 @@ import UserOrders from "../../components/UserOrder/UserOder";
 import UserFavorites from "../../components/UserFavorites/UserFavorites";
 import OrderTracking from "../../components/OrderTracking/OrderTracking";
 import UserDiscounts from "../../components/UserDiscounts/UserDiscounts";
+import LoyaltyHistory from "../../components/UserProfile/LoyaltyHistory";
 import path from "../../constant/path";
 import {
   getUserById,
@@ -470,6 +471,18 @@ function UserProfile() {
                   {t("account.my_discounts") || "Mã giảm giá"}
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => setActiveTab("loyalty-history")}
+                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
+                    activeTab === "loyalty-history"
+                      ? "font-bold text-blue-600"
+                      : ""
+                  }`}
+                >
+                  Lịch sử điểm thưởng
+                </button>
+              </li>
             </ul>
 
             <div className="mt-6 bg-gray-100 rounded-md p-4">
@@ -802,6 +815,21 @@ function UserProfile() {
                 </div>
               ) : (
                 <UserDiscounts userId={resolvedUserId} />
+              ))}
+
+            {activeTab === "loyalty-history" &&
+              (!resolvedUserId ? (
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                    Lịch sử điểm thưởng
+                  </h2>
+                  <p className="text-gray-500">
+                    Không thể hiển thị lịch sử điểm. Vui lòng đăng nhập lại để
+                    lấy thông tin đầy đủ.
+                  </p>
+                </div>
+              ) : (
+                <LoyaltyHistory userId={resolvedUserId} />
               ))}
           </div>
         </div>
