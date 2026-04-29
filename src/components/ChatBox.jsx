@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo, useContext } from "react";
+﻿import React, { useState, useEffect, useRef, memo, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
 const ChatBox = () => {
@@ -142,7 +142,7 @@ const ChatBox = () => {
     },
     violet: {
       bgPrimary: "bg-violet-600",
-      bgSecondary: "bg-gradient-to-br from-violet-50 via-white to-purple-50",
+      bgSecondary: "bg-gradient-to-br from-violet-50 via-white to-violet-50",
       textPrimary: "text-white",
       textSecondary: "text-violet-600",
       hoverBg: "hover:bg-violet-100/80",
@@ -723,7 +723,7 @@ const handleFileSelect = (e, multiple = false) => {
           </div>
         </div>
         {isUser && (
-          <div className={`w-8 h-8 rounded-full bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 flex items-center justify-center text-white text-sm font-bold shadow-lg`}>
+          <div className={`w-8 h-8 rounded-full bg-gradient-to-r from-violet-700 to-violet-600 flex items-center justify-center text-white text-sm font-bold shadow-lg`}>
             You
           </div>
         )}

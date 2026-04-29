@@ -1,4 +1,4 @@
-const ChatSidebar = ({ sessions, selectedSession, onSelect }) => (
+﻿const ChatSidebar = ({ sessions, selectedSession, onSelect }) => (
     <div className="w-1/3 bg-white border-r border-gray-100 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
@@ -29,7 +29,7 @@ const ChatSidebar = ({ sessions, selectedSession, onSelect }) => (
                 onClick={() => onSelect(s)}
                 className={`flex items-center p-4 cursor-pointer transition-all ${
                   selectedSession?.id === s.id
-                    ? "bg-gradient-to-r from-gray-900 to-purple-950 text-white border-l-4 border-purple-500"
+                    ? "bg-gradient-to-r from-gray-900 to-purple-950 text-white border-l-4 border-violet-500"
                     : "hover:bg-gray-50"
                 }`}
               >
@@ -37,7 +37,7 @@ const ChatSidebar = ({ sessions, selectedSession, onSelect }) => (
                 <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center font-semibold mr-3 ${
                   selectedSession?.id === s.id
                     ? "bg-white/20 text-white"
-                    : "bg-gradient-to-br from-gray-800 to-purple-900 text-white"
+                    : "bg-gradient-to-br from-gray-800 to-violet-900 text-white"
                 }`}>
                   {s.guestName?.charAt(0)?.toUpperCase() || "?"}
                 </div>
@@ -52,7 +52,7 @@ const ChatSidebar = ({ sessions, selectedSession, onSelect }) => (
                     </p>
                     {s.unread && (
                       <span className={`ml-2 w-2 h-2 rounded-full animate-pulse ${
-                        selectedSession?.id === s.id ? "bg-white" : "bg-purple-500"
+                        selectedSession?.id === s.id ? "bg-white" : "bg-violet-500"
                       }`} />
                     )}
                   </div>

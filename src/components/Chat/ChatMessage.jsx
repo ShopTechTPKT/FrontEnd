@@ -1,4 +1,4 @@
-const ChatMessage = ({ message }) => {
+﻿const ChatMessage = ({ message }) => {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
   const fileUrl = message.fileUrl 
     ? (message.fileUrl.startsWith("http") 
@@ -15,7 +15,7 @@ const ChatMessage = ({ message }) => {
       <div
         className={`max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
           message.senderType === "STAFF"
-            ? "bg-gradient-to-r from-purple-700 via-purple-500 to-fuchsia-500 text-white rounded-br-sm"
+            ? "bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-br-sm"
             : "bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-sm"
         }`}
       >
