@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { FaUserShield, FaPlus, FaEdit, FaTrash, FaSearch, FaCheck, FaTimes } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -56,7 +56,7 @@ const PermissionsPage = () => {
       case 'admin':
         return 'from-red-600 to-pink-600';
       case 'manager':
-        return 'from-sky-500 to-sky-700';
+        return 'from-violet-600 to-violet-800';
       case 'staff':
         return 'from-blue-600 to-cyan-600';
       case 'customer':
@@ -96,14 +96,14 @@ const PermissionsPage = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-sky-500">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-violet-600">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">{t('common.total_roles')}</p>
                 <p className="text-3xl font-bold text-gray-900">{roles.length}</p>
               </div>
               <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center">
-                <FaUserShield className="text-sky-600 text-xl" />
+                <FaUserShield className="text-violet-700 text-xl" />
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ const PermissionsPage = () => {
               placeholder={t('common.search_roles')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:outline-none"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-600 focus:outline-none"
             />
           </div>
         </div>
@@ -195,7 +195,7 @@ const PermissionsPage = () => {
                   {role.permissions.map((perm) => (
                     <span
                       key={perm}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium flex items-center gap-1"
+                      className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium flex items-center gap-1"
                     >
                       <FaCheck className="text-xs" />
                       {perm.replace('_', ' ')}
@@ -209,7 +209,7 @@ const PermissionsPage = () => {
                       setSelectedRole(role);
                       setIsModalOpen(true);
                     }}
-                    className="flex-1 py-2 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-2 bg-gradient-to-r from-violet-600 to-violet-800 hover:from-violet-700 hover:to-sky-800 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                   >
                     <FaEdit />{t('account.edit')}</button>
                   <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-all flex items-center justify-center gap-2">
@@ -237,7 +237,7 @@ const PermissionsPage = () => {
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 pt-28">
             <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
-              <div className="bg-gradient-to-r from-sky-500 to-sky-700 text-white p-6">
+              <div className="bg-gradient-to-r from-violet-600 to-violet-800 text-white p-6">
                 <h2 className="text-2xl font-bold">
                   {selectedRole ? 'Edit Role' : 'Create New Role'}
                 </h2>
@@ -251,7 +251,7 @@ const PermissionsPage = () => {
                       type="text"
                       placeholder={t('common.eg_manager')}
                       defaultValue={selectedRole?.name || ''}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-600 focus:outline-none"
                     />
                   </div>
 
@@ -260,7 +260,7 @@ const PermissionsPage = () => {
                     <textarea
                       placeholder={t('common.describe_the_role')}
                       defaultValue={selectedRole?.description || ''}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-sky-500 focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-600 focus:outline-none"
                       rows="3"
                     />
                   </div>
@@ -276,7 +276,7 @@ const PermissionsPage = () => {
                           <input
                             type="checkbox"
                             defaultChecked={selectedRole?.permissions.includes(perm.id)}
-                            className="w-5 h-5 text-sky-600 rounded focus:ring-sky-500"
+                            className="w-5 h-5 text-violet-700 rounded focus:ring-violet-600"
                           />
                           <div>
                             <p className="font-semibold text-gray-900">{perm.name}</p>
@@ -289,7 +289,7 @@ const PermissionsPage = () => {
                 </div>
 
                 <div className="flex gap-3 mt-6">
-                  <button className="flex-1 py-3 bg-gradient-to-r from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 text-white rounded-lg font-semibold transition-all">
+                  <button className="flex-1 py-3 bg-gradient-to-r from-violet-600 to-violet-800 hover:from-violet-700 hover:to-sky-800 text-white rounded-lg font-semibold transition-all">
                     {selectedRole ? 'Update Role' : 'Create Role'}
                   </button>
                   <button

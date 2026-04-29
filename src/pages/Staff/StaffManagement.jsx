@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FaUserTie, FaUsers, FaUserShield, FaEdit, FaTrash, FaPlus, FaSearch, FaEnvelope, FaPhone, FaBriefcase, FaCalendarAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -105,7 +105,7 @@ const StaffManagement = () => {
 
   const getRoleBadge = (role) => {
     const colors = {
-      Manager: 'bg-gradient-to-r from-purple-900 to-purple-950 text-white',
+      Manager: 'bg-gradient-to-r from-violet-800 to-violet-900 text-white',
       Sales: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
       Technician: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
       Warehouse: 'bg-gradient-to-r from-orange-500 to-orange-600 text-white',
@@ -142,16 +142,16 @@ const StaffManagement = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaUserTie className="text-6xl mb-4 text-purple-400" />
+              <FaUserTie className="text-6xl mb-4 text-violet-400" />
               <h1 className="text-5xl font-bold mb-3">{t('common.staff_management')}</h1>
-              <p className="text-xl text-purple-300">{t('common.manage_your_team_members')}</p>
+              <p className="text-xl text-violet-300">{t('common.manage_your_team_members')}</p>
             </div>
             <div className="flex gap-4">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <p className="text-purple-300 text-sm mb-1">{t('common.total_staff')}</p>
+                <p className="text-violet-300 text-sm mb-1">{t('common.total_staff')}</p>
                 <p className="text-4xl font-bold">{staff.length}</p>
               </div>
-              <button className="bg-white text-purple-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2 h-fit self-end">
+              <button className="bg-white text-violet-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2 h-fit self-end">
                 <FaPlus />
                 Add Staff
               </button>
@@ -173,8 +173,8 @@ const StaffManagement = () => {
                   onClick={() => setFilterRole(role.id)}
                   className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                     filterRole === role.id
-                      ? 'bg-gradient-to-r from-purple-900 to-purple-950 text-white shadow-lg scale-105'
-                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-purple-600'
+                      ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
+                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600'
                   }`}
                 >
                   <Icon />
@@ -192,7 +192,7 @@ const StaffManagement = () => {
               placeholder={t('common.search_by_name_email')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
             />
           </div>
         </div>
@@ -207,14 +207,14 @@ const StaffManagement = () => {
               className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-purple-900 to-purple-950 text-white p-6 text-center relative overflow-hidden">
+              <div className="bg-gradient-to-r from-violet-800 to-violet-900 text-white p-6 text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full"></div>
                 <div className="relative">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-purple-900 font-bold text-2xl mx-auto mb-3 shadow-lg">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-violet-900 font-bold text-2xl mx-auto mb-3 shadow-lg">
                     {member.avatar}
                   </div>
                   <h3 className="font-bold text-xl mb-1">{member.name}</h3>
-                  <p className="text-sm text-purple-200 mb-2">{member.id}</p>
+                  <p className="text-sm text-violet-200 mb-2">{member.id}</p>
                   {getRoleBadge(member.role)}
                 </div>
               </div>
@@ -230,23 +230,23 @@ const StaffManagement = () => {
                 {/* Contact Info */}
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <FaEnvelope className="text-purple-600" />
+                    <FaEnvelope className="text-violet-600" />
                     <span className="truncate">{member.email}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <FaPhone className="text-purple-600" />
+                    <FaPhone className="text-violet-600" />
                     <span>{member.phone}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <FaCalendarAlt className="text-purple-600" />
+                    <FaCalendarAlt className="text-violet-600" />
                     <span>Joined {new Date(member.joinDate).toLocaleDateString('vi-VN')}</span>
                   </div>
                 </div>
 
                 {/* Salary */}
-                <div className="bg-purple-50 rounded-xl p-4 mb-4">
+                <div className="bg-violet-50 rounded-xl p-4 mb-4">
                   <p className="text-xs text-gray-600 mb-1">{t('common.monthly_salary')}</p>
-                  <p className="text-2xl font-bold text-purple-900">
+                  <p className="text-2xl font-bold text-violet-900">
                     {member.salary.toLocaleString('vi-VN')}₫
                   </p>
                 </div>
@@ -278,10 +278,10 @@ const StaffManagement = () => {
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-violet-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg">
             <FaUserShield className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{staff.filter(s => s.role === 'Manager').length}</p>
-            <p className="text-purple-100">{t('common.managers')}</p>
+            <p className="text-violet-100">{t('common.managers')}</p>
           </div>
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
             <FaBriefcase className="text-4xl mb-3" />

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef, useMemo } from "react";
+﻿import { useState, useEffect, useContext, useRef, useMemo } from "react";
 
 import {
   FaChartPie,
@@ -1576,7 +1576,7 @@ export default function ComputerStoreAdminLayout() {
             alt="Solid Sphere" 
             className="h-8 mr-3 object-contain"
           />
-          <span className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <span className="text-lg font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
             {t("admin.techstore")}
           </span>
         </div>
@@ -1655,7 +1655,7 @@ export default function ComputerStoreAdminLayout() {
         <div className={`p-4 border-t ${borderColor} bg-gray-50`}>
           <div className="flex items-center">
             <div className="mr-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-violet-500 flex items-center justify-center">
                 <FaUserCircle size={20} className="text-white" />
               </div>
             </div>
@@ -1701,7 +1701,7 @@ export default function ComputerStoreAdminLayout() {
           className={`flex items-center justify-between px-6 py-4 border-b ${borderColor} bg-white shadow-sm`}
         >
           <div className="flex items-center">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
               {activeMenu === "Dashboard"
                 ? t("admin.menu_dashboard")
                 : activeMenu === "Computers"
@@ -1841,7 +1841,7 @@ export default function ComputerStoreAdminLayout() {
                     <h3 className={`text-sm font-semibold uppercase tracking-wide ${secondaryTextColor}`}>
                       {t("common.total_users")}
                     </h3>
-                    <span className="text-purple-500 flex items-center bg-purple-500/10 px-2 py-1 rounded-full">
+                    <span className="text-violet-500 flex items-center bg-violet-500/10 px-2 py-1 rounded-full">
                       <FaArrowUp className="mr-1" size={12} />
                     </span>
                   </div>
@@ -5227,7 +5227,7 @@ function MostFavoritedProductsChart({ data, darkMode }) {
                       i === 0
                         ? "bg-pink-500"
                         : i === 1
-                        ? "bg-purple-400"
+                        ? "bg-violet-400"
                         : i === 2
                         ? "bg-red-600"
                         : "bg-indigo-500"
@@ -5594,7 +5594,7 @@ function GenericBarChart({ data, darkMode, title }) {
             const colors = [
               "bg-gradient-to-t from-blue-600 to-blue-400",
               "bg-gradient-to-t from-green-600 to-green-400",
-              "bg-gradient-to-t from-purple-600 to-purple-400",
+              "bg-gradient-to-t from-violet-600 to-violet-400",
               "bg-gradient-to-t from-orange-600 to-orange-400",
               "bg-gradient-to-t from-red-600 to-red-400",
               "bg-gradient-to-t from-indigo-600 to-indigo-400",

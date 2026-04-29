@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FaTags, FaPercent, FaCalendarAlt, FaFire, FaPlus, FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -131,11 +131,11 @@ const PromotionsManagement = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaTags className="text-6xl mb-4 text-purple-400" />
+              <FaTags className="text-6xl mb-4 text-violet-400" />
               <h1 className="text-5xl font-bold mb-3">{t('deals.promotions_management')}</h1>
-              <p className="text-xl text-purple-300">{t('deals.create_and_manage_promotional')}</p>
+              <p className="text-xl text-violet-300">{t('deals.create_and_manage_promotional')}</p>
             </div>
-            <button className="bg-white text-purple-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            <button className="bg-white text-violet-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
               <FaPlus />
 {t('deals.create_new_promotion')}
             </button>
@@ -155,8 +155,8 @@ const PromotionsManagement = () => {
                   onClick={() => setFilterStatus(key)}
                   className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     filterStatus === key
-                      ? 'bg-gradient-to-r from-purple-900 to-purple-950 text-white shadow-lg scale-105'
-                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-purple-600'
+                      ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
+                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600'
                   }`}
                 >
                   {config.label} ({count})
@@ -173,7 +173,7 @@ const PromotionsManagement = () => {
               placeholder={t('deals.search_by_promotion_name')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
             />
           </div>
         </div>
@@ -188,7 +188,7 @@ const PromotionsManagement = () => {
               className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-purple-900 to-purple-950 text-white p-4">
+              <div className="bg-gradient-to-r from-violet-800 to-violet-900 text-white p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-sm opacity-75">{promo.id}</span>
                   {promo.status === 'active' && <FaFire className="text-orange-400 text-xl animate-pulse" />}
@@ -223,7 +223,7 @@ const PromotionsManagement = () => {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-gradient-to-r from-purple-600 to-purple-800 h-2 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-violet-600 to-violet-800 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${getUsagePercentage(promo)}%` }}
                       ></div>
                     </div>
@@ -238,19 +238,19 @@ const PromotionsManagement = () => {
                 {/* Details */}
                 <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
                   <div className="flex items-center gap-2 text-sm">
-                    <FaCalendarAlt className="text-purple-600" />
+                    <FaCalendarAlt className="text-violet-600" />
                     <span className="text-gray-700">
                       {new Date(promo.startDate).toLocaleDateString('vi-VN')} - {new Date(promo.endDate).toLocaleDateString('vi-VN')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <FaPercent className="text-purple-600" />
+                    <FaPercent className="text-violet-600" />
                     <span className="text-gray-700">
                       {t('deals.min_purchase')}: {promo.minPurchase.toLocaleString('vi-VN')}₫
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <FaTags className="text-purple-600" />
+                    <FaTags className="text-violet-600" />
                     <span className="text-gray-700">
                       {promo.applicableProducts.join(', ')}
                     </span>
@@ -294,10 +294,10 @@ const PromotionsManagement = () => {
             <p className="text-3xl font-bold">{promotions.filter(p => p.status === 'scheduled').length}</p>
             <p className="text-blue-100">{t('common.scheduled')}</p>
           </div>
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-violet-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg">
             <FaTags className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{promotions.length}</p>
-            <p className="text-purple-100">{t('deals.total_campaigns')}</p>
+            <p className="text-violet-100">{t('deals.total_campaigns')}</p>
           </div>
           <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-2xl shadow-lg">
             <FaFire className="text-4xl mb-3" />

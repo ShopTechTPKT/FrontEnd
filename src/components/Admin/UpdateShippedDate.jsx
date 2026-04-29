@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   updateShippedDate,
   getShippedOrders,
@@ -99,7 +99,7 @@ const UpdateShippedDate = () => {
                       <p className="font-bold">
                         {order.totalPrice?.toLocaleString("vi-VN")} VND
                       </p>
-                      <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                      <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded">
                         {order.status}
                       </span>
                     </div>
