@@ -68,7 +68,12 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">{category?.icon}</span>
+            <span className="text-violet-600">
+              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M8 8h8v8H8z"/>
+              </svg>
+            </span>
             <div>
               <h2 className="text-base font-bold text-gray-900">
                 Chọn {category?.label}
@@ -139,7 +144,12 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
         <div className="overflow-y-auto flex-1 p-4">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-              <span className="text-4xl mb-3">🔍</span>
+              <span className="mb-3 text-gray-300">
+                <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" />
+                </svg>
+              </span>
               <p className="text-sm font-medium">Không tìm thấy sản phẩm phù hợp</p>
             </div>
           ) : view === "grid" ? (
@@ -174,7 +184,12 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
                     )}
                     <p className="text-sm font-bold text-violet-700">{formatCurrency(comp.price)}</p>
                     {comp.watt > 0 && (
-                      <p className="text-[10px] text-amber-600 mt-0.5">⚡ {comp.watt}W</p>
+                      <p className="text-[10px] text-amber-600 mt-0.5 flex items-center gap-1">
+                        <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        {comp.watt}W
+                      </p>
                     )}
                   </button>
                 );
@@ -218,7 +233,12 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
                     <div className="shrink-0 text-right">
                       <p className="text-sm font-bold text-violet-700">{formatCurrency(comp.price)}</p>
                       {comp.watt > 0 && (
-                        <p className="text-[10px] text-amber-600">⚡ {comp.watt}W</p>
+                        <p className="text-[10px] text-amber-600 flex items-center justify-end gap-1">
+                          <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                          </svg>
+                          {comp.watt}W
+                        </p>
                       )}
                     </div>
                   </button>
