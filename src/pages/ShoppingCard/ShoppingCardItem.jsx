@@ -29,8 +29,9 @@ import {
 import {
   getUserActiveDiscounts,
   useUserDiscount as callUseUserDiscount,
-  getActiveDiscounts,
 } from "../../apis/discountApi";
+import { redeemLoyaltyPoints } from "../../apis/loyaltyApi";
+import { validateCouponCode } from "../../apis/couponApi";
 const ShoppingCardItem = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -72,11 +73,30 @@ const ShoppingCardItem = () => {
 
   const [discounts, setDiscounts] = useState([]);
   const [selectedPaymentName, setSelectedPaymentName] = useState("");
+  const [loyaltyRedemption, setLoyaltyRedemption] = useState({
+    points: 0,
+    discountAmount: 0,
+  });
+  const [couponFeedback, setCouponFeedback] = useState({
+    status: "idle",
+    message: "",
+  });
 
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const selectedShippingCost = Number.parseInt(
     localStorage.getItem("selectedShippingCost") || "0"
   );
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("loyaltyRedemption") || "{}");
+      setLoyaltyRedemption({
+        points: Number(saved?.points) || 0,
+        discountAmount: Number(saved?.discountAmount) || 0,
+      });
+    } catch {
+      setLoyaltyRedemption({ points: 0, discountAmount: 0 });
+    }
+  }, []);
   useEffect(() => {
     // Lấy userId từ nhiều nguồn (giống UserDiscounts component)
     const userId = user?.id || user?.customerID || user?.customerId || user?.userId || getCurrentUserId();
@@ -237,7 +257,9 @@ const ShoppingCardItem = () => {
 
   // Tính discount amount từ selectedDiscount
   const discountAmount = selectedDiscount
-    ? selectedDiscount.type === "PERCENTAGE"
+    ? typeof selectedDiscount.fixedAmount === "number"
+      ? selectedDiscount.fixedAmount
+      : selectedDiscount.type === "PERCENTAGE"
       ? orderTotalBeforeDiscount * (selectedDiscount.discountRate || 0)
       : selectedDiscount.type === "FIXED_AMOUNT"
       ? selectedDiscount.discountRate || 0
@@ -245,7 +267,7 @@ const ShoppingCardItem = () => {
     : discountValue;
 
   const discountedTotal = Math.max(
-    orderTotalBeforeDiscount - discountAmount,
+    orderTotalBeforeDiscount - discountAmount - loyaltyRedemption.discountAmount,
     0
   );
 
@@ -271,100 +293,68 @@ const ShoppingCardItem = () => {
     }
   };
 
-  // Helper: normalize code for comparison (remove spaces/punctuation, lowercase)
-  const normalizeCode = str =>
-    (str || "")
-      .toLowerCase()
-      .replace(/[%\s_-]+/g, "")
-      .trim();
-
-  // Apply discount by typing code/name (only one discount allowed)
+  // Apply discount by backend coupon validator (blur/enter/click)
   const handleApplyDiscountCode = async () => {
     if (selectedDiscount) {
-      return notify.warn("Bạn chỉ được áp dụng 1 mã giảm giá tại một thời điểm.");
+      return notify.warning(
+        "Bạn chỉ được áp dụng 1 mã giảm giá tại một thời điểm."
+      );
     }
-    const code = enteredDiscountCode.trim().toLowerCase();
-    const normalizedInput = normalizeCode(code);
+    const code = enteredDiscountCode.trim();
     if (!code) {
+      setCouponFeedback({ status: "idle", message: "" });
       return notify.error("Vui lòng nhập mã giảm giá.");
     }
-
-    // Luồng mã tri ân công khai, không phụ thuộc vào danh sách voucher user
-    let availableDiscounts = [];
     try {
-      const data = await getActiveDiscounts();
+      const data = await validateCouponCode({
+        code,
+        orderTotal: orderTotalBeforeDiscount,
+      });
 
-      // Normalize response to array (supports content/data/discounts)
-      let discountArray = [];
-      if (Array.isArray(data)) discountArray = data;
-      else if (data && typeof data === "object") {
-        if (Array.isArray(data.content)) discountArray = data.content;
-        else if (Array.isArray(data.data)) discountArray = data.data;
-        else if (Array.isArray(data.discounts)) discountArray = data.discounts;
+      if (!data?.valid) {
+        setCouponFeedback({
+          status: "error",
+          message: data?.message || "Mã giảm giá không hợp lệ.",
+        });
+        return notify.error(data?.message || "Mã giảm giá không hợp lệ.");
       }
 
-      availableDiscounts = discountArray.map(d => ({
-        id: d.id,
-        discountId: d.discountId || d.id,
-        name: d.discountName || d.name || `Discount #${d.discountId || d.id}`,
-        code:
-          d.discountCode ||
-          d.code ||
-          d.discountName ||
-          `DISCOUNT${d.discountId || d.id}`,
-        discountName: d.discountName || d.name,
-        discountCode: d.discountCode || d.code,
-        description: d.discountDescription || d.description,
-        discountRate: d.discountRate,
-        type: d.discountType || d.type,
-        endDate: d.expiresAt || d.endDate,
-      }));
-    } catch (err) {
-      console.error("❌ Error fetching public discounts on apply:", err);
-      return notify.error("Không thể áp dụng mã giảm giá lúc này.");
-    }
+      const discountAmount = Number(data.discountAmount) || 0;
+      const discountPercent = Number(data.discountPercent) || 0;
+      const normalizedDiscountRate =
+        discountPercent > 1 ? discountPercent / 100 : discountPercent;
 
-    const matchDiscount = list =>
-      (list || []).find(d => {
-        const candidates = [
-          normalizeCode(d.name),
-          normalizeCode(d.code),
-          normalizeCode(d.discountName),
-          normalizeCode(d.discountCode),
-          normalizeCode(`discount${d.discountId || d.id || ""}`),
-          normalizeCode(`voucher${d.discountId || d.id || ""}`),
-          normalizeCode(`${d.discountId || ""}`),
-        ].filter(Boolean);
-        return (
-          candidates.includes(normalizedInput) ||
-          candidates.some(c => c && c.replace(/%/g, "") === normalizedInput) ||
-          candidates.some(c => normalizedInput && c && c.includes(normalizedInput))
-        );
+      setSelectedDiscount({
+        id: `coupon-${code.toUpperCase()}`,
+        name: code.toUpperCase(),
+        code: code.toUpperCase(),
+        type: "PERCENTAGE",
+        discountRate: normalizedDiscountRate,
+        fixedAmount: discountAmount,
+        source: "coupon",
       });
-
-    const found = matchDiscount(availableDiscounts);
-
-    if (!found) {
-      console.warn("⚠️ Không tìm thấy mã trong danh sách khả dụng", {
-        input: normalizedInput,
-        availableDiscounts,
+      setDiscountValue(discountAmount);
+      setCouponFeedback({
+        status: "success",
+        message:
+          data?.message ||
+          `Áp dụng thành công: giảm ${new Intl.NumberFormat("vi-VN").format(
+            discountAmount
+          )}đ`,
       });
-      return notify.error("Mã giảm giá không hợp lệ hoặc không khả dụng.");
+      notify.success(
+        data?.message ||
+          `Áp dụng thành công: giảm ${new Intl.NumberFormat("vi-VN").format(
+            discountAmount
+          )}đ`
+      );
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ||
+        "Không thể áp dụng mã giảm giá lúc này.";
+      setCouponFeedback({ status: "error", message });
+      notify.error(message);
     }
-
-    // Giữ selectedDiscount nhưng không đánh dấu voucher user là đã dùng
-    setSelectedDiscount({ ...found, source: "manual" });
-
-    let amount = 0;
-    if (found.type === "PERCENTAGE") {
-      amount = orderTotalBeforeDiscount * (found.discountRate || 0);
-    } else if (found.type === "FIXED_AMOUNT") {
-      amount = found.discountRate || 0;
-    } else if (found.discount) {
-      amount = (orderTotalBeforeDiscount * found.discount) / 100;
-    }
-    setDiscountValue(amount);
-    setEnteredDiscountCode("");
   };
 
   const handleConfirmCancel = () => setConfirmOpen(false);
@@ -518,6 +508,19 @@ const ShoppingCardItem = () => {
         );
         createdOrderId = orderResponse.id || orderResponse.orderID;
 
+        if (loyaltyRedemption.points > 0) {
+          try {
+            await redeemLoyaltyPoints({
+              userId: Number(userId),
+              points: Number(loyaltyRedemption.points),
+              orderId: Number(createdOrderId),
+            });
+            localStorage.removeItem("loyaltyRedemption");
+          } catch (redeemError) {
+            console.error("Lỗi redeem loyalty points:", redeemError);
+          }
+        }
+
         // ✅ Lưu orderID vào localStorage để hiển thị ở trang thank you
         localStorage.setItem("lastOrderId", String(createdOrderId));
 
@@ -553,7 +556,7 @@ const ShoppingCardItem = () => {
         if (errorCode === 1302) {
           // INSUFFICIENT_STOCK
           notify.error(
-            "⚠️ Rất tiếc! Sản phẩm trong giỏ hàng của bạn không đủ số lượng tồn kho. " +
+            "Rất tiếc! Sản phẩm trong giỏ hàng của bạn không đủ số lượng tồn kho. " +
               "Vui lòng kiểm tra lại số lượng sản phẩm và thử lại.",
             { autoClose: 5000 }
           );
@@ -562,14 +565,14 @@ const ShoppingCardItem = () => {
         } else if (errorCode === 1303) {
           // PRODUCT_OUT_OF_STOCK
           notify.error(
-            "⚠️ Rất tiếc! Một số sản phẩm trong giỏ hàng đã hết hàng. " +
+            "Rất tiếc! Một số sản phẩm trong giỏ hàng đã hết hàng. " +
               "Vui lòng xóa sản phẩm đã hết hàng và thử lại.",
             { autoClose: 5000 }
           );
         } else if (errorCode === 1301) {
           // PRODUCT_NOT_FOUND
           notify.error(
-            "⚠️ Một số sản phẩm không tồn tại. Vui lòng làm mới trang và thử lại.",
+            "Một số sản phẩm không tồn tại. Vui lòng làm mới trang và thử lại.",
             { autoClose: 5000 }
           );
         } else {
@@ -1087,9 +1090,29 @@ const ShoppingCardItem = () => {
                         <input
                           type="text"
                           value={enteredDiscountCode}
-                          onChange={e => setEnteredDiscountCode(e.target.value)}
+                          onChange={e => {
+                            setEnteredDiscountCode(e.target.value.toUpperCase());
+                            if (couponFeedback.status !== "idle") {
+                              setCouponFeedback({ status: "idle", message: "" });
+                            }
+                          }}
+                          onBlur={() => {
+                            if (enteredDiscountCode.trim()) handleApplyDiscountCode();
+                          }}
+                          onKeyDown={e => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleApplyDiscountCode();
+                            }
+                          }}
                           placeholder={t("payment.payment_summary.enter_discount_code") || "Nhập mã giảm giá"}
-                          className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/30"
+                          className={`flex-1 rounded-xl border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
+                            couponFeedback.status === "success"
+                              ? "border-emerald-300 focus:border-emerald-400 focus:ring-emerald-300/30"
+                              : couponFeedback.status === "error"
+                              ? "border-red-300 focus:border-red-400 focus:ring-red-300/30"
+                              : "border-gray-200 focus:border-violet-400 focus:ring-violet-400/30"
+                          }`}
                         />
                         <button
                           type="button"
@@ -1098,6 +1121,28 @@ const ShoppingCardItem = () => {
                         >
                           {t("payment.payment_summary.apply") || "Áp dụng"}
                         </button>
+                      </div>
+                    )}
+                    {couponFeedback.message && !selectedDiscount && (
+                      <div
+                        className={`mb-3 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs ${
+                          couponFeedback.status === "success"
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-red-200 bg-red-50 text-red-700"
+                        }`}
+                      >
+                        <span className="inline-flex h-4 w-4 items-center justify-center">
+                          {couponFeedback.status === "success" ? (
+                            <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                          ) : (
+                            <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                          )}
+                        </span>
+                        <span>{couponFeedback.message}</span>
                       </div>
                     )}
 
@@ -1140,6 +1185,7 @@ const ShoppingCardItem = () => {
                           onClick={() => {
                             setSelectedDiscount(null);
                             setDiscountValue(0);
+                            setCouponFeedback({ status: "idle", message: "" });
                           }}
                           className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 rounded-md transition-all duration-200 border border-red-200 hover:border-red-300 hover:shadow-sm"
                         >

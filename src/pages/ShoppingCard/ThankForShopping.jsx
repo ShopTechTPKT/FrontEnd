@@ -17,6 +17,7 @@ import {
   updatePlaysAllowedAfterOrder,
 } from "../../apis/orderApi";
 import notify from "../../utils/notify";
+import { redeemLoyaltyPoints } from "../../apis/loyaltyApi";
 
 export default function ThankYouPage() {
   const { t } = useTranslation();
@@ -168,6 +169,21 @@ export default function ThankYouPage() {
           const createdOrder = response.data || response;
           setOrderData(createdOrder);
           setOrderNumber(createdOrder.orderID || createdOrder.id || "N/A");
+
+          const savedLoyalty = JSON.parse(
+            localStorage.getItem("loyaltyRedemption") || "{}"
+          );
+          if ((Number(savedLoyalty?.points) || 0) > 0 && userId) {
+            redeemLoyaltyPoints({
+              userId: Number(userId),
+              points: Number(savedLoyalty.points),
+              orderId: Number(createdOrder.orderID || createdOrder.id),
+            })
+              .then(() => localStorage.removeItem("loyaltyRedemption"))
+              .catch((error) =>
+                console.error("Lỗi redeem loyalty points:", error)
+              );
+          }
 
           // Lưu orderID vào localStorage để dùng sau
           localStorage.setItem(
