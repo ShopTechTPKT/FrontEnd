@@ -24,5 +24,6 @@ const notify = {
 };
 
 export default notify;
+export const toast = notify;
 
 
