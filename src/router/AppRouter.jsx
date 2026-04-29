@@ -196,6 +196,8 @@ import Favorites from "../pages/Favorites/Favorites";
 import NotFound from "../pages/NotFound/NotFound";
 import AuditLogsPage from "../pages/AuditLogs/AuditLogsPage";
 import PCBuilder from "../pages/PCBuilder/PCBuilder";
+import AnalyticsDashboard from "../pages/AdminLayout/AnalyticsDashboard";
+import CompareTable from "../components/product/CompareTable";
 
 const AppRouter = () => {
   const { getUserRole, loading: _loading } = useContext(UserContext);
@@ -230,6 +232,7 @@ const AppRouter = () => {
           }
         >
           <Route index element={<AdminLayout />} /> {/* /admin */}
+          <Route path="analytics" element={<AnalyticsDashboard />} /> {/* /admin/analytics */}
           <Route path="calendar" element={<VIPCalendar />} /> {/* /admin/calendar */}
           <Route path="reviews" element={<AdminLayout />} /> {/* /admin/reviews */}
           <Route path="messages" element={<AdminLayout />} /> {/* /admin/messages */}
@@ -273,6 +276,7 @@ const AppRouter = () => {
           <Route path="favorites" element={<Favorites />} />
           <Route path="pc-builder" element={<PCBuilder />} />
           <Route path="pc-builder/:presetId" element={<PCBuilder />} />
+          <Route path="compare" element={<CompareTable />} />
 
           {/* Management Pages - Protected by roles */}
           <Route 
