@@ -10,10 +10,12 @@ import { UserContext } from "../../context/UserContext";
 import DiscountModal from "../../components/DiscountModal";
 import AddressAutocomplete from "../../components/Orders/AddressAutocomplete";
 import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
+import LoyaltyPointsPanel from "../../components/checkout/LoyaltyPointsPanel";
+import { getLoyaltyBalance } from "../../apis/loyaltyApi";
 // import { getActiveDiscounts } from "../../apis/discountApi";
 
 // Component tượng trưng cho Order Summary (đã chỉnh sửa để nhận prop và hiển thị dữ liệu thật)
-const OrderSummary = ({ cartItems, selectedShippingCost }) => {
+const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) => {
   // useTranslation hook must be at the top level
   const { t } = useTranslation();
 
@@ -43,7 +45,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
     const qty = Number(item?.quantity) || 1;
     return total + unit * qty;
   }, 0);
-  const total = subtotal + selectedShippingCost;
+  const total = Math.max(0, subtotal + selectedShippingCost - loyaltyDiscount);
 
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
@@ -97,6 +99,18 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
           ))
         )}
         <div className="border-t border-gray-200 pt-3">
+          {loyaltyDiscount > 0 && (
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-emerald-600">Giảm từ điểm thưởng</span>
+              <span className="text-sm font-semibold text-emerald-600">
+                -
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(loyaltyDiscount)}
+              </span>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
               {t("payment.checkout.subtotal")}
@@ -173,7 +187,19 @@ function ShoppingCard_CheckOut() {
   // State để lưu lỗi
   const [errors, setErrors] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [loyaltyBalance, setLoyaltyBalance] = useState(0);
+  const [loyaltyApplied, setLoyaltyApplied] = useState({
+    points: 0,
+    discountAmount: 0,
+  });
   const isCartEmpty = !cartItems || cartItems.length === 0;
+
+  const subtotal = cartItems.reduce((total, item) => {
+    const unit = typeof item?.unitPrice === "number" ? item.unitPrice : Number(item?.price) || 0;
+    const qty = Number(item?.quantity) || 1;
+    return total + unit * qty;
+  }, 0);
+  const cartTotal = subtotal + shippingCost;
 
   // --- Auto-detect city/province/country from shipping address ---
   const removeVietnameseTones = str => {
@@ -258,6 +284,14 @@ function ShoppingCard_CheckOut() {
     }
   }, [streetAddress]);
 
+  useEffect(() => {
+    const userId = user?.id || user?.customerID || user?.customerId;
+    if (!userId) return;
+    getLoyaltyBalance(userId)
+      .then((balance) => setLoyaltyBalance(balance))
+      .catch(() => setLoyaltyBalance(0));
+  }, [user]);
+
   const handleNext = e => {
     e?.preventDefault(); // hỗ trợ gọi onClick không truyền event
     // Only check once when component mounts
@@ -311,6 +345,7 @@ function ShoppingCard_CheckOut() {
     };
     localStorage.setItem("customerInfo", JSON.stringify(customerInfo));
     localStorage.setItem("paymentMethod", paymentMethod);
+    localStorage.setItem("loyaltyRedemption", JSON.stringify(loyaltyApplied));
 
     navigate(path.shopping_payment);
   };
@@ -633,6 +668,13 @@ function ShoppingCard_CheckOut() {
             <OrderSummary
               cartItems={cartItems}
               selectedShippingCost={shippingCost}
+              loyaltyDiscount={loyaltyApplied.discountAmount}
+            />
+
+            <LoyaltyPointsPanel
+              available={loyaltyBalance}
+              cartTotal={cartTotal}
+              onApply={(data) => setLoyaltyApplied(data)}
             />
 
             {/* Shipping Options */}
