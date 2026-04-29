@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -100,12 +100,12 @@ const Favorites = () => {
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-sky-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-violet-700 rounded-2xl flex items-center justify-center shadow-lg">
               <FaHeart className="text-white text-3xl" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Favorite Products</h1>
-              <p className="text-purple-300 text-lg">{favoriteCount} products saved</p>
+              <p className="text-violet-300 text-lg">{favoriteCount} products saved</p>
             </div>
           </div>
         </div>
