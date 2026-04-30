@@ -9,6 +9,7 @@ import { useCompare } from "../../context/CompareContext";
 import formatCurrency from "../../utils/formatCurrency";
 import getCurrentUserId from "../../utils/getCurrentUserId";
 import QuickViewModal from "./QuickViewModal";
+import LazyImage from "../ui/LazyImage";
 
 /**
  * ProductCard — Enhanced product display card.
@@ -111,7 +112,7 @@ const ProductCard = ({ product }) => {
   return (
     <>
       <div
-        className="group relative bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-transparent hover:border-violet-100"
+        className="group product-card-hover relative bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-transparent hover:border-violet-100"
         onClick={handleClick}
         style={{ willChange: "transform, box-shadow" }}
       >
@@ -139,8 +140,8 @@ const ProductCard = ({ product }) => {
         {/* Installment badge — top right corner */}
         {isExpensive && (
           <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-semibold px-1.5 py-0.5 rounded-md leading-none whitespace-nowrap">
-              Trả góp 0%
+          <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-semibold px-1.5 py-0.5 rounded-md leading-none whitespace-nowrap">
+              {t("product.installment_zero_percent")}
             </span>
           </div>
         )}
@@ -155,7 +156,7 @@ const ProductCard = ({ product }) => {
             <button
               onClick={handleAddToCompare}
               className="p-2 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-violet-50 hover:border-violet-200 transition-colors"
-              title="Thêm so sánh"
+              title={t("product.add_compare")}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-600">
                 <path d="M4 7h8M4 12h12M4 17h8M17 5l3 3-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -165,8 +166,8 @@ const ProductCard = ({ product }) => {
             <button
               onClick={handleAddToWishlist}
               className="p-2 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-red-50 hover:border-red-200 transition-colors relative"
-              disabled={isCheckingFavorite}
-              title={isFavorited ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+              disabled={favoriteLoading}
+              title={isFavorited ? t("product.remove_favorite") : t("product.add_favorite")}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -181,7 +182,7 @@ const ProductCard = ({ product }) => {
                   strokeLinejoin="round"
                 />
               </svg>
-              {isCheckingFavorite && (
+              {favoriteLoading && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-3 h-3 border border-gray-700 border-t-transparent rounded-full animate-spin" />
                 </div>
@@ -192,7 +193,7 @@ const ProductCard = ({ product }) => {
             <button
               onClick={handleAddToCart}
               className="p-2 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-violet-50 hover:border-violet-200 transition-colors"
-              title="Thêm vào giỏ hàng"
+              title={t("product.add_to_cart")}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-600">
                 <path
@@ -210,13 +211,23 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* ── Product Image ── */}
-        <div className="aspect-square bg-gray-50/50 flex items-center justify-center p-5">
-          <img
+        <div className="aspect-square bg-gray-50/50 flex items-center justify-center p-5 relative overflow-hidden">
+          <LazyImage
             src={product.image}
             alt={product.productName}
-            className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-[1.06]"
-            loading="lazy"
+            className={`product-card-image max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-[1.06] ${
+              product.hoverImage || (product.images && product.images[1]) ? "group-hover:opacity-0" : ""
+            }`}
+            loadingClassName="w-full h-full"
           />
+          {(product.hoverImage || (product.images && product.images[1])) && (
+            <LazyImage
+              src={product.hoverImage || product.images[1]}
+              alt={`${product.productName} alternate view`}
+              className="product-card-image product-card-image-alt absolute max-w-full max-h-full object-contain p-5 transition-all duration-500 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-[1.06]"
+              loadingClassName="absolute inset-0"
+            />
+          )}
         </div>
 
         {/* ── Product Info ── */}
@@ -235,7 +246,9 @@ const ProductCard = ({ product }) => {
             </div>
             {soldCount && (
               <span className="text-[11px] text-gray-400">
-                Đã bán {soldCount > 999 ? `${(soldCount / 1000).toFixed(1)}k` : soldCount}
+                {t("product.sold_count", {
+                  count: soldCount > 999 ? `${(soldCount / 1000).toFixed(1)}k` : soldCount,
+                })}
               </span>
             )}
           </div>
@@ -270,7 +283,7 @@ const ProductCard = ({ product }) => {
                 setShowQuickView(true);
               }}
               className="opacity-0 group-hover:opacity-100 p-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800 transition-all duration-200 shrink-0"
-              title="Xem nhanh"
+              title={t("product.quick_view")}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5">
                 <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

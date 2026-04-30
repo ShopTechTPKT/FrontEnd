@@ -70,36 +70,6 @@ function All_Products() {
 
     // Load products on mount with filters from navigation state
     useEffect(() => {
-        console.log("🚀 All_Products useEffect triggered");
-        console.log("📍 location.pathname:", location.pathname);
-        console.log("📍 location.state:", location.state);
-        console.log("📍 location.key:", location.key); // React Router key changes on each navigation
-        
-        const initialFilters = {};
-        
-        // Support both formats: location.state.list or location.state.state.list (backward compatibility)
-        const categoryList = location.state?.list || location.state?.state?.list;
-        const brandFilter = location.state?.brand || location.state?.state?.brand;
-        
-        // Check if navigation state contains category list
-        if (categoryList && Array.isArray(categoryList)) {
-            console.log("✅ Found categoryIds in state:", categoryList);
-            initialFilters.categoryIds = categoryList;
-        } else {
-            console.log("⚠️ No categoryIds in location.state");
-        }
-        
-        // Check if navigation state contains brand filter
-        if (brandFilter) {
-            console.log("✅ Found brand in state:", brandFilter);
-            initialFilters.brand = brandFilter;
-        }
-        
-        console.log("📤 Setting filters to:", initialFilters);
-        console.log("📤 Has categoryIds?", !!initialFilters.categoryIds);
-        console.log("📤 CategoryIds length:", initialFilters.categoryIds?.length);
-        
-        setCurrentFilters(initialFilters);
         loadProducts(initialFilters);
     }, [location.key]); // Use location.key to trigger on every navigation
 
@@ -108,14 +78,20 @@ function All_Products() {
         setActiveCategoryTab(tab);
     }, [location.pathname]);
 
+    useEffect(() => {
+        if (!showMobileFilters) return;
+        const original = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = original;
+        };
+    }, [showMobileFilters]);
+
     const loadProducts = async (filters) => {
         setLoading(true);
         setError(null);
         try {
-            console.log("🔍 Sending filter request:", filters);
             const response = await filterProducts(filters);
-            console.log("✅ Filter response from backend:", response);
-
             // Backend trả về ProductFilterResponseDTO: { products: [], totalProducts: number }
             if (!response) {
                 throw new Error("Response is null or undefined");
@@ -124,10 +100,6 @@ function All_Products() {
             // Handle case where products might be in response.data or directly in response
             const productsData = response.products || response.data?.products || [];
             const totalCount = response.totalProducts || response.data?.totalProducts || 0;
-
-            console.log("📦 Products data:", productsData);
-            console.log("📊 Total products:", totalCount);
-
             // Map backend ProductFilterDTO to frontend ProductCard format
             const mappedProducts = productsData.map((p, index) => {
                 try {
@@ -149,9 +121,6 @@ function All_Products() {
                     return null;
                 }
             }).filter(p => p !== null); // Remove failed mappings
-
-            console.log("✨ Mapped products:", mappedProducts);
-            console.log("✨ Mapped products count:", mappedProducts.length);
             setProducts(mappedProducts);
             setTotalProducts(totalCount);
         } catch (err) {
@@ -176,9 +145,6 @@ function All_Products() {
     };
 
     const handleFilterChange = (filters) => {
-        console.log("==============================================");
-        console.log("🎯 handleFilterChange called with:", filters);
-        console.log("==============================================");
         setCurrentFilters(filters);
         setShowMobileFilters(false); // Close mobile filters after apply
         loadProducts(filters);
@@ -287,23 +253,33 @@ function All_Products() {
                         {/* Mobile Filter Button */}
                         <button
                             onClick={() => setShowMobileFilters(!showMobileFilters)}
-                            className="lg:hidden fixed bottom-4 right-4 z-50 bg-violet-600 text-white p-4 rounded-full shadow-lg hover:bg-violet-700 flex items-center gap-2"
+                            className="lg:hidden fixed bottom-4 right-4 z-50 bg-violet-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-violet-700 flex items-center gap-2"
                         >
                             <SlidersHorizontal size={20} />
-                            <span className="font-semibold">Lọc</span>
+                            <span className="font-semibold">{t("common.filter") || "Lọc"}</span>
+                            {appliedFilterChips.length > 0 && (
+                                <span className="text-xs bg-white/20 rounded-full px-2 py-0.5">
+                                    {appliedFilterChips.length}
+                                </span>
+                            )}
                         </button>
 
                         {/* Mobile Filter Modal */}
                         {showMobileFilters && (
-                            <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowMobileFilters(false)}>
-                                <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] rounded-t-2xl bg-white overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                            <div className="lg:hidden fixed inset-0 z-50 bg-black/45 backdrop-blur-[1px]" onClick={() => setShowMobileFilters(false)}>
+                                <div className="absolute bottom-0 left-0 right-0 max-h-[88vh] rounded-t-2xl bg-white overflow-y-auto animate-[slideUp_280ms_ease-out]" onClick={(e) => e.stopPropagation()}>
                                     <div className="p-4">
-                                        <button
-                                            onClick={() => setShowMobileFilters(false)}
-                                            className="mb-4 text-gray-600 hover:text-gray-900"
-                                        >
-                                            Đóng
-                                        </button>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="text-sm font-semibold text-gray-900">
+                                                {t("common.filters") || "Bộ lọc"}
+                                            </h3>
+                                            <button
+                                                onClick={() => setShowMobileFilters(false)}
+                                                className="text-sm text-gray-600 hover:text-gray-900"
+                                            >
+                                                {t("common.close") || "Đóng"}
+                                            </button>
+                                        </div>
                                         <ProductFilterSidebar
                                             onFilterChange={handleFilterChange}
                                             currentFilters={currentFilters}

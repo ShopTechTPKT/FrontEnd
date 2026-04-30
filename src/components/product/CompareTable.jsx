@@ -85,6 +85,11 @@ export default function CompareTable() {
     { label: t("product.description") || "Mô tả", key: "description" },
   ];
 
+  const hasDifference = (rowKey) => {
+    const values = mergedItems.map((p) => String(p[rowKey] ?? "").trim().toLowerCase());
+    return new Set(values).size > 1;
+  };
+
   // Find lowest price for highlighting
   const lowestPrice = Math.min(...mergedItems.map((p) => p.price || 0));
 
@@ -124,7 +129,8 @@ export default function CompareTable() {
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[760px]">
           <thead>
             <tr>
               <th className="w-40 p-4 text-left text-sm font-semibold text-gray-500 border-b border-gray-100" />
@@ -154,7 +160,7 @@ export default function CompareTable() {
                       onClick={() => handleAddToCart(product)}
                       className="px-3 py-1.5 text-xs font-semibold rounded-md bg-violet-700 text-white hover:bg-violet-800"
                     >
-                      Thêm vào giỏ
+                      {t("product.add_to_cart")}
                     </button>
                   </div>
                 </th>
@@ -163,9 +169,17 @@ export default function CompareTable() {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.key} className="border-b border-gray-50 last:border-0">
+              <tr
+                key={row.key}
+                className={`border-b border-gray-50 last:border-0 ${hasDifference(row.key) ? "bg-amber-50/40" : ""}`}
+              >
                 <td className="p-4 text-sm font-medium text-gray-500">
                   {row.label}
+                  {hasDifference(row.key) && (
+                    <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold">
+                      {t("compare.different")}
+                    </span>
+                  )}
                 </td>
                 {mergedItems.map((product) => {
                   const val = product[row.key];
@@ -196,6 +210,7 @@ export default function CompareTable() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

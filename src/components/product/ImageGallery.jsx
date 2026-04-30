@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ImageZoom from "./ImageZoom";
 
 /**
@@ -13,6 +13,8 @@ export default function ImageGallery({ images = [], alt = "" }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxScale, setLightboxScale] = useState(1);
+  const touchStartX = useRef(null);
 
   // Fallback to single empty image
   const imageList = images.length > 0 ? images : [""];
@@ -29,24 +31,55 @@ export default function ImageGallery({ images = [], alt = "" }) {
 
   const goNext = () => {
     if (!canNavigate) return;
+    setLightboxScale(1);
     setActiveIndex((prev) => (prev + 1) % imageList.length);
   };
 
   const goPrev = () => {
     if (!canNavigate) return;
+    setLightboxScale(1);
     setActiveIndex((prev) => (prev - 1 + imageList.length) % imageList.length);
+  };
+
+  const handleLightboxWheel = (event) => {
+    event.preventDefault();
+    const delta = event.deltaY < 0 ? 0.12 : -0.12;
+    setLightboxScale((prev) => Math.min(3, Math.max(1, prev + delta)));
+  };
+
+  const zoomIn = () => setLightboxScale((prev) => Math.min(3, +(prev + 0.2).toFixed(2)));
+  const zoomOut = () => setLightboxScale((prev) => Math.max(1, +(prev - 0.2).toFixed(2)));
+  const resetZoom = () => setLightboxScale(1);
+
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e) => {
+    if (touchStartX.current == null || !canNavigate) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (deltaX > 45) goPrev();
+    if (deltaX < -45) goNext();
+    touchStartX.current = null;
   };
 
   useEffect(() => {
     if (!lightboxOpen) return;
     const handleKeydown = (event) => {
-      if (event.key === "Escape") setLightboxOpen(false);
+      if (event.key === "Escape") {
+        setLightboxOpen(false);
+        setLightboxScale(1);
+      }
       if (event.key === "ArrowRight") goNext();
       if (event.key === "ArrowLeft") goPrev();
     };
     window.addEventListener("keydown", handleKeydown);
     return () => window.removeEventListener("keydown", handleKeydown);
   }, [lightboxOpen, canNavigate, imageList.length]);
+
+  useEffect(() => {
+    if (!lightboxOpen) setLightboxScale(1);
+  }, [lightboxOpen]);
 
   const mainImage = useMemo(() => imageList[activeIndex], [imageList, activeIndex]);
 
@@ -90,15 +123,45 @@ export default function ImageGallery({ images = [], alt = "" }) {
         <div className="fixed inset-0 z-[1200] bg-black/85 flex items-center justify-center p-4">
           <button
             type="button"
-            onClick={() => setLightboxOpen(false)}
+            onClick={() => {
+              setLightboxOpen(false);
+              setLightboxScale(1);
+            }}
             className="absolute inset-0"
             aria-label="Close lightbox overlay"
           />
           <div className="relative max-w-5xl w-full z-10">
-            <div className="absolute right-2 top-2 z-20">
+            <div className="absolute right-2 top-2 z-20 flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setLightboxOpen(false)}
+                onClick={zoomOut}
+                className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Zoom out"
+              >
+                -
+              </button>
+              <button
+                type="button"
+                onClick={resetZoom}
+                className="inline-flex items-center justify-center min-w-[52px] h-9 rounded-full bg-black/40 text-white hover:bg-black/60 text-xs px-2"
+                aria-label="Reset zoom"
+              >
+                {Math.round(lightboxScale * 100)}%
+              </button>
+              <button
+                type="button"
+                onClick={zoomIn}
+                className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-black/40 text-white hover:bg-black/60"
+                aria-label="Zoom in"
+              >
+                +
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLightboxOpen(false);
+                  setLightboxScale(1);
+                }}
                 className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/40 text-white hover:bg-black/60"
                 aria-label="Close lightbox"
               >
@@ -121,11 +184,20 @@ export default function ImageGallery({ images = [], alt = "" }) {
               </button>
             )}
 
-            <div className="bg-white rounded-xl overflow-hidden">
+            <div
+              className="bg-white rounded-xl overflow-hidden touch-pan-y"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
               <img
                 src={mainImage}
                 alt={alt}
-                className="w-full max-h-[80vh] object-contain bg-gray-50"
+                className="w-full max-h-[80vh] object-contain bg-gray-50 transition-transform duration-200"
+                style={{ transform: `scale(${lightboxScale})` }}
+                onWheel={handleLightboxWheel}
+                onDoubleClick={() =>
+                  setLightboxScale((prev) => (prev > 1 ? 1 : 2))
+                }
               />
             </div>
 

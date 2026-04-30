@@ -1,5 +1,4 @@
-﻿import { useState } from 'react';
-import { FaStar, FaFire, FaShippingFast, FaHeart } from 'react-icons/fa';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const NewArrivals = () => {
@@ -126,7 +125,7 @@ const NewArrivals = () => {
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center">
             <div className="inline-block mb-4 px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 rounded-full font-semibold animate-bounce">
-              🎉 Fresh Stock Just Arrived!
+              ðŸŽ‰ Fresh Stock Just Arrived!
             </div>
             <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-white to-violet-300 bg-clip-text text-transparent">
               New Arrivals
@@ -136,15 +135,15 @@ const NewArrivals = () => {
             </p>
             <div className="flex items-center justify-center gap-8 text-sm">
               <div className="flex items-center gap-2">
-                <FaShippingFast className="text-2xl text-green-400" />
+                <IcShippingFast className="w-6 h-6 text-green-400" />
                 <span>{t('common.free_shipping')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <FaFire className="text-2xl text-orange-500" />
+                <IcFire className="w-6 h-6 text-orange-500" />
                 <span>{t('common.limited_stock')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <FaStar className="text-2xl text-yellow-400" />
+                <IcStar className="w-6 h-6 text-yellow-400" />
                 <span>{t('common.premium_quality')}</span>
               </div>
             </div>
@@ -190,7 +189,7 @@ const NewArrivals = () => {
 
               {/* Wishlist */}
               <button className="absolute top-4 right-4 z-10 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-all duration-300 group/wish">
-                <FaHeart className="text-xl text-gray-400 group-hover/wish:text-white group-hover/wish:scale-125 transition-all" />
+                <IcHeart className="w-5 h-5 text-gray-400 group-hover/wish:text-white group-hover/wish:scale-125 transition-all" />
               </button>
 
               {/* Image */}
@@ -229,9 +228,9 @@ const NewArrivals = () => {
 
                 {/* Rating */}
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="flex text-yellow-400">
+                  <div className="flex text-yellow-400 gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <FaStar key={i} className={i < Math.floor(product.rating) ? '' : 'text-gray-300'} />
+                      <IcStar key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`} />
                     ))}
                   </div>
                   <span className="text-gray-600 font-medium">{product.rating}</span>
@@ -272,5 +271,29 @@ const NewArrivals = () => {
     </div>
   );
 };
+// SVG Icons
+const IcShippingFast = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+  </svg>
+);
+
+const IcFire = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 7.104 9.5a1 1 0 001.5.836c.214-.144.396-.326.544-.536A4.982 4.982 0 0115 11c0 1.5-.7 2.87-1.87 3.73a1 1 0 00-.31.87c.1.58.55 1 1.13 1h.06c.58 0 1.05-.42 1.15-1 .09-.54-.04-1.07-.34-1.5.76-.85 1.18-1.95 1.18-3.1 0-2.2-1.32-4.1-3.2-5.02-1-.48-2.13-.74-3.3-.74A9 9 0 004 13c0 4.97 4.03 9 9 9 2.12 0 4.07-.74 5.66-2.34l-.01-.01z" />
+  </svg>
+);
+
+const IcStar = ({ className }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+  </svg>
+);
+
+const IcHeart = ({ className }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+  </svg>
+);
 
 export default NewArrivals;

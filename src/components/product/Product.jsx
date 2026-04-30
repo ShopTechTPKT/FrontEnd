@@ -1,19 +1,5 @@
-﻿import { useEffect, useState } from "react";
-import {
-  AiOutlineHeart,
-  AiOutlineShareAlt,
-  AiOutlineMessage,
-} from "react-icons/ai";
-import { BiChevronDown, BiChevronUp } from "react-icons/bi";
-import {
-  FaHeadset,
-  FaUserCircle,
-  FaPercentage,
-  FaPaypal,
-} from "react-icons/fa";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
-// import { FaPaypal } from "react-icons/fa";
-import { BiPlus, BiMinus } from "react-icons/bi";
 import a1 from "../../assets/images/ProductDetail/a1.png";
 import a2 from "../../assets/images/ProductDetail/a2.png";
 import a3 from "../../assets/images/ProductDetail/a3.png";
@@ -22,19 +8,16 @@ import a5 from "../../assets/images/ProductDetail/a5.png";
 import a6 from "../../assets/images/ProductDetail/a6.png";
 import a7 from "../../assets/images/ProductDetail/a7.png";
 import zip from "../../assets/images/ProductDetail/zip.png";
-// import axiosInstance from "../../custom/axios";
-import { getProductByIdWithDetails } from "../../services/MockProductService";
+import axiosInstance from "../../custom/axios";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../utils/redux/cartSlice";
+import formatCurrency from "../../utils/formatCurrency";
 import notify from "../../utils/notify";
 import { useTranslation } from "react-i18next";
 import Loading from "../Loading";
 
 export default function Product() {
   const { t } = useTranslation();
-
-  console.log(a1);
-  console.log(zip);
 
   // const [expanded, setExpanded] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -51,37 +34,28 @@ export default function Product() {
     return "about"; // default to "about"
   };
   const activeNav = getActiveTab();
-  console.log(id);
-  //   Lấy sản phẩm từ Mock Data
-  async function fetchProduct(id) {
+  // Fetch product from API
+  async function fetchProduct(productId) {
     try {
       setLoading(true);
-      const res = await getProductByIdWithDetails(id);
-      if (res && res.DT && res.DT.length > 0) {
-        setProduct({ ...res.DT[0], quantity: 1 });
-      } else {
-        setProduct(null);
-      }
+      const res = await axiosInstance.get(`/products/${productId}`);
+      const data = res?.data?.result || res?.data;
+      setProduct(data ? { ...data, quantity: 1 } : null);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching product:", error);
+      setProduct(null);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    console.log("ID hiện tại:", id);
     fetchProduct(id);
   }, [id]);
 
-  useEffect(() => {
-    console.log("Product sau khi set:", product);
-  }, [product]);
-
   const dispatch = useDispatch();
 
-  const handleClickAddToCart = product => {
-    console.log(product);
+  const handleClickAddToCart = (product) => {
 
     // Lấy userId từ localStorage
     const getCurrentUserId = () => {
@@ -100,7 +74,6 @@ export default function Product() {
 
     // Thêm hàm xử lý sự kiện khi nhấn nút
     notify.success("Add to cart successfully!");
-    console.log("Thêm sản phẩm vào giỏ hàng:", product);
     dispatch(
       addToCart({
         userId: userId,
@@ -138,23 +111,8 @@ export default function Product() {
     }
   };
   const calculateTotal = (product, quantity) => {
-    // Sử dụng unitPrice trực tiếp từ API thay vì parse từ price string
     const unitPrice = product?.unitPrice || 0;
-    
-    console.log("🔍 Debug calculateTotal:", {
-      product: product,
-      priceString: product?.price,
-      unitPrice: unitPrice,
-      quantity: quantity
-    });
-    
-    // Tính tổng và format
-    const total = unitPrice * quantity;
-
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(total);
+    return formatCurrency(unitPrice * quantity);
   };
 
   // Show loading while fetching product
@@ -235,7 +193,7 @@ export default function Product() {
                     disabled={quantity <= 1}
                     className="w-7 h-7 flex items-center justify-center text-gray-600 hover:text-violet-600 hover:bg-white rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <BiMinus className="w-4 h-4" />
+                    <IcMinus className="w-4 h-4" />
                   </button>
                   <span className="w-8 text-center text-base font-medium text-gray-700">
                     {quantity}
@@ -244,7 +202,7 @@ export default function Product() {
                     onClick={handleIncrease}
                     className="w-7 h-7 flex items-center justify-center text-gray-600 hover:text-violet-600 hover:bg-white rounded transition"
                   >
-                    <BiPlus className="w-4 h-4" />
+                    <IcPlus className="w-4 h-4" />
                   </button>
                 </div>
 
@@ -454,7 +412,7 @@ export default function Product() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="bg-blue-600 rounded-full p-4 mb-4">
-                <FaHeadset className="text-white text-2xl" />
+                <IcHeadset className="text-white w-6 h-6" />
               </div>
               <h3 className="font-bold mb-2">{t("product.product_support")}</h3>
               <p className="text-sm text-gray-600">
@@ -465,7 +423,7 @@ export default function Product() {
 
             <div className="flex flex-col items-center text-center">
               <div className="bg-blue-600 rounded-full p-4 mb-4">
-                <FaUserCircle className="text-white text-2xl" />
+                <IcUserCircle className="text-white w-6 h-6" />
               </div>
               <h3 className="font-bold mb-2">
                 {t("product.personal_account")}
@@ -478,7 +436,7 @@ export default function Product() {
 
             <div className="flex flex-col items-center text-center">
               <div className="bg-blue-600 rounded-full p-4 mb-4">
-                <FaPercentage className="text-white text-2xl" />
+                <IcPercentage className="text-white w-6 h-6" />
               </div>
               <h3 className="font-bold mb-2">{t("product.amazing_savings")}</h3>
               <p className="text-sm text-gray-600">
@@ -491,3 +449,30 @@ export default function Product() {
     </div>
   );
 }
+
+// SVG Icons
+const IcMinus = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+  </svg>
+);
+const IcPlus = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+);
+const IcHeadset = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4a8 8 0 00-8 8v1.5a2.5 2.5 0 002.5 2.5h1.5v-6a2 2 0 012-2h4a2 2 0 012 2v6h1.5a2.5 2.5 0 002.5-2.5V12a8 8 0 00-8-8z" />
+  </svg>
+);
+const IcUserCircle = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+const IcPercentage = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M17 17h.01M5 19L19 5" />
+  </svg>
+);

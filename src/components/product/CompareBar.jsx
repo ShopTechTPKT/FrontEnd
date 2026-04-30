@@ -1,7 +1,6 @@
 import { useCompare } from "../../context/CompareContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import formatCurrency from "../../utils/formatCurrency";
 
 /**
  * CompareBar — Floating bottom bar showing selected comparison products.
@@ -14,13 +13,15 @@ export default function CompareBar() {
 
   if (items.length === 0) return null;
 
+  const canCompare = items.length >= 2;
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-lg transform transition-transform duration-300 dark:bg-gray-900/95 dark:border-gray-700">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-lg animate-slideInUp dark:bg-gray-900/95 dark:border-gray-700">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         {/* Product thumbnails */}
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300 shrink-0">
-            {t("compare.title") || "So sánh"} ({items.length}/4)
+            {t("compare.title")} ({items.length}/4)
           </span>
           <div className="flex gap-2">
             {items.map((product) => (
@@ -50,14 +51,14 @@ export default function CompareBar() {
             onClick={clearCompare}
             className="text-sm text-gray-400 hover:text-red-500 transition-colors"
           >
-            {t("common.clear") || "Xóa hết"}
+            {t("compare.clear_all")}
           </button>
           <button
             onClick={() => navigate("/compare")}
-            disabled={items.length < 2}
+            disabled={!canCompare}
             className="px-4 py-2 bg-violet-700 text-white text-sm font-medium rounded-lg hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {t("compare.compare_now") || "So sánh ngay"}
+            {canCompare ? t("compare.compare_now") : t("compare.select_more")}
           </button>
         </div>
       </div>

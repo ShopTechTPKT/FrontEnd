@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { addToCart } from "../../utils/redux/cartSlice";
 import notify from "../../utils/notify";
 import formatCurrency from "../../utils/formatCurrency";
@@ -16,8 +17,10 @@ import getCurrentUserId from "../../utils/getCurrentUserId";
  */
 const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [selectedQty, setSelectedQty] = useState(Math.max(1, quantity));
 
   /* Show bar when buy box scrolls above viewport */
   useEffect(() => {
@@ -35,6 +38,10 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
     return () => observer.disconnect();
   }, [anchorRef]);
 
+  useEffect(() => {
+    setSelectedQty(Math.max(1, quantity));
+  }, [quantity]);
+
   const handleAddToCart = async () => {
     if (adding) return;
     const userId = getCurrentUserId();
@@ -44,7 +51,7 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
         addToCart({
           userId,
           productId: product.productID,
-          quantity,
+          quantity: selectedQty,
           productData: {
             id: product.productID,
             name: product.productName,
@@ -53,9 +60,9 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
           },
         })
       ).unwrap();
-      notify.success("Đã thêm vào giỏ hàng!");
+      notify.success(t("cart.added_success"));
     } catch {
-      notify.error("Lỗi khi thêm vào giỏ hàng!");
+      notify.error(t("cart.added_error"));
     } finally {
       setAdding(false);
     }
@@ -86,9 +93,9 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
             </p>
             <p className="text-base font-bold text-violet-700 leading-tight tabular-nums">
               {formatCurrency(price * quantity)}
-              {quantity > 1 && (
+              {selectedQty > 1 && (
                 <span className="text-xs font-normal text-gray-500 ml-1.5">
-                  × {quantity}
+                  × {selectedQty}
                 </span>
               )}
             </p>
@@ -96,6 +103,25 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
 
           {/* Actions */}
           <div className="flex items-center gap-2 shrink-0">
+            <div className="hidden sm:flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-1.5 py-1">
+              <button
+                type="button"
+                onClick={() => setSelectedQty((q) => Math.max(1, q - 1))}
+                className="w-7 h-7 rounded-md text-gray-700 hover:bg-gray-100"
+                aria-label={t("cart.decrease_quantity")}
+              >
+                -
+              </button>
+              <span className="w-8 text-center text-sm font-semibold text-gray-900">{selectedQty}</span>
+              <button
+                type="button"
+                onClick={() => setSelectedQty((q) => Math.min(99, q + 1))}
+                className="w-7 h-7 rounded-md text-gray-700 hover:bg-gray-100"
+                aria-label={t("cart.increase_quantity")}
+              >
+                +
+              </button>
+            </div>
             <button
               onClick={handleAddToCart}
               disabled={adding}
@@ -113,11 +139,11 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
                   <circle cx="17.2" cy="19" r="1.4" fill="currentColor" />
                 </svg>
               )}
-              Thêm vào giỏ
+              {t("product.add_to_cart")}
             </button>
 
             <a
-              href={`/shopping_card_checkout`}
+              href={`/shopping_card_checkout?installment=1`}
               onClick={handleAddToCart}
               className="px-4 py-2.5 border border-violet-200 text-violet-700 text-sm font-semibold rounded-xl hover:bg-violet-50 transition-colors hidden sm:flex items-center gap-1.5"
             >
@@ -127,7 +153,7 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                 />
               </svg>
-              Mua ngay
+              {t("product.installment_zero_percent")}
             </a>
           </div>
         </div>

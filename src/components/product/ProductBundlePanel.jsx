@@ -1,8 +1,4 @@
-const formatVnd = (value) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  }).format(Number(value || 0));
+import formatCurrency from "../../utils/formatCurrency";
 
 const getProductId = (item) =>
   Number(item?.product?.id ?? item?.product?.productID ?? item?.productId ?? 0);
@@ -49,7 +45,7 @@ export default function ProductBundlePanel({
           )}
         </div>
         <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-          Tiết kiệm {formatVnd(savings)}
+          Tiết kiệm {formatCurrency(savings)}
         </span>
       </div>
 
@@ -74,8 +70,8 @@ export default function ProductBundlePanel({
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs text-gray-500 line-through">{formatVnd(bundle.originalPrice)}</p>
-          <p className="text-lg font-bold text-violet-700">{formatVnd(bundle.bundlePrice)}</p>
+          <p className="text-xs text-gray-500 line-through">{formatCurrency(bundle.originalPrice)}</p>
+          <p className="text-lg font-bold text-violet-700">{formatCurrency(bundle.bundlePrice)}</p>
         </div>
         <button
           type="button"

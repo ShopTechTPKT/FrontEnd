@@ -1,33 +1,16 @@
 import { useEffect, useState, useRef } from "react";
-import {
-  AiOutlineHeart,
-  AiFillHeart,
-  AiOutlineShareAlt,
-  AiOutlineMessage,
-} from "react-icons/ai";
-import { BiChevronDown, BiChevronUp } from "react-icons/bi";
-//import dispatch từ redux
 import { useDispatch } from "react-redux";
-import {
-  FaHeadset,
-  FaUserCircle,
-  FaPercentage,
-  FaShoppingCart,
-} from "react-icons/fa";
 import zip from "../../assets/images/ProductDetail/zip.png";
-import { FaPaypal } from "react-icons/fa";
 
 // Import các dịch vụ và hooks cần thiết
-import { getProductByIdWithDetails } from "../../services/MockProductService";
+import { getUserById } from "../../apis/userApi";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { addToCart } from "../../utils/redux/cartSlice.jsx";
 import { getReviewsByProduct, createReview } from "../../apis/reviewProductApi.jsx";
-import { getUserById } from "../../apis/userApis.jsx";
+import formatCurrency from "../../utils/formatCurrency";
 import Loading from "../Loading";
 import ProductQASection from "./ProductQASection.jsx";
-import { toast } from "react-toastify";
-import logo from "../../assets/logo-text.png";
 import notify from "../../utils/notify.js";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
@@ -317,13 +300,13 @@ const handleSubmitReview = async () => {
   
   // Kiểm tra đăng nhập
   if (!user) {
-      toast.error(t('reviews.login_required_toast'));
+      notify.error(t('reviews.login_required_toast'));
       return;
   }
 
   // Kiểm tra rating và comment
   if (newRating === 0 || newComment.trim() === "") {
-      toast.warning(t('reviews.rating_comment_required_toast'));
+      notify.warning(t('reviews.rating_comment_required_toast'));
       return;
   }
 
@@ -344,9 +327,7 @@ const handleSubmitReview = async () => {
           const errorMsg = t('reviews.violation_warning', { violationReason });
 
           setValidationError(errorMsg);
-          toast.warning(errorMsg, {
-              autoClose: 4000
-          });
+          notify.warning(errorMsg);
           return;
       }
 
@@ -378,15 +359,13 @@ const handleSubmitReview = async () => {
           setNewComment("");
           setNewReviewPhotos([]);
           setValidationError(""); // Clear error on success
-          toast.success(t('reviews.thank_you_toast'));
+          notify.success(t('reviews.thank_you_toast'));
       } else {
           // Xử lý lỗi nếu API không trả về ID
-          toast.error(t('reviews.error_sending_toast'));
+          notify.error(t('reviews.error_sending_toast'));
       }
   } catch (err) {
-      // Xử lý lỗi mạng hoặc lỗi API tổng quát
-      console.error(t('reviews.error_on_send'), err.response || err);
-      toast.error(t('reviews.error_occurred_toast'));
+      notify.error(t('reviews.error_occurred_toast'));
   }
 };
   const handleAddToCart = () => {
@@ -405,7 +384,7 @@ const handleSubmitReview = async () => {
 
     const userId = getCurrentUserId();
 
-    console.log("Adding to cart:", { userId, productId: product.productID, quantity });
+
 
     // Sử dụng addToCart với signature mới
       try {
@@ -463,27 +442,22 @@ const handleSubmitReview = async () => {
       setAddingBundle(false);
     }
   };
-  // Hàm mock để format tiền tệ (giả định dùng VND)
-  const formatCurrency = value => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
-  };
 
-  //  Lấy sản phẩm từ Mock Data (Logic giữ nguyên)
-  async function fetchProduct(id) {
+
+  // Lấy sản phẩm từ API
+  async function fetchProduct(productId) {
     try {
       setLoading(true);
-      const res = await getProductByIdWithDetails(id);
-      if (res && res.DT && res.DT.length > 0) {
-        // Giả định giá là một số (hoặc bạn sẽ cần parse nó)
-        setProduct(res.DT[0]);
+      const res = await axiosInstance.get(`/products/${productId}`);
+      const data = res?.data?.result || res?.data;
+      if (data) {
+        setProduct(data);
       } else {
         setProduct(null);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching product:", error);
+      setProduct(null);
     } finally {
       setLoading(false);
     }
@@ -618,9 +592,9 @@ const handleSubmitReview = async () => {
                 </svg>
               </div>
             ) : isFavorited ? (
-              <AiFillHeart className="w-5 h-5" />
+              <IcHeartFilled className="w-5 h-5" />
             ) : (
-              <AiOutlineHeart className="w-5 h-5" />
+              <IcHeart className="w-5 h-5" />
             )}
           </button>
           <button
@@ -631,7 +605,7 @@ const handleSubmitReview = async () => {
             }}
             className="text-gray-500 hover:text-violet-600 transition p-2 hover:bg-violet-50 rounded-full"
           >
-            <AiOutlineShareAlt className="w-5 h-5" />
+            <IcShare className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -741,13 +715,13 @@ const handleSubmitReview = async () => {
                 className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
                   onClick={() => handleAddToCart(product, quantity)}
                 >
-                  <FaShoppingCart className="w-5 h-5" />
+                  <IcCart className="w-5 h-5" />
                   <span>{t("product.add_to_cart")}</span>
                 </button>
               )}
               
               <button className="w-full flex items-center justify-center space-x-2 bg-yellow-400 text-gray-900 text-base font-semibold py-3 rounded-lg hover:bg-yellow-500 transition-all duration-200 shadow-sm hover:shadow-md">
-                <FaPaypal className="w-5 h-5" />
+                <IcPaypal className="w-5 h-5" />
                 <span>{t("product.pay_with_paypal")}</span>
               </button>
             </div>
@@ -757,7 +731,7 @@ const handleSubmitReview = async () => {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <FaHeadset className="w-5 h-5 text-violet-600" />
+                    <IcHeadset className="w-5 h-5 text-violet-600" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{t("product.free_support")}</p>
@@ -767,7 +741,7 @@ const handleSubmitReview = async () => {
                 
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <FaPercentage className="w-5 h-5 text-violet-600" />
+                    <IcPercentage className="w-5 h-5 text-violet-600" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{t("product.best_price_guarantee")}</p>
@@ -1086,7 +1060,7 @@ const handleSubmitReview = async () => {
                           count: reviews.length - 3,
                         })}
                   </span>
-                  {showAll ? <BiChevronUp /> : <BiChevronDown />}
+                  {showAll ? <IcChevronUp className="w-5 h-5" /> : <IcChevronDown className="w-5 h-5" />}
                 </button>
               )}
             </>
@@ -1107,3 +1081,50 @@ const handleSubmitReview = async () => {
     </>
   );
 }
+
+// SVG Icons
+const IcHeart = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+);
+const IcHeartFilled = ({ className }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+  </svg>
+);
+const IcShare = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+  </svg>
+);
+const IcCart = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+  </svg>
+);
+const IcPaypal = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M7.076 21.337H2.47a.641.641 0 01-.633-.74L4.944 3.72a.641.641 0 01.633-.538h6.883c4.148 0 6.002 2.016 5.565 5.344-.343 2.617-2.28 4.393-4.706 4.793-1.045.17-1.858.204-2.883.204h-1.4a.64.64 0 00-.632.536L7.076 21.337z"/>
+  </svg>
+);
+const IcHeadset = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4a8 8 0 00-8 8v1.5a2.5 2.5 0 002.5 2.5h1.5v-6a2 2 0 012-2h4a2 2 0 012 2v6h1.5a2.5 2.5 0 002.5-2.5V12a8 8 0 00-8-8z" />
+  </svg>
+);
+const IcPercentage = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M17 17h.01M5 19L19 5" />
+  </svg>
+);
+const IcChevronUp = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+  </svg>
+);
+const IcChevronDown = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+);

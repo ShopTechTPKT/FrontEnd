@@ -1,11 +1,5 @@
 import { useMemo, useState } from "react";
-
-const formatVnd = (value) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(Number(value || 0));
+import formatCurrency from "../../utils/formatCurrency";
 
 const TERM_OPTIONS = [3, 6, 9, 12];
 const INTEREST_OPTIONS = [0, 1.2, 1.6, 2.1];
@@ -84,20 +78,20 @@ export default function InstallmentCalculatorPanel({ price = 0 }) {
       <div className="mt-4 space-y-1.5 rounded-md border border-gray-100 bg-white px-3 py-2.5 text-xs">
         <div className="flex items-center justify-between">
           <span className="text-gray-500">Trả trước</span>
-          <span className="font-medium text-gray-800">{formatVnd(computed.downPayment)}</span>
+          <span className="font-medium text-gray-800">{formatCurrency(computed.downPayment)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-gray-500">Khoản vay</span>
-          <span className="font-medium text-gray-800">{formatVnd(computed.financedAmount)}</span>
+          <span className="font-medium text-gray-800">{formatCurrency(computed.financedAmount)}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-gray-500">Lãi dự kiến</span>
-          <span className="font-medium text-gray-800">{formatVnd(computed.totalInterest)}</span>
+          <span className="font-medium text-gray-800">{formatCurrency(computed.totalInterest)}</span>
         </div>
         <div className="mt-2 flex items-center justify-between border-t border-gray-100 pt-2">
           <span className="text-gray-700 font-semibold">Tạm tính mỗi tháng</span>
           <span className="text-sm font-bold text-violet-700">
-            {formatVnd(computed.monthlyPayment)}
+            {formatCurrency(computed.monthlyPayment)}
           </span>
         </div>
       </div>

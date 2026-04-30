@@ -35,6 +35,14 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
         searchName: ""
     });
 
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            ...currentFilters,
+            categoryName: currentFilters?.categoryName || prev.categoryName || "",
+        }));
+    }, [currentFilters]);
+
     // Fetch filter options on component mount
     useEffect(() => {
         loadFilterOptions();
@@ -42,9 +50,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
 
     const loadFilterOptions = async () => {
         try {
-            console.log("🔄 Loading filter options from backend...");
             const response = await getFilterOptions();
-            console.log("✅ Filter options response:", response);
 
             // Backend trả về FilterOptionsResponseDTO trực tiếp
             setFilterOptions({
@@ -52,11 +58,6 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                 priceRanges: response.priceRanges || [],
                 statusOptions: response.statusOptions || []
             });
-
-            console.log("📊 Filter options set:");
-            console.log("  - Categories:", response.categoryOptions?.length || 0);
-            console.log("  - Price ranges:", response.priceRanges?.length || 0);
-            console.log("  - Statuses:", response.statusOptions?.length || 0);
         } catch (error) {
             console.error("❌ Error loading filter options:", error);
             // Set empty arrays on error
@@ -87,7 +88,6 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
     };
 
     const handlePriceRangeSelect = (range) => {
-        console.log("💰 Price range clicked:", range);
         const isSelected =
             filters.minPrice === range.minPrice && filters.maxPrice === range.maxPrice;
 
@@ -97,21 +97,19 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
             maxPrice: isSelected ? null : range.maxPrice
         };
 
-        console.log("📝 New filters before clean:", newFilters);
         setFilters(newFilters);
 
         // Apply filter ngay lập tức
         const cleanedFilters = cleanFilters(newFilters);
-        console.log("✨ Cleaned filters to send:", cleanedFilters);
-        console.log("🚀 Calling onFilterChange...");
 
         onFilterChange(cleanedFilters);
     };
 
     const handleStatusSelect = (status) => {
+        const nextStatus = filters.status === status ? "" : status;
         const newFilters = {
             ...filters,
-            status: status
+            status: nextStatus
         };
         setFilters(newFilters);
 
@@ -129,11 +127,9 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
 
     // Helper function to clean filters
     const cleanFilters = (filtersToClean) => {
-        console.log("🧹 Cleaning filters - BEFORE:", filtersToClean);
         const cleaned = Object.entries(filtersToClean).reduce((acc, [key, value]) => {
             // Don't send categoryName to backend (only categoryId)
             if (key === 'categoryName') {
-                console.log("🗑️ Removing categoryName (not needed by backend)");
                 return acc;
             }
             if (value !== null && value !== "" && value !== undefined) {
@@ -141,7 +137,6 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
             }
             return acc;
         }, {});
-        console.log("🧹 Cleaning filters - AFTER:", cleaned);
         return cleaned;
     };
 
@@ -164,22 +159,36 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
         onFilterChange({});
     };
 
+    const activeFilterCount = [
+        filters.categoryId,
+        filters.status,
+        filters.searchName?.trim(),
+        filters.minPrice != null || filters.maxPrice != null ? "price" : "",
+    ].filter(Boolean).length;
+
     return (
-        <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-sm">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-800">
-                    Bộ Lọc
-                </h2>
+            <div className="px-5 py-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-bold text-gray-800">
+                        {t("common.filters") || "Bộ Lọc"}
+                    </h2>
+                    {activeFilterCount > 0 && (
+                        <span className="text-xs font-semibold px-2 py-1 rounded-full bg-violet-100 text-violet-700">
+                            {activeFilterCount} {t("common.apply_filters") || "đang áp dụng"}
+                        </span>
+                    )}
+                </div>
             </div>
 
-            <div className="px-6 py-4">
+            <div className="px-5 py-4">
                 {/* Clear Filter Button */}
                 <button
                     onClick={handleClearFilters}
-                    className="w-full border-2 border-gray-300 text-gray-600 font-medium py-2.5 rounded-full mb-6 hover:bg-gray-50 transition-colors"
+                    className="w-full border border-gray-300 text-gray-600 font-medium py-2.5 rounded-xl mb-5 hover:bg-gray-50 transition-colors"
                 >
-                    Xóa Bộ Lọc
+                    {t("common.clear_filters") || "Xóa Bộ Lọc"}
                 </button>
 
                 {/* Category Filter - Danh Mục */}
@@ -188,7 +197,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                         className="flex justify-between items-center cursor-pointer mb-3"
                         onClick={() => toggleSection("category")}
                     >
-                        <span className="font-bold text-base text-gray-800">Danh Mục</span>
+                        <span className="font-bold text-base text-gray-800">{t("common.category") || "Danh Mục"}</span>
                         {expanded.category ? (
                             <ChevronUp size={20} className="text-gray-600" />
                         ) : (
@@ -201,8 +210,8 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                                 filterOptions.categoryOptions.map((category) => (
                                     <div
                                         key={category.categoryId}
-                                        className={`flex justify-between items-center cursor-pointer px-3 py-2.5 rounded-md transition-colors ${filters.categoryId === category.categoryId
-                                            ? "bg-blue-50 text-blue-700"
+                                        className={`flex justify-between items-center cursor-pointer px-3 py-2.5 rounded-lg border transition-colors ${filters.categoryId === category.categoryId
+                                            ? "bg-violet-50 border-violet-200 text-violet-700"
                                             : "hover:bg-gray-50 text-gray-700"
                                             }`}
                                         onClick={() => handleCategorySelect(category)}
@@ -215,7 +224,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                                 ))
                             ) : (
                                 <div className="text-gray-400 text-sm text-center py-4">
-                                    Đang tải...
+                                    {t("common.loading") || "Đang tải..."}
                                 </div>
                             )}
                         </div>
@@ -228,7 +237,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                         className="flex justify-between items-center cursor-pointer mb-3"
                         onClick={() => toggleSection("price")}
                     >
-                        <span className="font-bold text-base text-gray-800">Giá</span>
+                        <span className="font-bold text-base text-gray-800">{t("common.price") || "Giá"}</span>
                         {expanded.price ? (
                             <ChevronUp size={20} className="text-gray-600" />
                         ) : (
@@ -241,21 +250,21 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                                 filterOptions.priceRanges.map((range, index) => (
                                     <div
                                         key={index}
-                                        className={`flex justify-between items-center cursor-pointer px-3 py-2.5 rounded-md transition-colors ${filters.minPrice === range.minPrice && filters.maxPrice === range.maxPrice
-                                            ? "bg-blue-50 text-blue-700"
+                                        className={`flex justify-between items-center cursor-pointer px-3 py-2.5 rounded-lg border transition-colors ${filters.minPrice === range.minPrice && filters.maxPrice === range.maxPrice
+                                            ? "bg-violet-50 border-violet-200 text-violet-700"
                                             : "hover:bg-gray-50 text-gray-700"
                                             }`}
                                         onClick={() => handlePriceRangeSelect(range)}
                                     >
                                         <span className="text-sm font-medium">{range.rangeLabel}</span>
                                         <span className="text-xs font-semibold px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full">
-                                            {range.productCount} Sản Phẩm
+                                            {range.productCount} {t("common.products") || "Sản phẩm"}
                                         </span>
                                     </div>
                                 ))
                             ) : (
                                 <div className="text-gray-400 text-sm text-center py-4">
-                                    Đang tải...
+                                    {t("common.loading") || "Đang tải..."}
                                 </div>
                             )}
 
@@ -263,14 +272,14 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                             <div className="mt-4 pt-4 border-t border-gray-200">
                                 <div className="flex items-center gap-2">
                                     <button
-                                        className="flex-1 px-3 py-2.5 border-2 border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                        className="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                                     >
-                                        Tối Thiểu
+                                        {t("common.min") || "Tối Thiểu"}
                                     </button>
                                     <button
-                                        className="flex-1 px-3 py-2.5 border-2 border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                        className="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                                     >
-                                        Tối Đa
+                                        {t("common.max") || "Tối Đa"}
                                     </button>
                                 </div>
                             </div>
@@ -278,12 +287,37 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                     )}
                 </div>
 
-                {/* Mau Sac - Color (if needed later) */}
+                {/* Status Filter */}
                 <div className="mb-6">
-                    <div className="flex justify-between items-center cursor-pointer mb-3">
-                        <span className="font-bold text-base text-gray-800">Màu Sắc</span>
-                        <ChevronDown size={20} className="text-gray-600" />
+                    <div
+                        className="flex justify-between items-center cursor-pointer mb-3"
+                        onClick={() => toggleSection("status")}
+                    >
+                        <span className="font-bold text-base text-gray-800">{t("common.status") || "Trạng thái"}</span>
+                        {expanded.status ? (
+                            <ChevronUp size={20} className="text-gray-600" />
+                        ) : (
+                            <ChevronDown size={20} className="text-gray-600" />
+                        )}
                     </div>
+                    {expanded.status && (
+                        <div className="flex flex-wrap gap-2">
+                            {(filterOptions.statusOptions || []).map((option) => (
+                                <button
+                                    key={option}
+                                    type="button"
+                                    onClick={() => handleStatusSelect(option)}
+                                    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                                        filters.status === option
+                                            ? "bg-violet-50 border-violet-200 text-violet-700"
+                                            : "bg-white border-gray-200 text-gray-600 hover:border-violet-200 hover:text-violet-700"
+                                    }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Ten Bo Loc - Filter Name */}
@@ -292,7 +326,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                         className="flex justify-between items-center cursor-pointer mb-3"
                         onClick={() => toggleSection("name")}
                     >
-                        <span className="font-bold text-base text-gray-800">Tên Bộ Lọc</span>
+                        <span className="font-bold text-base text-gray-800">{t("common.filter_name") || "Tên sản phẩm"}</span>
                         {expanded.name ? (
                             <ChevronUp size={20} className="text-gray-600" />
                         ) : (
@@ -304,18 +338,18 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                             type="text"
                             value={filters.searchName}
                             onChange={handleSearchNameChange}
-                            placeholder="Tìm kiếm theo tên..."
-                            className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                            placeholder={t("common.search_by_name") || "Tìm kiếm theo tên..."}
+                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-violet-500 transition-colors"
                         />
                     )}
                 </div>
 
                 {/* Apply Filters Button */}
                 <button
-                    className="w-full bg-violet-600 text-white py-3 rounded-full font-bold hover:bg-violet-700 transition-colors shadow-sm"
+                    className="w-full bg-violet-600 text-white py-3 rounded-xl font-bold hover:bg-violet-700 transition-colors shadow-sm"
                     onClick={handleApplyFilters}
                 >
-                    Áp dụng bộ lọc
+                    {t("common.apply_filters") || "Áp dụng bộ lọc"}
                 </button>
             </div>
         </div>

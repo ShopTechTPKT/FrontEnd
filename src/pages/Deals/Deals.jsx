@@ -1,8 +1,39 @@
-﻿import { useState, useEffect, useMemo, useCallback } from "react";
-import { FaFire, FaClock, FaTag, FaStar, FaFilter, FaSearch, FaHeart, FaShoppingCart } from "react-icons/fa";
+import { useState, useEffect, useMemo, useCallback } from "react";
+/* ── SVG Icons ─────────────────────────────────────────── */
+const IcClock = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+const IcHeart = ({ className = "w-4 h-4", filled }) => (
+  <svg className={className} fill={filled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+);
+const IcStar = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+  </svg>
+);
+const IcCart = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+  </svg>
+);
+const IcSearch = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+  </svg>
+);
+const IcFilter = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+  </svg>
+);
 import { getAllDiscounts } from "../../apis/discountApi";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
+import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
 import { useTranslation } from "react-i18next";
 
 /* ── Real-time countdown helper ────────────────────────── */
@@ -48,11 +79,11 @@ const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
           onClick={(e) => { e.stopPropagation(); onToggleFav(deal.id); }}
           className="absolute top-2 right-2 z-10 p-1.5 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors"
         >
-          <FaHeart className={`text-sm ${isFav ? "text-red-500" : "text-gray-300"}`} />
+          <IcHeart filled={isFav} className={`w-4 h-4 ${isFav ? "text-red-500" : "text-gray-300"}`} />
         </button>
         {/* Countdown overlay */}
         <div className="absolute bottom-2 left-2 z-10 bg-black/60 text-white px-2 py-1 rounded-lg text-[10px] flex items-center gap-1">
-          <FaClock className="text-yellow-300 shrink-0" />
+          <IcClock className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
           {tl ? (
             <span className="tabular-nums font-mono">{pad(tl.h)}:{pad(tl.m)}:{pad(tl.s)}</span>
           ) : (
@@ -78,7 +109,7 @@ const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
         <div className="flex items-center gap-1 mb-2">
           <div className="flex text-yellow-400">
             {[...Array(5)].map((_, i) => (
-              <FaStar key={i} className={`text-xs ${i < Math.floor(deal.rating) ? "text-yellow-400" : "text-gray-200"}`} />
+              <IcStar key={i} className={`w-3.5 h-3.5 ${i < Math.floor(deal.rating) ? "text-yellow-400" : "text-gray-200"}`} />
             ))}
           </div>
           <span className="text-xs text-gray-400">{deal.rating}</span>
@@ -112,7 +143,7 @@ const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
           onClick={(e) => { e.stopPropagation(); onNavigate(deal.id); }}
           className="w-full py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg font-medium hover:opacity-90 transition-colors text-sm flex items-center justify-center gap-2"
         >
-          <FaShoppingCart className="text-xs" />
+          <IcCart className="w-4 h-4" />
           {t("deals.buyNow")}
         </button>
       </div>
@@ -140,6 +171,7 @@ const Deals = () => {
 
   // Fetch all deals data
   useEffect(() => {
+    document.title = "Khuyến mãi HOT | ShopPC";
     const fetchAllDeals = async () => {
       try {
         setLoading(true);
@@ -147,11 +179,6 @@ const Deals = () => {
         
         // Load all discounts first
         const allDiscountsData = await getAllDiscounts();
-        
-        console.log("🔍 Raw data from backend:", allDiscountsData);
-        console.log("📊 Number of items:", allDiscountsData.length);
-        console.log("📋 First item structure:", allDiscountsData[0]);
-        
         const formattedDeals = allDiscountsData.map(item => ({
           id: item.productId,
           title: item.productName || "Unnamed Product",
@@ -172,10 +199,6 @@ const Deals = () => {
           discountStatus: item.discountStatus,
           type: item.type || "percentage"
         }));
-
-        console.log("✅ All deals loaded:", formattedDeals.length);
-        console.log("✅ Sample deals:", formattedDeals.slice(0, 3));
-        console.log("🔍 First formatted deal:", formattedDeals[0]);
         setAllDeals(formattedDeals);
       } catch (error) {
         console.error("Error fetching all deals:", error);
@@ -221,14 +244,6 @@ const Deals = () => {
 
   // Filter and sort deals based on selected tab and filters
   const filteredAndSortedDeals = useMemo(() => {
-    console.log("🔍 Filtering deals...");
-    console.log("📊 Total deals:", allDeals.length);
-    console.log("🔍 Search term:", searchTerm);
-    console.log("💰 Price range:", priceRange);
-    console.log("📈 Discount range:", discountRange);
-    console.log("📂 Selected category:", selectedCategory);
-    console.log("📋 Selected tab:", selectedTab);
-    
     let filtered = allDeals.filter(deal => {
       // Search filter - only apply if search term is not empty
       const matchesSearch = !searchTerm || 
@@ -252,24 +267,10 @@ const Deals = () => {
       
       // Debug first few deals
       if (allDeals.indexOf(deal) < 3) {
-        console.log(`🔍 Deal ${deal.id}:`, {
-          title: deal.title,
-          category: deal.category,
-          salePrice: deal.salePrice,
-          discount: deal.discount,
-          matchesSearch,
-          matchesPrice,
-          matchesDiscount,
-          matchesCategory,
-          passes
-        });
       }
       
       return passes;
     });
-    
-    console.log("✅ After basic filtering:", filtered.length);
-
     // Apply tab-specific filtering
     switch (selectedTab) {
       case "top10":
@@ -331,10 +332,6 @@ const Deals = () => {
         return aValue < bValue ? 1 : -1;
       }
     });
-
-    console.log("🎯 Final filtered deals:", filtered.length);
-    console.log("📋 Sample filtered deals:", filtered.slice(0, 2));
-    
     return filtered;
   }, [allDeals, searchTerm, priceRange, discountRange, sortBy, sortOrder, selectedCategory, selectedTab]);
 
@@ -368,8 +365,10 @@ const Deals = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen py-20">
-        <Loading fullScreen={false} size="lg" text={t('deals.loading')} className="py-20" />
+      <div className="min-h-screen py-20 bg-gray-50/50">
+        <div className="container-app">
+          <ProductGridSkeleton count={8} />
+        </div>
       </div>
     );
   }
@@ -438,7 +437,7 @@ const Deals = () => {
             {/* Search Bar - Simplified */}
             <div className="flex-1 w-full lg:max-w-sm">
               <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
+                <IcSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   placeholder={t('deals.searchPlaceholder')}
@@ -477,7 +476,7 @@ const Deals = () => {
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                <FaFilter className="text-xs" />
+                <IcFilter className="w-4 h-4" />
                 <span>{t('deals.filter')}</span>
               </button>
               

@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../utils/redux/cartSlice";
 import { useTranslation } from "react-i18next";
 import notify from "../../utils/notify";
+import formatCurrency from "../../utils/formatCurrency";
 
 /**
  * QuickViewModal — Preview product details without leaving the page.
@@ -18,11 +19,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
 
   if (!product) return null;
 
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
+
 
   const getCurrentUserId = () => {
     try {

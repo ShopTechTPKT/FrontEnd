@@ -1,4 +1,4 @@
-﻿import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { UserContext } from "../../context/UserContext";
@@ -18,6 +18,8 @@ export default function ProductQASection({ productId }) {
   const [newQuestion, setNewQuestion] = useState("");
   const [answeringQuestionId, setAnsweringQuestionId] = useState(null);
   const [newAnswer, setNewAnswer] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [answerVotes, setAnswerVotes] = useState({});
 
   const role = useMemo(() => getUserRole?.() ?? null, [getUserRole]);
   const isStaff = role === "admin" || role === "customer_service";
@@ -143,11 +145,34 @@ export default function ProductQASection({ productId }) {
     }
   };
 
+  const handleVoteAnswer = (answerId, type) => {
+    setAnswerVotes((prev) => {
+      const current = prev[answerId] || { up: 0, down: 0 };
+      const next = { ...current };
+      if (type === "up") next.up = current.up === 1 ? 0 : 1;
+      if (type === "down") next.down = current.down === 1 ? 0 : 1;
+      return { ...prev, [answerId]: next };
+    });
+  };
+
+  const filteredQuestions = useMemo(() => {
+    if (!searchTerm.trim()) return questions;
+    const q = searchTerm.trim().toLowerCase();
+    return questions.filter((question) => {
+      const inQuestion = (question.content || "").toLowerCase().includes(q);
+      const inAsksBy = (question.userFullName || "").toLowerCase().includes(q);
+      const inAnswers = (question.answers || []).some((a) =>
+        (a.content || "").toLowerCase().includes(q)
+      );
+      return inQuestion || inAsksBy || inAnswers;
+    });
+  }, [questions, searchTerm]);
+
   return (
     <div className="space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-5">
         <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3">
-          Hỏi đáp về sản phẩm
+          {t("product.qa_title") || "Hỏi đáp về sản phẩm"}
         </h3>
         {isStaff ? (
           <p className="text-xs md:text-sm text-gray-600">
@@ -158,14 +183,14 @@ export default function ProductQASection({ productId }) {
         ) : (
           <>
             <p className="text-xs md:text-sm text-gray-500 mb-3">
-              Đặt câu hỏi để được đội ngũ Shop Tech tư vấn rõ hơn trước khi mua.
+              {t("product.qa_subtitle") || "Đặt câu hỏi để được đội ngũ Shop Tech tư vấn rõ hơn trước khi mua."}
             </p>
             <div className="flex flex-col md:flex-row md:items-center gap-3">
               <textarea
                 rows={2}
                 value={newQuestion}
                 onChange={(e) => setNewQuestion(e.target.value)}
-                placeholder="Bạn đang thắc mắc điều gì về sản phẩm này?"
+                placeholder={t("product.qa_ask_placeholder") || "Bạn đang thắc mắc điều gì về sản phẩm này?"}
                 className="flex-1 w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-violet-600 bg-gray-50"
               />
               <button
@@ -173,7 +198,7 @@ export default function ProductQASection({ productId }) {
                 onClick={handleAskQuestion}
             className="w-full md:w-auto px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-gradient-to-r from-violet-700 to-violet-600 shadow-sm hover:shadow-md hover:opacity-90 transition-all"
               >
-                Gửi câu hỏi
+                {t("product.qa_send_question") || "Gửi câu hỏi"}
               </button>
             </div>
           </>
@@ -181,10 +206,17 @@ export default function ProductQASection({ productId }) {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg p-4 md:p-5">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
           <h4 className="text-sm md:text-base font-semibold text-gray-900">
-            {questions.length} câu hỏi từ khách hàng
+            {filteredQuestions.length} {t("product.qa_customer_questions") || "câu hỏi từ khách hàng"}
           </h4>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t("product.qa_search_placeholder") || "Tìm trong hỏi đáp..."}
+            className="w-full md:w-72 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-violet-600 bg-white"
+          />
           {loading && (
             <span className="text-xs text-gray-400">
               Đang tải...
@@ -192,14 +224,16 @@ export default function ProductQASection({ productId }) {
           )}
         </div>
 
-        {questions.length === 0 && !loading && (
+        {filteredQuestions.length === 0 && !loading && (
           <p className="text-sm text-gray-500">
-            Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi cho sản phẩm này.
+            {searchTerm
+              ? (t("product.qa_no_search_result") || "Không có kết quả phù hợp trong phần hỏi đáp.")
+              : (t("product.qa_empty") || "Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi cho sản phẩm này.")}
           </p>
         )}
 
         <div className="space-y-4">
-          {questions.map((q) => (
+          {filteredQuestions.map((q) => (
             <div
               key={q.id}
               className="border border-gray-100 rounded-lg p-3 md:p-4 bg-gray-50"
@@ -244,8 +278,8 @@ export default function ProductQASection({ productId }) {
                             {a.userFullName || (a.official ? "Shop Tech" : "Người dùng")}
                           </span>
                           {a.official && (
-                            <span className="text-[11px] text-violet-800 bg-sky-100 px-2 py-0.5 rounded-full">
-                              Câu trả lời từ Shop
+                            <span className="text-[11px] text-violet-800 bg-violet-100 px-2 py-0.5 rounded-full font-semibold">
+                              {t("product.qa_official_answer") || "Câu trả lời từ Shop"}
                             </span>
                           )}
                         </div>
@@ -261,7 +295,31 @@ export default function ProductQASection({ productId }) {
                             className="text-[11px] text-violet-700 hover:text-violet-800 font-medium"
                             onClick={() => handleLikeAnswer(q.id, a.id)}
                           >
-                            Thích ({a.likeCount ?? 0})
+                            {t("product.qa_like") || "Thích"} ({(a.likeCount ?? 0) + (answerVotes[a.id]?.up || 0)})
+                          </button>
+                        </div>
+                        <div className="mt-2 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleVoteAnswer(a.id, "up")}
+                            className={`text-[11px] px-2 py-1 rounded-md border transition-colors ${
+                              answerVotes[a.id]?.up
+                                ? "bg-green-50 border-green-200 text-green-700"
+                                : "bg-white border-gray-200 text-gray-500 hover:text-green-700 hover:border-green-200"
+                            }`}
+                          >
+                            👍 {t("product.qa_helpful") || "Hữu ích"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleVoteAnswer(a.id, "down")}
+                            className={`text-[11px] px-2 py-1 rounded-md border transition-colors ${
+                              answerVotes[a.id]?.down
+                                ? "bg-rose-50 border-rose-200 text-rose-700"
+                                : "bg-white border-gray-200 text-gray-500 hover:text-rose-700 hover:border-rose-200"
+                            }`}
+                          >
+                            👎 {t("product.qa_not_helpful") || "Chưa hữu ích"}
                           </button>
                         </div>
                       </div>

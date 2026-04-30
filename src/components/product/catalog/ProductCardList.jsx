@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { addToCart } from "../../../utils/redux/cartSlice";
+import LazyImage from "../../ui/LazyImage";
 
 /* ── SVG Icons ───────────────────────────────────────── */
 const CartIcon = () => (
@@ -92,11 +93,12 @@ export default function ProductCardList({ product }) {
     >
       {/* Image */}
       <div className="relative w-32 sm:w-40 flex-shrink-0 bg-gray-50 rounded-xl overflow-hidden">
-        <img
+        <LazyImage
           src={img}
           alt={name}
           className="w-full h-32 sm:h-40 object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-          onError={(e) => { e.target.src = "https://via.placeholder.com/200?text=SP"; }}
+          fallbackSrc="https://via.placeholder.com/200?text=SP"
+          loadingClassName="w-full h-32 sm:h-40"
         />
         {discountPct && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
