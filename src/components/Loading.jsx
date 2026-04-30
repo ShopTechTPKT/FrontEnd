@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Loading Component - Hiển thị loading indicator đơn giản và đẹp
@@ -8,36 +8,43 @@ import React from 'react';
  * @param {boolean} props.fullScreen - Hiển thị full screen (default: false)
  * @param {string} props.className - Custom className
  */
-const Loading = ({ 
-  size = 'md', 
-  text = 'Đang tải...', 
+const Loading = ({
+  size = "md",
+  text = "Đang tải...",
   fullScreen = false,
-  className = '' 
+  className = "",
 }) => {
   const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16'
+    sm: "h-24",
+    md: "h-32",
+    lg: "h-40",
   };
 
   const textSizeClasses = {
-    sm: 'text-xs',
-    md: 'text-sm',
-    lg: 'text-base'
+    sm: "text-xs",
+    md: "text-sm",
+    lg: "text-base",
   };
 
   const loadingContent = (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div className="relative mb-3">
-        {/* Outer ring */}
-        <div className={`${sizeClasses[size]} border-4 border-violet-200 rounded-full`}></div>
-        {/* Spinning ring */}
-        <div 
-          className={`absolute inset-0 ${sizeClasses[size]} border-4 border-violet-600 rounded-full border-t-transparent animate-spin`}
-        ></div>
+    <div className={`w-full max-w-4xl ${className}`}>
+      <div className={`relative overflow-hidden rounded-2xl border border-violet-100 bg-white p-5 ${sizeClasses[size]}`}>
+        <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.8s_infinite] bg-gradient-to-r from-transparent via-violet-100/60 to-transparent" />
+        <div className="relative z-10 space-y-3">
+          <div className="h-4 w-40 rounded bg-violet-100" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[...Array(4)].map((_, idx) => (
+              <div key={idx} className="space-y-2 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                <div className="h-14 rounded-lg bg-gray-200" />
+                <div className="h-3 w-5/6 rounded bg-gray-200" />
+                <div className="h-3 w-3/5 rounded bg-gray-200" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       {text && (
-        <p className={`${textSizeClasses[size]} text-gray-600 font-medium`}>
+        <p className={`${textSizeClasses[size]} mt-3 text-center text-gray-600 font-medium`}>
           {text}
         </p>
       )}
@@ -46,7 +53,7 @@ const Loading = ({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/85 backdrop-blur-sm p-4">
         {loadingContent}
       </div>
     );

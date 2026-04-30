@@ -365,15 +365,6 @@ body {
    UTILITY CLASSES — Used across components
    ═══════════════════════════════════════════════════════════════ */
 
-/* Container with consistent max-width and padding */
-.container-app {
-  width: 100%;
-  max-width: var(--content-max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--content-padding);
-  padding-right: var(--content-padding);
-}
 
 /* ── Gradient utilities ─────────────────────────────────────── */
 
@@ -456,6 +447,70 @@ body {
 .hero-dot.active {
   background: #fff;
   width: 24px;
+}
+
+/* ── Toastify custom theme ──────────────────────────────────── */
+.Toastify__toast-container {
+  width: min(380px, calc(100vw - 1rem));
+}
+
+.shop-toast {
+  border-radius: 14px !important;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  box-shadow: 0 12px 30px rgb(31 41 55 / 0.2) !important;
+  backdrop-filter: blur(8px);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 10px 12px;
+}
+
+.Toastify__toast--success.shop-toast {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+}
+
+.Toastify__toast--error.shop-toast {
+  background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+}
+
+.Toastify__toast--warning.shop-toast {
+  background: linear-gradient(135deg, #b45309, #f59e0b) !important;
+}
+
+.Toastify__toast--info.shop-toast {
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6) !important;
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--default.shop-toast {
+  background: linear-gradient(135deg, #374151, #4b5563) !important;
+}
+
+.shop-toast-progress {
+  height: 3px;
+  background: rgb(255 255 255 / 0.85) !important;
+}
+
+/* ── Product card hover polish ──────────────────────────────── */
+.product-card-hover {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
+}
+
+.product-card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgb(109 40 217 / 0.14), 0 8px 18px rgb(0 0 0 / 0.08);
+}
+
+.product-card-image {
+  filter: saturate(0.98) contrast(1);
+  transform-origin: center;
+}
+
+.product-card-hover:hover .product-card-image {
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.product-card-image-alt {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Primary button base — use via @apply or class composition */
@@ -593,4 +648,19 @@ img {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+  .container-app {
+    @apply max-w-screen-xl mx-auto px-4 sm:px-6;
+  }
+}
+
+@layer utilities {
+  .section-gap { margin-bottom: 3rem; }
+  .section-gap-lg { margin-bottom: 5rem; }
+  .section-padding { padding: 3rem 0; }
 }

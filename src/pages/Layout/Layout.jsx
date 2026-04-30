@@ -5,17 +5,31 @@ import BackToTop from "../../components/ui/BackToTop";
 import ScrollProgress from "../../components/ui/ScrollProgress";
 import CommandSearch from "../../components/CommandSearch";
 import CompareBar from "../../components/product/CompareBar";
+import AutoBreadcrumb from "../../components/ui/AutoBreadcrumb";
+import PageTransition from "../../components/ui/PageTransition";
+import usePageMeta from "../../hooks/usePageMeta";
 
 function Layout() {
+    usePageMeta();
+
     return (
         <>
+            <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-violet-700 focus:text-white"
+            >
+                Skip to main content
+            </a>
             <ScrollProgress />
             <Header />
             {/* Content area — uses header-height CSS var instead of magic numbers */}
-            <main className="pt-[var(--header-height)]">
-                <div className="animate-pageIn">
-                    <Outlet></Outlet>
+            <main id="main-content" className="pt-[var(--header-height)]">
+                <div className="container-app pt-4">
+                    <AutoBreadcrumb className="mb-2" />
                 </div>
+                <PageTransition>
+                    <Outlet></Outlet>
+                </PageTransition>
             </main>
             <Footer />
             <BackToTop />

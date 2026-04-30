@@ -78,7 +78,7 @@ function Modal({
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
         className={[
-          "relative bg-white rounded-2xl shadow-lg w-full animate-fadeIn",
+          "relative bg-white dark:bg-gray-900 rounded-2xl shadow-lg w-full animate-fadeIn",
           "max-h-[90vh] overflow-y-auto",
           sizeClasses[size] || sizeClasses.md,
           className,
@@ -86,13 +86,13 @@ function Modal({
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 id="modal-title" className="text-lg font-semibold text-gray-900">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 id="modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {title}
             </h2>
             <button
               onClick={onClose}
-              className="p-1.5 -mr-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="p-1.5 -mr-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               aria-label="Đóng"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +114,7 @@ function Modal({
 /** Modal.Footer — Consistent action bar at the bottom of modals */
 Modal.Footer = function ModalFooter({ className = "", children }) {
   return (
-    <div className={`flex items-center justify-end gap-3 pt-5 mt-5 border-t border-gray-100 ${className}`}>
+    <div className={`flex items-center justify-end gap-3 pt-5 mt-5 border-t border-gray-100 dark:border-gray-700 ${className}`}>
       {children}
     </div>
   );

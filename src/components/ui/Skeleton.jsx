@@ -13,7 +13,9 @@ function Skeleton({ className = "", circle = false, rounded = false }) {
   return (
     <div
       className={[
-        "animate-pulse bg-gray-200",
+        "relative overflow-hidden bg-gray-200 dark:bg-gray-700",
+        "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer",
+        "before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent",
         circle ? "rounded-full" : rounded ? "rounded-xl" : "rounded-md",
         className,
       ].join(" ")}
@@ -28,15 +30,32 @@ function Skeleton({ className = "", circle = false, rounded = false }) {
 /** Product card skeleton */
 Skeleton.ProductCard = function ProductCardSkeleton() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
-      <Skeleton className="h-48 w-full" />
-      <div className="p-4 space-y-3">
-        <Skeleton className="h-3 w-20" />
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <div className="flex items-center justify-between pt-1">
-          <Skeleton className="h-5 w-24" />
+    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-xs">
+      <div className="relative p-4 pb-0">
+        <div className="absolute top-2 left-2 z-10 flex gap-2">
+          <Skeleton className="h-5 w-14 rounded-full" />
+          <Skeleton className="h-5 w-10 rounded-full" />
+        </div>
+        <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
           <Skeleton className="h-8 w-8" circle />
+          <Skeleton className="h-8 w-8" circle />
+        </div>
+      </div>
+      <Skeleton className="h-52 w-full" />
+      <div className="p-4 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-3 w-14" />
+        </div>
+        <Skeleton className="h-4 w-11/12" />
+        <Skeleton className="h-4 w-8/12" />
+        <Skeleton className="h-3 w-7/12" />
+        <div className="flex items-end justify-between pt-2">
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-5 w-28" />
+          </div>
+          <Skeleton className="h-9 w-9 rounded-lg" />
         </div>
       </div>
     </div>

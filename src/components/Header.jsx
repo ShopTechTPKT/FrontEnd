@@ -4,10 +4,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import path from "../constant/path";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../context/UserContext";
-import CartDropdown from "./CartDropdown";
+import CartDrawer from "./CartDrawer";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { loadCartItems } from "../utils/redux/cartSlice";
+import { selectCartTotalItems } from "../utils/redux/selectors";
 import notify from "../utils/notify";
 import ThemeToggle from "./ui/ThemeToggle";
 
@@ -29,16 +30,15 @@ const Header = () => {
   // ── State ──────────────────────────────────────────────────
   const [showDropdown, setShowDropdown] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showCartDropdown, setShowCartDropdown] = useState(false);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hideOnScrollMobile, setHideOnScrollMobile] = useState(false);
 
   const dropdownRef = useRef(null);
-  const cartDropdownRef = useRef(null);
+  const lastScrollYRef = useRef(0);
 
   // ── Cart ───────────────────────────────────────────────────
-  const cartQuantity = useSelector((state) =>
-    state.cart.cartSummary ? state.cart.cartSummary.totalItems : 0
-  );
+  const cartQuantity = useSelector(selectCartTotalItems);
 
   useEffect(() => {
     dispatch(loadCartItems());
@@ -54,19 +54,30 @@ const Header = () => {
 
   // ── Scroll tracking ────────────────────────────────────────
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      setIsScrolled(currentY > 50);
+
+      // Mobile-only sticky behavior: hide on scroll down, show on scroll up.
+      if (window.innerWidth < 1024) {
+        const isScrollingDown = currentY > lastScrollYRef.current;
+        const shouldHide = isScrollingDown && currentY > 120 && !isMobileMenuOpen && !showCartDrawer;
+        setHideOnScrollMobile(shouldHide);
+      } else {
+        setHideOnScrollMobile(false);
+      }
+
+      lastScrollYRef.current = currentY;
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMobileMenuOpen, showCartDrawer]);
 
   // ── Click outside handlers ─────────────────────────────────
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
-      }
-      if (cartDropdownRef.current && !cartDropdownRef.current.contains(event.target)) {
-        setShowCartDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -87,17 +98,7 @@ const Header = () => {
   const handleLogoutConfirm = () => {
     logout();
     setShowDropdown(false);
-    notify.success("Đăng xuất thành công!");
-  };
-
-  // ── Cart dropdown handlers ─────────────────────────────────
-  const handleCartMouseEnter = () => setShowCartDropdown(true);
-  const handleCartMouseLeave = () => {
-    setTimeout(() => {
-      if (cartDropdownRef.current && !cartDropdownRef.current.matches(":hover")) {
-        setShowCartDropdown(false);
-      }
-    }, 100);
+    notify.success(t("header.logoutSuccess"));
   };
 
   // ── Mobile menu handlers ───────────────────────────────────
@@ -106,6 +107,12 @@ const Header = () => {
   useEffect(() => {
     closeMobileMenu();
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen || showCartDrawer) {
+      setHideOnScrollMobile(false);
+    }
+  }, [isMobileMenuOpen, showCartDrawer]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -136,7 +143,9 @@ const Header = () => {
   // ── Render ─────────────────────────────────────────────────
   return (
     <header
-      className={`font-sans fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`font-sans fixed top-0 left-0 right-0 z-50 transition-all duration-300 lg:translate-y-0 ${
+        hideOnScrollMobile ? "-translate-y-full" : "translate-y-0"
+      } ${
         isScrolled ? "shadow-md" : ""
       }`}
     >
@@ -170,7 +179,7 @@ const Header = () => {
           isScrolled ? "py-2 bg-white/85 backdrop-blur-xl" : "py-3 bg-white"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex items-center justify-between gap-3">
+        <div className="container-app flex items-center justify-between gap-3">
           {/* Logo */}
           <Link to={path.home} className="shrink-0">
             <img
@@ -213,7 +222,7 @@ const Header = () => {
                     <rect x="2" y="3" width="20" height="14" rx="2"/>
                     <path d="M8 21h8M12 17v4"/>
                   </svg>
-                  <span>Xây PC</span>
+                  <span>{t("nav.pcBuilder")}</span>
                 </Link>
               </li>
 
@@ -251,15 +260,10 @@ const Header = () => {
             <ThemeToggle />
 
             {/* Cart */}
-            <div
-              className="relative"
-              ref={cartDropdownRef}
-              onMouseEnter={handleCartMouseEnter}
-              onMouseLeave={handleCartMouseLeave}
-            >
+            <div className="relative">
               <button
                 className="relative w-9 h-9 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                onClick={() => setShowCartDropdown(!showCartDropdown)}
+                onClick={() => setShowCartDrawer(true)}
               >
                 <IconCart className="w-[18px] h-[18px]" />
                 {cartQuantity > 0 && (
@@ -268,9 +272,9 @@ const Header = () => {
                   </span>
                 )}
               </button>
-              <CartDropdown
-                isOpen={showCartDropdown}
-                onClose={() => setShowCartDropdown(false)}
+              <CartDrawer
+                isOpen={showCartDrawer}
+                onClose={() => setShowCartDrawer(false)}
               />
             </div>
 
@@ -321,7 +325,7 @@ const Header = () => {
                           </Link>
                         )}
                         <Link to="/favorites" onClick={handleMenuItemClick} className="block px-4 py-2 text-sm text-gray-700 hover:text-violet-700 hover:bg-violet-50 transition-colors">
-                          Yêu thích
+                          {t("nav.favorites")}
                         </Link>
                         <div className="my-1 border-t border-gray-100" />
                         <button onClick={handleLogoutConfirm} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
@@ -347,7 +351,7 @@ const Header = () => {
               type="button"
               className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              aria-label={isMobileMenuOpen ? "Đóng menu" : "Mở menu"}
+              aria-label={isMobileMenuOpen ? t("header.closeMenu") : t("header.openMenu")}
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
