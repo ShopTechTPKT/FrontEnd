@@ -22,16 +22,6 @@ export default function AboutUs() {
         // Import mock reviews service
         const { getAllReviews } = await import('../../mockData/reviews');
         const data = await getAllReviews();
-        
-        console.log("Mock Data Response:", data); // Kiểm tra toàn bộ response
-        console.log("Data.DT:", data.DT); // Kiểm tra dữ liệu đánh giá
-        
-        if (data.EC === 1) {
-          // Ánh xạ dữ liệu thành định dạng testimonials
-          const formattedTestimonials = data.DT.map(review => ({
-            comment: review.comment,
-            customerName: review.customerName,
-          }));
           setTestimonials(formattedTestimonials);
         } else {
           throw new Error(data.EM || "Lỗi lấy đánh giá");

@@ -93,7 +93,7 @@ function Content() {
         });
       } catch (error) {
         console.error("Error fetching products:", error);
-        setLoadError("Không load được data từ server. Vui lòng thử lại sau.");
+        setLoadError(t("common.load_error"));
       } finally {
         setLoading(false);
       }

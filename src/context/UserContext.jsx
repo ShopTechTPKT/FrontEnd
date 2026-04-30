@@ -13,24 +13,21 @@ const UserProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
 
-  // Login function - Using Real Authentication
   const login = useCallback(async (credentials) => {
     try {
       const user = await realLogin(credentials);
-
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
         return user;
       } else {
-        throw new Error("Đăng nhập thất bại");
+        throw new Error("auth.login_failed");
       }
     } catch (err) {
-      if (err.message) {
-        throw new Error(err.message);
-      } else {
-        throw new Error("Đăng nhập thất bại, vui lòng thử lại sau");
-      }
+      const fallback = "auth.login_failed_retry";
+      const message = err?.message || fallback;
+      // Preserve i18n key when available, otherwise fallback key.
+      throw new Error(message.startsWith("auth.") ? message : fallback);
     }
   }, []);
 
@@ -185,6 +182,3 @@ const UserProvider = ({ children }) => {
 };
 
 export { UserContext, UserProvider };
-// Updated: 2025-10-12T16:06:31.045Z
-
-// Updated: 2025-10-12T16:09:08.038Z

@@ -1,4 +1,5 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
+import formatCurrency from "../utils/formatCurrency";
 
 function DiscountModal({
   isOpen,
@@ -66,10 +67,7 @@ function DiscountModal({
                   const discountRate = voucher.discountRate || 0;
                   const discountValue = isPercentage
                     ? `${(discountRate * 100).toFixed(0)}%`
-                    : new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(discountRate);
+                    : formatCurrency(discountRate);
 
                   return (
                     <div
@@ -265,4 +263,5 @@ function DiscountModal({
 }
 
 export default DiscountModal;
+
 

@@ -1,9 +1,9 @@
-import React from "react";
+﻿import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../../utils/redux/cartSlice";
 import path from "../../constant/path";
-import axios from "axios";
+import axiosInstance from "../../custom/axios";
 import { addOrder } from "../../utils/redux/orderSlice";
 import { toast } from "react-toastify";
 import { useTranslation } from 'react-i18next';
@@ -27,11 +27,7 @@ const CreateOrder = ({
   const taxRate = 0.1;
   const tax = subtotal * taxRate;
   const discount = voucher.discount / 100; // You can add discount logic here if needed
-  console.log("voucher", voucher);
-
   const total = (subtotal + tax + shippingCost) * (1 - discount);
-  console.log("total", total);
-
   // const handleCreateOrder = () => {
   //   // Create the order object
   //   const order = {
@@ -76,7 +72,7 @@ const CreateOrder = ({
   //   };
 
   //   try {
-  //     const response = await axios.post('http://localhost:4000/api/order/add', orderData); // Sử dụng axios.post
+  //     const response = await axiosInstance.post('http://localhost:4000/api/order/add', orderData); // Sử dụng axios.post
 
   //     if (response.data.EC === 1) {
   //       console.log('Đơn hàng đã được lưu thành công, Order ID:', response.data.DT.orderID);
@@ -122,16 +118,12 @@ const CreateOrder = ({
     };
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:4000/api/order/add",
         orderData
       ); // Sử dụng axios.post
 
       if (response.data.EC === 1) {
-        console.log(
-          "Đơn hàng đã được lưu thành công, Order ID:",
-          response.data.DT.orderID
-        );
         // Dispatch action để lưu đơn hàng vào Redux store
         // Tạo đối tượng order để lưu vào Redux
         const order = {
@@ -150,8 +142,6 @@ const CreateOrder = ({
           status: "Processing",
         };
         localStorage.setItem("orders", JSON.stringify(order));
-        console.log(order);
-
         dispatch(addOrder(order));
         // Hiển thị thông báo xác nhận thanh toán
         const confirmPayment = window.confirm(

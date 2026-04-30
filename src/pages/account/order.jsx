@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import OrderReceipt from "../../components/order/order-receipt";
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
 const Orders = () => {
   const { t } = useTranslation();
@@ -27,10 +28,7 @@ const Orders = () => {
   }, []);
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
+    return formatCurrency(value);
   };
 
   const handleViewOrder = (order) => {
@@ -184,5 +182,6 @@ const Orders = () => {
 };
 
 export default Orders;
+
 
 

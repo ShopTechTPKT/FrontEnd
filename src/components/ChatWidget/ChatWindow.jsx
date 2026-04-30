@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
+﻿import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import axios from "axios";
+import axiosInstance from "../../custom/axios";
 import { ChatContext } from "./ChatProvider";
 import { UserContext } from "../../context/UserContext";
 import ScheduleForm from "../Schedule/ScheduleForm";
@@ -13,7 +13,7 @@ const STORAGE_KEY = "customer-support-session";
 const ChatWindow = () => {
   const { isOpen } = useContext(ChatContext);
   const { user } = useContext(UserContext);
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
+  
   const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:8081/ws";
 
   const [connected, setConnected] = useState(false);
@@ -47,14 +47,13 @@ const ChatWindow = () => {
       try {
         const sessionData = JSON.parse(savedSession);
         if (sessionData.chatId && sessionData.sessionCode) {
-          console.log("📂 Restoring session from localStorage:", sessionData);
           setSessionId(sessionData.chatId);
           setIsRegistered(true);
           setCustomer(sessionData.customer || { name: "", phone: "" });
           
           // Load messages
-          const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
-          axios.get(`${apiUrl}/chat/${sessionData.chatId}/messages`)
+          
+          axiosInstance.get(`/chat/${sessionData.chatId}/messages`)
             .then(res => {
               if (Array.isArray(res.data)) {
                 setMessages(res.data);
@@ -81,7 +80,6 @@ const ChatWindow = () => {
 
   // Hàm reset chat về trạng thái ban đầu
   const handleResetChat = useCallback(() => {
-    console.log("🔄 Resetting chat session...");
     setCustomer({ name: "", phone: "" });
     setIsRegistered(false);
     setMessages([]);
@@ -109,7 +107,6 @@ const ChatWindow = () => {
 
     // Xóa session từ localStorage
     localStorage.removeItem(STORAGE_KEY);
-    console.log("✅ Chat session đã được reset");
   }, [stompClient]);
 
   // Track previous user để detect logout/login tài khoản khác
@@ -131,7 +128,6 @@ const ChatWindow = () => {
       (hadUserBefore && !hasUserNow) || // Logout
       (hadUserBefore && hasUserNow && prevUserId !== null && currentUserId !== prevUserId) // Login tài khoản khác
     )) {
-      console.log("🔄 User đã thay đổi (logout/login khác), resetting chat session...");
       handleResetChat();
     }
     
@@ -198,20 +194,14 @@ const ChatWindow = () => {
   const handleRegister = async e => {
     e.preventDefault();
     if (!customer.name || !customer.phone || isRegistering) {
-      console.log("❌ Validation failed:", { name: customer.name, phone: customer.phone, isRegistering });
       return;
     }
-
-    console.log("🚀 Bắt đầu đăng ký chat...", { name: customer.name, phone: customer.phone });
     setIsRegistering(true);
     try {
-      const res = await axios.post(`${API_URL}/chat/start`, {
+      const res = await axiosInstance.post(`/chat/start`, {
         fullName: customer.name,
         phoneNumber: customer.phone,
       });
-
-      console.log("✅ Response from API:", res.data);
-
       if (!res.data || !res.data.chatId || !res.data.sessionCode) {
         console.error("❌ API response không hợp lệ:", res.data);
         alert("Phản hồi từ server không hợp lệ. Vui lòng thử lại.");
@@ -223,19 +213,13 @@ const ChatWindow = () => {
         sessionCode: res.data.sessionCode,
         customer: { name: customer.name, phone: customer.phone },
       };
-
-      console.log("💾 Lưu session data:", sessionData);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
       setSessionId(sessionData.chatId);
       setIsRegistered(true);
       setAskedAI(true); // Hiển thị prompt hỏi dùng AI
-      
-      console.log("✅ Đã set isRegistered = true");
-      
       // Load messages từ backend
       try {
-        const messagesRes = await axios.get(`${API_URL}/chat/${sessionData.chatId}/messages`);
-        console.log("📨 Messages loaded:", messagesRes.data);
+        const messagesRes = await axiosInstance.get(`/chat/${sessionData.chatId}/messages`);
         if (Array.isArray(messagesRes.data)) {
           setMessages(messagesRes.data);
         }
@@ -325,7 +309,7 @@ const ChatWindow = () => {
       formData.append("file", file);
       formData.append("chatId", sessionId);
 
-      const uploadRes = await axios.post(`${API_URL}/chat/upload`, formData, {
+      const uploadRes = await axiosInstance.post(`/chat/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -465,7 +449,7 @@ const ChatWindow = () => {
               },
             ]);
 
-            await axios.post(`${API_URL}/appointments`, data);
+            await axiosInstance.post(`/appointments`, data);
 
             // Thông báo thành công
             setMessages(prev => [

@@ -1,8 +1,43 @@
-﻿import { useState } from "react";
-import { FaEnvelope, FaKey, FaLock, FaShieldAlt, FaTimes, FaCheckCircle } from "react-icons/fa";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import axiosInstance from "../custom/axios";
 import notify from "../utils/notify";
+
+/* ── SVG Icons ──────────────────────────────────── */
+const IcEnvelope = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  </svg>
+);
+const IcKey = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+  </svg>
+);
+const IcLock = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+);
+const IcShield = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+  </svg>
+);
+const IcClose = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+const IcCheck = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+  </svg>
+);
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081';
 
@@ -170,9 +205,10 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
           </h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            aria-label="Close"
           >
-            <FaTimes className="text-xl" />
+            <IcClose className="w-5 h-5" />
           </button>
         </div>
 
@@ -180,13 +216,17 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-center gap-4 mb-8">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center">
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold ${
-              step >= s
-                ? 'bg-gradient-to-r from-violet-700 to-violet-600 text-white'
-                : 'bg-gray-200 text-gray-500'
-            }`}>
-                {step > s ? <FaCheckCircle /> : s}
-              </div>
+              {step > s ? (
+                <div className="flex items-center justify-center w-10 h-10 rounded-full font-semibold bg-gradient-to-r from-violet-700 to-violet-600 text-white">
+                  <IcCheck className="w-4 h-4" />
+                </div>
+              ) : (
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold ${
+                  step >= s ? 'bg-gradient-to-r from-violet-700 to-violet-600 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  {s}
+                </div>
+              )}
               {s < 3 && (
                 <div className={`w-16 h-1 mx-2 ${
                   step > s ? 'bg-gradient-to-r from-violet-700 to-violet-600' : 'bg-gray-200'
@@ -200,13 +240,15 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 1 && (
           <form onSubmit={handleSendOTP} className="space-y-5">
             <div className="text-center mb-6">
-              <FaEnvelope className="text-5xl text-violet-600 mx-auto mb-3" />
+              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <IcEnvelope className="w-8 h-8 text-violet-600" />
+              </div>
               <p className="text-gray-600">{t('forgotPassword.step1.description')}</p>
             </div>
 
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <FaEnvelope />
+                <IcEnvelope className="w-4 h-4" />
               </div>
               <input
                 type="email"
@@ -227,7 +269,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
 
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <FaEnvelope />
+                <IcEnvelope className="w-4 h-4" />
               </div>
               <input
                 type="email"
@@ -260,13 +302,15 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 2 && (
           <form onSubmit={handleVerifyOTP} className="space-y-5">
             <div className="text-center mb-6">
-              <FaKey className="text-5xl text-violet-600 mx-auto mb-3" />
+              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <IcKey className="w-8 h-8 text-violet-600" />
+              </div>
               <p className="text-gray-600">{t('forgotPassword.step2.description', { email })}</p>
             </div>
 
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <FaKey />
+                <IcKey className="w-4 h-4" />
               </div>
               <input
                 type="text"
@@ -310,13 +354,15 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 3 && (
           <form onSubmit={handleResetPassword} className="space-y-5">
             <div className="text-center mb-6">
-              <FaLock className="text-5xl text-violet-600 mx-auto mb-3" />
+              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <IcLock className="w-8 h-8 text-violet-600" />
+              </div>
               <p className="text-gray-600">{t('forgotPassword.step3.description')}</p>
             </div>
 
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <FaLock />
+                <IcLock className="w-4 h-4" />
               </div>
               <input
                 type="password"
@@ -337,7 +383,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
 
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
-                <FaShieldAlt />
+                <IcShield className="w-4 h-4" />
               </div>
               <input
                 type="password"

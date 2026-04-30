@@ -1,5 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
-import { FaHeart } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getFavoritesByUser, removeFavorite, countFavoritesByUser } from "../../apis/favoriteApi";
@@ -10,6 +9,21 @@ import Button from "../../components/ui/Button";
 import EmptyState from "../../components/ui/EmptyState";
 import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
 import StatusNotice from "../../components/ui/StatusNotice";
+
+const IcHeart = ({ filled = false, className = "w-5 h-5" }) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth={1.8}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+  </svg>
+);
 
 const Favorites = () => {
   const navigate = useNavigate();
@@ -73,7 +87,9 @@ const Favorites = () => {
       <div className="min-h-screen bg-white">
         <Header />
         <div className="container mx-auto px-4 py-20 text-center">
-          <FaHeart className="text-6xl text-gray-300 mx-auto mb-4" />
+          <div className="w-16 h-16 bg-violet-50 border-2 border-violet-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <IcHeart filled className="w-8 h-8 text-violet-400" />
+          </div>
           <h2 className="text-2xl font-bold text-gray-700 mb-2">Please login</h2>
           <p className="text-gray-500 mb-6">You need to login to view favorites</p>
           <Button onClick={() => navigate("/login")} variant="primary" size="lg">
@@ -101,7 +117,7 @@ const Favorites = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-violet-700 rounded-2xl flex items-center justify-center shadow-lg">
-              <FaHeart className="text-white text-3xl" />
+              <IcHeart filled className="text-white w-7 h-7" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Favorite Products</h1>
@@ -154,7 +170,7 @@ const Favorites = () => {
                   className="absolute top-2 right-2 z-20 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
                   title="Remove from favorites"
                 >
-                  <FaHeart className="text-red-500 text-sm" />
+                  <IcHeart filled className="text-red-500 w-4 h-4" />
                 </button>
                 <ProductCard product={convertFavoriteToProduct(favorite)} />
               </div>

@@ -3,14 +3,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import notify from '../../utils/notify';
 
+// OAuth2 callback — uses raw axios with full URL to avoid interceptor redirect loops
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081';
-axios.defaults.withCredentials = true;
 
 export default function GoogleCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Legacy simple flow: call backend for profile, mark as logged-in customer
     axios.get(`${API_URL}/api/auth/me`, { withCredentials: true })
       .then((res) => {
         const data = res?.data || {};
@@ -34,5 +33,3 @@ export default function GoogleCallback() {
 
   return null;
 }
-
-

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import formatCurrency from "../utils/formatCurrency";
 import { getAllProducts } from "../apis/productApi";
+import useDebouncedValue from "../hooks/useDebouncedValue";
 
 /**
  * CommandSearch — Global command palette search (Ctrl+K / Cmd+K).
@@ -17,8 +18,7 @@ export default function CommandSearch() {
   const [results, setResults] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [allProducts, setAllProducts] = useState([]);
-
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query, 180);
 
   // Load products from backend API
   useEffect(() => {
@@ -33,13 +33,6 @@ export default function CommandSearch() {
     };
     loadProducts();
   }, []);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 180);
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   // Global keyboard shortcut
   useEffect(() => {
@@ -82,26 +75,10 @@ export default function CommandSearch() {
     setResults(filtered);
   }, [debouncedQuery, allProducts]);
 
-  const handleSearch = useCallback(
-    (value) => {
-      setQuery(value);
-      setSelectedIndex(0);
-      if (!value.trim()) {
-        setResults([]);
-        return;
-      }
-      const q = value.toLowerCase();
-      const filtered = allProducts
-        .filter(
-          (p) =>
-            (p.productName || p.name || "").toLowerCase().includes(q) ||
-            (p.categoryName || "").toLowerCase().includes(q)
-        )
-        .slice(0, 8);
-      setResults(filtered);
-    },
-    [allProducts]
-  );
+  const handleSearch = useCallback((value) => {
+    setQuery(value);
+    setSelectedIndex(0);
+  }, []);
 
   const handleSelect = (product) => {
     navigate(`/product/${product.productID || product.id}/productAbout`);
@@ -124,7 +101,7 @@ export default function CommandSearch() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[15vh]">
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[15vh]" role="dialog" aria-modal="true" aria-label={t("search.search") || "Search"}>
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -146,6 +123,7 @@ export default function CommandSearch() {
             onKeyDown={handleKeyDown}
             placeholder={t("search.command_placeholder") || "Tìm kiếm sản phẩm..."}
             className="flex-1 text-base text-gray-900 placeholder:text-gray-400 bg-transparent border-0 outline-none"
+            aria-label={t("search.search_for_products") || "Tìm kiếm sản phẩm"}
           />
           <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-xs text-gray-400 bg-gray-100 rounded border border-gray-200 font-mono">
             ESC
@@ -169,7 +147,7 @@ export default function CommandSearch() {
                     <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                       <img
                         src={product.image || product.imageUrl}
-                        alt=""
+                        alt={product.productName || product.name || "Product image"}
                         className="w-full h-full object-contain"
                       />
                     </div>

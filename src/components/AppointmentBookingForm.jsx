@@ -1,11 +1,9 @@
 ﻿import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../custom/axios";
 import { useTranslation } from "react-i18next";
 
 const AppointmentBookingForm = ({ isOpen, onClose, customerInfo }) => {
   const { t } = useTranslation("translation");
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
-
   const [formData, setFormData] = useState({
     guestName: customerInfo?.name || "",
     guestEmail: "",
@@ -37,12 +35,9 @@ const AppointmentBookingForm = ({ isOpen, onClose, customerInfo }) => {
         expectedArrival: new Date(formData.expectedArrival).toISOString(),
       };
 
-      const response = await axios.post(
-        `${API_URL}/appointments`,
+      const response = await axiosInstance.post(`/appointments`,
         appointmentData
       );
-
-      console.log("✅ Appointment booked successfully:", response.data);
       setSubmitSuccess(true);
 
       // Reset form after 2 seconds
@@ -59,7 +54,7 @@ const AppointmentBookingForm = ({ isOpen, onClose, customerInfo }) => {
         });
       }, 2000);
     } catch (error) {
-      console.error("❌ Error booking appointment:", error);
+      console.error("? Error booking appointment:", error);
       alert(t("scheduleForm.booking_error_alert"));
     } finally {
       setIsSubmitting(false);
@@ -79,14 +74,14 @@ const AppointmentBookingForm = ({ isOpen, onClose, customerInfo }) => {
       className="fixed inset-0 z-50 flex items-center justify-center glass-overlay transition-all duration-300"
       onClick={handleOverlayClick}
     >
-      {/* Form Container với hiệu ứng bong bóng */}
+      {/* Form Container v?i hi?u ?ng bong b�ng */}
       <div className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100 animate-pulse-subtle">
         {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold transition-colors"
         >
-          ×
+          �
         </button>
 
         {/* Header */}

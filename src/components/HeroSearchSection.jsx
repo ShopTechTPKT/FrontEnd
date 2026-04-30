@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../utils/formatCurrency";
 
 const HeroSearchSection = ({ product = [] }) => {
   const { t } = useTranslation();
@@ -284,7 +285,7 @@ const HeroSearchSection = ({ product = [] }) => {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{productName}</p>
                           <p className="text-xs text-gray-500">
-                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(productPrice)}
+                            {formatCurrency(productPrice)}
                           </p>
                         </div>
                       </button>

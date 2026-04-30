@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../utils/formatCurrency";
+import useDebouncedValue from "../hooks/useDebouncedValue";
 
 // Reuse existing banner images
 import banner1 from "../assets/1.jpg";
@@ -11,29 +13,29 @@ const SLIDES = [
   {
     id: 1,
     image: banner1,
-    title: "Laptop Gaming Cao Cấp",
-    subtitle: "RTX 4070 · 144Hz · 1 giờ giao hàng",
-    ctaLabel: "Khám phá ngay",
+    titleKey: "banner.hero_slides.laptop.title",
+    subtitleKey: "banner.hero_slides.laptop.subtitle",
+    ctaLabelKey: "banner.hero_slides.laptop.cta",
     ctaPath: "/laptops",
     accent: "from-violet-900/70 via-violet-800/40 to-transparent",
   },
   {
     id: 3,
     image: banner3,
-    title: "Flash Deal Hôm Nay",
-    subtitle: "Giảm đến 40% · Số lượng có hạn",
-    ctaLabel: "Săn deal ngay",
+    titleKey: "banner.hero_slides.flash_deal.title",
+    subtitleKey: "banner.hero_slides.flash_deal.subtitle",
+    ctaLabelKey: "banner.hero_slides.flash_deal.cta",
     ctaPath: "/deals",
-    accent: "from-rose-900/70 via-rose-800/40 to-transparent",
+    accent: "from-violet-900/75 via-violet-800/40 to-transparent",
   },
   {
     id: 4,
     image: banner4,
-    title: "Phụ Kiện Gaming",
-    subtitle: "Màn hình · Bàn phím · Chuột · Headset",
-    ctaLabel: "Mua ngay",
+    titleKey: "banner.hero_slides.accessories.title",
+    subtitleKey: "banner.hero_slides.accessories.subtitle",
+    ctaLabelKey: "banner.hero_slides.accessories.cta",
     ctaPath: "/all_products",
-    accent: "from-emerald-900/70 via-emerald-800/40 to-transparent",
+    accent: "from-violet-900/75 via-violet-800/40 to-transparent",
   },
 ];
 
@@ -44,13 +46,14 @@ const HeroBanner = ({ products = [] }) => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const intervalRef = useRef(null);
   const searchRef = useRef(null);
   const suggestionsRef = useRef(null);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 220);
+  const suggestionListId = "hero-search-suggestions";
 
   // ── Auto-play ──────────────────────────────────────────────
   const startAutoplay = useCallback(() => {
@@ -96,13 +99,6 @@ const HeroBanner = ({ products = [] }) => {
     );
     return name.includes(q);
   });
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 220);
-    return () => window.clearTimeout(timeoutId);
-  }, [searchTerm]);
 
   const visibleSuggestions = filteredProducts.slice(0, 7);
 
@@ -188,7 +184,7 @@ const HeroBanner = ({ products = [] }) => {
         >
           <img
             src={s.image}
-            alt={s.title}
+            alt={t(s.titleKey)}
             className="w-full h-full object-cover"
             loading={idx === 0 ? "eager" : "lazy"}
           />
@@ -205,22 +201,22 @@ const HeroBanner = ({ products = [] }) => {
             key={`sub-${current}`}
             className="text-white/80 text-sm font-medium tracking-wide mb-2 animate-fadeInUp"
           >
-            {slide.subtitle}
+            {t(slide.subtitleKey)}
           </p>
-          <h1
+          <h2
             key={`title-${current}`}
             className="text-white text-3xl md:text-4xl lg:text-5xl font-bold leading-tight animate-fadeInUp"
             style={{ animationDelay: "60ms" }}
           >
-            {slide.title}
-          </h1>
+            {t(slide.titleKey)}
+          </h2>
           <button
             key={`cta-${current}`}
             onClick={() => navigate(slide.ctaPath)}
             className="mt-5 inline-flex items-center gap-2 bg-white text-violet-700 font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-violet-50 transition-colors shadow-md animate-fadeInUp"
             style={{ animationDelay: "120ms" }}
           >
-            {slide.ctaLabel}
+            {t(slide.ctaLabelKey)}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -248,6 +244,15 @@ const HeroBanner = ({ products = [] }) => {
               <input
                 type="text"
                 value={searchTerm}
+                role="combobox"
+                aria-expanded={showSuggestions}
+                aria-controls={suggestionListId}
+                aria-autocomplete="list"
+                aria-activedescendant={
+                  selectedSuggestionIndex >= 0
+                    ? `${suggestionListId}-${selectedSuggestionIndex}`
+                    : undefined
+                }
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setShowSuggestions(e.target.value.trim().length > 0);
@@ -264,6 +269,7 @@ const HeroBanner = ({ products = [] }) => {
                 <button
                   onClick={() => { setSearchTerm(""); setShowSuggestions(false); }}
                   className="px-2 text-gray-400 hover:text-gray-600"
+                  aria-label={t("common.clear") || "Xóa"}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -282,6 +288,8 @@ const HeroBanner = ({ products = [] }) => {
             {showSuggestions && searchTerm.trim() && (
               <div
                 ref={suggestionsRef}
+                id={suggestionListId}
+                role="listbox"
                 className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 max-h-80 overflow-y-auto animate-fadeIn"
               >
                 {filteredProducts.length > 0 ? (
@@ -294,6 +302,9 @@ const HeroBanner = ({ products = [] }) => {
                       return (
                         <button
                           key={id}
+                          id={`${suggestionListId}-${i}`}
+                          role="option"
+                          aria-selected={i === selectedSuggestionIndex}
                           onClick={() => {
                             navigate(`/product/${id}/productAbout`);
                             setShowSuggestions(false);
@@ -312,7 +323,7 @@ const HeroBanner = ({ products = [] }) => {
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
                             <p className="text-xs text-violet-700 font-medium">
-                              {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price)}
+                              {formatCurrency(price)}
                             </p>
                           </div>
                         </button>
@@ -323,13 +334,13 @@ const HeroBanner = ({ products = [] }) => {
                         onClick={handleSearch}
                         className="w-full py-2.5 text-sm text-violet-700 font-medium text-center hover:bg-violet-50 border-t border-gray-100 transition-colors"
                       >
-                        Xem tất cả {filteredProducts.length} kết quả →
+                        {t("search.view_all_results", { count: filteredProducts.length })}
                       </button>
                     )}
                   </div>
                 ) : (
                   <div className="px-4 py-6 text-center text-sm text-gray-500">
-                    Không tìm thấy sản phẩm phù hợp
+                    {t("search.no_results")}
                   </div>
                 )}
               </div>
@@ -377,3 +388,4 @@ const HeroBanner = ({ products = [] }) => {
 };
 
 export default HeroBanner;
+

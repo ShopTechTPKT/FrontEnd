@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback, useRef } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import axios from "axios";
+import axiosInstance from "../../custom/axios";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import ChatSidebar from "../../components/Chat/ChatSidebar";
 import ChatWindow from "../../components/Chat/ChatWindow";
 import ScheduleForm from "../../components/Schedule/ScheduleForm";
-import AppointmentBookingForm from "../../components/AppointmentBookingForm"; // Import form mới
+import AppointmentBookingForm from "../../components/AppointmentBookingForm"; // Import form m?i
 import StatusNotice from "../../components/ui/StatusNotice";
 import Button from "../../components/ui/Button";
 
@@ -34,25 +34,25 @@ const CustomerServiceDashboard = () => {
   const [connected, setConnected] = useState(false);
   const [sessionLoadError, setSessionLoadError] = useState("");
 
-  // State quản lý Modal
-  const [showScheduleForm, setShowScheduleForm] = useState(false); // Form Lịch trình (Internal/Detail)
-  const [showAppointmentForm, setShowAppointmentForm] = useState(false); // Form Đặt hẹn (Booking)
+  // State qu?n l� Modal
+  const [showScheduleForm, setShowScheduleForm] = useState(false); // Form L?ch tr�nh (Internal/Detail)
+  const [showAppointmentForm, setShowAppointmentForm] = useState(false); // Form �?t h?n (Booking)
 
   const { t } = useTranslation("translation");
   const messagesEndRef = useRef(null);
 
   const loadSessions = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/chat/active`);
+      const { data } = await axiosInstance.get(`/chat/active`);
       setSessions(Array.isArray(data) ? data : []);
       setSessionLoadError("");
     } catch (err) {
-      console.error("❌ Error loading sessions:", err);
-      setSessionLoadError("Không tải được danh sách hội thoại. Vui lòng thử lại.");
+      console.error("? Error loading sessions:", err);
+      setSessionLoadError("Kh�ng t?i du?c danh s�ch h?i tho?i. Vui l�ng th? l?i.");
     }
   }, [API_URL]);
 
-  // Kết nối WebSocket
+  // K?t n?i WebSocket
   useEffect(() => {
     loadSessions();
     const socket = new SockJS(WS_URL);
@@ -66,34 +66,27 @@ const CustomerServiceDashboard = () => {
         setConnected(true);
         client.subscribe("/topic/chat/global", async msg => {
           const body = JSON.parse(msg.body);
-          console.log("📨 Received global message:", body);
-          
           if (body.type === "NEW_SESSION") {
-            console.log("🆕 New session created, reloading sessions...");
             await loadSessions();
           }
           
           if (body.type === "NEW_MESSAGE") {
             const { sessionCode, senderType, content, fileUrl } = body;
-            console.log("💬 New message received:", { sessionCode, senderType, content, fileUrl });
-
             setSessions(prev => {
               let updated = [...prev];
               const idx = updated.findIndex(s => s.sessionCode === sessionCode);
 
               if (idx !== -1) {
-                // Session đã có trong list, update nó
+                // Session d� c� trong list, update n�
                 let session = { ...updated[idx] };
-                session.lastMessage = content || (fileUrl ? "Đã gửi file" : "");
+                session.lastMessage = content || (fileUrl ? "�� g?i file" : "");
                 session.lastMessageFrom = senderType;
                 session.unread = senderType === "CUSTOMER";
 
                 updated.splice(idx, 1);
                 updated.unshift(session);
-                console.log("✅ Updated session in list:", session.sessionCode);
               } else {
-                // Session chưa có trong list, reload toàn bộ
-                console.log("⚠️ Session not found in list, reloading...");
+                // Session chua c� trong list, reload to�n b?
                 loadSessions();
               }
 
@@ -106,11 +99,10 @@ const CustomerServiceDashboard = () => {
               return updated;
             });
 
-            // Nếu đang xem session này, thêm message vào chat window
+            // N?u dang xem session n�y, th�m message v�o chat window
             if (selectedSession?.sessionCode === sessionCode) {
-              console.log("✅ Adding message to chat window");
               setMessages(prev => {
-                // Tránh duplicate messages
+                // Tr�nh duplicate messages
                 if (prev.some(m => 
                   m.id === body.id || 
                   (m.senderType === body.senderType && 
@@ -118,7 +110,6 @@ const CustomerServiceDashboard = () => {
                    ((m.content === body.content && !body.fileUrl) || (m.fileUrl === body.fileUrl)) &&
                    Math.abs(new Date(m.sentAt) - new Date(body.sentAt)) < 1000)
                 )) {
-                  console.log("⚠️ Duplicate message, skipping");
                   return prev;
                 }
                 return [...prev, body];
@@ -128,41 +119,41 @@ const CustomerServiceDashboard = () => {
         });
       },
       error => {
-        console.error("❌ WebSocket failed:", error);
+        console.error("? WebSocket failed:", error);
         setConnected(false);
       }
     );
 
     return () => {
       if (client.connected)
-        client.disconnect(() => console.log("🔌 Disconnected"));
+        client.disconnect(() => console.log("?? Disconnected"));
     };
   }, [WS_URL, loadSessions, selectedSession]);
 
-  // Refresh mỗi 15s
+  // Refresh m?i 15s
   useEffect(() => {
     const interval = setInterval(() => loadSessions(), 15000);
     return () => clearInterval(interval);
   }, [loadSessions]);
 
-  // Khi chọn session
+  // Khi ch?n session
   const handleSelectSession = async session => {
     try {
       setSelectedSession(session);
-      await axios.put(`${API_URL}/chat/${session.id}/read`);
+      await axiosInstance.put(`/chat/${session.id}/read`);
 
       setSessions(prev =>
         prev.map(s => (s.id === session.id ? { ...s, unread: false } : s))
       );
 
-      const res = await axios.get(`${API_URL}/chat/${session.id}/messages`);
+      const res = await axiosInstance.get(`/chat/${session.id}/messages`);
       setMessages(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("❌ Error selecting session:", err);
+      console.error("? Error selecting session:", err);
     }
   };
 
-  // Gửi tin nhắn
+  // G?i tin nh?n
   const handleSend = e => {
     e.preventDefault();
     if (!input.trim() || !stompClient || !selectedSession) return;
@@ -197,7 +188,7 @@ const CustomerServiceDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-violet-900 to-violet-600 text-white shadow-sm">
-                <span className="text-xl">💬</span>
+                <span className="text-xl">??</span>
               </div>
               <div>
                 <h1 className="text-xl font-semibold">
@@ -212,14 +203,14 @@ const CustomerServiceDashboard = () => {
                   {connected
                     ? t("dashboard.connected")
                     : t("dashboard.disconnected")}{" "}
-                  • {sessions.length} {t("dashboard.active_sessions")}
+                  � {sessions.length} {t("dashboard.active_sessions")}
                 </p>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
-              {/* Nút Đặt lịch hẹn (Booking Form) */}
+              {/* N�t �?t l?ch h?n (Booking Form) */}
               <Button
                 onClick={() => setShowAppointmentForm(true)}
                 variant="primary"
@@ -242,7 +233,7 @@ const CustomerServiceDashboard = () => {
                 {t("dashboard.btn_book_appointment")}
               </Button>
 
-              {/* Nút Lịch trình (Schedule Form - cho session hiện tại) */}
+              {/* N�t L?ch tr�nh (Schedule Form - cho session hi?n t?i) */}
               <Button
                 onClick={() => setShowScheduleForm(true)}
                 variant="outline"
@@ -265,7 +256,7 @@ const CustomerServiceDashboard = () => {
                 {t("dashboard.btn_schedule")}
               </Button>
 
-              {/* Nút Hỏi đáp sản phẩm */}
+              {/* N�t H?i d�p s?n ph?m */}
               <Button
                 onClick={() => navigate("/products")}
                 variant="outline"
@@ -285,7 +276,7 @@ const CustomerServiceDashboard = () => {
                   </svg>
                 }
               >
-                Hỏi đáp sản phẩm
+                H?i d�p s?n ph?m
               </Button>
             </div>
           </div>
@@ -295,9 +286,9 @@ const CustomerServiceDashboard = () => {
           <div className="px-6 pt-4">
             <StatusNotice
               tone="warning"
-              title="Mất kết nối dữ liệu"
+              title="M?t k?t n?i d? li?u"
               message={sessionLoadError}
-              actionText="Thử lại"
+              actionText="Th? l?i"
               onAction={loadSessions}
             />
           </div>
@@ -320,7 +311,7 @@ const CustomerServiceDashboard = () => {
         ) : (
           <div className="flex flex-col items-center justify-center flex-1 text-center px-8">
             <div className="w-24 h-24 mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center text-5xl shadow-sm">
-              💬
+              ??
             </div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               {t("dashboard.welcome_title")}
@@ -332,7 +323,7 @@ const CustomerServiceDashboard = () => {
         )}
       </div>
 
-      {/* 1. Form Lịch trình (ScheduleForm) - Dùng để xem/sửa chi tiết dựa trên session */}
+      {/* 1. Form L?ch tr�nh (ScheduleForm) - D�ng d? xem/s?a chi ti?t d?a tr�n session */}
       {showScheduleForm && (
         <ScheduleForm
           onClose={() => setShowScheduleForm(false)}
@@ -340,7 +331,7 @@ const CustomerServiceDashboard = () => {
         />
       )}
 
-      {/* 2. Form Đặt hẹn (AppointmentBookingForm) - Dùng để tạo mới hoàn toàn */}
+      {/* 2. Form �?t h?n (AppointmentBookingForm) - D�ng d? t?o m?i ho�n to�n */}
       <AppointmentBookingForm
         isOpen={showAppointmentForm}
         onClose={() => setShowAppointmentForm(false)}

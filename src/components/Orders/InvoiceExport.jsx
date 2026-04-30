@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import formatCurrency from '../../utils/formatCurrency';
 
 /**
  * Handles generating and downloading a PDF invoice for a specific order.
@@ -22,9 +23,6 @@ export const downloadInvoice = async (order, customerName) => {
     ? new Date(order.createdDate).toLocaleDateString('vi-VN') 
     : 'N/A';
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price || 0);
-  };
 
   // Build the invoice HTML structure
   invoiceElement.innerHTML = `

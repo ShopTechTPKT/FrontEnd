@@ -44,7 +44,6 @@ const GlobalWebSocketNotification = () => {
       stompClient.connect(
         {},
         (frame) => {
-          console.log('✅ Global Notification WebSocket Connected');
           retryCount = 0;
           
           // Subscribe to global notifications
@@ -105,7 +104,6 @@ const GlobalWebSocketNotification = () => {
       // Avoid InvalidStateError when unmount happens before STOMP handshake finishes.
       if (stompClient && stompClient.connected) {
         stompClient.disconnect(() => {
-          console.log('🛑 Global Notification WebSocket Disconnected');
         });
       } else if (socket) {
         try {

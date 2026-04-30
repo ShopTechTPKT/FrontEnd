@@ -1,6 +1,5 @@
 import "./App.css";
 import AppRouter from "./router/AppRouter";
-import { Router } from "react-router-dom";
 import { UserProvider } from "./context/UserContext";
 import { Provider } from "react-redux";
 import store from "./utils/redux/store";
@@ -20,7 +19,7 @@ function App() {
           <ChatWidget />
           <GlobalWebSocketNotification />
           <ToastContainer
-            position="top-right"
+            position="bottom-right"
             autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
@@ -29,7 +28,10 @@ function App() {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="light"
+            theme="colored"
+            limit={3}
+            toastClassName="shop-toast"
+            progressClassName="shop-toast-progress"
           />
         </Provider>
       </UserProvider>

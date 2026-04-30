@@ -1,5 +1,4 @@
-﻿import { useState } from 'react';
-import { FaClock, FaUser, FaComment, FaArrowRight, FaSearch, FaEye } from 'react-icons/fa';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Blog = () => {
@@ -208,7 +207,7 @@ const Blog = () => {
           {/* Search */}
           <div className="max-w-xl mx-auto">
             <div className="relative">
-              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <IcSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder={t('blog.search_placeholder')}
@@ -273,20 +272,20 @@ const Blog = () => {
               </p>
               <div className="flex items-center gap-4 text-gray-500 text-sm mb-4">
                 <div className="flex items-center gap-1">
-                  <FaUser className="text-xs" />
+                  <IcUser className="text-xs" />
                   <span>{featuredPost.author}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <FaClock className="text-xs" />
+                  <IcClock className="text-xs" />
                   <span>{featuredPost.date}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <FaEye className="text-xs" />
+                  <IcEye className="text-xs" />
                   <span>{featuredPost.views?.toLocaleString('vi-VN')}</span>
                 </div>
               </div>
               <button className="inline-flex items-center gap-2 text-gray-700 font-medium">
-                {t('blog.read_more')} <FaArrowRight />
+                {t('blog.read_more')} <IcArrowRight />
               </button>
             </div>
           </div>
@@ -326,15 +325,15 @@ const Blog = () => {
 
                 <div className="flex items-center gap-3 text-gray-500 text-xs mb-3 pb-3 border-b border-gray-100">
                   <div className="flex items-center gap-1">
-                    <FaUser />
+                    <IcUser className="w-3 h-3" />
                     <span>{post.author}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <FaClock />
+                    <IcClock className="w-3 h-3" />
                     <span>{post.readTime}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <FaEye />
+                    <IcEye className="w-3 h-3" />
                     <span>{post.views?.toLocaleString('vi-VN')}</span>
                   </div>
                 </div>
@@ -342,7 +341,7 @@ const Blog = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500 text-xs">{post.date}</span>
                   <button className="inline-flex items-center gap-1 text-gray-700 font-medium text-sm">
-                    {t('blog.read')} <FaArrowRight />
+                    {t('blog.read')} <IcArrowRight className="w-3 h-3" />
                   </button>
                 </div>
               </div>
@@ -371,5 +370,37 @@ const Blog = () => {
     </div>
   );
 };
+
+// SVG Icons
+const IcClock = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+const IcUser = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+  </svg>
+);
+
+const IcArrowRight = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+  </svg>
+);
+
+const IcSearch = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+  </svg>
+);
+
+const IcEye = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  </svg>
+);
 
 export default Blog;

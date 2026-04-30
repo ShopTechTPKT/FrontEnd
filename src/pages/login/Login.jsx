@@ -87,7 +87,6 @@ const App = () => {
               className="bg-gray-900 text-white px-8 py-2 rounded-md uppercase text-sm font-semibold mt-2 hover:bg-gray-800 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
-                console.log("Sign Up");
               }}
             >
               Sign Up

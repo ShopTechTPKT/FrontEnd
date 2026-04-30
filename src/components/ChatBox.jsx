@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, memo, useContext } from "react";
+import React, { useState, useEffect, useRef, memo, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
 const ChatBox = () => {
@@ -478,13 +478,11 @@ const handleImageUpload = async (file) => {
 const handleCompareImages = async (images) => {
   // ✅ VALIDATION chặt chẽ hơn
   if (!images || images.length === 0) {
-    console.log("❌ No images provided for comparison");
     alert("Vui lòng chọn ảnh để so sánh!");
     return;
   }
 
   if (images.length !== 2) {
-    console.log("❌ Invalid number of images:", images.length);
     alert("Vui lòng chọn đúng 2 ảnh để so sánh!");
     return;
   }
@@ -492,12 +490,9 @@ const handleCompareImages = async (images) => {
   // ✅ KIỂM TRA file validity
   const validImages = images.filter(img => img instanceof File && img.type.startsWith('image/'));
   if (validImages.length !== 2) {
-    console.log("❌ Invalid image files");
     alert("Vui lòng chọn file ảnh hợp lệ!");
     return;
   }
-
-  console.log("✅ Starting comparison with 2 valid images");
   setIsUploading(true);
   
   const formData = new FormData();
@@ -548,8 +543,6 @@ const handleCompareImages = async (images) => {
     }
 
     setMessages((prev) => [...prev, { text: botMessage, sender: "bot" }]);
-    
-    console.log("✅ Comparison completed successfully");
   } catch (error) {
     console.error("❌ Comparison error:", error);
     setMessages((prev) => [
@@ -562,7 +555,6 @@ const handleCompareImages = async (images) => {
     setSelectedImages([]);
     setShowImagePreview(false);
     setCompareMode(false);
-    console.log("🧹 Cleanup completed");
   }
 };
 
@@ -572,7 +564,6 @@ const handleFileSelect = (e, multiple = false) => {
   
   // ✅ KIỂM TRA files có tồn tại không
   if (files.length === 0) {
-    console.log("No files selected");
     return; // ✅ RETURN sớm nếu không có file
   }
   
@@ -760,7 +751,6 @@ const ImagePreviewModal = () => (
             <div className="flex space-x-3">
               <button
                 onClick={() => {
-                  console.log("🚫 User cancelled comparison");
                   setShowImagePreview(false);
                   setSelectedImages([]);
                   setCompareMode(false); // ✅ Reset compare mode
@@ -771,7 +761,6 @@ const ImagePreviewModal = () => (
               </button>
               <button
                 onClick={() => {
-                  console.log("✅ User confirmed comparison with", selectedImages.length, "images");
                   handleCompareImages(selectedImages);
                 }}
                 className={`flex-1 py-2 ${theme.buttonBg} ${theme.textPrimary} rounded-lg ${theme.buttonHover} transition-all`}
@@ -872,10 +861,10 @@ const ImagePreviewModal = () => (
 
         {/* Chat window */}
         {open && (
-          <div className="fixed bottom-4 right-4 w-[380px] h-[550px] flex flex-col rounded-3xl shadow-xl overflow-hidden bg-white border border-gray-200">
+          <div className="fixed bottom-4 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[380px] h-[clamp(400px,70vh,600px)] flex flex-col rounded-3xl shadow-xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
             
             {/* Header */}
-            <div className="relative px-6 py-5 bg-gradient-to-r from-violet-50 via-fuchsia-50 to-white border-b border-gray-200">
+            <div className="relative px-6 py-5 bg-gradient-to-r from-violet-50 via-fuchsia-50 to-white dark:from-violet-900/40 dark:via-fuchsia-900/20 dark:to-gray-900 border-b border-gray-200 dark:border-gray-800">
               <div className="relative z-10 flex justify-between items-center">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm ring-1 ring-gray-200">
@@ -886,8 +875,8 @@ const ImagePreviewModal = () => (
   />
 </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Hỗ trợ khách hàng</h2>
-                    <p className="text-xs text-gray-600">Luôn sẵn sàng hỗ trợ bạn</p>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Hỗ trợ khách hàng</h2>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Luôn sẵn sàng hỗ trợ bạn</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -914,9 +903,9 @@ const ImagePreviewModal = () => (
             </div>
 
             {/* Enhanced Chat content */}
-            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white" ref={messagesEndRef} >
+            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar bg-white dark:bg-gray-900" ref={messagesEndRef} >
               {messages.length === 0 && (
-                <div className="bg-gray-50 text-gray-800 p-6 rounded-2xl border border-gray-200 text-center animate-fadeIn">
+                <div className="bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 text-center animate-fadeIn">
                   <div className="mb-4">
                     <span className="text-4xl">👋</span>
                   </div>
@@ -943,12 +932,12 @@ const ImagePreviewModal = () => (
             </div>
 
             {/* Enhanced Input section with glassmorphism and image upload */}
-            <div className="p-4 border-t border-gray-200 bg-white">
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
   <div className="flex items-center space-x-3">
     <div className="flex-1 relative">
       <input
         type="text"
-        className="w-full rounded-full px-5 py-3 pr-20 text-sm bg-gray-50/60 border border-gray-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all duration-200 placeholder-gray-500"
+        className="w-full rounded-full px-5 py-3 pr-20 text-sm bg-gray-50/60 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white focus:bg-white dark:focus:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all duration-200 placeholder-gray-500 dark:placeholder-gray-400"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Nhập tin nhắn của bạn..."

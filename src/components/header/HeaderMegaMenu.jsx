@@ -1,7 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { getMegaMenuSections } from "./navData";
-import { IconChevronDown } from "./HeaderIcons";
+import msiSeries from "../../assets/images/msi_series.jpg";
+import msiMonitor from "../../assets/images/msi_monitor.jpg";
+import customBuild from "../../assets/images/custom_buid.webp";
 
 /**
  * HeaderMegaMenu — Desktop product mega menu (4-column grid).
@@ -10,35 +12,93 @@ import { IconChevronDown } from "./HeaderIcons";
 function HeaderMegaMenu({ onNavigate }) {
   const { t } = useTranslation();
   const sections = getMegaMenuSections();
+  const prefetchedRef = React.useRef(false);
 
   const itemClass =
     "block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors";
 
+  const previewCards = [
+    {
+      key: "laptop",
+      title: t("categories.laptops"),
+      subtitle: t("categories.allLaptops"),
+      image: msiSeries,
+      list: sections[0]?.items?.[0]?.list || [],
+    },
+    {
+      key: "monitor",
+      title: t("categories.monitor"),
+      subtitle: t("nav.hotBadge"),
+      image: msiMonitor,
+      list: sections[2]?.items?.[0]?.list || [],
+    },
+    {
+      key: "builder",
+      title: t("nav.pcBuilder"),
+      subtitle: t("categories.customBuilds") || "Custom build",
+      image: customBuild,
+      to: "/pc-builder",
+    },
+  ];
+
+  const handlePrefetch = () => {
+    if (prefetchedRef.current) return;
+    prefetchedRef.current = true;
+    import("../../pages/All_Products/All_Products");
+  };
+
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[680px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+    <div
+      className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[820px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+      onMouseEnter={handlePrefetch}
+    >
       <div className="bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 p-5">
-        <div className="grid grid-cols-4 gap-5">
-          {sections.map((section) => (
-            <div key={section.titleKey}>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
-                {t(section.titleKey)}
-              </h3>
-              {section.items.map((item, idx) => (
-                <button
-                  key={idx}
-                  onClick={() =>
-                    onNavigate("/products", {
-                      list: item.list,
-                      ...(item.brand && { brand: item.brand }),
-                    })
+        <div className="grid grid-cols-[2fr_1fr] gap-5">
+          <div className="grid grid-cols-4 gap-5">
+            {sections.map((section) => (
+              <div key={section.titleKey}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
+                  {t(section.titleKey)}
+                </h3>
+                {section.items.map((item, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() =>
+                      onNavigate("/products", {
+                        list: item.list,
+                        ...(item.brand && { brand: item.brand }),
+                      })
+                    }
+                    className={itemClass}
+                  >
+                    {t(item.labelKey)}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-3">
+            {previewCards.map((card) => (
+              <button
+                key={card.key}
+                onClick={() => {
+                  if (card.to) {
+                    onNavigate(card.to);
+                    return;
                   }
-                  className={itemClass}
-                >
-                  {t(item.labelKey)}
-                </button>
-              ))}
-            </div>
-          ))}
+                  onNavigate("/products", { list: card.list });
+                }}
+                className="w-full text-left rounded-lg border border-gray-100 hover:border-violet-200 hover:bg-violet-50/40 transition-colors overflow-hidden"
+              >
+                <img src={card.image} alt={card.title} className="h-20 w-full object-cover" loading="lazy" />
+                <div className="p-2.5">
+                  <p className="text-xs font-semibold text-gray-900">{card.title}</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5">{card.subtitle}</p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getMegaMenuSections, getSupportLinks } from "./navData";
@@ -22,6 +22,8 @@ function HeaderMobileMenu({
   const { t } = useTranslation();
   const [showProducts, setShowProducts] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
+  const touchStartX = useRef(null);
+  const touchCurrentX = useRef(null);
 
   if (!isOpen) return null;
 
@@ -41,6 +43,31 @@ function HeaderMobileMenu({
       active ? "text-violet-700 bg-violet-50" : "text-gray-700 hover:bg-gray-50"
     }`;
 
+  const getSectionIcon = (titleKey) => {
+    if (titleKey === "categories.laptops") return "💻";
+    if (titleKey === "categories.gamingGear") return "🎮";
+    if (titleKey === "categories.pcParts") return "🧩";
+    if (titleKey === "categories.smartDevice") return "📱";
+    return "•";
+  };
+
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const onTouchMove = (e) => {
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (touchStartX.current == null || touchCurrentX.current == null) return;
+    const deltaX = touchCurrentX.current - touchStartX.current;
+    if (deltaX > 70) onClose(); // swipe right to close
+    touchStartX.current = null;
+    touchCurrentX.current = null;
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -48,11 +75,16 @@ function HeaderMobileMenu({
         type="button"
         className="lg:hidden fixed inset-0 bg-black/20 z-40"
         onClick={onClose}
-        aria-label="Đóng menu"
+        aria-label={t("header.closeMenu") || "Đóng menu"}
       />
 
       {/* Menu panel */}
-      <div className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-200 bg-white shadow-lg z-50">
+      <div
+        className="lg:hidden absolute top-full left-0 right-0 border-t border-gray-200 bg-white shadow-lg z-50 animate-slideInRight"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-4 py-3 space-y-1">
           {/* Home */}
           <Link to="/" onClick={onClose} className={mobileLinkClass(isActive("/"))}>
@@ -65,17 +97,26 @@ function HeaderMobileMenu({
               type="button"
               className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               onClick={() => setShowProducts((prev) => !prev)}
+              aria-expanded={showProducts}
+              aria-controls="mobile-products-panel"
             >
               <span>{t("nav.products")}</span>
               <IconChevronDown
                 className={`w-3 h-3 transition-transform duration-200 ${showProducts ? "rotate-180" : ""}`}
               />
             </button>
-            {showProducts && (
-              <div className="border-t border-gray-100 bg-gray-50/50 px-3 py-3 space-y-3">
+            <div
+              id="mobile-products-panel"
+              className={`grid transition-all duration-300 ease-in-out ${
+                showProducts ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="border-t border-gray-100 bg-gray-50/50 px-3 py-3 space-y-3">
                 {sections.map((section) => (
                   <div key={section.titleKey}>
-                    <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">
+                    <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5 flex items-center gap-1.5">
+                      <span aria-hidden>{getSectionIcon(section.titleKey)}</span>
                       {t(section.titleKey)}
                     </h3>
                     <div className="space-y-0.5">
@@ -97,7 +138,8 @@ function HeaderMobileMenu({
                   </div>
                 ))}
               </div>
-            )}
+              </div>
+            </div>
           </div>
 
           {/* Deals */}
@@ -123,14 +165,22 @@ function HeaderMobileMenu({
               type="button"
               className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               onClick={() => setShowSupport((prev) => !prev)}
+              aria-expanded={showSupport}
+              aria-controls="mobile-support-panel"
             >
               <span>{t("nav.support")}</span>
               <IconChevronDown
                 className={`w-3 h-3 transition-transform duration-200 ${showSupport ? "rotate-180" : ""}`}
               />
             </button>
-            {showSupport && (
-              <div className="border-t border-gray-100 bg-gray-50/50 p-2 space-y-0.5">
+            <div
+              id="mobile-support-panel"
+              className={`grid transition-all duration-300 ease-in-out ${
+                showSupport ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="border-t border-gray-100 bg-gray-50/50 p-2 space-y-0.5">
                 {supportLinks.map((link) => (
                   <Link
                     key={link.to}
@@ -151,7 +201,8 @@ function HeaderMobileMenu({
                   </Link>
                 )}
               </div>
-            )}
+              </div>
+            </div>
           </div>
 
           {/* Account Section */}

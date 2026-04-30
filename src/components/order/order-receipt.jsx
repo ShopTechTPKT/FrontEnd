@@ -1,6 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
 const OrderReceipt = ({ order }) => {
   const { t } = useTranslation();
@@ -19,12 +20,7 @@ const OrderReceipt = ({ order }) => {
     shippingMethod,
   } = order;
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
-  };
+
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto my-8 print:shadow-none">

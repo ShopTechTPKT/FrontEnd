@@ -1,18 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getAllProducts } from '../../services/MockProductService';
-import { useTranslation } from 'react-i18next';
+import axiosInstance from '../../custom/axios';
 
-// Thực hiện fetch sản phẩm từ Mock Data
+/**
+ * fetchProducts — fetches all products from the real API.
+ * Previously used MockProductService; now uses axiosInstance.
+ */
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async () => {
-    const response = await getAllProducts();
-    if (response.EC !== 1) {
-      throw new Error("Failed to fetch products");
-    }
-    return response.DT.map((item) => ({
+    const response = await axiosInstance.get('/products');
+    const data = response.data?.result || response.data || [];
+    const items = Array.isArray(data) ? data : [];
+    return items.map((item) => ({
       ...item,
-      inStock: item.stock > 0 ? true : false,
+      inStock: (item.stock ?? item.stockQuantity ?? item.quantity ?? 1) > 0,
     }));
   }
 );
@@ -29,6 +30,7 @@ const productsSlice = createSlice({
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.products = action.payload;
@@ -42,7 +44,3 @@ const productsSlice = createSlice({
 });
 
 export default productsSlice.reducer;
-
-// Updated: 2025-10-12T16:06:26.954Z
-
-// Updated: 2025-10-12T16:09:04.968Z

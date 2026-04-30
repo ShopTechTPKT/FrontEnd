@@ -1,9 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../custom/axios";
 import { useTranslation } from "react-i18next";
 
 const ScheduleForm = ({ onClose, defaultInfo }) => {
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
 
   const [form, setForm] = useState({
     name: defaultInfo?.guestName || "",
@@ -46,15 +45,11 @@ const ScheduleForm = ({ onClose, defaultInfo }) => {
         userId: null,
       };
 
-      console.log("📤 Gửi dữ liệu đặt lịch:", payload);
 
-      const response = await axios.post(`${API_URL}/appointments`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
 
-      console.log("✅ Phản hồi từ server:", response.data);
+      const response = await axiosInstance.post(`/appointments`, payload);
+
+
       alert(t("scheduleForm.success_message"));
       onClose();
     } catch (err) {
