@@ -35,7 +35,6 @@ const ReviewsTable = ({ theme }) => {
     try {
       setLoading(true);
       const data = await fetchReviews();
-      console.log('Reviews data:', data);
       setReviews(data);
       setError(null);
     } catch (error) {

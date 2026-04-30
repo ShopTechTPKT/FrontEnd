@@ -100,8 +100,6 @@ const DiscountsTable = ({ theme }) => {
         default:
           data = await fetchDiscounts();
       }
-
-      console.log('Discounts data:', data);
       setDiscounts(data);
       setError(null);
     } catch (error) {

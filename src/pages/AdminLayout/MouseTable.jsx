@@ -1,8 +1,9 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
-// Ánh xạ categoryID với tên hãng cho danh mục Mice
+// �nh x? categoryID v?i t�n h�ng cho danh m?c Mice
 const CATEGORY_BRAND_MAPPING = {
 6: 'Dareu',
   7: 'MSI',
@@ -73,13 +74,13 @@ const MouseForm = ({
 
     try {
       if (!formData.categoryId || !validCategoryIds.includes(parseInt(formData.categoryId))) {
-        throw new Error('Vui lòng chọn một hãng hợp lệ');
+        throw new Error('Vui l�ng ch?n m?t h�ng h?p l?');
       }
       if (isNaN(parseFloat(formData.unitPrice)) || parseFloat(formData.unitPrice) < 0) {
-        throw new Error('Giá phải là số dương');
+        throw new Error('Gi� ph?i l� s? duong');
       }
       if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
-        throw new Error('Số lượng tồn kho phải là số không âm');
+        throw new Error('S? lu?ng t?n kho ph?i l� s? kh�ng �m');
       }
 
       const productData = {
@@ -98,7 +99,7 @@ const MouseForm = ({
       setFormData((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message || 'Không thể lưu chuột',
+        error: error.message || 'Kh�ng th? luu chu?t',
       }));
     }
   };
@@ -206,7 +207,7 @@ const MouseForm = ({
                 <option value="">{t('admin.chn_hng')}</option>
                 {validCategoryIds.map((id) => (
                   <option key={id} value={id}>
-                    {CATEGORY_BRAND_MAPPING[id] || `Danh mục ${id}`}
+                    {CATEGORY_BRAND_MAPPING[id] || `Danh m?c ${id}`}
                   </option>
                 ))}
               </select>
@@ -217,7 +218,7 @@ const MouseForm = ({
               <div className="relative">
                 <input
                   type="text"
-                  value={formData.imageUrl || 'Chọn hình ảnh'}
+                  value={formData.imageUrl || 'Ch?n h�nh ?nh'}
                   onClick={() => setShowImagePicker(true)}
                   onChange={handleChange}
                   name="imageUrl"
@@ -246,7 +247,7 @@ const MouseForm = ({
                   onClick={() => setShowImagePicker(false)}
                   className="text-gray-400 hover:text-gray-200"
                 >
-                  ✕
+                  ?
                 </button>
               </div>
               <div className="relative mb-4">
@@ -280,7 +281,7 @@ const MouseForm = ({
                   ))
                 ) : (
                   <div className="col-span-3 text-center text-gray-400">
-                    Không tìm thấy hình ảnh
+                    Kh�ng t�m th?y h�nh ?nh
                   </div>
                 )}
               </div>
@@ -300,7 +301,7 @@ const MouseForm = ({
               className={`px-4 py-2 rounded-lg transition-colors flex items-center ${currentTheme.buttonPrimary}`}
             >
               {formData.isLoading && <Loader2 size={18} className="animate-spin mr-2" />}
-              Lưu
+              Luu
             </button>
           </div>
         </form>
@@ -309,7 +310,7 @@ const MouseForm = ({
   );
 };
 
-// Component bảng danh sách mice
+// Component b?ng danh s�ch mice
 const MouseTable = memo(
   ({
     activeMenu,
@@ -333,8 +334,6 @@ const MouseTable = memo(
     });
     const [localMouses, setLocalMouses] = useState(mouses);
     const [isSynced, setIsSynced] = useState(true);
-console.log(deleteProduct);
-
     useEffect(() => {
       if (isSynced) {
         setLocalMouses(mouses);
@@ -354,10 +353,7 @@ console.log(deleteProduct);
 
     const formatPrice = (price) => {
       if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
+      return formatCurrency(price);
     };
 
     const filteredMouses = searchTerm.trim() === ''
@@ -417,7 +413,7 @@ console.log(deleteProduct);
         if (formState.formType === 'add') {
           const newProduct = await createProduct(productData);
           if (!newProduct.id && !newProduct.productID) {
-            throw new Error('API không trả về ID sản phẩm');
+            throw new Error('API kh�ng tr? v? ID s?n ph?m');
           }
           setLocalMouses((prev) => [
             ...prev,
@@ -444,7 +440,7 @@ console.log(deleteProduct);
         setIsLoading(false);
       } catch (error) {
         console.error('Error saving mouse:', error);
-        setError(error.message || 'Không thể lưu chuột');
+        setError(error.message || 'Kh�ng th? luu chu?t');
         setIsLoading(false);
         throw error;
       }
@@ -460,7 +456,7 @@ console.log(deleteProduct);
               className="ml-auto text-white hover:text-gray-200"
               onClick={() => setError(null)}
             >
-              ✕
+              ?
             </button>
           </div>
         )}
@@ -553,7 +549,7 @@ console.log(deleteProduct);
                       {mouse.name || 'N/A'}
                     </td>
                     <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                      <div className="max-w-xs truncate">{mouse.description || 'Không có mô tả'}</div>
+                      <div className="max-w-xs truncate">{mouse.description || 'Kh�ng c� m� t?'}</div>
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
                       {formatPrice(mouse.unitPrice)}
@@ -585,7 +581,7 @@ console.log(deleteProduct);
             mouse={formState.currentMouse}
             onSave={handleSave}
             onCancel={() => setFormState((prev) => ({ ...prev, isOpen: false }))}
-            formTitle={formState.formType === 'add' ? 'Thêm Chuột mới' : 'Chỉnh sửa Chuột'}
+            formTitle={formState.formType === 'add' ? 'Th�m Chu?t m?i' : 'Ch?nh s?a Chu?t'}
             theme={theme}
             validCategoryIds={validCategoryIds}
             images={images}
@@ -600,3 +596,4 @@ export default MouseTable;
 // Updated: 2025-10-12T16:06:43.871Z
 
 // Updated: 2025-10-12T16:09:08.798Z
+

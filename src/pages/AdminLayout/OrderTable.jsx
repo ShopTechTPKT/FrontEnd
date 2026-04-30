@@ -1,16 +1,17 @@
-﻿import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { ImageOff, Search, FileDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 import { downloadInvoice } from '../../components/Orders/InvoiceExport';
 
 // OrderTable - Displays a list of orders with search and status update functionality
 const OrderTable = memo(({ orders = [], theme = 'dark', updateOrderStatus, getOrderById }) => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [localOrders, setLocalOrders] = useState(orders); // State nội bộ
+  const [localOrders, setLocalOrders] = useState(orders); // State n?i b?
   const [customerNames, setCustomerNames] = useState({}); // Store customer names by userId
 
-  // Đồng bộ localOrders với orders từ props khi orders thay đổi
+  // �?ng b? localOrders v?i orders t? props khi orders thay d?i
   useEffect(() => {
     setLocalOrders(orders);
   }, [orders]);
@@ -31,7 +32,6 @@ const OrderTable = memo(({ orders = [], theme = 'dark', updateOrderStatus, getOr
             names[userId] = userData.fullName || userData.name || 'Unknown';
           }
         } catch (error) {
-          console.log(`Error fetching user ${userId}:`, error);
           names[userId] = 'Unknown';
         }
       }
@@ -43,11 +43,6 @@ const OrderTable = memo(({ orders = [], theme = 'dark', updateOrderStatus, getOr
       fetchCustomerNames();
     }
   }, [orders]);
-console.log('OrderTable - orders data:', orders);
-console.log('OrderTable - getOrderById:', getOrderById);
-console.log('OrderTable - first order status:', orders[0]?.status);
-console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order.id, status: order.status })));
-
   // Filter orders based on search term
   const filteredOrders = searchTerm.trim() === ''
     ? localOrders
@@ -119,14 +114,14 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
   const handleStatusChange = async (orderId, newStatus) => {
     if (!orderId) {
       console.error('Order ID is undefined');
-      alert('Không thể cập nhật trạng thái: Order ID không hợp lệ.');
+      alert('Kh�ng th? c?p nh?t tr?ng th�i: Order ID kh�ng h?p l?.');
       return;
     }
 
-    // Lưu trạng thái hiện tại để rollback nếu cần
+    // Luu tr?ng th�i hi?n t?i d? rollback n?u c?n
     const previousOrders = [...localOrders];
 
-    // Optimistic update: Cập nhật giao diện ngay lập tức
+    // Optimistic update: C?p nh?t giao di?n ngay l?p t?c
     setLocalOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === orderId ? { ...order, status: newStatus } : order
@@ -135,13 +130,13 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
 
     if (updateOrderStatus) {
       try {
-        // Gọi API để cập nhật
+        // G?i API d? c?p nh?t
         await updateOrderStatus(orderId, newStatus);
-        // Sau khi API thành công, không cần làm gì thêm vì useEffect sẽ đồng bộ với orders từ props
+        // Sau khi API th�nh c�ng, kh�ng c?n l�m g� th�m v� useEffect s? d?ng b? v?i orders t? props
       } catch (error) {
         console.error(`Failed to update order ${orderId}:`, error);
-        alert('Cập nhật trạng thái thất bại. Vui lòng thử lại.');
-        // Rollback giao diện về trạng thái trước đó
+        alert('C?p nh?t tr?ng th�i th?t b?i. Vui l�ng th? l?i.');
+        // Rollback giao di?n v? tr?ng th�i tru?c d�
         setLocalOrders(previousOrders);
       }
     }
@@ -197,7 +192,7 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
                 <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.order_date')}</th>
                 <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.total_amount')}</th>
                 <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.status')}</th>
-                <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Hóa Đơn</th>
+                <th className="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">H�a �on</th>
               </tr>
             </thead>
             <tbody>
@@ -223,10 +218,7 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
                   </td>
                   <td className={`px-6 py-4 text-sm font-semibold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
                     {order.totalPrice != null
-                      ? new Intl.NumberFormat('vi-VN', {
-                          style: 'currency',
-                          currency: 'VND',
-                        }).format(order.totalPrice)
+                      ? formatCurrency(order.totalPrice)
                       : '0.00'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -247,10 +239,10 @@ console.log('OrderTable - all order statuses:', orders.map(order => ({ id: order
                     <button
                       onClick={() => downloadInvoice(order, customerNames[order.userId])}
                       className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium rounded-lg transition-colors border border-indigo-200"
-                      title="Xuất PDF"
+                      title="Xu?t PDF"
                     >
                       <FileDown size={16} />
-                      Xuất
+                      Xu?t
                     </button>
                   </td>
                 </tr>
@@ -267,3 +259,4 @@ export default OrderTable;
 // Updated: 2025-10-12T16:06:41.992Z
 
 // Updated: 2025-10-12T16:09:03.270Z
+

@@ -1,3 +1,4 @@
+import formatCurrency from "../../utils/formatCurrency";
 import { useEffect, useMemo, useState } from "react";
 import {
   ResponsiveContainer,
@@ -59,12 +60,7 @@ const formatVndCompact = (value) =>
     maximumFractionDigits: 1,
   }).format(Number(value) || 0);
 
-const formatVnd = (value) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(Number(value) || 0);
+const formatVnd = formatCurrency;
 
 export default function AnalyticsDashboard() {
   const [preset, setPreset] = useState(30);

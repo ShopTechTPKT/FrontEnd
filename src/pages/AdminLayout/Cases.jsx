@@ -1,6 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
 // Form component for adding/editing cases
 const CaseForm = ({
@@ -61,13 +62,13 @@ const CaseForm = ({
     try {
       // Validation
       if (!formData.name) {
-        throw new Error('Tên sản phẩm là bắt buộc');
+        throw new Error('T�n s?n ph?m l� b?t bu?c');
       }
       if (isNaN(parseFloat(formData.unitPrice)) || parseFloat(formData.unitPrice) < 0) {
-        throw new Error('Giá phải là số dương');
+        throw new Error('Gi� ph?i l� s? duong');
       }
       if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
-        throw new Error('Số lượng tồn kho phải là số không âm');
+        throw new Error('S? lu?ng t?n kho ph?i l� s? kh�ng �m');
       }
 
       const productData = {
@@ -75,19 +76,16 @@ const CaseForm = ({
         description: formData.description,
         unitPrice: parseFloat(formData.unitPrice),
         quantity: parseInt(formData.quantity),
-        categoryID: 17, // categoryID cố định cho Cases
+        categoryID: 17, // categoryID c? d?nh cho Cases
         imageUrl: formData.imageUrl || null, // Include image URL (or null if not selected)
       };
-
-      console.log('Submitting productData:', productData); // Add logging
-      await onSave(productData);
       setFormData((prev) => ({ ...prev, isLoading: false }));
     } catch (error) {
       console.error('Error saving case:', error);
       setFormData((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message || 'Không thể lưu vỏ máy tính',
+        error: error.message || 'Kh�ng th? luu v? m�y t�nh',
       }));
     }
   };
@@ -188,7 +186,7 @@ const CaseForm = ({
               <div className="relative">
                 <input
                   type="text"
-                  value={formData.image || 'Chọn hình ảnh'}
+                  value={formData.image || 'Ch?n h�nh ?nh'}
                   onClick={() => setShowImagePicker(true)}
                   readOnly
                   className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input} cursor-pointer`}
@@ -215,7 +213,7 @@ const CaseForm = ({
                   onClick={() => setShowImagePicker(false)}
                   className="text-gray-400 hover:text-gray-200"
                 >
-                  ✕
+                  ?
                 </button>
               </div>
               <div className="relative mb-4">
@@ -249,7 +247,7 @@ const CaseForm = ({
                   ))
                 ) : (
                   <div className="col-span-3 text-center text-gray-400">
-                    Không tìm thấy hình ảnh
+                    Kh�ng t�m th?y h�nh ?nh
                   </div>
                 )}
               </div>
@@ -269,7 +267,7 @@ const CaseForm = ({
               className={`px-4 py-2 rounded-lg transition-colors flex items-center ${currentTheme.buttonPrimary}`}
             >
               {formData.isLoading && <Loader2 size={18} className="animate-spin mr-2" />}
-              Lưu
+              Luu
             </button>
           </div>
         </form>
@@ -278,7 +276,7 @@ const CaseForm = ({
   );
 };
 
-// Component bảng danh sách cases
+// Component b?ng danh s�ch cases
 const Cases = memo(
   ({
     activeMenu,
@@ -300,8 +298,6 @@ const Cases = memo(
     });
     const [localCases, setLocalCases] = useState(cases);
     const [isSynced, setIsSynced] = useState(true);
-    console.log(getProductById);
-
     useEffect(() => {
       if (isSynced) {
         setLocalCases(cases);
@@ -321,10 +317,7 @@ const Cases = memo(
 
     const formatPrice = (price) => {
       if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
+      return formatCurrency(price);
     };
 
     const filteredCases = searchTerm.trim() === ''
@@ -370,7 +363,6 @@ const Cases = memo(
     };
 
     const handleEdit = (caseItem) => {
-      console.log('Editing case:', caseItem);
       setFormState({
         isOpen: true,
         formType: 'edit',
@@ -382,11 +374,10 @@ const Cases = memo(
       try {
         setIsLoading(true);
         setIsSynced(false);
-        console.log('Saving productData:', productData);
         if (formState.formType === 'add') {
           const newProduct = await createProduct(productData);
           if (!newProduct.id && !newProduct.productID) {
-            throw new Error('API không trả về ID sản phẩm');
+            throw new Error('API kh�ng tr? v? ID s?n ph?m');
           }
           setLocalCases((prev) => [
             ...prev,
@@ -400,8 +391,6 @@ const Cases = memo(
           if (!productId) {
             throw new Error(t('remaining.no_product_id'));
           }
-          console.log('Updating product with ID:', productId); // Add logging
-          await updateProduct(productId, productData);
           setLocalCases((prev) =>
             prev.map((item) =>
               (item.id || item.productID) === productId
@@ -414,7 +403,7 @@ const Cases = memo(
         setIsLoading(false);
       } catch (error) {
         console.error('Error saving case:', error);
-        setError(error.message || 'Không thể lưu vỏ máy tính');
+        setError(error.message || 'Kh�ng th? luu v? m�y t�nh');
         setIsLoading(false);
         throw error;
       }
@@ -430,7 +419,7 @@ const Cases = memo(
               className="ml-auto text-white hover:text-gray-200"
               onClick={() => setError(null)}
             >
-              ✕
+              ?
             </button>
           </div>
         )}
@@ -522,7 +511,7 @@ const Cases = memo(
                       {caseItem.name || 'N/A'}
                     </td>
                     <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                      <div className="max-w-xs truncate">{caseItem.description || 'Không có mô tả'}</div>
+                      <div className="max-w-xs truncate">{caseItem.description || 'Kh�ng c� m� t?'}</div>
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
                       {formatPrice(caseItem.unitPrice)}
@@ -531,7 +520,7 @@ const Cases = memo(
                       {caseItem.quantity !== undefined ? caseItem.quantity : 'N/A'}
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
-                      Hãng case
+                      H�ng case
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
@@ -554,7 +543,7 @@ const Cases = memo(
             caseItem={formState.currentCase}
             onSave={handleSave}
             onCancel={() => setFormState((prev) => ({ ...prev, isOpen: false }))}
-            formTitle={formState.formType === 'add' ? 'Thêm vỏ máy tính mới' : 'Chỉnh sửa vỏ máy tính'}
+            formTitle={formState.formType === 'add' ? 'Th�m v? m�y t�nh m?i' : 'Ch?nh s?a v? m�y t�nh'}
             theme={theme}
             images={images} // Pass images prop to CaseForm
           />
@@ -568,3 +557,4 @@ export default Cases;
 // Updated: 2025-10-12T16:06:44.427Z
 
 // Updated: 2025-10-12T16:09:11.409Z
+

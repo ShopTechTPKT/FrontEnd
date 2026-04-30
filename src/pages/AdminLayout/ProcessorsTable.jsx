@@ -1,6 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+﻿import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
 // Ánh xạ categoryID với tên hãng
 const CATEGORY_BRAND_MAPPING = {
@@ -350,10 +351,7 @@ const ProcessorsTable = memo(
 
     const formatPrice = (price) => {
       if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
+      return formatCurrency(price);
     };
 
     const filteredProcessors = searchTerm.trim() === ''
@@ -598,3 +596,4 @@ export default ProcessorsTable;
 // Updated: 2025-10-12T16:06:43.426Z
 
 // Updated: 2025-10-12T16:09:07.593Z
+

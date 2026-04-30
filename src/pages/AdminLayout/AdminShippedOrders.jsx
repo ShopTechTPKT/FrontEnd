@@ -1,3 +1,4 @@
+﻿import formatCurrency from "../../utils/formatCurrency";
 import { useState, useEffect } from "react";
 import { getShippedOrders, updateShippedDate } from "../../apis/orderApi";
 import {
@@ -155,10 +156,7 @@ const AdminShippedOrders = () => {
                   <div>
                     <p className="text-xs text-gray-400 mb-1">Total Amount</p>
                     <p className="text-sm font-medium text-white">
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(order.totalPrice)}
+                      {formatCurrency(order.totalPrice)}
                     </p>
                   </div>
                   <div>
@@ -276,3 +274,4 @@ const AdminShippedOrders = () => {
 };
 
 export default AdminShippedOrders;
+

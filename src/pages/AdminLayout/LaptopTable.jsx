@@ -1,14 +1,16 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
+import React, { memo, useState, useEffect, useCallback } from 'react';
+import { ImageOff, Search, Plus, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 import Button from '../../components/ui/Button';
 import StatusNotice from '../../components/ui/StatusNotice';
 import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
 import EmptyState from '../../components/ui/EmptyState';
+import { useProductCRUD, CATEGORY_IDS } from './hooks/useProductCRUD';
 
 // Ánh xạ categoryID với tên hãng
 const CATEGORY_BRAND_MAPPING = {
-45: 'Acer',
+  45: 'Acer',
   46: 'Asus',
   47: 'Dell',
   48: 'Gigabyte',
@@ -25,7 +27,6 @@ const LaptopForm = ({
   formTitle,
   theme,
   validCategoryIds = [45, 46, 47, 48, 49, 50, 51],
-  images = [],
 }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
@@ -34,22 +35,10 @@ const LaptopForm = ({
     unitPrice: computer?.unitPrice || '',
     quantity: computer?.quantity || '',
     categoryId: computer?.categoryId || '',
-    imageUrl: computer?.imageUrl || '', // Store image URL
+    imageUrl: computer?.imageUrl || '',
     isLoading: false,
     error: null,
   });
-
-  const [imageSearchTerm, setImageSearchTerm] = useState('');
-  const [showImagePicker, setShowImagePicker] = useState(false);
-
-  useEffect(() => {
-    if (formData.error) {
-      const timer = setTimeout(() => {
-        setFormData((prev) => ({ ...prev, error: null }));
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [formData.error]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,250 +53,56 @@ const LaptopForm = ({
     }));
   };
 
-  const handleImageSelect = (image) => {
-    setFormData((prev) => ({
-      ...prev,
-      image: image.url, // Store the selected image's URL
-    }));
-    setShowImagePicker(false);
-    setImageSearchTerm('');
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormData((prev) => ({ ...prev, isLoading: true, error: null }));
-
     try {
-      if (!formData.categoryId || !validCategoryIds.includes(parseInt(formData.categoryId))) {
-        throw new Error('Vui lòng chọn một hãng hợp lệ');
-      }
-      if (isNaN(parseFloat(formData.unitPrice)) || parseFloat(formData.unitPrice) < 0) {
-        throw new Error('Giá phải là số dương');
-      }
-      if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
-        throw new Error('Số lượng tồn kho phải là số không âm');
-      }
-
-      const productData = {
-        name: formData.name,
-        description: formData.description,
-        unitPrice: parseFloat(formData.unitPrice),
-        quantity: parseInt(formData.quantity),
-        categoryId: parseInt(formData.categoryId),
-        imageUrl: formData.imageUrl || null, // Include image URL (or null if not selected)
-      };
-
-      await onSave(productData);
-      setFormData((prev) => ({ ...prev, isLoading: false }));
-    } catch (error) {
-      console.error('Error saving product:', error);
-      setFormData((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: error.message || 'Không thể lưu sản phẩm',
-      }));
+      await onSave(formData);
+    } catch (err) {
+      setFormData((prev) => ({ ...prev, isLoading: false, error: err.message }));
     }
   };
 
-  const filteredImages = imageSearchTerm.trim() === ''
-    ? images
-    : images.filter((image) =>
-        (image.url || '').toLowerCase().includes(imageSearchTerm.toLowerCase())
-      );
-
-  const currentTheme = {
-    dark: {
-      container: 'bg-gray-800 text-gray-200',
-      input: 'bg-gray-700 border-gray-600 text-gray-200 focus:ring-blue-500',
-      buttonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white shadow-md',
-      buttonSecondary: 'bg-gray-600 hover:bg-gray-700 text-white shadow-md',
-      error: 'text-red-400',
-      imagePicker: 'bg-gray-700 border-gray-600',
-    },
-    light: {
-      container: 'bg-white text-gray-800',
-      input: 'bg-white border-gray-300 text-gray-900 focus:ring-blue-400',
-      buttonPrimary: 'bg-blue-500 hover:bg-blue-600 text-white shadow-md',
-      buttonSecondary: 'bg-gray-300 hover:bg-gray-400 text-gray-800 shadow-md',
-      error: 'text-red-600',
-      imagePicker: 'bg-gray-100 border-gray-300',
-    },
-  }[theme || 'dark'];
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-      <div className={`${currentTheme.container} rounded-lg shadow-xl p-6 w-full max-w-lg relative`}>
-        <h3 className="text-xl font-semibold mb-4">{formTitle}</h3>
-
-        {formData.error && (
-          <div className={`${currentTheme.error} mb-4 flex items-center`}>
-            <AlertCircle size={20} className="mr-2" />
-            {formData.error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className={`w-full max-w-2xl rounded-xl shadow-2xl p-6 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
+        <h3 className="text-xl font-bold mb-4">{formTitle}</h3>
+        {formData.error && <div className="mb-4 text-red-500 text-sm">{formData.error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1">{t('admin.tn_sn_phm')}</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input}`}
-                required
-              />
+              <label className="block text-sm font-medium mb-1">{t('admin.tn_sn_phm')}</label>
+              <input name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required />
             </div>
-
             <div>
-              <label className="block mb-1">{t('admin.m_t')}</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="3"
-                className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input}`}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-1">{t('admin.gi_vnd')}</label>
-                <input
-                  type="number"
-                  name="unitPrice"
-                  value={formData.unitPrice}
-                  onChange={handleChange}
-                  min="0"
-                  step="1"
-                  className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input}`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1">{t('admin.tn_kho')}</label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  min="0"
-                  className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input}`}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block mb-1">{t('admin.hng')}</label>
-              <select
-                name="categoryId"
-                value={formData.categoryId}
-                onChange={handleChange}
-                className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input}`}
-                required
-              >
-                <option value="">{t('admin.chn_hng')}</option>
-                {validCategoryIds.map((id) => (
-                  <option key={id} value={id}>
-                    {CATEGORY_BRAND_MAPPING[id] || `Danh mục ${id}`}
-                  </option>
-                ))}
+              <label className="block text-sm font-medium mb-1">{t('admin.hng')}</label>
+              <select name="categoryId" value={formData.categoryId} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required>
+                <option value="">-- Chọn hãng --</option>
+                {validCategoryIds.map(id => <option key={id} value={id}>{CATEGORY_BRAND_MAPPING[id]}</option>)}
               </select>
             </div>
-
             <div>
-              <label className="block mb-1">{t('admin.hnh_nh')}</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={formData.imageUrl || 'Chọn hình ảnh'}
-                  onClick={() => setShowImagePicker(true)}
-                  onChange={handleChange}
-                  name="imageUrl"
-                  className={`w-full rounded-lg border px-4 py-2 ${currentTheme.input} cursor-pointer`}
-                />
-                {formData.imageUrl && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.imageUrl}
-                      alt={t('admin.selected')}
-                      className="h-20 w-20 object-cover rounded-lg shadow-sm"
-                      onError={(e) => (e.target.src = '')}
-                    />
-                  </div>
-                )}
-              </div>
+              <label className="block text-sm font-medium mb-1">{t('product.price')}</label>
+              <input type="number" name="unitPrice" value={formData.unitPrice} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('admin.tn_kho')}</label>
+              <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required />
             </div>
           </div>
-
-          {showImagePicker && (
-            <div className={`absolute top-0 left-0 w-full h-full ${currentTheme.imagePicker} rounded-lg p-4 overflow-y-auto z-10`}>
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="text-lg font-semibold">{t('admin.chn_hnh_nh')}</h4>
-                <button
-                  type="button"
-                  onClick={() => setShowImagePicker(false)}
-                  className="text-gray-400 hover:text-gray-200"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="relative mb-4">
-                <input
-                  type="text"
-                  placeholder={t('admin.tm_kim_hnh_nh')}
-                  value={imageSearchTerm}
-                  onChange={(e) => setImageSearchTerm(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-2 rounded-lg border ${currentTheme.input}`}
-                />
-                <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-              </div>
-              <div className="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto">
-                {filteredImages.length > 0 ? (
-                  filteredImages.map((image) => (
-                    <div
-                      key={image.url}
-                      onClick={() => handleImageSelect(image)}
-                      className={`cursor-pointer p-1 rounded-lg hover:bg-gray-600 ${formData.imageUrl === image.url ? 'border-2 border-blue-500' : ''}`}
-                    >
-                      <img
-                        src={image.url}
-                        alt={image.url}
-                        className="h-20 w-full object-cover rounded-lg"
-                      />
-                      <p className="text-xs truncate mt-1">{image.url.split('/').pop()}</p>
-                    </div>
-                  ))
-                ) : (
-                  <div className="col-span-3 text-center text-gray-400">
-                    Không tìm thấy hình ảnh
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
+          <div>
+            <label className="block text-sm font-medium mb-1">{t('admin.m_t')}</label>
+            <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" rows="3" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Image URL</label>
+            <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" />
+          </div>
           <div className="flex justify-end space-x-3 mt-6">
-            <button
-              type="button"
-              onClick={onCancel}
-              className={`px-4 py-2 rounded-lg transition-colors ${currentTheme.buttonSecondary}`}
-              disabled={formData.isLoading}
-            >{t('common.cancel')}</button>
-            <button
-              type="submit"
-              disabled={formData.isLoading}
-              className={`px-4 py-2 rounded-lg transition-colors flex items-center ${currentTheme.buttonPrimary}`}
-            >
-              {formData.isLoading && <Loader2 size={18} className="animate-spin mr-2" />}
-              Lưu
-            </button>
+            <Button type="button" onClick={onCancel} variant="ghost">{t('common.cancel')}</Button>
+            <Button type="submit" variant="primary" disabled={formData.isLoading}>
+              {formData.isLoading ? 'Saving...' : t('common.save')}
+            </Button>
           </div>
         </form>
       </div>
@@ -315,296 +110,135 @@ const LaptopForm = ({
   );
 };
 
-// Component LaptopTable
-const LaptopTable = memo(
-  ({
-    activeMenu,
-    computers = [],
-    theme = 'dark',
-    createProduct,
-    updateProduct,
-    validCategoryIds = [45, 46, 47, 48, 49, 50, 51],
-    images = [],
-  }) => {
-    const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [formState, setFormState] = useState({
-      isOpen: false,
-      formType: null, // 'add' or 'edit'
-      currentComputer: null,
-    });
-    const [localComputers, setLocalComputers] = useState(computers);
-    const [isSynced, setIsSynced] = useState(true);
+const LaptopTable = memo(({ theme = 'light' }) => {
+  const { t } = useTranslation();
+  const { performOperation, loading: crudLoading } = useProductCRUD();
+  const [laptops, setLaptops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [formState, setFormState] = useState({ isOpen: false, currentLaptop: null, type: 'add' });
 
-    useEffect(() => {
-      if (isSynced) {
-        setLocalComputers(computers);
-      }
-    }, [computers, isSynced]);
-
-    useEffect(() => {
-      if (error) {
-        const timer = setTimeout(() => {
-          setError(null);
-        }, 5000);
-        return () => clearTimeout(timer);
-      }
-    }, [error]);
-
-    if (activeMenu !== 'Laptops') return null;
-
-    const formatPrice = (price) => {
-      if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
-    };
-
-    const filteredComputers = searchTerm.trim() === ''
-      ? localComputers
-      : localComputers.filter((computer) =>
-          (computer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (computer?.description || '').toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-    const themeClasses = {
-      dark: {
-        container: 'bg-gray-900 text-gray-200',
-        table: 'bg-gray-800 border-gray-700',
-        tableHeader: 'bg-gray-900 text-gray-300',
-        tableRow: 'hover:bg-gray-700 text-gray-200',
-        secondaryText: 'text-gray-400',
-        input: 'bg-gray-800 border-gray-600 text-gray-200 focus:ring-blue-500',
-        emptyState: 'text-gray-400',
-        buttonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white shadow-md',
-        buttonIcon: 'text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 p-2 rounded-full shadow-sm',
-      },
-      light: {
-        container: 'bg-white text-gray-800',
-        table: 'bg-white border-gray-300',
-        tableHeader: 'bg-gray-200 text-gray-700',
-        tableRow: 'hover:bg-gray-200 text-gray-800',
-        secondaryText: 'text-gray-600',
-        input: 'bg-white border-gray-300 text-gray-900 focus:ring-blue-400',
-        emptyState: 'text-gray-500',
-        buttonPrimary: 'bg-blue-500 hover:bg-blue-600 text-white shadow-md',
-        buttonIcon: 'text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 p-2 rounded-full shadow-sm',
-      },
-    };
-
-    const currentTheme = themeClasses[theme] || themeClasses.dark;
-
-    const handleAdd = () => {
-      setFormState({
-        isOpen: true,
-        formType: 'add',
-        currentComputer: null,
+  const fetchLaptops = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:8081/api/products', {
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
       });
-    };
-
-    const handleEdit = (computer) => {
-      console.log('Editing computer:', computer);
-      setFormState({
-        isOpen: true,
-        formType: 'edit',
-        currentComputer: computer,
-      });
-    };
-
-    const handleSave = async (productData) => {
-      try {
-        setIsLoading(true);
-        setIsSynced(false);
-        if (formState.formType === 'add') {
-          const newProduct = await createProduct(productData);
-          console.log('New product from API:', newProduct);
-          if (!newProduct.id && !newProduct.productID) {
-            throw new Error('API không trả về ID sản phẩm');
-          }
-          setLocalComputers((prev) => [
-            ...prev,
-            {
-              ...productData,
-              id: newProduct.id || newProduct.productID,
-            },
-          ]);
-        } else {
-          const productId = formState.currentComputer?.id || formState.currentComputer?.productID;
-          if (!productId) {
-            throw new Error('Không tìm thấy ID sản phẩm để cập nhật.');
-          }
-          console.log('Updating product ID:', productId, 'with data:', productData);
-          const updatedProduct = await updateProduct(productId, productData);
-          console.log('Updated product from API:', updatedProduct);
-          setLocalComputers((prev) =>
-            prev.map((computer) =>
-              (computer.id || computer.productID) === productId
-                ? { ...computer, ...productData }
-                : computer
-            )
-          );
-        }
-        setFormState((prev) => ({ ...prev, isOpen: false }));
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error saving product:', error);
-        const errorMessage = error.message.includes('Product not found')
-          ? 'Sản phẩm không tồn tại hoặc đã bị xóa'
-          : error.message || 'Không thể lưu sản phẩm';
-        setError(errorMessage);
-        setIsLoading(false);
-        throw error;
+      if (response.ok) {
+        const data = await response.json();
+        const laptopIds = CATEGORY_IDS.laptop;
+        setLaptops(data.filter(p => laptopIds.includes(p.categoryId)));
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    return (
-      <div className={`p-6 ${currentTheme.container}`}>
-        {error && (
-          <div className="mb-4">
-            <StatusNotice
-              tone="error"
-              title="Không thể xử lý dữ liệu laptop"
-              message={error}
-              actionText="Đóng"
-              onAction={() => setError(null)}
+  useEffect(() => {
+    fetchLaptops();
+  }, [fetchLaptops]);
+
+  const handleSave = async (formData) => {
+    const op = formState.type === 'add' ? 'create' : 'update';
+    const id = formState.currentLaptop?.id || formState.currentLaptop?.productID;
+    await performOperation(op, 'laptop', formData, id);
+    setFormState({ isOpen: false, currentLaptop: null, type: 'add' });
+    fetchLaptops();
+  };
+
+  const filteredLaptops = laptops.filter(l => 
+    l.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    l.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const currentTheme = theme === 'dark' ? {
+    container: 'bg-gray-900 text-white',
+    table: 'border-gray-700',
+    tableHeader: 'bg-gray-800 text-gray-300',
+    tableRow: 'hover:bg-gray-800',
+    secondaryText: 'text-gray-400',
+    input: 'bg-gray-800 border-gray-700 text-white',
+  } : {
+    container: 'bg-white text-gray-900',
+    table: 'border-gray-200',
+    tableHeader: 'bg-gray-50 text-gray-600',
+    tableRow: 'hover:bg-gray-50',
+    secondaryText: 'text-gray-500',
+    input: 'bg-white border-gray-300 text-gray-900',
+  };
+
+  return (
+    <div className={`p-6 rounded-xl ${currentTheme.container}`}>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">{t('admin.menu_laptops')}</h2>
+        <div className="flex items-center space-x-4">
+          <Button onClick={() => setFormState({ isOpen: true, currentLaptop: null, type: 'add' })} variant="primary" icon={<Plus size={18} />}>
+            {t('admin.thm')}
+          </Button>
+          <div className="relative w-64">
+            <input
+              type="text"
+              placeholder={t('admin.tm_kim_my_tnh')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 ${currentTheme.input}`}
             />
-          </div>
-        )}
-
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-center">{t('admin.danh_sch_my_tnh')}</h2>
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={handleAdd}
-              variant="primary"
-              icon={<Plus size={18} />}
-            >
-              <span>{t('admin.thm')}</span>
-            </Button>
-            <div className="relative w-64">
-              <input
-                type="text"
-                placeholder={t('admin.tm_kim_my_tnh')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${currentTheme.input}`}
-              />
-              <Search
-                className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentTheme.secondaryText}`}
-                size={20}
-              />
-            </div>
+            <Search className={`absolute left-3 top-1/2 -translate-y-1/2 ${currentTheme.secondaryText}`} size={20} />
           </div>
         </div>
-
-        {isLoading && localComputers.length === 0 && (
-          <div className="py-4">
-            <ProductGridSkeleton count={4} />
-          </div>
-        )}
-
-        {!isLoading && localComputers.length === 0 && (
-          <div className={`h-64 flex items-center justify-center ${currentTheme.emptyState}`}>
-            <EmptyState title={t('admin.khng_tm_thy_my')} className="py-0" />
-          </div>
-        )}
-
-        {!isLoading && localComputers.length > 0 && filteredComputers.length === 0 && (
-          <div className={`h-64 flex items-center justify-center ${currentTheme.emptyState}`}>
-            <EmptyState title={t('remaining.no_pc_match')} className="py-0" />
-          </div>
-        )}
-
-        {localComputers.length > 0 && filteredComputers.length > 0 && (
-          <div className="overflow-x-auto rounded-lg shadow-lg">
-            <table className={`min-w-full border ${currentTheme.table}`}>
-              <thead className={currentTheme.tableHeader}>
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('admin.hnh_nh')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('admin.tn_sn_phm')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('admin.m_t')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('product.price')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('admin.tn_kho')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('admin.hng')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">{t('common.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className={`divide-y ${theme === 'dark' ? 'divide-gray-700' : 'divide-gray-300'}`}>
-                {filteredComputers.map((computer, index) => (
-                  <tr
-                    key={computer.id || computer.productID || `computer-${index}`}
-                    className={`transition-colors duration-150 ${currentTheme.tableRow}`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="h-12 w-12 bg-gray-700 rounded-lg flex items-center justify-center">
-                        {computer.imageUrl ? (
-                          <img
-                            src={computer.imageUrl}
-                            alt={computer.name || 'Laptop'}
-                            className="h-12 w-12 object-cover rounded-lg shadow-sm"
-                            onError={(e) => (e.target.src = '')}
-                          />
-                        ) : (
-                          <ImageOff
-                            className={currentTheme.secondaryText}
-                            size={24}
-                          />
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {computer.name || 'N/A'}
-                    </td>
-                    <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                      <div className="max-w-xs truncate">{computer.description || 'Không có mô tả'}</div>
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
-                        {formatPrice(computer.unitPrice)}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
-                        {computer.quantity !== undefined ? computer.quantity : 'N/A'}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
-                        {CATEGORY_BRAND_MAPPING[computer.categoryId] || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex space-x-2">
-                        <Button
-                          onClick={() => handleEdit(computer)}
-                          variant="ghost"
-                          size="sm"
-                          icon={<Pencil size={16} />}
-                          title={t('admin.chnh_sa')}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {formState.isOpen && (
-          <LaptopForm
-            computer={formState.currentComputer}
-            onSave={handleSave}
-            onCancel={() => setFormState((prev) => ({ ...prev, isOpen: false }))}
-            formTitle={formState.formType === 'add' ? 'Thêm máy tính mới' : 'Chỉnh sửa máy tính'}
-            theme={theme}
-            validCategoryIds={validCategoryIds}
-            images={images}
-          />
-        )}
       </div>
-    );
-  }
-);
+
+      {loading ? (
+        <ProductGridSkeleton count={5} />
+      ) : laptops.length === 0 ? (
+        <EmptyState title="No laptops found" />
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className={currentTheme.tableHeader}>
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{t('admin.hnh_nh')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{t('admin.tn_sn_phm')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{t('product.price')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{t('admin.tn_kho')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{t('admin.hng')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{t('common.actions')}</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              {filteredLaptops.map((laptop) => (
+                <tr key={laptop.id || laptop.productID} className={currentTheme.tableRow}>
+                  <td className="px-6 py-4">
+                    {laptop.imageUrl ? <img src={laptop.imageUrl} alt="" className="h-12 w-12 object-cover rounded shadow-sm" /> : <ImageOff size={24} />}
+                  </td>
+                  <td className="px-6 py-4 text-sm font-medium">{laptop.name}</td>
+                  <td className="px-6 py-4 text-sm">{formatCurrency(laptop.unitPrice)}</td>
+                  <td className="px-6 py-4 text-sm">{laptop.quantity}</td>
+                  <td className="px-6 py-4 text-sm">{CATEGORY_BRAND_MAPPING[laptop.categoryId] || 'N/A'}</td>
+                  <td className="px-6 py-4 text-sm">
+                    <Button onClick={() => setFormState({ isOpen: true, currentLaptop: laptop, type: 'edit' })} variant="ghost" size="sm" icon={<Pencil size={16} />} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {formState.isOpen && (
+        <LaptopForm
+          computer={formState.currentLaptop}
+          onSave={handleSave}
+          onCancel={() => setFormState({ isOpen: false, currentLaptop: null, type: 'add' })}
+          formTitle={formState.type === 'add' ? 'Thêm Laptop' : 'Sửa Laptop'}
+          theme={theme}
+        />
+      )}
+    </div>
+  );
+});
 
 export default LaptopTable;
-// Updated: 2025-10-12T16:06:33.025Z
-
-// Updated: 2025-10-12T16:08:44.986Z

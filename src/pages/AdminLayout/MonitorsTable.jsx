@@ -1,12 +1,13 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 import Button from '../../components/ui/Button';
 import StatusNotice from '../../components/ui/StatusNotice';
 import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
 import EmptyState from '../../components/ui/EmptyState';
 
-// Ánh xạ categoryID với tên hãng cho danh mục Monitors
+// �nh x? categoryID v?i t�n h�ng cho danh m?c Monitors
 const CATEGORY_BRAND_MAPPING = {
 36: 'ASUS',
   37: 'Acer',
@@ -77,13 +78,13 @@ const MonitorForm = ({
     try {
       // Validation
       if (!formData.categoryId || !validCategoryIds.includes(parseInt(formData.categoryId))) {
-        throw new Error('Vui lòng chọn một hãng hợp lệ');
+        throw new Error('Vui l�ng ch?n m?t h�ng h?p l?');
       }
       if (isNaN(parseFloat(formData.unitPrice)) || parseFloat(formData.unitPrice) < 0) {
-        throw new Error('Giá phải là số dương');
+        throw new Error('Gi� ph?i l� s? duong');
       }
       if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
-        throw new Error('Số lượng tồn kho phải là số không âm');
+        throw new Error('S? lu?ng t?n kho ph?i l� s? kh�ng �m');
       }
 
       const productData = {
@@ -102,7 +103,7 @@ const MonitorForm = ({
       setFormData((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message || 'Không thể lưu sản phẩm',
+        error: error.message || 'Kh�ng th? luu s?n ph?m',
       }));
     }
   };
@@ -210,7 +211,7 @@ const MonitorForm = ({
                 <option value="">{t('admin.chn_hng')}</option>
                 {validCategoryIds.map((id) => (
                   <option key={id} value={id}>
-                    {CATEGORY_BRAND_MAPPING[id] || `Danh mục ${id}`}
+                    {CATEGORY_BRAND_MAPPING[id] || `Danh m?c ${id}`}
                   </option>
                 ))}
               </select>
@@ -221,7 +222,7 @@ const MonitorForm = ({
               <div className="relative">
                 <input
                   type="text"
-                  value={formData.imageUrl || 'Chọn hình ảnh'}
+                  value={formData.imageUrl || 'Ch?n h�nh ?nh'}
                   onClick={() => setShowImagePicker(true)}
                   onChange={handleChange}
                   name="imageUrl"
@@ -250,7 +251,7 @@ const MonitorForm = ({
                   onClick={() => setShowImagePicker(false)}
                   className="text-gray-400 hover:text-gray-200"
                 >
-                  ✕
+                  ?
                 </button>
               </div>
               <div className="relative mb-4">
@@ -284,7 +285,7 @@ const MonitorForm = ({
                   ))
                 ) : (
                   <div className="col-span-3 text-center text-gray-400">
-                    Không tìm thấy hình ảnh
+                    Kh�ng t�m th?y h�nh ?nh
                   </div>
                 )}
               </div>
@@ -304,7 +305,7 @@ const MonitorForm = ({
               className={`px-4 py-2 rounded-lg transition-colors flex items-center ${currentTheme.buttonPrimary}`}
             >
               {formData.isLoading && <Loader2 size={18} className="animate-spin mr-2" />}
-              Lưu
+              Luu
             </button>
           </div>
         </form>
@@ -336,8 +337,6 @@ const MonitorsTable = memo(
     });
     const [localMonitors, setLocalMonitors] = useState(monitors);
     const [isSynced, setIsSynced] = useState(true);
-console.log(getProductById);
-
     useEffect(() => {
       if (isSynced) {
         setLocalMonitors(monitors);
@@ -357,10 +356,7 @@ console.log(getProductById);
 
     const formatPrice = (price) => {
       if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
+      return formatCurrency(price);
     };
 
     const filteredMonitors = searchTerm.trim() === ''
@@ -406,7 +402,6 @@ console.log(getProductById);
     };
 
     const handleEdit = (monitor) => {
-      console.log('Editing monitor:', monitor);
       setFormState({
         isOpen: true,
         formType: 'edit',
@@ -420,9 +415,8 @@ console.log(getProductById);
         setIsSynced(false);
         if (formState.formType === 'add') {
           const newProduct = await createProduct(productData);
-          console.log('New product from API:', newProduct);
           if (!newProduct.id && !newProduct.productID) {
-            throw new Error('API không trả về ID sản phẩm');
+            throw new Error('API kh�ng tr? v? ID s?n ph?m');
           }
           setLocalMonitors((prev) => [
             ...prev,
@@ -436,7 +430,6 @@ console.log(getProductById);
           if (!productId) {
             throw new Error(t('remaining.no_product_id'));
           }
-          console.log('Updating product ID:', productId, 'with data:', productData);
           await updateProduct(productId, productData);
           setLocalMonitors((prev) =>
             prev.map((monitor) =>
@@ -450,7 +443,7 @@ console.log(getProductById);
         setIsLoading(false);
       } catch (error) {
         console.error('Error saving product:', error);
-        setError(error.message || 'Không thể lưu sản phẩm');
+        setError(error.message || 'Kh�ng th? luu s?n ph?m');
         setIsLoading(false);
         throw error;
       }
@@ -462,9 +455,9 @@ console.log(getProductById);
           <div className="mb-4">
             <StatusNotice
               tone="error"
-              title="Không thể xử lý dữ liệu monitor"
+              title="Kh�ng th? x? l� d? li?u monitor"
               message={error}
-              actionText="Đóng"
+              actionText="��ng"
               onAction={() => setError(null)}
             />
           </div>
@@ -531,8 +524,6 @@ console.log(getProductById);
               <tbody className={`divide-y ${theme === 'dark' ? 'divide-gray-700' : 'divide-gray-300'}`}>
                 {filteredMonitors.map((monitor, index) => {
                   let matchingImage;
-console.log(matchingImage);
-
                   return (
                     <tr
                       key={monitor.id || monitor.productID || `monitor-${index}`}
@@ -559,7 +550,7 @@ console.log(matchingImage);
                         {monitor.name || 'N/A'}
                       </td>
                       <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                        <div className="max-w-xs truncate">{monitor.description || 'Không có mô tả'}</div>
+                        <div className="max-w-xs truncate">{monitor.description || 'Kh�ng c� m� t?'}</div>
                       </td>
                       <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
                         {formatPrice(monitor.unitPrice)}
@@ -592,7 +583,7 @@ console.log(matchingImage);
             monitor={formState.currentMonitor}
             onSave={handleSave}
             onCancel={() => setFormState((prev) => ({ ...prev, isOpen: false }))}
-            formTitle={formState.formType === 'add' ? 'Thêm màn hình mới' : 'Chỉnh sửa màn hình'}
+            formTitle={formState.formType === 'add' ? 'Th�m m�n h�nh m?i' : 'Ch?nh s?a m�n h�nh'}
             theme={theme}
             validCategoryIds={validCategoryIds}
             images={images}
@@ -607,3 +598,4 @@ export default MonitorsTable;
 // Updated: 2025-10-12T16:06:29.771Z
 
 // Updated: 2025-10-12T16:08:47.550Z
+

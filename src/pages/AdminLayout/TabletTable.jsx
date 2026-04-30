@@ -1,8 +1,9 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
-// Ánh xạ categoryID với tên hãng cho danh mục Tablets
+// �nh x? categoryID v?i t�n h�ng cho danh m?c Tablets
 const CATEGORY_BRAND_MAPPING = {
 44: 'Apple',
 };
@@ -69,13 +70,13 @@ const TabletForm = ({
 
     try {
       if (!formData.categoryId || !validCategoryIds.includes(parseInt(formData.categoryId))) {
-        throw new Error('Vui lòng chọn một hãng hợp lệ');
+        throw new Error('Vui l�ng ch?n m?t h�ng h?p l?');
       }
       if (isNaN(parseFloat(formData.unitPrice)) || parseFloat(formData.unitPrice) < 0) {
-        throw new Error('Giá phải là số dương');
+        throw new Error('Gi� ph?i l� s? duong');
       }
       if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
-        throw new Error('Số lượng tồn kho phải là số không âm');
+        throw new Error('S? lu?ng t?n kho ph?i l� s? kh�ng �m');
       }
 
       const productData = {
@@ -94,7 +95,7 @@ const TabletForm = ({
       setFormData((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message || 'Không thể lưu sản phẩm',
+        error: error.message || 'Kh�ng th? luu s?n ph?m',
       }));
     }
   };
@@ -202,7 +203,7 @@ const TabletForm = ({
                 <option value="">{t('admin.chn_hng')}</option>
                 {validCategoryIds.map((id) => (
                   <option key={id} value={id}>
-                    {CATEGORY_BRAND_MAPPING[id] || `Danh mục ${id}`}
+                    {CATEGORY_BRAND_MAPPING[id] || `Danh m?c ${id}`}
                   </option>
                 ))}
               </select>
@@ -213,7 +214,7 @@ const TabletForm = ({
               <div className="relative">
                 <input
                   type="text"
-                  value={formData.image || t('admin.chn_hnh_nh') || 'Chọn hình ảnh'}
+                  value={formData.image || t('admin.chn_hnh_nh') || 'Ch?n h�nh ?nh'}
                   onClick={() => setShowImagePicker(true)}
                   onChange={handleChange}
                   name="imageUrl"
@@ -242,7 +243,7 @@ const TabletForm = ({
                   onClick={() => setShowImagePicker(false)}
                   className="text-gray-400 hover:text-gray-200"
                 >
-                  ✕
+                  ?
                 </button>
               </div>
               <div className="relative mb-4">
@@ -276,7 +277,7 @@ const TabletForm = ({
                   ))
                 ) : (
                   <div className="col-span-3 text-center text-gray-400">
-                    {t('admin.no_image_found') || 'Không tìm thấy hình ảnh'}
+                    {t('admin.no_image_found') || 'Kh�ng t�m th?y h�nh ?nh'}
                   </div>
                 )}
               </div>
@@ -296,7 +297,7 @@ const TabletForm = ({
               className={`px-4 py-2 rounded-lg transition-colors flex items-center ${currentTheme.buttonPrimary}`}
             >
               {formData.isLoading && <Loader2 size={18} className="animate-spin mr-2" />}
-              Lưu
+              Luu
             </button>
           </div>
         </form>
@@ -329,8 +330,6 @@ const TabletTable = memo(
     });
     const [localTablets, setLocalTablets] = useState(tablets);
     const [isSynced, setIsSynced] = useState(true);
-console.log(getProductById);
-
     useEffect(() => {
       if (isSynced) {
         setLocalTablets(tablets);
@@ -350,10 +349,7 @@ console.log(getProductById);
 
     const formatPrice = (price) => {
       if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
+      return formatCurrency(price);
     };
 
     const filteredTablets = searchTerm.trim() === ''
@@ -413,7 +409,7 @@ console.log(getProductById);
         if (formState.formType === 'add') {
           const newProduct = await createProduct(productData);
           if (!newProduct.id && !newProduct.productID) {
-            throw new Error('API không trả về ID sản phẩm');
+            throw new Error('API kh�ng tr? v? ID s?n ph?m');
           }
           setLocalTablets((prev) => [
             ...prev,
@@ -440,7 +436,7 @@ console.log(getProductById);
         setIsLoading(false);
       } catch (error) {
         console.error('Error saving tablet:', error);
-        setError(error.message || 'Không thể lưu sản phẩm');
+        setError(error.message || 'Kh�ng th? luu s?n ph?m');
         setIsLoading(false);
         throw error;
       }
@@ -456,14 +452,14 @@ console.log(getProductById);
               className="ml-auto text-white hover:text-gray-200"
               onClick={() => setError(null)}
             >
-              ✕
+              ?
             </button>
           </div>
         )}
 
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold">
-            {t('admin.tablet_list_title') || 'Danh sách Máy Tính Bảng'}
+            {t('admin.tablet_list_title') || 'Danh s�ch M�y T�nh B?ng'}
           </h2>
           <div className="flex items-center space-x-4">
             <button
@@ -476,7 +472,7 @@ console.log(getProductById);
             <div className="relative w-64">
               <input
                 type="text"
-                placeholder={t('admin.tablet_search_placeholder') || 'Tìm kiếm máy tính bảng...'}
+                placeholder={t('admin.tablet_search_placeholder') || 'T�m ki?m m�y t�nh b?ng...'}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 ${currentTheme.input}`}
@@ -552,7 +548,7 @@ console.log(getProductById);
                     </td>
                     <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
                       <div className="max-w-xs truncate">
-                        {tablet.description || t('admin.no_description') || 'Không có mô tả'}
+                        {tablet.description || t('admin.no_description') || 'Kh�ng c� m� t?'}
                       </div>
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
@@ -587,8 +583,8 @@ console.log(getProductById);
             onCancel={() => setFormState((prev) => ({ ...prev, isOpen: false }))}
             formTitle={
               formState.formType === 'add'
-                ? t('admin.tablet_add_title') || 'Thêm Máy Tính Bảng mới'
-                : t('admin.tablet_edit_title') || 'Chỉnh sửa Máy Tính Bảng'
+                ? t('admin.tablet_add_title') || 'Th�m M�y T�nh B?ng m?i'
+                : t('admin.tablet_edit_title') || 'Ch?nh s?a M�y T�nh B?ng'
             }
             theme={theme}
             validCategoryIds={validCategoryIds}
@@ -604,3 +600,4 @@ export default TabletTable;
 // Updated: 2025-10-12T16:06:39.089Z
 
 // Updated: 2025-10-12T16:09:02.690Z
+

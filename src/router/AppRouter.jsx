@@ -1,132 +1,4 @@
-// // AppRouter.jsx
-// import React, { useContext } from "react";
-// import {
-//   BrowserRouter,
-//   Routes,
-//   Route,
-//   Navigate
-// } from "react-router-dom";
-// import { UserContext } from "../context/UserContext";
-// import ProtectedRoute from "../services/ProtectedRoute";
-
-// // Pages
-// import Layout from "../pages/Layout/Layout";
-
-// import Content from "../components/Content/Content";
-// import Contact from "../components/Contact";
-// import About from "../components/About";
-// import LoginWave from "../pages/login/LoginWave";
-// import Profile from "../pages/Profile/Profile";
-// import Laptop from "../pages/Laptops/Laptops";
-// import Desktop from "../pages/Desktops/Desktops";
-// import NetWorking from "../pages/Networking_devices/Networking_devices";
-// import Printer_Scanner from "../pages/Printer_scanner/Printer_scanner";
-// import PC_Part from "../pages/Pc_parts/PC_Part";
-// import All_Product from "../pages/All_Products/All_Products";
-// import Repair from "../pages/Repair/Repair";
-// import Our_Deal from "../pages/Our_Deal/Our_Deal";
-// import Card from "../pages/Card/Card";
-// import Catalog from "../pages/Laptops/Catalog";
-// import FAQ from "../pages/faq/FAQ";
-// import ShoppingCartItem from "../pages/ShoppingCard/ShoppingCardItem";
-// import ShoppingCard_CheckOut from "../pages/ShoppingCard/ShoppingCard_CheckOut";
-// import ProductDetail from "../components/product/ProductDetail";
-// import ProductSpeccs from "../components/product/ProductSpecss";
-// import Admin from "../pages/AdminLayout/AdminLayout";
-// import ProductAbout from "../components/product/ProductAbout";
-// import Product from "../components/product/Product";
-// import ScrollToTop from "../components/option/ScrollToTop";
-// const AppRouter = () => {
-//   const { getUserRole, loading } = useContext(UserContext);
-
-//   if (loading) {
-//     return (
-//       <div className="flex items-center justify-center h-screen">
-//         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-700"></div>
-//       </div>
-//     );
-//   }
-
-//   const userRole = getUserRole();
-//   console.log("Current user role:", userRole);
-
-//   return (
-//     <BrowserRouter>
-//       <ScrollToTop />
-//       <Routes>
-//         {/* Public routes */}
-//         <Route path="/login" element={<LoginWave />} />
-
-//         {/* Admin routes  */}
-//         <Route path="/admin" element={
-//           <ProtectedRoute requiredRoles={['manager']}>
-//             <Admin />
-//           </ProtectedRoute>
-//         } />
-
-//         {/* Customer/public routes */}
-//         <Route path="/" element={<Layout />}>
-//           <Route index element={<Content />} />
-//           {/* Fix nested routes by removing leading slashes */}
-//           <Route path="contact" element={<Contact />} />
-//           <Route path="about" element={<About />} />
-//           <Route path="laptops" element={<Laptop />} />
-//           <Route path="laptops/catalog" element={<Catalog />} />
-//           <Route path="faq" element={<FAQ />} />
-//           <Route path="desktops" element={<Desktop />} />
-//           <Route path="networking_devices" element={<NetWorking />} />
-//           <Route path="printer_scanner" element={<Printer_Scanner />} />
-//           <Route path="pc_parts" element={<PC_Part />} />
-//           <Route path="all_products" element={<All_Product />} />
-//           <Route path="repair" element={<Repair />} />
-//           <Route path="our_deal" element={<Our_Deal />} />
-
-//           {/* Protected customer routes - also fix nested paths */}
-//           <Route path="profile" element={
-//             <ProtectedRoute requiredRoles={['customer']}>
-//               <Profile />
-//             </ProtectedRoute>
-//           } />
-//           <Route path="card" element={
-//             <ProtectedRoute requiredRoles={['customer']}>
-//               <Card />
-//             </ProtectedRoute>
-//           } />
-//           <Route path="shopping_card_checkout" element={
-//             <ProtectedRoute requiredRoles={['customer']}>
-//               <ShoppingCard_CheckOut />
-//             </ProtectedRoute>
-//           } />
-//           <Route path="shopping_card_item" element={
-//             <ProtectedRoute requiredRoles={['customer']}>
-//               <ShoppingCartItem />
-//             </ProtectedRoute>
-//           } />
-//         </Route>
-//         <Route path="/product/:id" element={<Product />}>
-//             <Route path="productAbout" element={<ProductAbout />}></Route>
-//             <Route path="productDetail" element={<ProductDetail />}></Route>
-//             <Route path="productSpeccs" element={<ProductSpeccs />}></Route>
-//             <Route index element={<ProductAbout />}></Route>
-//           </Route>
-//         {/* Redirect based on role */}
-//         <Route path="/dashboard" element={
-//           userRole === 'manager' ? <Navigate to="/admin" /> :
-//           userRole === 'employee' ? <Navigate to="/employee" /> :
-//           <Navigate to="/" />
-//         } />
-//         <Route path="/products" element={<Catalog />}></Route>
-
-//         <Route path="/about" element={<About />}></Route>
-//         {/* Catch all - 404 */}
-//         <Route path="*" element={<Navigate to="/" />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// };
-
-// export default AppRouter;
-import React, { useContext } from "react";
+import React, { Suspense, lazy, useContext } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -137,86 +9,80 @@ import {
 import { UserContext } from "../context/UserContext";
 import ProtectedRoute from "../services/ProtectedRoute";
 
-// Pages and Components
-import Layout from "../pages/Layout/Layout";
-import Content from "../components/Content/Content";
-import Contact from "../components/Contact";
-import About from "../components/About";
-import LoginWave from "../pages/login/LoginWave";
-import Login from "../pages/login/Login";
-import GoogleCallback from "../pages/login/GoogleCallback";
-import ProfileLayout from "../pages/Profile/ProfileLayout";
-import ProfileDashboard from "../pages/Profile/ProfileDashboard";
-import ProfileInfo from "../pages/Profile/ProfileInfo";
-import MyOrders from "../pages/Profile/MyOrders";
-import MyFavourite from "../pages/Profile/MyFavourite";
-import Laptop from "../pages/Laptops/Laptops";
-import Desktop from "../pages/Desktops/Desktops";
-import NetWorking from "../pages/Networking_devices/Networking_devices";
-import Printer_Scanner from "../pages/Printer_scanner/Printer_scanner";
-import PC_Part from "../pages/Pc_parts/PC_Part";
-import All_Product from "../pages/All_Products/All_Products";
-import Repair from "../pages/Repair/Repair";
-import Our_Deal from "../pages/Our_Deal/Our_Deal";
-import Card from "../pages/Card/Card";
-import Catalog from "../pages/Laptops/Catalog";
-import FAQ from "../pages/faq/FAQ";
-import ShoppingCartItem from "../pages/ShoppingCard/ShoppingCardItem";
-import ShoppingCard_CheckOut from "../pages/ShoppingCard/ShoppingCard_CheckOut";
-import ProductDetail from "../components/product/ProductDetail";
-import ProductSpeccs from "../components/product/ProductSpecss";
-import AdminLayout from "../pages/AdminLayout/AdminLayout";
-import ProductAbout from "../components/product/ProductAbout";
-import Product from "../components/product/Product";
+const Layout = lazy(() => import("../pages/Layout/Layout"));
+const Content = lazy(() => import("../components/Content/Content"));
+const Contact = lazy(() => import("../components/Contact"));
+const About = lazy(() => import("../components/About"));
+const LoginWave = lazy(() => import("../pages/login/LoginWave"));
+const GoogleCallback = lazy(() => import("../pages/login/GoogleCallback"));
+const ProfileLayout = lazy(() => import("../pages/Profile/ProfileLayout"));
+const ProfileDashboard = lazy(() => import("../pages/Profile/ProfileDashboard"));
+const ProfileInfo = lazy(() => import("../pages/Profile/ProfileInfo"));
+const MyOrders = lazy(() => import("../pages/Profile/MyOrders"));
+const MyFavourite = lazy(() => import("../pages/Profile/MyFavourite"));
+const Laptop = lazy(() => import("../pages/Laptops/Laptops"));
+const Desktop = lazy(() => import("../pages/Desktops/Desktops"));
+const NetWorking = lazy(() => import("../pages/Networking_devices/Networking_devices"));
+const Printer_Scanner = lazy(() => import("../pages/Printer_scanner/Printer_scanner"));
+const PC_Part = lazy(() => import("../pages/Pc_parts/PC_Part"));
+const All_Product = lazy(() => import("../pages/All_Products/All_Products"));
+const Repair = lazy(() => import("../pages/Repair/Repair"));
+const Our_Deal = lazy(() => import("../pages/Our_Deal/Our_Deal"));
+const Card = lazy(() => import("../pages/Card/Card"));
+const Catalog = lazy(() => import("../pages/Laptops/Catalog"));
+const FAQ = lazy(() => import("../pages/faq/FAQ"));
+const ShoppingCard_CheckOut = lazy(() => import("../pages/ShoppingCard/ShoppingCard_CheckOut"));
+const ProductDetail = lazy(() => import("../components/product/ProductDetail"));
+const ProductSpeccs = lazy(() => import("../components/product/ProductSpecss"));
+const AdminLayout = lazy(() => import("../pages/AdminLayout/AdminLayout"));
+const ProductAbout = lazy(() => import("../components/product/ProductAbout"));
+const Product = lazy(() => import("../components/product/Product"));
 import ScrollToTop from "../components/option/ScrollToTop";
-import VIPCalendar from "../pages/Calendar/VIPCalendar";
-import ThankYouPage from "../pages/ShoppingCard/ThankForShopping";
-import ShoppingCardItem from "../pages/ShoppingCard/ShoppingCardItem";
-import ShoppingCart from "../pages/ShoppingCard/ShoppingCart";
-// New 2025 Ecommerce Pages
-import Deals from "../pages/Deals/Deals";
-import NewArrivals from "../pages/NewArrivals/NewArrivals";
-import Brands from "../pages/Brands/Brands";
-import TrackOrder from "../pages/TrackOrder/TrackOrder";
-import Blog from "../pages/Blog/Blog";
-
-// Management Pages
-import Appointments from "../pages/Appointments/Appointments";
-import Warranties from "../pages/Warranties/Warranties";
-import CustomerManagement from "../pages/Customers/CustomerManagement";
-import PromotionsManagement from "../pages/Promotions/PromotionsManagement";
-import CategoriesManagement from "../pages/Categories/CategoriesManagement";
-import StaffManagement from "../pages/Staff/StaffManagement";
-import CustomerServiceDashboard from "../pages/CustomerService/CustomerServiceDashboard";
-import ToastDemo from "../pages/ToastDemo/ToastDemo";
-import I18nDemo from "../pages/I18nDemo/I18nDemo";
-import UserProfile from "../pages/UserProfile/UserProfile";
-import FlappyBird from "../components/minigame/flappy-bord";
-import Favorites from "../pages/Favorites/Favorites";
-import NotFound from "../pages/NotFound/NotFound";
-import AuditLogsPage from "../pages/AuditLogs/AuditLogsPage";
-import PCBuilder from "../pages/PCBuilder/PCBuilder";
-import AnalyticsDashboard from "../pages/AdminLayout/AnalyticsDashboard";
-import CompareTable from "../components/product/CompareTable";
+const VIPCalendar = lazy(() => import("../pages/Calendar/VIPCalendar"));
+const ThankYouPage = lazy(() => import("../pages/ShoppingCard/ThankForShopping"));
+const ShoppingCardItem = lazy(() => import("../pages/ShoppingCard/ShoppingCardItem"));
+const ShoppingCart = lazy(() => import("../pages/ShoppingCard/ShoppingCart"));
+const Deals = lazy(() => import("../pages/Deals/Deals"));
+const NewArrivals = lazy(() => import("../pages/NewArrivals/NewArrivals"));
+const Brands = lazy(() => import("../pages/Brands/Brands"));
+const TrackOrder = lazy(() => import("../pages/TrackOrder/TrackOrder"));
+const Blog = lazy(() => import("../pages/Blog/Blog"));
+const Appointments = lazy(() => import("../pages/Appointments/Appointments"));
+const Warranties = lazy(() => import("../pages/Warranties/Warranties"));
+const CustomerManagement = lazy(() => import("../pages/Customers/CustomerManagement"));
+const PromotionsManagement = lazy(() => import("../pages/Promotions/PromotionsManagement"));
+const CategoriesManagement = lazy(() => import("../pages/Categories/CategoriesManagement"));
+const StaffManagement = lazy(() => import("../pages/Staff/StaffManagement"));
+const CustomerServiceDashboard = lazy(() => import("../pages/CustomerService/CustomerServiceDashboard"));
+const ToastDemo = lazy(() => import("../pages/ToastDemo/ToastDemo"));
+const I18nDemo = lazy(() => import("../pages/I18nDemo/I18nDemo"));
+const UserProfile = lazy(() => import("../pages/UserProfile/UserProfile"));
+const FlappyBird = lazy(() => import("../components/minigame/flappy-bord"));
+const Favorites = lazy(() => import("../pages/Favorites/Favorites"));
+const NotFound = lazy(() => import("../pages/NotFound/NotFound"));
+const AuditLogsPage = lazy(() => import("../pages/AuditLogs/AuditLogsPage"));
+const PCBuilder = lazy(() => import("../pages/PCBuilder/PCBuilder"));
+const AnalyticsDashboard = lazy(() => import("../pages/AdminLayout/AnalyticsDashboard"));
+const CompareTable = lazy(() => import("../components/product/CompareTable"));
+const LaptopTable = lazy(() => import("../pages/AdminLayout/LaptopTable"));
+const PhoneTable = lazy(() => import("../pages/AdminLayout/PhoneTable"));
+const DashboardViewContainer = lazy(() => import("../pages/AdminLayout/components/DashboardViewContainer"));
 
 const AppRouter = () => {
-  const { getUserRole, loading: _loading } = useContext(UserContext);
-
-  // Temporarily disable loading check for debugging
-  // if (_loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-700"></div>
-  //     </div>
-  //   );
-  // }
+  const { getUserRole } = useContext(UserContext);
 
   const userRole = getUserRole();
-  console.log("Current user role:", userRole);
 
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center text-sm text-gray-500">
+            Loading...
+          </div>
+        }
+      >
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginWave />} />
@@ -227,18 +93,16 @@ const AppRouter = () => {
           path="/admin"
           element={
             <ProtectedRoute requiredRoles={["admin"]}>
-              <Outlet /> {/* Render child routes */}
+              <AdminLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<AdminLayout />} /> {/* /admin */}
-          <Route path="analytics" element={<AnalyticsDashboard />} /> {/* /admin/analytics */}
-          <Route path="calendar" element={<VIPCalendar />} /> {/* /admin/calendar */}
-          <Route path="reviews" element={<AdminLayout />} /> {/* /admin/reviews */}
-          <Route path="messages" element={<AdminLayout />} /> {/* /admin/messages */}
-          <Route path="discounts" element={<AdminLayout />} /> {/* /admin/discounts */}
-          <Route path="permissions" element={<AdminLayout />} /> {/* /admin/permissions */}
-          <Route path="audit-logs" element={<AuditLogsPage />} /> {/* /admin/audit-logs */}
+          <Route index element={<DashboardViewContainer />} />
+          <Route path="products/laptops" element={<LaptopTable />} />
+          <Route path="products/phones" element={<PhoneTable />} />
+          <Route path="analytics" element={<AnalyticsDashboard />} />
+          <Route path="calendar" element={<VIPCalendar />} />
+          <Route path="audit-logs" element={<AuditLogsPage />} />
         </Route>
         {/* Customer/public routes */}
         <Route path="/" element={<Layout />}>
@@ -428,6 +292,7 @@ const AppRouter = () => {
         {/* Catch all - 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };

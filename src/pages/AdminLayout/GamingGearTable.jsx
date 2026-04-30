@@ -1,8 +1,9 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Loader2, AlertCircle, ImageOff, Search, Pencil, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import formatCurrency from "../../utils/formatCurrency";
 
-// Ánh xạ categoryID với tên hãng cho danh mục Gaming Gear
+// �nh x? categoryID v?i t�n h�ng cho danh m?c Gaming Gear
 const CATEGORY_BRAND_MAPPING = {
   14: 'Sony',
   15: 'Lenovo',
@@ -71,13 +72,13 @@ const GamingGearForm = ({
 
     try {
       if (!formData.categoryId || !validCategoryIds.includes(parseInt(formData.categoryId))) {
-        throw new Error('Vui lòng chọn một hãng hợp lệ');
+        throw new Error('Vui l�ng ch?n m?t h�ng h?p l?');
       }
       if (isNaN(parseFloat(formData.unitPrice)) || parseFloat(formData.unitPrice) < 0) {
-        throw new Error('Giá phải là số dương');
+        throw new Error('Gi� ph?i l� s? duong');
       }
       if (isNaN(parseInt(formData.quantity)) || parseInt(formData.quantity) < 0) {
-        throw new Error('Số lượng tồn kho phải là số không âm');
+        throw new Error('S? lu?ng t?n kho ph?i l� s? kh�ng �m');
       }
 
       const productData = {
@@ -96,7 +97,7 @@ const GamingGearForm = ({
       setFormData((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message || 'Không thể lưu gaming gear',
+        error: error.message || 'Kh�ng th? luu gaming gear',
       }));
     }
   };
@@ -204,7 +205,7 @@ const GamingGearForm = ({
                 <option value="">{t('admin.chn_hng')}</option>
                 {validCategoryIds.map((id) => (
                   <option key={id} value={id}>
-                    {CATEGORY_BRAND_MAPPING[id] || `Danh mục ${id}`}
+                    {CATEGORY_BRAND_MAPPING[id] || `Danh m?c ${id}`}
                   </option>
                 ))}
               </select>
@@ -215,7 +216,7 @@ const GamingGearForm = ({
               <div className="relative">
                 <input
                   type="text"
-                  value={formData.image || 'Chọn hoặc nhập URL hình ảnh'}
+                  value={formData.image || 'Ch?n ho?c nh?p URL h�nh ?nh'}
                   onClick={() => setShowImagePicker(true)}
                   onChange={handleChange}
                   name="imageUrl"
@@ -245,7 +246,7 @@ const GamingGearForm = ({
                   onClick={() => setShowImagePicker(false)}
                   className="text-gray-400 hover:text-gray-200"
                 >
-                  ✕
+                  ?
                 </button>
               </div>
               <div className="relative mb-4">
@@ -279,7 +280,7 @@ const GamingGearForm = ({
                   ))
                 ) : (
                   <div className="col-span-3 text-center text-gray-400">
-                    Không tìm thấy hình ảnh
+                    Kh�ng t�m th?y h�nh ?nh
                   </div>
                 )}
               </div>
@@ -299,7 +300,7 @@ const GamingGearForm = ({
               className={`px-4 py-2 rounded-lg transition-colors flex items-center ${currentTheme.buttonPrimary}`}
             >
               {formData.isLoading && <Loader2 size={18} className="animate-spin mr-2" />}
-              Lưu
+              Luu
             </button>
           </div>
         </form>
@@ -332,8 +333,6 @@ const GamingGear = memo(
     });
     const [localGamingGear, setLocalGamingGear] = useState(gamingGear);
     const [isSynced, setIsSynced] = useState(true);
-console.log(getProductById);
-
     useEffect(() => {
       if (isSynced) {
         setLocalGamingGear(gamingGear);
@@ -353,10 +352,7 @@ console.log(getProductById);
 
     const formatPrice = (price) => {
       if (price === undefined || price === null) return 'N/A';
-      return new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND',
-      }).format(price);
+      return formatCurrency(price);
     };
 
     const filteredGamingGear = searchTerm.trim() === ''
@@ -416,7 +412,7 @@ console.log(getProductById);
         if (formState.formType === 'add') {
           const newProduct = await createProduct(productData);
           if (!newProduct.id && !newProduct.productID) {
-            throw new Error('API không trả về ID sản phẩm');
+            throw new Error('API kh�ng tr? v? ID s?n ph?m');
           }
           setLocalGamingGear((prev) => [
             ...prev,
@@ -444,8 +440,8 @@ console.log(getProductById);
       } catch (error) {
         console.error('Error saving gaming gear:', error);
         const errorMessage = error.message.includes('Product not found')
-          ? 'Sản phẩm không tồn tại hoặc đã bị xóa'
-          : error.message || 'Không thể lưu gaming gear';
+          ? 'S?n ph?m kh�ng t?n t?i ho?c d� b? x�a'
+          : error.message || 'Kh�ng th? luu gaming gear';
         setError(errorMessage);
         setIsLoading(false);
         throw error;
@@ -462,7 +458,7 @@ console.log(getProductById);
               className="ml-auto text-white hover:text-gray-200"
               onClick={() => setError(null)}
             >
-              ✕
+              ?
             </button>
           </div>
         )}
@@ -555,7 +551,7 @@ console.log(getProductById);
                       {item.name || 'N/A'}
                     </td>
                     <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                      <div className="max-w-xs truncate">{item.description || 'Không có mô tả'}</div>
+                      <div className="max-w-xs truncate">{item.description || 'Kh�ng c� m� t?'}</div>
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
                       {formatPrice(item.unitPrice)}
@@ -587,7 +583,7 @@ console.log(getProductById);
             gamingGear={formState.currentGamingGear}
             onSave={handleSave}
             onCancel={() => setFormState((prev) => ({ ...prev, isOpen: false }))}
-            formTitle={formState.formType === 'add' ? 'Thêm Gaming Gear mới' : 'Chỉnh sửa Gaming Gear'}
+            formTitle={formState.formType === 'add' ? 'Th�m Gaming Gear m?i' : 'Ch?nh s?a Gaming Gear'}
             theme={theme}
             validCategoryIds={validCategoryIds}
             images={images}
@@ -602,3 +598,4 @@ export default GamingGear;
 // Updated: 2025-10-12T16:06:27.364Z
 
 // Updated: 2025-10-12T16:09:01.073Z
+
