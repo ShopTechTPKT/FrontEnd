@@ -45,20 +45,11 @@ export const removeFavoriteById = async (favoriteId) => {
 // Lấy danh sách sản phẩm yêu thích của user
 export const getUserFavorites = async (userId) => {
   try {
-    console.log('=== getUserFavorites API Call ===');
-    console.log('userId:', userId);
-    console.log('Full URL:', axiosInstance.defaults.baseURL + `/favorites/user/${userId}`);
-    
     const response = await axiosInstance.get(`/favorites/user/${userId}`);
-    
-    console.log('API Response status:', response.status);
-    console.log('API Response data:', response.data);
     
     return response.data;
   } catch (error) {
-    console.error('Error getting user favorites:', error);
-    console.error('Error response:', error.response?.data);
-    console.error('Error status:', error.response?.status);
+    console.error('Error getting user favorites:', error?.message);
     throw new Error(error.response?.data?.message || 'Không thể lấy danh sách yêu thích');
   }
 };
@@ -92,17 +83,11 @@ export const isProductFavorited = async (userId, productId) => {
 // Đếm số lượng sản phẩm yêu thích của user
 export const countUserFavorites = async (userId) => {
   try {
-    console.log('=== countUserFavorites API Call ===');
-    console.log('userId:', userId);
-    
     const response = await axiosInstance.get(`/favorites/user/${userId}/count`);
-    
-    console.log('Count API Response:', response.data);
     
     return response.data;
   } catch (error) {
-    console.error('Error counting user favorites:', error);
-    console.error('Count error response:', error.response?.data);
+    console.error('Error counting user favorites:', error?.message);
     return 0;
   }
 };

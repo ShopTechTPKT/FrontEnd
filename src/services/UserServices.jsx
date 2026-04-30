@@ -15,20 +15,11 @@ export const getUserAccount = async () => {
 };
 export const getUserByEmail = async email => {
   try {
-    console.log('=== getUserByEmail API Call ===');
-    console.log('email:', email);
-    console.log('Full URL:', axiosInstance.defaults.baseURL + `/users/email/${email}`);
-    
     const response = await axiosInstance.get(`/users/email/${email}`);
-    
-    console.log('getUserByEmail API Response status:', response.status);
-    console.log('getUserByEmail API Response data:', response.data);
     
     return response.data;
   } catch (error) {
-    console.error("Error fetching user by email:", error);
-    console.error("Error response:", error.response?.data);
-    console.error("Error status:", error.response?.status);
+    console.error("Error fetching user by email:", error?.message);
     return null;
   }
 };

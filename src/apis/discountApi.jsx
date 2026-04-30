@@ -82,19 +82,10 @@ export const getDiscountsByRateRange = async (minRate, maxRate) => {
 
 
 export const exchangePoint = async (userId, point, idDisCount) => {
-
-  console.log(userId, point, idDisCount)
-
   try {
-    const response = await axiosInstance.post(
-      `/user-discounts/user/${userId}/exchange-point`,
-      null, {
-      params: {
-        point,
-        idDisCount,
-      },
-    }
-    );
+    const response = await axiosInstance.post(`/user-discounts/exchange`, null, {
+      params: { userId, point, discountId: idDisCount },
+    });
     return response.data;
   } catch (error) {
     console.error("Error exchanging points:", error);
@@ -106,10 +97,9 @@ export const exchangePoint = async (userId, point, idDisCount) => {
 export const getAllDiscountExchangePoint = async () => {
   try {
     const response = await axiosInstance.get(`/discounts/exchange-point`);
-    console.log("NGUYEN TRONG NGHIA ", response.data)
     return response.data;
   } catch (error) {
-    console.error("Error fetching discounts by category:", error);
+    console.error("Error fetching discount exchange points:", error);
     return [];
   }
 };
@@ -118,7 +108,6 @@ export const updatePointAccumulate = async (userId, points) => {
     const response = await axiosInstance.patch(`/users/${userId}/points`, null, {
       params: { points },
     });
-    console.log("✅ Cập nhật điểm thành công:", response.data);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật điểm:", error);

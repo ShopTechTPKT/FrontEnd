@@ -1,4 +1,4 @@
-﻿/**
+/**
  * pcBuilderApi.jsx
  * API wrapper for PC Builder feature.
  * Falls back to rich mock data when backend endpoints are unavailable.
@@ -78,6 +78,51 @@ const MOCK_COMPONENTS = {
   ],
 };
 
+const CATEGORY_KEYWORDS = {
+  cpu: ["cpu", "processor", "ryzen", "intel core"],
+  mainboard: ["mainboard", "motherboard", "bo mach chu", "bo mạch chủ"],
+  ram: ["ram", "ddr4", "ddr5", "memory"],
+  gpu: ["gpu", "vga", "graphics card", "rtx", "radeon"],
+  storage: ["ssd", "hdd", "nvme", "storage", "o cung", "ổ cứng"],
+  psu: ["psu", "power supply", "nguon", "nguồn"],
+  case: ["case", "vo may", "vỏ máy", "chassis"],
+  cooler: ["cooler", "tan nhiet", "tản nhiệt", "fan", "aio"],
+  monitor: ["monitor", "man hinh", "màn hình", "display"],
+};
+
+const normalizeProductList = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.DT)) return payload.DT;
+  if (Array.isArray(payload?.result)) return payload.result;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.content)) return payload.content;
+  return [];
+};
+
+const toBuilderComponent = (product) => {
+  const name = product?.productName || product?.name || "";
+  const description = product?.description || "";
+  return {
+    id: product?.productID || product?.id,
+    name,
+    brand: product?.brandName || product?.brand || "",
+    price: Number(product?.unitPrice ?? product?.price ?? 0),
+    specs: product?.seriesName || description.slice(0, 90),
+    watt: 0,
+    image: product?.imageUrl || product?.image || "",
+    badge: null,
+    raw: product,
+  };
+};
+
+const classifyCategory = (component) => {
+  const haystack = `${component.name} ${component.brand} ${component.specs}`.toLowerCase();
+  for (const [catId, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (keywords.some((kw) => haystack.includes(kw))) return catId;
+  }
+  return null;
+};
+
 // ── Preset builds ──────────────────────────────────────────────
 export const PRESET_BUILDS = [
   {
@@ -125,18 +170,11 @@ export const PRESET_BUILDS = [
  */
 export const getComponentsByCategory = async (categoryId) => {
   try {
-    const res = await axiosInstance.get(`/products?categorySlug=${categoryId}&limit=20`);
-    if (res.data?.DT?.length) {
-      return res.data.DT.map((p) => ({
-        id: p.productID || p.id,
-        name: p.productName || p.name,
-        brand: p.brandName || p.brand || "",
-        price: p.price || p.unitPrice || 0,
-        specs: p.seriesName || p.description?.slice(0, 60) || "",
-        watt: 0,
-        image: p.image || p.imageUrl || "",
-        badge: null,
-      }));
+    const res = await axiosInstance.get("/products", { params: { categorySlug: categoryId, limit: 80 } });
+    const products = normalizeProductList(res.data);
+    if (products.length) {
+      const mapped = products.map(toBuilderComponent).filter((item) => Boolean(item.id));
+      if (mapped.length) return mapped;
     }
   } catch {
     // fallthrough to mock
@@ -148,9 +186,25 @@ export const getComponentsByCategory = async (categoryId) => {
  * Get all components at once (for initial load).
  */
 export const getAllComponents = async () => {
-  const result = {};
+  const result = Object.fromEntries(PC_CATEGORIES.map((cat) => [cat.id, []]));
+  try {
+    const res = await axiosInstance.get("/products");
+    const products = normalizeProductList(res.data).map(toBuilderComponent).filter((item) => Boolean(item.id));
+
+    for (const item of products) {
+      const catId = classifyCategory(item);
+      if (catId && result[catId]) {
+        result[catId].push(item);
+      }
+    }
+  } catch {
+    // ignore and apply fallback below
+  }
+
   for (const cat of PC_CATEGORIES) {
-    result[cat.id] = await getComponentsByCategory(cat.id);
+    if (!result[cat.id].length) {
+      result[cat.id] = MOCK_COMPONENTS[cat.id] || [];
+    }
   }
   return result;
 };
@@ -175,7 +229,7 @@ export const checkCompatibility = (selected, allComponents) => {
     const cpuSocket = cpu.socket;
     const mbSocket = mb.socket;
     if (cpuSocket && mbSocket && cpuSocket !== mbSocket) {
-      warnings.push(`⚠️ CPU socket ${cpuSocket} không tương thích với Mainboard socket ${mbSocket}`);
+      warnings.push(`CPU socket ${cpuSocket} không tương thích với Mainboard socket ${mbSocket}.`);
     }
   }
 
@@ -188,7 +242,7 @@ export const checkCompatibility = (selected, allComponents) => {
     }, 0);
     const psuWatt = parseInt(psu.name?.match(/(\d{3,4})W/)?.[1] || 0);
     if (psuWatt > 0 && totalWatt > psuWatt * 0.85) {
-      warnings.push(`⚡ PSU ${psuWatt}W có thể không đủ cho cấu hình này (ước tính ${totalWatt}W). Khuyến nghị tối thiểu ${Math.ceil(totalWatt / 0.8 / 50) * 50}W.`);
+      warnings.push(`PSU ${psuWatt}W có thể không đủ cho cấu hình này (ước tính ${totalWatt}W). Khuyến nghị tối thiểu ${Math.ceil(totalWatt / 0.8 / 50) * 50}W.`);
     }
   }
 
@@ -225,4 +279,20 @@ export const resolvePreset = (preset, allComponents) => {
     if (comp) resolved[catId] = comp;
   }
   return resolved;
+};
+
+export const savePCBuild = async ({ userId, name, components, totalPrice }) => {
+  const payload = {
+    userId,
+    name,
+    components,
+    totalPrice,
+  };
+  const res = await axiosInstance.post("/pc-builds", payload);
+  return res.data;
+};
+
+export const getSharedPCBuild = async (shareCode) => {
+  const res = await axiosInstance.get(`/pc-builds/share/${shareCode}`);
+  return res.data;
 };

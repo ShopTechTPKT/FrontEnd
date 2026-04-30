@@ -1,29 +1,23 @@
-// Minimal 2025-style notification adapter for the in-house Toast system
-// Usage:
-// import notify from '../utils/notify';
-// notify.success('Đăng nhập thành công');
-// notify.error('Lỗi xảy ra', { duration: 5000, position: 'bottom-right' });
-//
-// This dispatches a CustomEvent captured by ToastProvider to render toasts.
-
-const emit = (type, message, options = {}) => {
-  const detail = {
-    type,
-    message,
-    duration: options.duration ?? 3000,
-    position: options.position ?? 'top-right',
-  };
-  window.dispatchEvent(new CustomEvent('app:notify', { detail }));
-};
+/**
+ * notify — Unified notification adapter.
+ *
+ * Single source of truth for all toast notifications across the app.
+ * Built on top of react-toastify (configured in App.jsx via <ToastContainer>).
+ *
+ * Usage:
+ *   import notify from '../utils/notify';
+ *   notify.success('Đăng nhập thành công');
+ *   notify.error('Lỗi xảy ra');
+ *   notify.warning('Cảnh báo');
+ *   notify.info('Thông tin');
+ */
+import { toast } from 'react-toastify';
 
 const notify = {
-  success: (msg, opts) => emit('success', msg, opts),
-  error: (msg, opts) => emit('error', msg, opts),
-  warning: (msg, opts) => emit('warning', msg, opts),
-  info: (msg, opts) => emit('info', msg, opts),
+  success: (msg, opts) => toast.success(msg, opts),
+  error:   (msg, opts) => toast.error(msg, opts),
+  warning: (msg, opts) => toast.warn(msg, opts),
+  info:    (msg, opts) => toast.info(msg, opts),
 };
 
 export default notify;
-export const toast = notify;
-
-
