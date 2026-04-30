@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getUserDiscounts } from "../../apis/userApi";
 import {
@@ -23,28 +23,24 @@ const UserDiscounts = ({ userId }) => {
       try {
         setLoading(true);
         let data = await getUserDiscounts(userId);
-        console.log("User discounts raw data:", data);
-        console.log("Type of data:", typeof data);
 
         // Nếu data là string, parse JSON
         if (typeof data === "string") {
           try {
             data = JSON.parse(data);
-            console.log("Parsed data from string:", data);
           } catch (parseError) {
             console.error("Failed to parse JSON string:", parseError);
           }
         }
 
-        console.log("Is data an array after parse?", Array.isArray(data));
+
 
         // Đảm bảo data luôn là mảng
         let discountArray = [];
         if (Array.isArray(data)) {
           discountArray = data;
-          console.log("Data is array, using directly");
+
         } else if (data && typeof data === "object") {
-          console.log("Data is object, checking nested properties");
           if (Array.isArray(data.content)) {
             discountArray = data.content;
           } else if (Array.isArray(data.data)) {
@@ -54,8 +50,7 @@ const UserDiscounts = ({ userId }) => {
           }
         }
 
-        console.log("Final discountArray:", discountArray);
-        console.log("discountArray.length:", discountArray.length);
+
 
         setDiscounts(discountArray);
         setError(null);

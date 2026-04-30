@@ -11,6 +11,7 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 
 const OrderTracking = ({ userId, onNavigateToTracking }) => {
   const { t } = useTranslation();
@@ -186,13 +187,7 @@ const OrderTracking = ({ userId, onNavigateToTracking }) => {
     }
   };
 
-  // Format giá tiền
-  const formatPrice = price => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
+
 
   // Format ngày
   const formatDate = dateString => {
@@ -268,7 +263,7 @@ const OrderTracking = ({ userId, onNavigateToTracking }) => {
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-gray-900">
-                    {formatPrice(order.totalPrice)}
+                   {formatCurrency(order.totalPrice)}
                   </p>
                   <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 mt-1">
                     <FaTruck className="mr-1" />

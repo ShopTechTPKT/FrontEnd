@@ -46,10 +46,6 @@ export const useFavorites = (productId = null) => {
     // Fallback: Nếu vẫn không có userId và có email, thử tìm user bằng email
     // Nhưng nếu API lỗi, sẽ sử dụng hardcoded userId để test
     if (!userId && user.email) {
-      console.log(
-        "No userId found, will try to find user by email:",
-        user.email
-      );
       userId = "find_by_email";
     }
   }
@@ -64,18 +60,14 @@ export const useFavorites = (productId = null) => {
     // Nếu userId là "find_by_email", thử tìm user bằng email
     if (userId === "find_by_email" && user?.email) {
       try {
-        console.log("Trying to find user by email from API:", user.email);
         const userData = await getUserByEmail(user.email);
 
         if (userData && userData.id) {
-          console.log("Found user by email:", userData);
           setResolvedUserId(userData.id);
           return userData.id;
         } else {
-          console.log("User not found by email, using fallback strategy");
           // Fallback: Sử dụng hardcoded userId cho test
           const FALLBACK_USER_ID = 8; // ID từ database test
-          console.log("Using fallback userId:", FALLBACK_USER_ID);
           setResolvedUserId(FALLBACK_USER_ID);
           return FALLBACK_USER_ID;
         }
@@ -85,7 +77,6 @@ export const useFavorites = (productId = null) => {
 
         // Fallback: Sử dụng hardcoded userId khi API lỗi
         const FALLBACK_USER_ID = 8;
-        console.log("API failed, using fallback userId:", FALLBACK_USER_ID);
         setResolvedUserId(FALLBACK_USER_ID);
         return FALLBACK_USER_ID;
       }
@@ -101,15 +92,10 @@ export const useFavorites = (productId = null) => {
 
   // Fetch danh sách favorites của user
   const fetchFavorites = async () => {
-    console.log("=== FETCHING FAVORITES ===");
-    console.log("userId:", userId);
-    console.log("user object:", user);
-
     // Resolve userId trước
     const actualUserId = await resolveUserId();
 
     if (!actualUserId) {
-      console.log("No actual userId found, skipping fetch");
       setFavorites([]);
       setTotalCount(0);
       setLoading(false);
@@ -118,15 +104,10 @@ export const useFavorites = (productId = null) => {
 
     setLoading(true);
     try {
-      console.log("Calling API with actualUserId:", actualUserId);
       const [favoritesData, countData] = await Promise.all([
         getUserFavorites(actualUserId),
         countUserFavorites(actualUserId),
       ]);
-
-      console.log("Favorites API response:", favoritesData);
-      console.log("Count API response:", countData);
-
       setFavorites(favoritesData || []);
       setTotalCount(countData || 0);
       setError(null);

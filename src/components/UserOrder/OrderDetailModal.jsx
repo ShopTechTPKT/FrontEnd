@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   getOrderById,
   getOrderProductDetails,
@@ -16,6 +16,7 @@ import {
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 
 const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
   const { t } = useTranslation();
@@ -44,17 +45,14 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
       // Lấy thông tin khách hàng theo user_id
       if (orderData.user_id) {
         const userData = await getUserById(orderData.user_id);
-        console.log("Customer data loaded:", userData);
         setCustomer(userData);
       } else {
-        console.log("No user_id found in order data");
+
       }
 
       // Lấy chi tiết đơn hàng với thông tin sản phẩm đầy đủ (sử dụng endpoint mới)
-      console.log("Fetching order product details for orderId:", orderId);
       try {
         const detailsData = await getOrderProductDetails(orderId);
-        console.log("Order product details received:", detailsData);
         setOrderDetails(detailsData || []);
       } catch (productError) {
         console.error(
@@ -64,7 +62,6 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
         // Fallback to basic order details if the new endpoint fails
         try {
           const basicDetailsData = await getOrderDetails(orderId);
-          console.log("Basic order details received:", basicDetailsData);
           setOrderDetails(basicDetailsData || []);
         } catch (basicError) {
           console.error("Error fetching basic details:", basicError);
@@ -80,10 +77,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
   };
 
   const formatPrice = price => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
+    return formatCurrency(price);
   };
 
   const formatDate = dateString => {
@@ -622,3 +616,4 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
 };
 
 export default OrderDetailModal;
+

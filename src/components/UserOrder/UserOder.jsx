@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 import { getOrdersByUser } from "../../apis/orderApi";
 import OrderDetailModal from "./OrderDetailModal";
 import ProductGridSkeleton from "../ui/ProductGridSkeleton";
@@ -78,10 +79,7 @@ const UserOrders = ({ userId }) => {
   };
 
   const formatPrice = price => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
+    return formatCurrency(price);
   };
 
   const formatDate = dateString => {
@@ -326,3 +324,4 @@ const UserOrders = ({ userId }) => {
 };
 
 export default UserOrders;
+

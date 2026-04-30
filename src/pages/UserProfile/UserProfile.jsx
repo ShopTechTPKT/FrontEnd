@@ -137,13 +137,6 @@ function UserProfile() {
       setChangePasswordError(errorMessage);
     }
   };
-
-  console.log("Full user object:", user);
-  console.log("user.id:", user?.id);
-  console.log("user.customerID:", user?.customerID);
-  console.log("user.userId:", user?.userId);
-  console.log("All user keys:", user ? Object.keys(user) : "No user");
-
   let userId = null;
 
   if (user) {
@@ -160,33 +153,19 @@ function UserProfile() {
       );
       if (idKey) {
         userId = user[idKey];
-        console.log(`Found userId in field: ${idKey} = ${userId}`);
       }
     }
 
     //  dùng email để tìm user
     if (!userId && user.email) {
-      console.log(
-        "No userId found, will try to find user by email:",
-        user.email
-      );
       // set userId = "email" để trigger việc tìm user bằng email
       userId = "find_by_email";
     }
   }
-
-  console.log("Final userId:", userId);
-
   useEffect(() => {
-    console.log("=== useEffect TRIGGERED ===");
-    console.log("Current userId:", userId);
-    console.log("Current user email:", user?.email);
-    console.log("Current resolvedUserId:", resolvedUserId);
-
     const fetchUser = async () => {
       // Kiểm tra xem có userId không (người dùng đã đăng nhập)
       if (!userId) {
-        console.log("Không tìm thấy userId, người dùng chưa đăng nhập");
         return;
       }
 
@@ -196,10 +175,6 @@ function UserProfile() {
         userId !== "find_by_email" &&
         userId === resolvedUserId
       ) {
-        console.log(
-          "Already have resolvedUserId, skipping fetch:",
-          resolvedUserId
-        );
         return;
       }
 
@@ -208,16 +183,12 @@ function UserProfile() {
 
         // Nếu userId là "find_by_email", thử tìm user bằng email từ API
         if (userId === "find_by_email" && user?.email) {
-          console.log("Trying to find user by email from API:", user.email);
           data = await getUserByEmail(user.email);
 
           if (data) {
-            console.log("Found user by email:", data);
             // Cập nhật userId thực tế từ API response
             setResolvedUserId(data.id);
-            console.log("Updated userId from API:", data.id);
           } else {
-            console.log("User not found by email, using fallback data");
             // Fallback nếu không tìm thấy user
             data = {
               id: null,
@@ -329,18 +300,11 @@ function UserProfile() {
         gender: editAccountInfo.gender,
         dob: editAccountInfo.birthDate,
       };
-
-      console.log("=== SAVING ACCOUNT INFO ===");
-      console.log("Updating user ID:", resolvedUserId);
-      console.log("Updated data:", updatedData);
-
       const response = await updateUserById(resolvedUserId, updatedData);
 
       if (response) {
         alert("Thông tin tài khoản đã được cập nhật thành công!");
         setAccountInfo(updatedData);
-        console.log("Account info updated successfully, local state updated");
-
         // Cập nhật UserContext một cách an toàn - chỉ cập nhật các trường cần thiết
         // và không thay đổi id để tránh trigger useEffect
         setTimeout(() => {

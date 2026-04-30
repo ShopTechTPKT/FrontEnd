@@ -1,4 +1,5 @@
-﻿import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 import { Link } from "react-router-dom";
 import { removeFavoriteById } from "../../services/FavoriteServices";
 import { useFavorites } from "../../hooks/useFavorites";
@@ -52,14 +53,8 @@ const UserFavorites = ({ userId: propUserId }) => {
     }
   };
 
-  // Format  tiền
-  const formatPrice = price => {
-    if (!price) return "Liên hệ";
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
+  // Format tiền — dùng shared util, fallback "Liên hệ" nếu không có giá
+  const formatPrice = (price) => price ? formatCurrency(price) : "Liên hệ";
 
   // Format ngày thêm vào yêu thích
   const formatDate = dateString => {
