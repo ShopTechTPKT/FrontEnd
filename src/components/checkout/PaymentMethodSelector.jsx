@@ -20,8 +20,8 @@ const METHODS = [
         <path d="M2 10h20" stroke="currentColor" strokeWidth="1.8" />
       </svg>
     ),
-    accent: "border-emerald-300 bg-emerald-50",
-    dot: "bg-emerald-500",
+    accent: "border-violet-300 bg-violet-50",
+    dot: "bg-violet-500",
   },
   {
     id: "vnpay",
@@ -35,8 +35,8 @@ const METHODS = [
         </svg>
       </div>
     ),
-    accent: "border-blue-300 bg-blue-50",
-    dot: "bg-blue-500",
+    accent: "border-violet-300 bg-violet-50",
+    dot: "bg-violet-500",
   },
   {
     id: "bank",
@@ -47,8 +47,8 @@ const METHODS = [
         <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     ),
-    accent: "border-indigo-300 bg-indigo-50",
-    dot: "bg-indigo-500",
+    accent: "border-violet-300 bg-violet-50",
+    dot: "bg-violet-500",
   },
   {
     id: "momo",
@@ -62,8 +62,8 @@ const METHODS = [
         </svg>
       </div>
     ),
-    accent: "border-pink-300 bg-pink-50",
-    dot: "bg-pink-500",
+    accent: "border-violet-300 bg-violet-50",
+    dot: "bg-violet-500",
   },
 ];
 
@@ -121,26 +121,26 @@ const PaymentMethodSelector = ({ selected, onChange }) => {
 
       {/* VNPAY note */}
       {selected === "vnpay" && (
-        <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-xl border border-blue-100 animate-fadeIn">
-          <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-blue-500 mt-0.5 shrink-0">
+        <div className="flex items-start gap-2 p-3 bg-violet-50 rounded-xl border border-violet-100 animate-fadeIn">
+          <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-violet-500 mt-0.5 shrink-0">
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
             <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
-          <p className="text-xs text-blue-700">
-            Bạn sẽ được chuyển đến cổng thanh toán VNPAY an toàn sau khi đặt hàng.
-            Hỗ trợ: Visa, MasterCard, ATM nội địa và QR Code.
+          <p className="text-xs text-violet-700">
+            Ban se duoc chuyen den cong thanh toan VNPAY an toan sau khi dat hang.
+            Ho tro: Visa, MasterCard, ATM noi dia va QR Code.
           </p>
         </div>
       )}
 
       {selected === "bank" && (
-        <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100 animate-fadeIn">
-          <p className="text-xs font-semibold text-indigo-800 mb-1">Thông tin chuyển khoản:</p>
-          <div className="space-y-0.5 text-xs text-indigo-700">
-            <p>Ngân hàng: <strong>Techcombank</strong></p>
+        <div className="p-3 bg-violet-50 rounded-xl border border-violet-100 animate-fadeIn">
+          <p className="text-xs font-semibold text-violet-800 mb-1">Thong tin chuyen khoan:</p>
+          <div className="space-y-0.5 text-xs text-violet-700">
+            <p>Ngan hang: <strong>Techcombank</strong></p>
             <p>STK: <strong>19036789012345</strong></p>
-            <p>Chủ TK: <strong>CONG TY TNHH SHOPPC</strong></p>
-            <p>Nội dung: <strong>Tên + SĐT + Mã đơn hàng</strong></p>
+            <p>Chu TK: <strong>CONG TY TNHH SHOPPC</strong></p>
+            <p>Noi dung: <strong>Ten + SDT + Ma don hang</strong></p>
           </div>
         </div>
       )}

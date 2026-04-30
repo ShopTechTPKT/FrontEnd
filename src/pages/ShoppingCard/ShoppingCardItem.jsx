@@ -18,6 +18,7 @@ import {
 import notify from "../../utils/notify";
 import { addOrder } from "../../utils/redux/orderSlice";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 import ConfirmModal from "../../components/ConfirmModal";
 import {
   createOrder,
@@ -102,9 +103,7 @@ const ShoppingCardItem = () => {
     const userId = user?.id || user?.customerID || user?.customerId || user?.userId || getCurrentUserId();
     
     if (isDiscountModalOpen && userId) {
-      console.log("🔍 Loading discounts for userId:", userId);
       getUserActiveDiscounts(userId).then(data => {
-        console.log("📦 User Discounts from DB:", data);
         
         // Đảm bảo data là mảng
         let discountArray = [];
@@ -131,8 +130,7 @@ const ShoppingCardItem = () => {
           }
         };
         
-        console.log("🔍 Raw discountArray items:", discountArray);
-        console.log("🔍 First item structure:", discountArray[0]);
+
         
         // Filter chỉ lấy những discount chưa dùng và chưa hết hạn
         // UserDiscountDTO đã flatten, không có nested discount object
@@ -141,31 +139,12 @@ const ShoppingCardItem = () => {
           const hasDiscountInfo = ud.discountId && ud.discountName;
           const notExpired = !isExpired(ud.expiresAt);
           
-          console.log(`🔍 Filtering item ${ud.id}:`, {
-            notUsed,
-            hasDiscountInfo,
-            notExpired,
-            isUsed: ud.isUsed,
-            expiresAt: ud.expiresAt,
-            discountId: ud.discountId,
-            discountName: ud.discountName
-          });
+
           
           return notUsed && hasDiscountInfo && notExpired;
         });
         
-        console.log("📊 Total unused and active vouchers:", unusedDiscounts?.length || 0);
-        if (unusedDiscounts && unusedDiscounts.length > 0) {
-          console.log("🎫 First voucher:", unusedDiscounts[0]);
-        } else {
-          console.log("⚠️ No valid vouchers found. All items:", discountArray.map(ud => ({
-            id: ud.id,
-            isUsed: ud.isUsed,
-            expiresAt: ud.expiresAt,
-            discountId: ud.discountId,
-            discountName: ud.discountName
-          })));
-        }
+
         
         // Map UserDiscountDTO thành format discount để hiển thị
         // DTO đã flatten, dùng trực tiếp các field
@@ -190,7 +169,7 @@ const ShoppingCardItem = () => {
       });
     } else if (isDiscountModalOpen && !userId) {
       // Nếu chưa đăng nhập thì không có discount
-      console.log("⚠️ No userId found, skipping discount load");
+
       setDiscounts([]);
     }
   }, [isDiscountModalOpen, user]);
@@ -272,10 +251,7 @@ const ShoppingCardItem = () => {
   );
 
   const formatCurrency = value =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
+    formatCurrency(value);
 
   // Confirm Modal Handlers
   const openConfirm = (message, action) => {
@@ -338,14 +314,12 @@ const ShoppingCardItem = () => {
         status: "success",
         message:
           data?.message ||
-          `Áp dụng thành công: giảm ${new Intl.NumberFormat("vi-VN").format(
-            discountAmount
+          `Áp dụng thành công: giảm ${formatCurrency(discountAmount
           )}đ`,
       });
       notify.success(
         data?.message ||
-          `Áp dụng thành công: giảm ${new Intl.NumberFormat("vi-VN").format(
-            discountAmount
+          `Áp dụng thành công: giảm ${formatCurrency(discountAmount
           )}đ`
       );
     } catch (error) {
@@ -440,23 +414,17 @@ const ShoppingCardItem = () => {
     selectedPaymentName || "Select Payment Method";
 
   const handleCompleteOrder = async () => {
-    console.log("=== DEBUG AUTHENTICATION ===");
-    console.log("User object:", user);
-    console.log("User type:", typeof user);
-    console.log("User exists:", !!user);
-    console.log("localStorage user:", localStorage.getItem("user"));
-    console.log("localStorage authToken:", localStorage.getItem("authToken"));
-    console.log("customerInfo", customerInfo);
+
 
     // Check if user is authenticated
     if (!user) {
-      console.log("❌ No user found - redirecting to login");
+
       notify.error("Vui lòng đăng nhập để đặt hàng!");
       navigate("/login");
       return;
     }
 
-    console.log("✅ User authenticated, proceeding with order...");
+
 
     if (carts.length === 0) {
       notify.error("Giỏ hàng trống!");
@@ -502,7 +470,7 @@ const ShoppingCardItem = () => {
           }),
         };
 
-        console.log("Creating order with details:", orderWithDetailsData);
+
         const orderResponse = await createOrderWithDetails(
           orderWithDetailsData
         );
@@ -530,7 +498,7 @@ const ShoppingCardItem = () => {
         // ⭐ Thêm 3 lượt chơi cho user khi tạo order thành công (COD)
         updatePlaysAllowedAfterOrder(userId)
           .then(updatedUser => {
-            console.log("✅ Updated plays allowed for COD:", updatedUser);
+
             if (updatedUser) {
               localStorage.setItem("user", JSON.stringify(updatedUser));
             }
@@ -588,7 +556,7 @@ const ShoppingCardItem = () => {
         if (createdOrderId) {
           try {
             await deleteOrder(createdOrderId);
-            console.log("✅ Cleaned up order:", createdOrderId);
+
           } catch (cleanupError) {
             console.error("Failed to cleanup order:", cleanupError);
           }
@@ -615,9 +583,7 @@ const ShoppingCardItem = () => {
     if (discountedTotal <= 0) return notify.error("Tổng tiền không hợp lệ!");
 
     try {
-      // Debug: log cart structure
-      console.log("🛒 Cart items:", carts);
-      console.log("📦 First cart item:", carts[0]);
+
 
       // Chuẩn bị dữ liệu order để lưu vào sessionStorage (KHÔNG tạo order ngay)
       // Lấy userId đúng cách từ localStorage
@@ -642,12 +608,7 @@ const ShoppingCardItem = () => {
           // Try multiple possible field names for productId
           const productId =
             item.productId || item.product?.id || item.productID || item.id;
-          console.log(`📝 Mapping item:`, {
-            raw: item,
-            extractedProductId: productId,
-            quantity: item.quantity,
-            price: item.price,
-          });
+
 
           return {
             productId: Number(productId),
@@ -656,11 +617,6 @@ const ShoppingCardItem = () => {
           };
         }),
       };
-
-      console.log(
-        "� Saving order data to sessionStorage for VNPAY:",
-        orderWithDetailsData
-      );
 
       // LƯU orderData vào sessionStorage để ThankForShopping sử dụng SAU khi VNPAY callback thành công
       sessionStorage.setItem(
@@ -723,7 +679,7 @@ const ShoppingCardItem = () => {
         });
 
           document.body.appendChild(form);
-          console.log("🔄 Submitting VNPAY payment form:", fields);
+
           form.submit();
         }, 1500); // UI delay 1.5s then redirect
       });
@@ -1016,8 +972,6 @@ const ShoppingCardItem = () => {
                     if (selected.id) {
                       try {
                         await callUseUserDiscount(selected.id);
-                        console.log("✅ Discount marked as used:", selected.id);
-                        
                         // Remove discount from list (ẩn nó đi)
                         setDiscounts(prevDiscounts => 
                           prevDiscounts.filter(d => d.id !== selected.id)
@@ -1174,8 +1128,7 @@ const ShoppingCardItem = () => {
                                     selectedDiscount.discountRate * 100
                                   ).toFixed(0)}% OFF`
                                 : selectedDiscount.type === "FIXED_AMOUNT"
-                                ? `${new Intl.NumberFormat("vi-VN").format(
-                                    selectedDiscount.discountRate
+                                ? `${formatCurrency(selectedDiscount.discountRate
                                   )} VND OFF`
                                 : `${selectedDiscount.discount}% OFF`}
                             </span>
@@ -1220,10 +1173,7 @@ const ShoppingCardItem = () => {
                         </span>
                         <span className="text-sm font-semibold text-green-600">
                           -{" "}
-                          {new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(discountAmount)}
+                          {formatCurrency(discountAmount)}
                         </span>
                       </div>
                     )}
@@ -1281,3 +1231,4 @@ const ShoppingCardItem = () => {
 };
 
 export default ShoppingCardItem;
+

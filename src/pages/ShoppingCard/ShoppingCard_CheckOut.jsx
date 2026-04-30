@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import path from "../../constant/path";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 import { UserContext } from "../../context/UserContext";
 import DiscountModal from "../../components/DiscountModal";
 import AddressAutocomplete from "../../components/Orders/AddressAutocomplete";
@@ -90,10 +91,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
                 </div>
               </div>
               <span className="text-sm font-semibold text-gray-900">
-                {new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(getUnitPrice(item) * (Number(item.quantity) || 1))}
+                {formatCurrency(getUnitPrice(item) * (Number(item.quantity) || 1))}
               </span>
             </div>
           ))
@@ -104,10 +102,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               <span className="text-sm text-emerald-600">Giảm từ điểm thưởng</span>
               <span className="text-sm font-semibold text-emerald-600">
                 -
-                {new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(loyaltyDiscount)}
+                {formatCurrency(loyaltyDiscount)}
               </span>
             </div>
           )}
@@ -116,10 +111,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               {t("payment.checkout.subtotal")}
             </span>
             <span className="text-sm font-semibold text-gray-900">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(subtotal)}
+              {formatCurrency(subtotal)}
             </span>
           </div>
           <div className="flex items-center justify-between mt-1">
@@ -127,10 +119,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               {t("payment.checkout.shipping")}
             </span>
             <span className="text-sm font-semibold text-gray-900">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(selectedShippingCost)}
+              {formatCurrency(selectedShippingCost)}
             </span>
           </div>
         </div>
@@ -141,10 +130,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               {t("payment.checkout.total")}
             </span>
             <span className="text-base font-bold text-violet-700">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(total)}
+              {formatCurrency(total)}
             </span>
           </div>
         </div>
@@ -381,7 +367,15 @@ function ShoppingCard_CheckOut() {
           <h1 className="mt-6 text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
             {t("payment.checkout.checkout_title")}
           </h1>
-          <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-8">
+          <div className="mt-6 rounded-2xl border border-violet-100 bg-violet-50/60 p-4 sm:p-5">
+            <div className="mb-3 flex items-center justify-between text-xs text-violet-700">
+              <span className="font-medium">{t("payment.checkout.step_shipping")}</span>
+              <span>{t("payment.checkout.step_payment_review")}</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-violet-100 overflow-hidden">
+              <div className="h-full w-1/2 bg-violet-600 rounded-full" />
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-4 sm:gap-8">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-xs font-semibold text-white shadow-sm">
                 <svg
@@ -411,6 +405,7 @@ function ShoppingCard_CheckOut() {
               <span className="text-sm">
                 {t("payment.checkout.step_payment_review")}
               </span>
+            </div>
             </div>
           </div>
         </div>
@@ -702,10 +697,7 @@ function ShoppingCard_CheckOut() {
                     </label>
                   </div>
                   <span className="text-sm text-gray-700">
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(20000)}
+                    {formatCurrency(20000)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -751,7 +743,13 @@ function ShoppingCard_CheckOut() {
         </div>
 
         {/* Next Button */}
-        <div className="mt-10 flex justify-end">
+        <div className="mt-10 flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-xs text-gray-500">
+            {t("payment.checkout.shipping")} {formatCurrency(shippingCost)} - {t("payment.checkout.total")}{" "}
+            <span className="font-semibold text-violet-700">
+              {formatCurrency(Math.max(0, cartTotal - loyaltyApplied.discountAmount))}
+            </span>
+          </p>
           <button
             type="button"
             onClick={e => {
@@ -778,4 +776,5 @@ function ShoppingCard_CheckOut() {
 }
 
 export default ShoppingCard_CheckOut;
+
 

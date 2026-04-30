@@ -1,14 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import formatCurrency from "../../utils/formatCurrency";
 
 const PaymentCartItem = ({ item }) => {
   const { t } = useTranslation();
 
-  const formatCurrency = value =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(value);
 
   const unit = Number(item.price || item.unitPrice || 0);
   const qty = Number(item.quantity) || 0;

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import formatCurrency from "../../utils/formatCurrency";
 
 const POINT_TO_VND = 100;
 
@@ -58,7 +59,7 @@ export default function LoyaltyPointsPanel({
       </div>
       {discountAmount > 0 && (
         <p className="mt-2 text-sm text-emerald-600">
-          Giảm ngay {new Intl.NumberFormat("vi-VN").format(discountAmount)}đ
+          Giảm ngay {formatCurrency(discountAmount)}
         </p>
       )}
     </div>

@@ -11,7 +11,7 @@ import {
   clearCart,
   loadCartItems,
 } from "../../utils/redux/cartSlice";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ConfirmModal from "../../components/ConfirmModal";
 import { Breadcrumb, Button } from "../../components/ui";
 import formatCurrency from "../../utils/formatCurrency";
@@ -31,6 +31,7 @@ const ShoppingCart = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const [confirmAction, setConfirmAction] = useState(() => () => {});
+  const quantityDebounceRef = useRef({});
 
 
 
@@ -67,12 +68,23 @@ const ShoppingCart = () => {
 
   const handleQuantityChange = (productId, newQuantity) => {
     const userId = getCurrentUserId();
-    dispatch(
-      updateCartItemQuantity({ userId, productId, quantity: newQuantity })
-    )
-      .unwrap()
-      .catch(err => console.error(err));
+    if (quantityDebounceRef.current[productId]) {
+      clearTimeout(quantityDebounceRef.current[productId]);
+    }
+    quantityDebounceRef.current[productId] = setTimeout(() => {
+      dispatch(
+        updateCartItemQuantity({ userId, productId, quantity: newQuantity })
+      )
+        .unwrap()
+        .catch(err => console.error(err));
+    }, 320);
   };
+
+  useEffect(() => {
+    return () => {
+      Object.values(quantityDebounceRef.current).forEach((timerId) => clearTimeout(timerId));
+    };
+  }, []);
 
   const handleClearCart = () => {
     const userId = getCurrentUserId();

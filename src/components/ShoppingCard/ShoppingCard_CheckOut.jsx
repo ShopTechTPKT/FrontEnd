@@ -4,13 +4,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import path from "../../constant/path";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { UserContext } from "../../context/UserContext"; // Đảm bảo đường dẫn chính xác
+import { UserContext } from "../../context/UserContext";
+import formatCurrency from "../../utils/formatCurrency";
 
 // Component tượng trưng cho Order Summary (đã chỉnh sửa để nhận prop và hiển thị dữ liệu thật)
 const OrderSummary = ({ cartItems, selectedShippingCost }) => {
   const { t } = useTranslation();
 
-  console.log("Cart Items in OrderSummary:", cartItems); // Kiểm tra dữ liệu cartItems
   const subtotal = 50000;
   const total = subtotal + selectedShippingCost;
 
@@ -55,10 +55,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
                 </div>
               </div>
               <span className="text-sm font-semibold text-gray-800">
-                {new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(item.price * item.quantity)}
+                {formatCurrency(item.price * item.quantity)}
               </span>
             </div>
           ))
@@ -75,10 +72,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
               {t("remaining.shipping")}
             </span>
             <span className="text-sm font-semibold text-gray-800">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(selectedShippingCost)}
+              {formatCurrency(selectedShippingCost)}
             </span>
           </div>
         </div>
@@ -88,10 +82,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost }) => {
               {t("remaining.total")}
             </span>
             <span className="text-md font-bold text-indigo-600">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(total)}
+              {formatCurrency(total)}
             </span>
           </div>
         </div>
@@ -105,7 +96,6 @@ function ShoppingCard_CheckOut() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  console.log(location);
   const cartItems = useSelector(state => state.cart.carts);
   const [selectedShippingOption, setSelectedShippingOption] =
     useState("standard");
@@ -396,10 +386,7 @@ function ShoppingCard_CheckOut() {
                     </label>
                   </div>
                   <span className="text-sm text-gray-700">
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(20000)}
+                    {formatCurrency(20000)}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 ml-6">
@@ -424,10 +411,7 @@ function ShoppingCard_CheckOut() {
                     </label>
                   </div>
                   <span className="text-sm text-gray-700">
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(0)}
+                    {formatCurrency(0)}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 ml-6">

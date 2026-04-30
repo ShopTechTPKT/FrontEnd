@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+import formatCurrency from "../../utils/formatCurrency";
 import {
   updateCartItemQuantity,
   removeFromCart,
@@ -224,10 +225,7 @@ function CartItem({ item, onQuantityChange, onRemove }) {
 
       {/* Tổng tiền sản phẩm */}
       <div className="text-center text-sm font-semibold text-gray-900 tabular-nums sm:mr-4 sm:text-right">
-        {new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(item?.totalPrice || 0)}
+        {formatCurrency(item?.totalPrice || 0)}
       </div>
 
       {/* Nút xóa sản phẩm */}

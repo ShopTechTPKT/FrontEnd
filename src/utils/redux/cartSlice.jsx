@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { cartApi } from "../../apis/cartApi";
 import notify from "../notify";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 // Helper: lấy id (Long) của user hiện tại từ localStorage
 const getCurrentUserId = () => {
@@ -158,7 +159,7 @@ export const loadCartItems = createAsyncThunk(
       // (nếu loadCartItems được gọi nhiều lần đồng thời)
       const guestCart = getGuestCart();
       if (guestCart && guestCart.length > 0) {
-        console.log("🧩 Found guest cart, merging into user cart...");
+        // Merge guest cart into user cart
 
         // ⚠️ QUAN TRỌNG: Xóa guestCart TRƯỚC KHI merge để tránh merge nhiều lần
         // nếu loadCartItems được gọi nhiều lần đồng thời
@@ -176,7 +177,7 @@ export const loadCartItems = createAsyncThunk(
             const quantity = item.quantity || 1;
             await cartApi.addToCart(userId, productId, quantity);
           } catch (err) {
-            console.warn("⚠️ Failed to merge item:", item, err);
+            // Item merge failed — likely out of stock
             failedItems.push(item);
           }
         }
@@ -185,6 +186,9 @@ export const loadCartItems = createAsyncThunk(
           notify.error(
             `Một số sản phẩm trong giỏ khách đã hết hàng hoặc không đủ số lượng. Vui lòng kiểm tra lại.`
           );
+        }
+        if (guestCart.length > failedItems.length) {
+          notify.success("Đã gộp giỏ hàng khách vào tài khoản của bạn.");
         }
       }
       // Nếu đã có userId (được truyền vào hoặc lấy từ localStorage), load từ DB
@@ -221,10 +225,7 @@ export const loadCartItems = createAsyncThunk(
       return { items: normalizedItems, summary: normalizedSummary };
     } catch (error) {
       const status = error?.response?.status;
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ.";
+      const message = getApiErrorMessage(error, "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ.");
 
       if (status === 409) {
         notify.error("Sản phẩm không đủ hàng, vui lòng giảm số lượng.");
@@ -337,10 +338,7 @@ export const addToCart = createAsyncThunk(
       return { items: normalizedItems, summary: normalizedSummary };
     } catch (error) {
       const status = error?.response?.status;
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Đã xảy ra lỗi khi cập nhật số lượng.";
+      const message = getApiErrorMessage(error, "Đã xảy ra lỗi khi cập nhật số lượng.");
 
       if (status === 409) {
         notify.error("Sản phẩm không đủ hàng, vui lòng giảm số lượng.");
@@ -433,10 +431,7 @@ export const updateCartItemQuantity = createAsyncThunk(
       return { items: normalizedItems, summary: normalizedSummary };
     } catch (error) {
       const status = error?.response?.status;
-      const message =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Đã xảy ra lỗi khi tải giỏ hàng.";
+      const message = getApiErrorMessage(error, "Đã xảy ra lỗi khi tải giỏ hàng.");
 
       if (status === 409) {
         notify.error("Sản phẩm không đủ hàng, vui lòng giảm số lượng.");
@@ -582,7 +577,7 @@ const cartSlice = createSlice({
           state.carts = action.payload.items;
           state.cartSummary = action.payload.summary;
         } else {
-          console.warn("⚠️ addToCart: Payload không hợp lệ!", action.payload);
+          // Payload unexpected shape — state unchanged
         }
       })
       .addCase(addToCart.rejected, (state, action) => {
@@ -601,10 +596,7 @@ const cartSlice = createSlice({
           state.carts = action.payload.items;
           state.cartSummary = action.payload.summary;
         } else {
-          console.warn(
-            "⚠️ updateCartItemQuantity: Payload không hợp lệ!",
-            action.payload
-          );
+          // Payload unexpected shape — state unchanged
         }
         // const updatedItem = action.payload;
 
@@ -650,10 +642,7 @@ const cartSlice = createSlice({
           state.carts = action.payload.items;
           state.cartSummary = action.payload.summary;
         } else {
-          console.warn(
-            "⚠️ removeFromCart: Payload không hợp lệ!",
-            action.payload
-          );
+          // Payload unexpected shape — state unchanged
         }
         // Update state with new cart data (for both guest and user cart)
         // if (action.payload.items) {

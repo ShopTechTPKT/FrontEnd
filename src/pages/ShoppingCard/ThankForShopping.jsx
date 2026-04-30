@@ -5,15 +5,15 @@ import {
   Package,
   ChevronRight,
   Truck,
-  RefreshCw,
   XCircle,
+  ReceiptText,
+  CalendarClock,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart } from "../../utils/redux/cartSlice";
 import { useTranslation } from "react-i18next";
 import {
   createOrderWithDetails,
-  getOrderById,
   updatePlaysAllowedAfterOrder,
 } from "../../apis/orderApi";
 import notify from "../../utils/notify";
@@ -26,10 +26,8 @@ export default function ThankYouPage() {
   const [searchParams] = useSearchParams();
 
   const [result, setResult] = useState({});
-  const [orderData, setOrderData] = useState(null); // Order từ backend
   const [orderNumber, setOrderNumber] = useState("N/A");
   const [countdown, setCountdown] = useState(30);
-  const [savedItems, setSavedItems] = useState([]);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [orderCreated, setOrderCreated] = useState(false); // ⭐ Flag ngăn duplicate
   const [displayData, setDisplayData] = useState(null); // Chuyển thành state
@@ -68,15 +66,14 @@ export default function ThankYouPage() {
     }
   }, [searchParams]);
 
-  const subtotal = displayData?.subtotal || 0;
-  const tax = displayData?.tax || 0;
-  const shippingCost = displayData?.shippingCost || 0;
+  const subtotal = Number(displayData?.subtotal || 0);
+  const tax = Number(displayData?.tax || 0);
+  const shippingCost = Number(displayData?.shippingCost || 0);
   const discount = displayData?.discount
-    ? (Number(subtotal) + Number(tax) + Number(shippingCost)) *
-      Number(displayData.discount) *
-      -1
+    ? (Number(subtotal) + Number(tax) + Number(shippingCost)) * Number(displayData.discount) * -1
     : 0;
-  const total = displayData?.total || 0;
+  const total = Number(displayData?.total || 0);
+  const orderItems = Array.isArray(displayData?.items) ? displayData.items : [];
 
   // Xử lý VNPAY callback và TẠO ORDER SAU khi thanh toán thành công
   useEffect(() => {
@@ -84,12 +81,6 @@ export default function ThankYouPage() {
     const vnpResponseCode = searchParams.get("vnp_ResponseCode");
     const vnpAmount = searchParams.get("vnp_Amount");
 
-    // Debug: log all params
-    console.log("🔍 URL Params:", {
-      vnpResponseCode,
-      vnpAmount,
-      allParams: Object.fromEntries(searchParams.entries()),
-    });
 
     // Backward compatibility: vẫn check code nếu có
     const code = vnpResponseCode || searchParams.get("code");
@@ -100,7 +91,7 @@ export default function ThankYouPage() {
 
     const paymentSuccess = code === "00" || isCOD;
 
-    console.log("💳 Payment status:", { code, paymentSuccess, isCOD });
+
 
     setResult({
       code,
@@ -117,12 +108,12 @@ export default function ThankYouPage() {
     // ⭐ CLEAR CART NGAY khi thanh toán thành công (không đợi tạo order)
     if (paymentSuccess && !orderCreated) {
       const userId = getCurrentUserId();
-      console.log("🗑️ Clearing cart for user:", userId);
+
 
       // Clear cart trong Redux
       dispatch(clearCart(userId))
         .then(result => {
-          console.log("✅ Cart cleared successfully:", result);
+
 
           // Clear localStorage để đảm bảo
           localStorage.removeItem("guestCart");
@@ -147,17 +138,13 @@ export default function ThankYouPage() {
 
       const pendingOrder = sessionStorage.getItem("pendingOrder");
       if (!pendingOrder) {
-        console.log("⚠️ No pendingOrder found (COD payment)");
+
         setIsCreatingOrder(false);
         sessionStorage.removeItem("orderCreationLock");
         return;
       }
 
       const orderPayload = JSON.parse(pendingOrder);
-      console.log(
-        "✅ VNPAY thanh toán thành công! Đang tạo order:",
-        orderPayload
-      );
 
       // Lấy userId trước khi tạo order
       const userId = getCurrentUserId();
@@ -165,9 +152,8 @@ export default function ThankYouPage() {
       // Gọi API tạo order
       createOrderWithDetails(orderPayload)
         .then(response => {
-          console.log("✅ Order created successfully:", response);
+
           const createdOrder = response.data || response;
-          setOrderData(createdOrder);
           setOrderNumber(createdOrder.orderID || createdOrder.id || "N/A");
 
           const savedLoyalty = JSON.parse(
@@ -191,20 +177,11 @@ export default function ThankYouPage() {
             createdOrder.orderID || createdOrder.id
           );
 
-          // Lấy items từ displayData để hiển thị
-          const currentDisplayData = JSON.parse(
-            localStorage.getItem("orderDisplay") || "{}"
-          );
-          if (currentDisplayData?.items) {
-            setSavedItems(currentDisplayData.items);
-          }
-
           // ⭐ Cart đã được clear ở trên rồi, không cần clear lại
 
           // ⭐ Thêm 3 lượt chơi cho user khi tạo order thành công
           updatePlaysAllowedAfterOrder(userId)
             .then(updatedUser => {
-              console.log("✅ Updated plays allowed:", updatedUser);
               // Update localStorage user
               if (updatedUser) {
                 localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -271,7 +248,7 @@ export default function ThankYouPage() {
   }, [countdown, result.success, isCreatingOrder, navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-violet-50/40 via-white to-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -287,7 +264,7 @@ export default function ThankYouPage() {
         </div>
 
         {/* Payment Result Message */}
-        <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
           <div className="flex flex-col items-center text-center mb-8">
             <div
               className={`p-3 rounded-full mb-4 ${
@@ -331,6 +308,25 @@ export default function ThankYouPage() {
 
           {result.success && !isCreatingOrder && (
             <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+                <div className="rounded-xl border border-violet-100 bg-violet-50/70 p-4">
+                  <p className="text-xs text-violet-700">{t("payment.thank_you.order_number")}</p>
+                  <p className="text-sm font-semibold text-violet-800 mt-1">#{orderNumber}</p>
+                </div>
+                <div className="rounded-xl border border-emerald-100 bg-emerald-50/70 p-4">
+                  <p className="text-xs text-emerald-700">{t("order.total") || "Tổng thanh toán"}</p>
+                  <p className="text-sm font-semibold text-emerald-800 mt-1">
+                    {Number(total || result.amount || 0).toLocaleString("vi-VN")} VND
+                  </p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+                  <p className="text-xs text-gray-600">ETA</p>
+                  <p className="text-sm font-semibold text-gray-800 mt-1">
+                    {t("payment.thank_you.prepare_delivery")}
+                  </p>
+                </div>
+              </div>
+
               {/* Order Status */}
               <div className="border-t border-b border-gray-200 py-6 my-6">
                 <div className="relative max-w-2xl mx-auto px-4">
@@ -367,86 +363,67 @@ export default function ThankYouPage() {
               </div>
 
               {/* Order Summary */}
-              {/* <div className="bg-gray-50 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {t("cart.order_summary")}
-                </h2>
-                <div className="space-y-4 mb-6">
-                  {savedItems.map((item, index) => (
-                    <div key={index} className="flex items-center">
-                      <img
-                        src={item.image}
-                        alt={item.productName}
-                        className="w-16 h-16 object-cover rounded-md bg-white p-2 border border-gray-200"
-                      />
-                      <div className="ml-4 flex-1">
-                        <h3 className="text-sm font-medium text-gray-800">
-                          {item.productName}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          Qty: {item.quantity}
+              {orderItems.length > 0 && (
+                <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-100">
+                  <h2 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <ReceiptText className="w-4 h-4 text-violet-600" />
+                    {t("cart.order_summary") || "Tóm tắt đơn hàng"}
+                  </h2>
+                  <div className="space-y-3 mb-5">
+                    {orderItems.slice(0, 4).map((item, index) => (
+                      <div key={index} className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">
+                            {item.productName || item.name}
+                          </p>
+                          <p className="text-xs text-gray-500">x{item.quantity || 1}</p>
+                        </div>
+                        <p className="text-sm font-semibold text-gray-800">
+                          {(Number(item.totalPrice) || Number(item.price) || 0).toLocaleString("vi-VN")} VND
                         </p>
                       </div>
-                      <div className="text-sm font-medium text-gray-800">
-                        {parseFloat(item.price).toLocaleString("vi-VN")} VND
-                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-gray-200 pt-4 space-y-1.5 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t("order.subtotal")}</span>
+                      <span className="font-medium">{subtotal.toLocaleString("vi-VN")} VND</span>
                     </div>
-                  ))}
-                </div>
-
-                <div className="border-t border-gray-200 pt-4">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">
-                      {t("remaining.subtotal")}
-                    </span>
-                    <span className="font-medium">
-                      {subtotal.toLocaleString()} VND
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">
-                      {t("remaining.shipping")}
-                    </span>
-                    <span className="font-medium">
-                      {shippingCost.toLocaleString()} VND
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">{t("cart.tax")}</span>
-                    <span className="font-medium">
-                      {tax.toLocaleString()} VND
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">{t("cart.discount")}</span>
-                    <span className="font-medium text-green-500">
-                      {discount.toLocaleString("vi-VN")} VND
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-base font-medium mt-4">
-                    <span className="text-gray-800">
-                      {t("remaining.total")}
-                    </span>
-                    <span className="text-blue-700">
-                      {total.toLocaleString("vi-VN")} VND
-                    </span>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t("payment.checkout.shipping")}</span>
+                      <span className="font-medium">{shippingCost.toLocaleString("vi-VN")} VND</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t("order.tax_10")}</span>
+                      <span className="font-medium">{tax.toLocaleString("vi-VN")} VND</span>
+                    </div>
+                    {discount !== 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-emerald-600">{t("cart.discount") || "Giảm giá"}</span>
+                        <span className="font-semibold text-emerald-600">{discount.toLocaleString("vi-VN")} VND</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
+                      <span className="font-semibold text-gray-800">{t("order.total")}</span>
+                      <span className="font-bold text-violet-700">{total.toLocaleString("vi-VN")} VND</span>
+                    </div>
                   </div>
                 </div>
-              </div> */}
+              )}
             </>
           )}
         </div>
 
         {/* Next Steps (only if success) */}
         {result.success && !isCreatingOrder && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
               {t("payment.thank_you.whats_next")}
             </h2>
             <div className="space-y-6">
               <div className="flex items-start">
                 <div className="bg-blue-100 p-2 rounded-full mr-4">
-                  <RefreshCw className="text-blue-600 w-5 h-5" />
+                  <CalendarClock className="text-blue-600 w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-800">
