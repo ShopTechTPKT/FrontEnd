@@ -10,6 +10,7 @@ import formatCurrency from "../../utils/formatCurrency";
 import getCurrentUserId from "../../utils/getCurrentUserId";
 import QuickViewModal from "./QuickViewModal";
 import LazyImage from "../ui/LazyImage";
+import Badge from "../ui/Badge";
 
 /**
  * ProductCard — Enhanced product display card.
@@ -27,7 +28,14 @@ const ProductCard = ({ product }) => {
   const [showQuickView, setShowQuickView] = useState(false);
   const { addToCompare, isInCompare } = useCompare();
 
-  const {
+  const { isFavorited,
+    loading: favoriteLoading,
+    handleToggleFavorite,
+  } = useFavorites(product?.productID);
+
+  // Derived stock value
+  const stock = product.stock ?? product.quantity ?? product.inventory ?? 0;
+
     isFavorited,
     loading: favoriteLoading,
     handleToggleFavorite,
@@ -131,8 +139,14 @@ const ProductCard = ({ product }) => {
 
           {/* Discount badge */}
           {hasDiscount && (
-            <span className="bg-discount-badge text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none shadow-sm">
+            <span className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none shadow-sm">
               -{discountPct}%
+            </span>
+          )}
+          {/* HOT badge (if product.isHot) */}
+          {product.isHot && (
+            <span className="bg-gradient-to-r from-red-500 to-amber-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none shadow-sm mt-1">
+              HOT
             </span>
           )}
         </div>
@@ -151,58 +165,44 @@ const ProductCard = ({ product }) => {
           className={`absolute z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
             isExpensive ? "top-10 right-3" : "top-3 right-3"
           }`}
+          style={{ background: "rgba(255,255,255,0.08)", borderRadius: "0.75rem", padding: "0.5rem" }}
         >
           <div className="flex flex-col gap-2">
             <button
               onClick={handleAddToCompare}
-              className="p-2 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-violet-50 hover:border-violet-200 transition-colors"
+              className="p-2 bg-gradient-to-r from-violet-600 to-purple-500 text-white rounded-full shadow-md hover:scale-105 transition-transform"
               title={t("product.add_compare")}
             >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-600">
-                <path d="M4 7h8M4 12h12M4 17h8M17 5l3 3-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 7h8M4 12h12M4 17h8M17 5l3 3-3 3" />
               </svg>
             </button>
             {/* Wishlist */}
             <button
               onClick={handleAddToWishlist}
-              className="p-2 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-red-50 hover:border-red-200 transition-colors relative"
+              className={`p-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow-md hover:scale-105 transition-transform ${favoriteLoading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={favoriteLoading}
               title={isFavorited ? t("product.remove_favorite") : t("product.add_favorite")}
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill={isFavorited ? "currentColor" : "none"}
-                className={`w-4 h-4 transition-all ${isFavorited ? "text-red-500" : "text-gray-600"}`}
-              >
-                <path
-                  d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10Z"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {favoriteLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-3 h-3 border border-gray-700 border-t-transparent rounded-full animate-spin" />
-                </div>
+              {isFavorited ? (
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10Z" />
+                </svg>
               )}
             </button>
 
             {/* Add to Cart */}
             <button
               onClick={handleAddToCart}
-              className="p-2 bg-white rounded-full shadow-sm border border-gray-100 hover:bg-violet-50 hover:border-violet-200 transition-colors"
+              className="p-2 bg-gradient-to-r from-violet-600 to-purple-500 text-white rounded-full shadow-md hover:scale-105 transition-transform"
               title={t("product.add_to_cart")}
             >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-600">
-                <path
-                  d="M3 4H5L7.2 14.5C7.3 15 7.8 15.4 8.3 15.4H17.8C18.3 15.4 18.8 15 18.9 14.5L20.3 8.5H6.2"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 4H5L7.2 14.5C7.3 15 7.8 15.4 8.3 15.4H17.8C18.3 15.4 18.8 15 18.9 14.5L20.3 8.5H6.2" />
                 <circle cx="9.2" cy="19" r="1.4" fill="currentColor" />
                 <circle cx="17.2" cy="19" r="1.4" fill="currentColor" />
               </svg>
@@ -275,6 +275,15 @@ const ProductCard = ({ product }) => {
                 {formatCurrency(price)}
               </p>
             </div>
+            {/* Stock indicator nếu còn ít */}
+            {stock > 0 && stock < 10 && (
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-red-600">Còn {stock} sản phẩm</span>
+                <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden mt-0.5">
+                  <div className="h-full bg-red-500" style={{ width: `${(stock / 10) * 100}%` }} />
+                </div>
+              </div>
+            )}
 
             {/* Quick View */}
             <button

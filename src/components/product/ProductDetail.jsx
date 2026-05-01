@@ -71,14 +71,20 @@ export default function ProductDetail() {
               Be the first to review this product
             </p>
 
-            {/* Attributes List - Cleaner */}
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
-              <div className="space-y-2 text-sm">
+            {/* Attributes - pill chips */}
+            <div className="mb-6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2.5">Thong so noi bat</p>
+              <div className="flex flex-wrap gap-2">
                 {product.attributeList?.split("|").map((attr, index) => (
-                  <div key={index} className="flex items-start">
-                    <span className="text-violet-600 mr-2">•</span>
-                    <span className="text-gray-700">{attr.trim()}</span>
-                  </div>
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-violet-50 border border-violet-100 text-xs font-medium text-violet-800 leading-tight"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5 text-violet-500 shrink-0">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    {attr.trim()}
+                  </span>
                 ))}
               </div>
             </div>
@@ -98,15 +104,21 @@ export default function ProductDetail() {
 
             {/* More Information */}
             <button
-              className="flex items-center text-sm font-medium text-gray-700 hover:text-violet-600 transition"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-violet-600 transition-colors"
               onClick={() => setExpanded(!expanded)}
             >
-              <span className="mr-2 text-lg">{expanded ? "−" : "+"}</span>
+              <svg
+                viewBox="0 0 24 24" fill="none"
+                className={`w-4 h-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+                stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"
+              >
+                <path d="M19 9l-7 7-7-7"/>
+              </svg>
               <span>{t("product.more_information")}</span>
             </button>
             {expanded && (
-              <div className="mt-4 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                Thông tin bổ sung về sản phẩm sẽ được hiển thị tại đây...
+              <div className="mt-4 text-sm text-gray-600 bg-violet-50/50 p-4 rounded-xl border border-violet-100">
+                Thong tin bo sung ve san pham se duoc hien thi tai day...
               </div>
             )}
           </div>
@@ -129,11 +141,12 @@ export default function ProductDetail() {
 
               {/* Product Image */}
               <div className="flex-1 flex justify-center items-center w-full lg:w-auto">
-                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200 max-w-md">
+                <div className="relative w-full max-w-md bg-gray-50 rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6 group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-violet-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
                   <img
                     src={product.image}
                     alt={product.productName}
-                    className="w-full h-auto object-contain max-h-96"
+                    className="w-full h-auto object-contain max-h-96 group-hover:scale-[1.03] transition-transform duration-500"
                   />
                 </div>
               </div>

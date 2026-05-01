@@ -62,50 +62,79 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
     <Modal isOpen={isOpen} onClose={onClose} title={t("product.quick_view") || "Xem nhanh"} size="lg">
       <div className="flex flex-col md:flex-row gap-6">
         {/* Product Image */}
-        <div className="md:w-1/2 bg-gray-50 rounded-xl flex items-center justify-center p-6">
+        <div className="md:w-1/2 relative bg-gray-50 rounded-2xl flex items-center justify-center p-6 border border-gray-100 overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-50/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           <img
             src={product.image || product.imageUrl}
             alt={product.productName || product.name}
-            className="max-w-full max-h-72 object-contain"
+            className="max-w-full max-h-64 object-contain group-hover:scale-[1.04] transition-transform duration-500"
           />
+          {/* Discount badge */}
+          {product.percentage > 0 && (
+            <div className="absolute top-3 left-3 bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-lg shadow-sm">
+              -{product.percentage}%
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
         <div className="md:w-1/2 flex flex-col">
-          <h2 className="text-lg font-semibold text-gray-900 tracking-tight mb-2">
-            {product.productName || product.name}
-          </h2>
-
-          {/* Category */}
+          {/* Category pill */}
           {product.categoryName && (
-            <span className="text-xs text-gray-500 mb-3">
+            <span className="inline-flex w-fit items-center px-2.5 py-0.5 rounded-full bg-violet-50 border border-violet-200 text-[11px] font-semibold text-violet-700 mb-2">
               {product.categoryName}
             </span>
           )}
 
+          <h2 className="text-lg font-bold text-gray-900 tracking-tight mb-3 leading-snug">
+            {product.productName || product.name}
+          </h2>
+
+          {/* Rating */}
+          <div className="flex items-center gap-1.5 mb-3">
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-yellow-400">
+                  <path d="M10 2.8l2.2 4.4 4.9.7-3.5 3.4.8 4.8L10 14.7 5.6 16l.8-4.8L2.9 7.9l4.9-.7L10 2.8Z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-xs text-gray-400">(4.8)</span>
+          </div>
+
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-sm text-gray-400 line-through">
-              {formatCurrency(price * 1.25)}
-            </span>
             <span className="text-2xl font-bold text-violet-700">
               {formatCurrency(price)}
             </span>
+            <span className="text-sm text-gray-400 line-through">
+              {formatCurrency(price * 1.25)}
+            </span>
+            <span className="text-xs font-semibold text-red-500 bg-red-50 px-1.5 py-0.5 rounded-md">-20%</span>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 leading-relaxed line-clamp-4 mb-6 flex-1">
+          <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-5 flex-1">
             {product.description || t("product.default_description")}
           </p>
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button variant="primary" className="flex-1" onClick={handleAddToCart}>
-              {t("product.add_to_cart") || "Thêm vào giỏ"}
-            </Button>
-            <Button variant="outline" className="flex-1" onClick={handleViewDetails}>
-              {t("product.view_details") || "Xem chi tiết"}
-            </Button>
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold shadow-md shadow-violet-200/50 hover:shadow-violet-300/60 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {t("product.add_to_cart") || "Them vao gio"}
+            </button>
+            <button
+              onClick={handleViewDetails}
+              className="flex-1 py-2.5 rounded-xl border border-violet-200 text-violet-700 text-sm font-semibold hover:bg-violet-50 transition-colors"
+            >
+              {t("product.view_details") || "Xem chi tiet"}
+            </button>
           </div>
         </div>
       </div>

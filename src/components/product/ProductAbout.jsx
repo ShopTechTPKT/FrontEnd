@@ -51,18 +51,18 @@ const QuantitySelector = ({ quantity, setQuantity }) => {
   };
 
   return (
-    <div className="inline-flex items-center border border-gray-300 rounded-md bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="inline-flex items-center bg-gray-100 rounded-full overflow-hidden p-1 gap-1">
       {/* Decrease Button */}
       <button
         type="button"
         onClick={handleDecrease}
         disabled={quantity <= 1}
-        className="px-4 py-2.5 text-gray-700 hover:bg-gray-50 active:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium text-lg leading-none border-r border-gray-300"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 font-bold text-base leading-none"
         aria-label="Giảm số lượng"
       >
-        −
+        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"><path d="M5 12h14"/></svg>
       </button>
-      
+
       {/* Quantity Input */}
       <input
         id="quantity-selector"
@@ -70,18 +70,18 @@ const QuantitySelector = ({ quantity, setQuantity }) => {
         value={quantity}
         onChange={handleInputChange}
         min="1"
-        className="w-16 text-center text-gray-900 font-medium py-2.5 px-2 border-0 focus:ring-0 focus:outline-none bg-transparent text-base"
+        className="w-10 text-center text-gray-900 font-bold bg-transparent border-0 focus:ring-0 focus:outline-none text-sm tabular-nums"
         aria-label="Số lượng"
       />
-      
+
       {/* Increase Button */}
       <button
         type="button"
         onClick={handleIncrease}
-        className="px-4 py-2.5 text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors font-medium text-lg leading-none border-l border-gray-300"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-sm hover:shadow-violet-300/50 hover:scale-105 transition-all duration-150"
         aria-label="Tăng số lượng"
       >
-        +
+        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </button>
     </div>
   );
@@ -637,23 +637,21 @@ const handleSubmitReview = async () => {
               {isOutOfStock ? t("product.check_availability") : t("product.in_stock")}
             </p>
 
-            {/* Price Section - Simplified */}
-            <div className="mb-6 pb-6 border-b border-gray-200">
-              <div className="flex items-baseline space-x-3 mb-2">
-                <p className="text-gray-400 line-through text-base">
-                  {formatCurrency(originalPrice)}
-                </p>
-                <p className="text-3xl lg:text-4xl font-bold text-red-600">
+            {/* Price Section - Premium */}
+            <div className="mb-6 pb-6 border-b border-gray-100">
+              <div className="flex items-baseline gap-3 mb-2 flex-wrap">
+                <p className="text-gray-400 line-through text-base">{formatCurrency(originalPrice)}</p>
+                <p className="text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-violet-700 to-purple-600 bg-clip-text text-transparent">
                   {formatCurrency(price)}
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-1 rounded-full border border-red-200">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
                   -25%
                 </span>
-                <p className="text-sm text-green-600 font-medium">
+                <span className="text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full border border-green-200">
                   Khuyến mãi đặc biệt
-                </p>
+                </span>
               </div>
             </div>
 
@@ -697,30 +695,28 @@ const handleSubmitReview = async () => {
           {/* Column 3: Buy Box & Service/Payment Info */}
           <div className="col-span-1 lg:col-span-1 space-y-5">
             {/* Quantity and Action Buttons - Simplified */}
-            <div ref={buyBoxRef} className="bg-white rounded-lg p-5 border border-gray-200">
+            <div ref={buyBoxRef} className="bg-white rounded-2xl p-5 border border-violet-100 shadow-sm shadow-violet-100/40 hover:shadow-md transition-shadow">
+              {/* Quantity row */}
               <div className="flex items-center justify-between mb-5">
-                <label htmlFor="quantity-selector" className="text-gray-700 font-medium text-sm cursor-pointer">
+                <label htmlFor="quantity-selector" className="text-sm font-semibold text-gray-700 cursor-pointer">
                   {t("product.quantity")}:
                 </label>
-                <QuantitySelector
-                  quantity={quantity}
-                  setQuantity={setQuantity}
-                />
+                <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
               </div>
 
               {isOutOfStock ? (
                 <NotifyMeButton productId={product.productID} className="mb-3" />
               ) : (
                 <button
-                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-base font-semibold py-3 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold py-3.5 rounded-xl hover:shadow-lg hover:shadow-violet-300/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 mb-3"
                   onClick={() => handleAddToCart(product, quantity)}
                 >
                   <IcCart className="w-5 h-5" />
                   <span>{t("product.add_to_cart")}</span>
                 </button>
               )}
-              
-              <button className="w-full flex items-center justify-center space-x-2 bg-yellow-400 text-gray-900 text-base font-semibold py-3 rounded-lg hover:bg-yellow-500 transition-all duration-200 shadow-sm hover:shadow-md">
+
+              <button className="w-full flex items-center justify-center gap-2 bg-amber-400 text-gray-900 text-sm font-bold py-3.5 rounded-xl hover:bg-amber-500 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-sm">
                 <IcPaypal className="w-5 h-5" />
                 <span>{t("product.pay_with_paypal")}</span>
               </button>

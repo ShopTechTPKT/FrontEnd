@@ -48,44 +48,30 @@ const ProductSlider = ({
           <button
             onClick={goToPrev}
             disabled={currentIndex === 0}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 ${
-              currentIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 -translate-x-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-md ${
+              currentIndex === 0
+                ? "bg-white text-gray-300 cursor-not-allowed shadow-sm"
+                : "bg-gradient-to-br from-violet-600 to-purple-600 text-white hover:shadow-violet-200/60 hover:scale-110"
             }`}
+            aria-label="Previous"
           >
-            <svg
-              className="w-5 h-5 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
           <button
             onClick={goToNext}
             disabled={currentIndex >= maxIndex}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 ${
-              currentIndex >= maxIndex ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 translate-x-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-md ${
+              currentIndex >= maxIndex
+                ? "bg-white text-gray-300 cursor-not-allowed shadow-sm"
+                : "bg-gradient-to-br from-violet-600 to-purple-600 text-white hover:shadow-violet-200/60 hover:scale-110"
             }`}
+            aria-label="Next"
           >
-            <svg
-              className="w-5 h-5 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </>
@@ -117,15 +103,16 @@ const ProductSlider = ({
 
       {/* Dots indicator */}
       {shouldSlide && products.length > visibleCount && (
-        <div className="flex justify-center mt-6 space-x-2">
+        <div className="flex justify-center mt-5 items-center gap-1.5">
           {Array.from({ length: maxIndex + 1 }).map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              aria-label={`Go to slide ${index + 1}`}
+              className={`rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? "bg-violet-700 w-6"
-                  : "bg-gray-200 hover:bg-gray-300"
+                  ? "w-6 h-2 bg-gradient-to-r from-violet-600 to-purple-500"
+                  : "w-2 h-2 bg-gray-200 hover:bg-violet-300"
               }`}
             />
           ))}
