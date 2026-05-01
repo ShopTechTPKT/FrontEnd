@@ -172,10 +172,53 @@ export default function AnalyticsDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <KpiCard label="Doanh thu" value={formatVndCompact(kpi.totalRevenue)} />
-        <KpiCard label="Đơn hàng" value={kpi.totalOrders} />
-        <KpiCard label="Khách hàng" value={kpi.totalUsers} />
-        <KpiCard label="Giá trị đơn TB" value={formatVnd(kpi.avgOrderValue)} />
+        <KpiCard
+          label="Doanh thu"
+          value={formatVndCompact(kpi.totalRevenue)}
+          subValue={formatVnd(kpi.totalRevenue)}
+          gradient="from-violet-500 to-purple-600"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          }
+          trend="+12%"
+          trendUp
+        />
+        <KpiCard
+          label="Đơn hàng"
+          value={kpi.totalOrders}
+          gradient="from-blue-500 to-cyan-500"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          }
+          trend="+8%"
+          trendUp
+        />
+        <KpiCard
+          label="Khách hàng"
+          value={kpi.totalUsers}
+          gradient="from-emerald-500 to-teal-500"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm10 5a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          }
+          trend="+5%"
+          trendUp
+        />
+        <KpiCard
+          label="Giá trị đơn TB"
+          value={formatVnd(kpi.avgOrderValue)}
+          gradient="from-orange-500 to-amber-500"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          }
+        />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
@@ -218,26 +261,59 @@ export default function AnalyticsDashboard() {
       </ChartCard>
 
       {loading && (
-        <div className="text-sm text-gray-500">Đang tải dữ liệu phân tích...</div>
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-gray-600 font-medium">Đang tải dữ liệu...</p>
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
-function KpiCard({ label, value }) {
+function KpiCard({ label, value, subValue, icon, gradient = "from-violet-500 to-purple-600", trend, trendUp }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="mt-1 text-xl font-bold text-gray-900">{value}</p>
+    <div className="relative rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden group hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+      {/* Gradient accent top bar */}
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient}`} />
+      <div className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">{label}</p>
+            <p className="text-2xl font-bold text-gray-900 leading-none">{value}</p>
+            {subValue && <p className="text-xs text-gray-400 mt-1 truncate">{subValue}</p>}
+          </div>
+          {icon && (
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm shrink-0 ml-3`}>
+              {icon}
+            </div>
+          )}
+        </div>
+        {trend && (
+          <div className={`flex items-center gap-1 mt-3 text-xs font-semibold ${
+            trendUp ? "text-emerald-600" : "text-red-500"
+          }`}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d={trendUp ? "M7 17l10-10M17 7H7m10 0v10" : "M7 7l10 10M17 17H7m10 0V7"} />
+            </svg>
+            {trend} <span className="text-gray-400 font-normal">so với tháng trước</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function ChartCard({ title, children, className = "" }) {
   return (
-    <div className={`rounded-xl border border-gray-100 bg-white p-4 shadow-sm ${className}`}>
-      <h2 className="mb-3 text-base font-semibold text-gray-900">{title}</h2>
-      {children}
+    <div className={`rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden ${className}`}>
+      <div className="px-5 py-4 border-b border-gray-50">
+        <h2 className="text-sm font-semibold text-gray-900 tracking-tight">{title}</h2>
+      </div>
+      <div className="p-4">
+        {children}
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { FaHome, FaCalendar } from "react-icons/fa";
 import LanguageSwitcher from "../../../components/LanguageSwitcher";
 
-export default function AdminHeader({ setIsSidebarOpen, darkMode }) {
+export default function AdminHeader({ setIsSidebarOpen }) {
   const { t } = useTranslation("translation");
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,46 +36,61 @@ export default function AdminHeader({ setIsSidebarOpen, darkMode }) {
     return t("admin.techstore");
   };
 
-  const borderColor = "border-gray-200 dark:border-gray-700";
+  const iconBtn = "w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 dark:text-gray-400 hover:bg-violet-50 dark:hover:bg-gray-800 hover:text-violet-700 dark:hover:text-violet-400 transition-all duration-200";
 
   return (
-    <header className={`flex items-center justify-between px-4 lg:px-6 py-4 border-b ${borderColor} bg-white dark:bg-gray-900 shadow-sm`}>
-      <div className="flex items-center gap-4">
+    <header className="relative flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
+      {/* Gradient accent top strip */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-400/40 to-transparent" />
+
+      <div className="flex items-center gap-3">
+        {/* Mobile hamburger */}
         <button
-          className="lg:hidden text-gray-500 dark:text-gray-300 hover:text-violet-600 focus:outline-none"
+          className={`lg:hidden ${iconBtn}`}
           onClick={() => setIsSidebarOpen(true)}
+          aria-label="Open sidebar"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-          {getPageTitle()}
-        </h1>
+
+        {/* Page title */}
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:block text-xs font-medium text-gray-400 dark:text-gray-500">Admin</span>
+          <span className="hidden sm:block text-gray-300 dark:text-gray-600">/</span>
+          <h1 className="text-base font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+            {getPageTitle()}
+          </h1>
+        </div>
       </div>
-      <div className="flex items-center space-x-2">
+
+      <div className="flex items-center gap-1">
         <button
           onClick={() => navigate("/admin/audit-logs")}
-          className="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-500 dark:text-gray-400 hover:bg-violet-50 dark:hover:bg-gray-800 hover:text-violet-700 transition-all"
         >
           Audit Logs
         </button>
         <button
           onClick={() => navigate("/")}
-          className="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className={iconBtn}
           title={t("admin.go_to_homepage")}
         >
-          <FaHome size={18} />
+          <FaHome size={16} />
         </button>
         <button
           onClick={() => navigate("/admin/calendar")}
-          className="p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className={iconBtn}
           title={t("admin.view_calendar")}
         >
-          <FaCalendar size={18} />
+          <FaCalendar size={16} />
         </button>
-        <LanguageSwitcher />
+        <div className="ml-1">
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );
 }
+
