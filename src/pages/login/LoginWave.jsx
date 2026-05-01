@@ -653,36 +653,61 @@ function AuthCard() {
             )}
           </div>
 
-          {/* Right Side - Promo Banner (now light theme) */}
-          <div className="bg-gray-50 p-8 lg:p-12 text-gray-900 flex flex-col justify-center relative overflow-hidden border-l border-gray-200 animate-[fadeIn_650ms_ease-out]">
+          {/* Right Side - Premium Brand Panel */}
+          <div className="relative hidden md:flex flex-col justify-center overflow-hidden bg-gradient-to-br from-violet-700 via-violet-600 to-purple-800 p-8 lg:p-12 animate-[fadeIn_650ms_ease-out]">
+            {/* Decorative blobs */}
+            <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/5 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-20 -left-16 w-80 h-80 rounded-full bg-purple-900/40 blur-3xl pointer-events-none" />
+            <div className="absolute top-1/2 right-0 w-48 h-48 rounded-full bg-violet-400/10 blur-2xl pointer-events-none" />
+
             <div className="relative z-10">
+              {/* Logo / Brand */}
               <div className="mb-8">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm ring-1 ring-gray-200">
-                  <IcShield className="w-8 h-8 text-violet-600" />
+                <div className="w-14 h-14 bg-white/15 rounded-2xl flex items-center justify-center mb-5 backdrop-blur-sm ring-1 ring-white/20 shadow-lg">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7 text-white" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                  </svg>
                 </div>
-                <h3 className="text-4xl font-bold mb-4 text-gray-900">
+                <h3 className="text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
                   {isLogin ? t('common.new_here') : t('common.already_have_account')}
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                  {isLogin
-                    ? t('common.register_description')
-                    : t('common.login_description')}
+                <p className="text-violet-200 text-base leading-relaxed">
+                  {isLogin ? t('common.register_description') : t('common.login_description')}
                 </p>
               </div>
 
-              {/* Features */}
-              <div className="space-y-4 mb-8">
-                <Feature text={t('common.secure_payment')} />
-                <Feature text={t('common.fast_free_shipping')} />
-                <Feature text={t('common.customer_support_24_7')} />
-                <Feature text={t('common.exclusive_member_deals')} />
+              {/* Features list */}
+              <div className="space-y-3.5 mb-8">
+                {[
+                  { icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", text: t('common.secure_payment') },
+                  { icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8M10 12v4M14 12v4", text: t('common.fast_free_shipping') },
+                  { icon: "M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z", text: t('common.customer_support_24_7') },
+                  { icon: "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7", text: t('common.exclusive_member_deals') },
+                ].map(({ icon, text }, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0 backdrop-blur-sm">
+                      <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={icon} />
+                      </svg>
+                    </div>
+                    <span className="text-white/90 text-sm font-medium">{text}</span>
+                  </div>
+                ))}
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200">
-                <Stat number="10K+" label={t('common.products')} />
-                <Stat number="50K+" label={t('common.customers')} />
-                <Stat number="4.9★" label={t('common.rating')} />
+              <div className="grid grid-cols-3 gap-3 pt-6 border-t border-white/15">
+                {[
+                  { number: "10K+", label: t('common.products') },
+                  { number: "50K+", label: t('common.customers') },
+                  { number: "4.9★", label: t('common.rating') },
+                ].map(({ number, label }, i) => (
+                  <div key={i} className="text-center p-3 rounded-xl bg-white/10 backdrop-blur-sm">
+                    <p className="text-xl font-bold text-white">{number}</p>
+                    <p className="text-xs text-violet-200 mt-0.5">{label}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
