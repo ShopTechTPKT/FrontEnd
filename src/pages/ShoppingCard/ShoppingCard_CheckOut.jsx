@@ -367,45 +367,53 @@ function ShoppingCard_CheckOut() {
           <h1 className="mt-6 text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
             {t("payment.checkout.checkout_title")}
           </h1>
-          <div className="mt-6 rounded-2xl border border-violet-100 bg-violet-50/60 p-4 sm:p-5">
-            <div className="mb-3 flex items-center justify-between text-xs text-violet-700">
-              <span className="font-medium">{t("payment.checkout.step_shipping")}</span>
-              <span>{t("payment.checkout.step_payment_review")}</span>
-            </div>
-            <div className="h-1.5 w-full rounded-full bg-violet-100 overflow-hidden">
-              <div className="h-full w-1/2 bg-violet-600 rounded-full" />
-            </div>
-            <div className="mt-4 flex flex-wrap items-center gap-4 sm:gap-8">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-xs font-semibold text-white shadow-sm">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+          {/* Premium 3-step progress indicator */}
+          <div className="mt-6 rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50/70 to-purple-50/70 p-5">
+            {/* Step labels row */}
+            <div className="flex items-center justify-between relative">
+              {/* Connector lines */}
+              <div className="absolute left-0 right-0 top-4 flex items-center px-4 pointer-events-none" aria-hidden>
+                <div className="flex-1 h-0.5 bg-violet-600 rounded-full" />
+                <div className="flex-1 h-0.5 bg-gray-200 rounded-full" />
               </div>
-              <span className="text-sm font-medium text-violet-700">
-                {t("payment.checkout.step_shipping")}
-              </span>
-            </div>
-            <div className="hidden h-px w-12 bg-gray-200 sm:block" />
-            <div className="flex items-center gap-2 text-gray-500">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-200 text-xs font-semibold">
-                2
+
+              {/* Step 1 — Active */}
+              <div className="flex flex-col items-center gap-1 z-10">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center shadow-md shadow-violet-300/50">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <span className="text-xs font-bold text-violet-700 whitespace-nowrap">Địa chỉ</span>
               </div>
-              <span className="text-sm">
-                {t("payment.checkout.step_payment_review")}
-              </span>
+
+              {/* Step 2 — Pending */}
+              <div className="flex flex-col items-center gap-1 z-10">
+                <div className="w-9 h-9 rounded-full border-2 border-gray-200 bg-white text-gray-400 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                    <path d="M2 10h20" />
+                  </svg>
+                </div>
+                <span className="text-xs text-gray-400 whitespace-nowrap">Thanh toán</span>
+              </div>
+
+              {/* Step 3 — Pending */}
+              <div className="flex flex-col items-center gap-1 z-10">
+                <div className="w-9 h-9 rounded-full border-2 border-gray-200 bg-white text-gray-400 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+                  </svg>
+                </div>
+                <span className="text-xs text-gray-400 whitespace-nowrap">Xác nhận</span>
+              </div>
             </div>
+
+            {/* Progress bar */}
+            <div className="mt-4 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+              <div className="h-full w-1/3 bg-gradient-to-r from-violet-600 to-purple-500 rounded-full transition-all duration-500" />
             </div>
           </div>
         </div>
@@ -419,24 +427,25 @@ function ShoppingCard_CheckOut() {
             </h2>
             <form className="space-y-4">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="email" className="block text-xs font-semibold text-gray-600 mb-1.5">
                   {t("payment.checkout.email")}
                 </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
-                    errors.email ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500 mt-1">{errors.email}</p>
-                )}
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+                  </span>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className={`block w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 border text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all ${
+                      errors.email ? "border-red-400 bg-red-50" : "border-gray-200"
+                    }`}
+                    placeholder="email@example.com"
+                  />
+                </div>
+                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
               </div>
               <div>
                 <label
@@ -753,20 +762,18 @@ function ShoppingCard_CheckOut() {
           <button
             type="button"
             onClick={e => {
-              if (isCartEmpty) {
-                e.preventDefault();
-                return;
-              }
+              if (isCartEmpty) { e.preventDefault(); return; }
               handleNext();
             }}
             disabled={isCartEmpty}
-            className={`rounded-xl px-8 py-3 text-sm font-medium shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 ${
+            className={`flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold shadow-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 ${
               isCartEmpty
                 ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                : "bg-violet-600 text-white hover:bg-violet-700"
+                : "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-lg hover:shadow-violet-300/50 hover:-translate-y-0.5 active:translate-y-0"
             }`}
           >
             {t("payment.checkout.next_button")}
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
       </div>
