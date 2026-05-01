@@ -103,60 +103,61 @@ const Footer = () => {
     }
   };
 
-  const linkClass = "text-sm hover:text-violet-700 transition-colors duration-200";
+  const linkClass = "text-sm text-gray-500 hover:text-violet-700 transition-colors duration-200";
   const iconBtnClass =
-    "p-2 rounded-lg flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors duration-200";
+    "w-9 h-9 rounded-xl flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-100 hover:border-violet-200 transition-all duration-200";
 
   return (
-    <footer className="bg-gray-50 dark:bg-[var(--color-bg-subtle)] text-gray-600 dark:text-[var(--color-text-secondary)] border-t border-gray-200 dark:border-[var(--color-border)]">
+    <footer className="bg-gray-50 text-gray-600 border-t border-gray-200">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-14">
-        {/* ── Newsletter ── */}
-        <div className="mb-12 text-center bg-white dark:bg-[var(--color-bg-muted)] rounded-2xl shadow-xs border border-gray-100 dark:border-[var(--color-border)] p-8 sm:p-10">
-          <h3 className="text-2xl font-semibold text-gray-900 dark:text-[var(--color-text)] mb-2 tracking-tight">
+
+        {/* Newsletter */}
+        <div className="mb-12 text-center bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
+            <span className="text-xs font-semibold text-violet-600 uppercase tracking-widest">Newsletter</span>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
             {t("footer.newsletter.title")}
           </h3>
-          <p className="text-sm text-gray-500 dark:text-[var(--color-text-muted)] mb-6">
+          <p className="text-sm text-gray-500 mb-6">
             {t("footer.newsletter.subtitle")}
           </p>
           <form
             onSubmit={handleNewsletterSubmit}
-            className="flex items-center justify-center gap-3 max-w-md mx-auto"
+            className="flex items-center gap-2 max-w-md mx-auto"
           >
             <input
               type="email"
               placeholder={t("footer.newsletter.placeholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 h-10 px-4 rounded-lg text-sm text-gray-900 bg-gray-50 border border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder-gray-400 outline-none"
+              className="flex-1 h-11 px-4 rounded-xl text-sm text-gray-900 bg-gray-50 border border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder-gray-400 outline-none"
               required
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-5 rounded-lg text-sm font-medium text-white bg-violet-700 hover:bg-violet-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="h-11 px-5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-violet-900/30"
             >
               {isSubmitting ? "..." : t("footer.newsletter.subscribe")}
             </button>
           </form>
           {messageKey && (
-            <p
-              className={`mt-3 text-xs ${
-                messageType === "success" ? "text-green-600" : "text-red-600"
-              }`}
-            >
+            <p className={`mt-3 text-xs ${ messageType === "success" ? "text-emerald-600" : "text-red-600" }`}>
               {t(messageKey)}
             </p>
           )}
         </div>
 
-        {/* ── Link Columns ── */}
+        {/* Link Columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.titleKey}>
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-[var(--color-text)] mb-3">
+              <h4 className="text-sm font-semibold text-gray-900 mb-4">
                 {t(col.titleKey)}
               </h4>
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.labelKey}>
                     <Link to={link.to} className={linkClass}>
@@ -169,9 +170,9 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* ── Contact Info — Separate card ── */}
-        <div className="mb-10 bg-white dark:bg-[var(--color-bg-muted)] rounded-2xl border border-gray-100 dark:border-[var(--color-border)] shadow-xs p-5 sm:p-6">
-          <h4 className="text-sm font-semibold text-gray-900 dark:text-[var(--color-text)] mb-3">
+        {/* Contact Info */}
+        <div className="mb-10 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
+          <h4 className="text-sm font-semibold text-gray-900 mb-3">
             {t("footer.address.title")}
           </h4>
           <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8">
@@ -179,19 +180,15 @@ const Footer = () => {
               <p>{t("footer.address.street")}</p>
               <p>
                 {t("footer.address.phone")}{" "}
-                <span className="text-violet-700 font-medium">
-                  {t("footer.address.phoneNumber")}
-                </span>
+                <span className="text-violet-700 font-medium">{t("footer.address.phoneNumber")}</span>
               </p>
               <p>
                 {t("footer.address.email")}{" "}
-                <span className="text-violet-700 font-medium">
-                  {t("footer.address.emailAddress")}
-                </span>
+                <span className="text-violet-700 font-medium">{t("footer.address.emailAddress")}</span>
               </p>
             </address>
             <div className="text-sm">
-              <p className="font-medium text-gray-900 mb-1.5">{t("footer.address.openHours")}</p>
+              <p className="font-semibold text-gray-900 mb-1.5">{t("footer.address.openHours")}</p>
               <ul className="space-y-0.5 text-gray-500">
                 <li>{t("footer.address.mondayThursday")}</li>
                 <li>{t("footer.address.friday")}</li>
@@ -201,8 +198,8 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* ── Bottom Bar ── */}
-        <div className="pt-6 border-t border-gray-100 dark:border-[var(--color-border)]">
+        {/* Bottom Bar */}
+        <div className="pt-6 border-t border-gray-100">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
 
             {/* Social */}
@@ -221,13 +218,12 @@ const Footer = () => {
               ))}
             </div>
 
-            {/* Payment badges — SVG-free text badges */}
-            <div className="flex gap-1.5 flex-wrap justify-center" aria-label="Payment methods accepted">
+            {/* Payment badges */}
+            <div className="flex gap-1.5 flex-wrap justify-center" aria-label="Payment methods">
               {PAYMENT_BADGES.map(({ label, bg, text, tracking }) => (
                 <span
                   key={label}
-                  className={`inline-flex items-center justify-center px-2 py-1 rounded text-[10px] font-bold ${bg} ${text} ${tracking}`}
-                  aria-label={label}
+                  className={`inline-flex items-center justify-center px-2 py-1 rounded-md text-[10px] font-bold ${bg} ${text} ${tracking} opacity-80 hover:opacity-100 transition-opacity`}
                 >
                   {label}
                 </span>
@@ -235,7 +231,7 @@ const Footer = () => {
             </div>
 
             {/* Copyright */}
-            <p className="text-xs text-gray-400 dark:text-[var(--color-text-muted)]">{t("footer.copyright")}</p>
+            <p className="text-xs text-gray-400">{t("footer.copyright")}</p>
           </div>
         </div>
       </div>

@@ -44,31 +44,11 @@ const IconHeadset = () => (
 
 /* ── Badges data ─────────────────────────────────── */
 const BADGES = [
-  {
-    icon: <IconTruck />,
-    label: "Miễn phí giao hàng",
-    sub: "Đơn từ 500.000₫",
-  },
-  {
-    icon: <IconShield />,
-    label: "Bảo hành chính hãng",
-    sub: "12 - 36 tháng",
-  },
-  {
-    icon: <IconReturn />,
-    label: "Đổi trả dễ dàng",
-    sub: "Trong vòng 15 ngày",
-  },
-  {
-    icon: <IconLock />,
-    label: "Thanh toán an toàn",
-    sub: "VNPAY · MoMo · COD",
-  },
-  {
-    icon: <IconHeadset />,
-    label: "Hỗ trợ 24/7",
-    sub: "Hotline: 1800-9999",
-  },
+  { icon: <IconTruck />,   label: "Mien phi giao hang",    sub: "Don tu 500.000d",        gradient: "from-blue-500 to-cyan-500",     glow: "shadow-blue-100" },
+  { icon: <IconShield />,  label: "Bao hanh chinh hang",  sub: "12 - 36 thang",           gradient: "from-violet-500 to-purple-600", glow: "shadow-violet-100" },
+  { icon: <IconReturn />,  label: "Doi tra de dang",       sub: "Trong vong 15 ngay",      gradient: "from-emerald-500 to-teal-500", glow: "shadow-emerald-100" },
+  { icon: <IconLock />,    label: "Thanh toan an toan",   sub: "VNPAY - MoMo - COD",      gradient: "from-orange-500 to-amber-500", glow: "shadow-orange-100" },
+  { icon: <IconHeadset />, label: "Ho tro 24/7",           sub: "Hotline: 1800-9999",      gradient: "from-pink-500 to-rose-500",   glow: "shadow-pink-100" },
 ];
 
 /* ── Stats counters ──────────────────────────────── */
@@ -86,24 +66,20 @@ const TrustBadges = () => {
   return (
     <div className="bg-white border-y border-gray-100">
       {/* ── Badge strip ── */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-5">
         <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap overflow-x-auto">
           {BADGES.map((badge, i) => (
             <div
               key={i}
-              className="trust-badge animate-trustPop flex-shrink-0 flex-1 min-w-[140px] sm:min-w-0"
+              className="trust-badge animate-trustPop flex-shrink-0 flex-1 min-w-[140px] sm:min-w-0 flex items-center gap-3 px-3 py-3 rounded-2xl bg-white border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default group"
               style={{ animationDelay: `${i * 80}ms` }}
             >
-              <span className="p-2 bg-violet-50 rounded-lg text-violet-700 flex-shrink-0">
+              <span className={`w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br ${badge.gradient} ${badge.glow} shadow-md flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-200`}>
                 {badge.icon}
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-gray-900 leading-tight">
-                  {badge.label}
-                </p>
-                <p className="text-[11px] text-gray-500 leading-tight mt-0.5">
-                  {badge.sub}
-                </p>
+                <p className="text-xs font-bold text-gray-900 leading-tight">{badge.label}</p>
+                <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{badge.sub}</p>
               </div>
             </div>
           ))}

@@ -170,23 +170,16 @@ const FlashSaleStrip = () => {
   return (
     <section className="bg-white border-b border-gray-100">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4">
-        {/* Header row */}
+        {/* Header row — gradient banner */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-          {/* Left: label + badge */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              {/* Lightning bolt SVG */}
-              <div className="w-7 h-7 bg-violet-700 rounded-lg flex items-center justify-center shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" stroke="none"/>
-                </svg>
-              </div>
-              <h2 className="text-base font-bold text-gray-900 tracking-tight">
-                Flash Sale
-              </h2>
-              <span className="ml-1 px-2 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full uppercase tracking-wide">
-                HOT
-              </span>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 px-3 py-1.5 rounded-xl shadow-sm shadow-red-200/50">
+              {/* Lightning bolt */}
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+              <h2 className="text-sm font-bold text-white tracking-tight">Flash Sale</h2>
+              <span className="px-1.5 py-0.5 text-[9px] font-bold bg-white/20 text-white rounded-full uppercase tracking-wider">HOT</span>
             </div>
 
             {/* Countdown */}
@@ -232,7 +225,7 @@ const FlashSaleStrip = () => {
               <button
                 key={item.id}
                 onClick={() => navigate(`/product/${item.id}/productAbout`)}
-                className="group flex-shrink-0 w-36 bg-white rounded-xl border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all duration-200 overflow-hidden text-left"
+                className="group flex-shrink-0 w-40 bg-white rounded-2xl border border-gray-100 hover:border-red-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden text-left shadow-sm"
               >
                 {/* Image */}
                 <div className="relative">
