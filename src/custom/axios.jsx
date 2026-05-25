@@ -130,17 +130,28 @@ axiosInstance.interceptors.response.use(
       if (!isAuthEndpoint && !error.config._retry) {
         const refreshToken = localStorage.getItem('refreshToken');
 
-        if (refreshToken && !isTokenExpired(refreshToken) && !isRefreshing) {
+        if (refreshToken && !isTokenExpired(refreshToken)) {
+          if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+              failedQueue.push({ resolve, reject });
+            }).then(newToken => {
+              error.config.headers.Authorization = `Bearer ${newToken}`;
+              return axiosInstance(error.config);
+            }).catch(err => Promise.reject(err));
+          }
+
           error.config._retry = true;
           isRefreshing = true;
 
           try {
             const newAccessToken = await refreshAccessToken();
             isRefreshing = false;
+            processQueue(null, newAccessToken);
             error.config.headers.Authorization = `Bearer ${newAccessToken}`;
             return axiosInstance(error.config);
-          } catch {
+          } catch (refreshError) {
             isRefreshing = false;
+            processQueue(refreshError, null);
             console.error("❌ Token refresh failed — redirecting to login");
             localStorage.removeItem('authToken');
             localStorage.removeItem('refreshToken');
@@ -148,6 +159,7 @@ axiosInstance.interceptors.response.use(
             if (!window.location.pathname.includes('/login')) {
               window.location.href = '/login';
             }
+            return Promise.reject(refreshError);
           }
         } else {
           localStorage.removeItem('authToken');
