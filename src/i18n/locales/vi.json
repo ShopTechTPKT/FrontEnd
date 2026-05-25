@@ -1,4 +1,4 @@
-{
+﻿{
     "nav":  {
                 "home":  "Trang Chủ",
                 "products":  "Sản Phẩm",
@@ -641,9 +641,13 @@
                    "cancel":  "Hủy",
                    "save":  "Lưu",
                    "close":  "Đóng",
-                   "loading":  "Đang tải..."
-               },
-    "categories":  {
+                   "loading":  "Đang tải...",
+                    "shop_by_category": "Danh Mục Nổi Bật"
+                },
+     "content": {
+                     "trusted_brands": "Thương Hiệu Uy Tín"
+                 },
+     "categories":  {
                        "laptops":  "Laptop",
                        "allLaptops":  "Tất Cả Laptop",
                        "gamingGear":  "Thiết Bị Gaming",
@@ -664,9 +668,14 @@
                        "iphone":  " iPhone",
                        "samsung":  " Samsung",
                        "xiaomi":  " Xiaomi",
-                       "ipad":  " iPad"
-                   },
-    "brands":  {
+                       "ipad":  " iPad",
+                        "customBuilds": "Xây PC"
+                    },
+     "cart": {
+                    "empty_description": "Giỏ hàng trống. Hãy khám phá sản phẩm!",
+                    "start_shopping": "Bắt đầu mua sắm"
+                },
+     "brands":  {
                    "topBrands":  "Thương Hiệu Hàng Đầu",
                    "viewAll":  "Xem Tất Cả Thương Hiệu →"
                },
@@ -832,6 +841,13 @@
                   "total_orders":  "Tổng Số Đơn Hàng",
                   "new_customers":  "Khách Hàng Mới",
                   "low_stock":  "Hàng Tồn Kho Ít",
+                  "low_stock_alerts":  "Cảnh báo hàng sắp hết",
+                  "recent_reviews_section":  "Đánh giá gần đây",
+                  "realtime_activity_feed":  "Hoạt động theo thời gian thực",
+                  "shipped_orders_page_subtitle":  "Cập nhật ngày giao hàng dự kiến và ghi chú cho đơn đang vận chuyển.",
+                  "loading_shipped_orders":  "Đang tải đơn đã gửi...",
+                  "no_shipped_orders_title":  "Chưa có đơn đã gửi",
+                  "no_shipped_orders_description":  "Các đơn được đánh dấu đã gửi sẽ hiển thị tại đây.",
                   "sales_performance":  "Hiệu Suất Bán Hàng",
                   "last_7_days":  "7 Ngày Qua",
                   "last_30_days":  "30 Ngày Qua",
@@ -1033,6 +1049,61 @@
                   "menu_customers":  "Khách hàng",
                   "menu_reviews":  "Đánh giá",
                   "menu_discounts":  "Giảm giá",
+                  "menu_products_unified":  "Bảng sản phẩm tổng hợp",
+                  "menu_products_import":  "Import CSV",
+                  "menu_return_requests":  "Yêu cầu hoàn trả",
+                  "menu_promotions":  "Khuyến mãi",
+                  "menu_flash_sales":  "Flash Sale",
+                  "menu_gift_cards":  "Gift Card",
+                  "menu_referrals":  "Referral",
+                  "menu_categories":  "Danh mục",
+                  "menu_customer_service":  "CSKH",
+                  "menu_calendar":  "Lịch",
+                  "menu_audit_logs":  "Nhật ký hoạt động",
+                  "menu_staff":  "Nhân sự",
+                  "menu_roles":  "Phân quyền",
+                  "menu_analytics":  "Phân tích",
+                  "menu_orders_kanban":  "Kanban đơn hàng",
+                  "menu_banners":  "Banner",
+                  "menu_email_campaigns":  "Chiến dịch email",
+                  "menu_notifications":  "Thông báo",
+                  "menu_ai_analytics":  "Phân tích AI",
+                  "menu_shipping_settings":  "Cài đặt vận chuyển",
+                  "import_products_title":  "Import sản phẩm (CSV)",
+                  "import_products_subtitle":  "Tải CSV, xem trước dòng hợp lệ rồi import một lần.",
+                  "import_products_template":  "Tải mẫu",
+                  "import_products_choose_csv":  "Chọn CSV",
+                  "import_products_preview":  "Xem trước",
+                  "import_products_previewing":  "Đang xem trước...",
+                  "import_products_import":  "Import",
+                  "import_products_importing":  "Đang import...",
+                  "import_products_reset":  "Đặt lại",
+                  "import_products_drag_drop":  "Kéo thả tệp CSV vào đây, hoặc bấm",
+                  "import_products_required_columns":  "Cột bắt buộc:",
+                  "import_products_allowed_status":  "Trạng thái hợp lệ:",
+                  "import_products_selected_file":  "Tệp đã chọn",
+                  "import_products_name":  "Tên:",
+                  "import_products_size":  "Dung lượng:",
+                  "import_products_no_file":  "Chưa chọn tệp.",
+                  "import_products_total_rows":  "Tổng số dòng",
+                  "import_products_valid_rows":  "Dòng hợp lệ",
+                  "import_products_error_rows":  "Dòng lỗi",
+                  "import_products_preview_rows":  "Dữ liệu xem trước (tối đa 20 dòng)",
+                  "import_products_col_name":  "Tên",
+                  "import_products_col_price":  "Giá",
+                  "import_products_col_qty":  "SL",
+                  "import_products_col_category":  "Danh mục",
+                  "import_products_col_status":  "Trạng thái",
+                  "import_products_error_rows_title":  "Dòng lỗi",
+                  "import_products_col_row":  "Dòng",
+                  "import_products_col_raw":  "Dữ liệu gốc",
+                  "import_products_col_message":  "Thông báo",
+                  "import_products_invalid_row":  "Dòng không hợp lệ",
+                  "import_products_file_type":  "Chỉ hỗ trợ tệp .csv.",
+                  "import_products_select_file":  "Vui lòng chọn tệp CSV trước.",
+                  "import_products_need_preview":  "Hãy xem trước và đảm bảo có dòng hợp lệ.",
+                  "import_products_preview_ready":  "Đã xem trước: {{count}} dòng hợp lệ.",
+                  "import_products_import_done":  "Đã import {{count}} sản phẩm.",
                   "menu_customer_service_staff":  "Nhân Viên CSKH",
                   "customer_service_staff":  "Nhân Viên Chăm Sóc Khách Hàng",
                   "manage_customer_service_team":  "Quản lý đội ngũ chăm sóc khách hàng",
@@ -1379,7 +1450,8 @@
                                      "desktop":  "Máy tính",
                                      "accessories":  "Phụ kiện",
                                      "gaming":  "Gaming",
-                                     "office":  "Văn phòng"
+                                     "office":  "Văn phòng",
+                                     "customBuilds": "Xây PC"
                                  },
                   "sort":  {
                                "highDiscount":  "Giảm giá cao",

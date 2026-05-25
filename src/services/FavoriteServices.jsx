@@ -135,3 +135,23 @@ export const toggleFavorite = async (userId, productId) => {
     throw error;
   }
 };
+
+export const generateWishlistShareLink = async (userId) => {
+  try {
+    const response = await axiosInstance.get(`/favorites/share/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error generating wishlist share link:", error);
+    throw new Error(error.response?.data?.message || "Không thể tạo link chia sẻ");
+  }
+};
+
+export const getSharedWishlist = async (code) => {
+  try {
+    const response = await axiosInstance.get(`/favorites/shared/${code}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting shared wishlist:", error);
+    throw new Error(error.response?.data?.message || "Không thể tải wishlist được chia sẻ");
+  }
+};

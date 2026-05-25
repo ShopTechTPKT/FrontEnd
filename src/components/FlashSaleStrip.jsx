@@ -17,73 +17,89 @@ const calcTimeLeft = (endDate) => {
 
 const pad = (n) => String(n).padStart(2, "0");
 
-/* ── Mock data — used when API returns nothing ──────── */
-const MOCK_FLASH_ITEMS = [
-  {
-    id: "m1",
-    productName: "ASUS ROG Strix G16 RTX 4060",
-    imageUrl: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=200&h=200&fit=crop",
-    originalPrice: 32_000_000,
-    salePrice: 26_500_000,
-    discount: 17,
-    sold: 73,
-    total: 100,
-  },
-  {
-    id: "m2",
-    productName: "MSI Cyborg 15 RTX 4050",
-    imageUrl: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=200&h=200&fit=crop",
-    originalPrice: 24_000_000,
-    salePrice: 19_200_000,
-    discount: 20,
-    sold: 41,
-    total: 60,
-  },
-  {
-    id: "m3",
-    productName: "Corsair K100 RGB Mechanical",
-    imageUrl: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=200&h=200&fit=crop",
-    originalPrice: 5_500_000,
-    salePrice: 3_850_000,
-    discount: 30,
-    sold: 88,
-    total: 100,
-  },
-  {
-    id: "m4",
-    productName: "Logitech G Pro X Superlight 2",
-    imageUrl: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=200&h=200&fit=crop",
-    originalPrice: 3_200_000,
-    salePrice: 2_400_000,
-    discount: 25,
-    sold: 55,
-    total: 80,
-  },
-  {
-    id: "m5",
-    productName: "Samsung 970 EVO Plus 2TB SSD",
-    imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop",
-    originalPrice: 4_800_000,
-    salePrice: 3_360_000,
-    discount: 30,
-    sold: 60,
-    total: 80,
-  },
-];
-
+/* ── Removed Mock data ──────── */
 /* ── Countdown cell ─────────────────────────────────── */
-const TimeCell = ({ value, label }) => (
-  <div className="flex flex-col items-center min-w-[2.5rem]">
-    <span className="bg-violet-700 text-white font-mono font-bold text-base leading-none px-2 py-1 rounded-md tabular-nums">
+const TimeCell = React.memo(({ value, label }) => (
+  <div className="flex min-w-[2.5rem] flex-col items-center">
+    <span className="rounded-lg border border-white/20 bg-white/15 px-2 py-1 font-mono text-base font-bold leading-none text-white tabular-nums shadow-inner backdrop-blur-md dark:bg-violet-950/40">
       {pad(value)}
     </span>
     <span className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">{label}</span>
   </div>
-);
+));
 
 const Colon = () => (
   <span className="text-violet-400 font-bold text-base self-start mt-1 px-0.5 leading-none">:</span>
 );
+
+const FlashSaleItem = React.memo(({ item, progress, onNavigate }) => (
+  <button
+    onClick={() => onNavigate(`/product/${item.id}/productAbout`)}
+    className="group flex-shrink-0 w-40 bg-white rounded-2xl border border-gray-100 hover:border-red-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden text-left shadow-sm product-card-hover"
+  >
+    {/* Image */}
+    <div className="relative">
+      <div className="aspect-square bg-gray-50 overflow-hidden">
+        <img
+          src={item.imageUrl}
+          alt={item.productName}
+          loading="lazy"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 product-card-image"
+          onError={(e) => { e.target.src = "https://via.placeholder.com/200?text=SP"; }}
+        />
+      </div>
+      {/* Discount badge */}
+      <div className="absolute top-1.5 left-1.5 bg-discount-badge text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none">
+        -{item.discount}%
+      </div>
+    </div>
+
+    <div className="p-2">
+      {/* Name */}
+      <p className="text-[11px] text-gray-700 font-medium line-clamp-2 leading-tight mb-1.5">
+        {item.productName}
+      </p>
+
+      {/* Price */}
+      <p className="text-sm font-bold text-[var(--color-flash-sale)] leading-none">
+        {formatCurrency(item.salePrice)}
+      </p>
+      <p className="text-[10px] text-gray-400 line-through mt-0.5">
+        {formatCurrency(item.originalPrice)}
+      </p>
+
+      {/* Progress bar */}
+      <div className="mt-2">
+        <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+          <span>Đã bán {item.sold}</span>
+          <span>{progress}%</span>
+        </div>
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${progress}%`,
+              background:
+                progress >= 80
+                  ? "var(--color-flash-sale)"   // red — sắp hết
+                  : progress >= 50
+                  ? "var(--color-primary-600)"   // violet-600 — trung bình
+                  : "var(--color-primary)",  // violet-700 — còn nhiều
+            }}
+          />
+        </div>
+        {progress >= 80 && (
+          <p className="text-[10px] text-[var(--color-flash-sale)] font-medium mt-0.5 flex items-center gap-0.5">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5 text-[var(--color-hot-badge)]">
+              <path d="M12 2C9 7 4 8 4 13a8 8 0 0016 0c0-4-3-7-5-9-1 2-2 3-3 3s0-5 0-5z"/>
+            </svg>
+            Sắp hết hàng!
+          </p>
+        )}
+      </div>
+    </div>
+  </button>
+));
 
 /* ── Main component ─────────────────────────────────── */
 const FlashSaleStrip = () => {
@@ -116,16 +132,14 @@ const FlashSaleStrip = () => {
             sold: it.soldCount || it.sold || 0,
             total: it.totalQuantity || it.total || 100,
           }));
-          setItems(mapped.length ? mapped : MOCK_FLASH_ITEMS);
+          setItems(mapped);
           setEndTime(fs.endTime || fs.endDate);
         } else {
-          // No active flash sale — use mock with +6h end
-          setItems(MOCK_FLASH_ITEMS);
-          setEndTime(new Date(Date.now() + 6 * 3_600_000).toISOString());
+          // No active flash sale
+          setItems([]);
         }
       } catch {
-        setItems(MOCK_FLASH_ITEMS);
-        setEndTime(new Date(Date.now() + 5 * 3_600_000 + 23 * 60_000).toISOString());
+        setItems([]);
       } finally {
         setLoading(false);
       }
@@ -173,7 +187,7 @@ const FlashSaleStrip = () => {
         {/* Header row — gradient banner */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 px-3 py-1.5 rounded-xl shadow-sm shadow-red-200/50">
+            <div className="flex items-center gap-2 bg-gradient-to-r from-[var(--color-flash-sale)] to-[var(--color-hot-badge)] px-3 py-1.5 rounded-xl shadow-sm shadow-red-200/50">
               {/* Lightning bolt */}
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
@@ -194,7 +208,7 @@ const FlashSaleStrip = () => {
                 </div>
               </div>
             ) : (
-              <span className="text-xs text-red-500 font-medium">Đã kết thúc</span>
+              <span className="text-xs text-[var(--color-flash-sale)] font-medium">Đã kết thúc</span>
             )}
           </div>
 
@@ -222,72 +236,12 @@ const FlashSaleStrip = () => {
           {items.map((item) => {
             const progress = Math.min(100, Math.round((item.sold / item.total) * 100));
             return (
-              <button
-                key={item.id}
-                onClick={() => navigate(`/product/${item.id}/productAbout`)}
-                className="group flex-shrink-0 w-40 bg-white rounded-2xl border border-gray-100 hover:border-red-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden text-left shadow-sm"
-              >
-                {/* Image */}
-                <div className="relative">
-                  <div className="aspect-square bg-gray-50 overflow-hidden">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.productName}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => { e.target.src = "https://via.placeholder.com/200?text=SP"; }}
-                    />
-                  </div>
-                  {/* Discount badge */}
-                  <div className="absolute top-1.5 left-1.5 bg-discount-badge text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none">
-                    -{item.discount}%
-                  </div>
-                </div>
-
-                <div className="p-2">
-                  {/* Name */}
-                  <p className="text-[11px] text-gray-700 font-medium line-clamp-2 leading-tight mb-1.5">
-                    {item.productName}
-                  </p>
-
-                  {/* Price */}
-                  <p className="text-sm font-bold text-red-600 leading-none">
-                    {formatCurrency(item.salePrice)}
-                  </p>
-                  <p className="text-[10px] text-gray-400 line-through mt-0.5">
-                    {formatCurrency(item.originalPrice)}
-                  </p>
-
-                  {/* Progress bar */}
-                  <div className="mt-2">
-                    <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
-                      <span>Đã bán {item.sold}</span>
-                      <span>{progress}%</span>
-                    </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${progress}%`,
-                          background:
-                            progress >= 80
-                              ? "#dc2626"   // red — sắp hết
-                              : progress >= 50
-                              ? "#7c3aed"   // violet-600 — trung bình
-                              : "#6d28d9",  // violet-700 — còn nhiều
-                        }}
-                      />
-                    </div>
-                    {progress >= 80 && (
-                      <p className="text-[10px] text-red-500 font-medium mt-0.5 flex items-center gap-0.5">
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5 text-orange-500">
-                          <path d="M12 2C9 7 4 8 4 13a8 8 0 0016 0c0-4-3-7-5-9-1 2-2 3-3 3s0-5 0-5z"/>
-                        </svg>
-                        Sắp hết hàng!
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </button>
+              <FlashSaleItem 
+                key={item.id} 
+                item={item} 
+                progress={progress} 
+                onNavigate={navigate} 
+              />
             );
           })}
         </div>

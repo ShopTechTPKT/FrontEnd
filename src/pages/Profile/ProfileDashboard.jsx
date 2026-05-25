@@ -1,4 +1,4 @@
-﻿import { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 import { useTranslation } from 'react-i18next';
 import { updateUserProfile, changePassword } from "../../apis/userApi";
@@ -22,6 +22,9 @@ function ProfileDashboard() {
     const [passwordLoading, setPasswordLoading] = useState(false);
     const [editError, setEditError] = useState('');
     const [changePasswordError, setChangePasswordError] = useState('');
+    const userOrders = JSON.parse(localStorage.getItem("userOrders") || "[]");
+    const wishlistItems = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    const totalSpent = userOrders.reduce((sum, order) => sum + (Number(order.totalPrice) || 0), 0);
 
     const handleEditButtonClick = () => {
         setEditAccountInfo({
@@ -115,6 +118,25 @@ function ProfileDashboard() {
 
     return (
         <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-500">Tong chi tieu</p>
+                    <p className="text-lg font-semibold text-gray-900">{new Intl.NumberFormat("vi-VN").format(totalSpent)} VND</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-500">Tong don hang</p>
+                    <p className="text-lg font-semibold text-gray-900">{userOrders.length}</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-500">Danh sach yeu thich</p>
+                    <p className="text-lg font-semibold text-gray-900">{wishlistItems.length}</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <p className="text-xs text-gray-500">Diem loyalty</p>
+                    <p className="text-lg font-semibold text-gray-900">{user?.cumulativePoints || 0}</p>
+                </div>
+            </div>
+
             {/* Contact Information Card */}
             <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <div className="flex items-start justify-between mb-6">
@@ -148,7 +170,7 @@ function ProfileDashboard() {
                     <div className="flex flex-col gap-3">
                         <button
                             onClick={handleEditButtonClick}
-                            className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
+                            className="px-6 py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
                         >
                             {t('account.edit')}
                         </button>
@@ -225,7 +247,7 @@ function ProfileDashboard() {
                                         <button
                                             onClick={handleChangePasswordSubmit}
                                             disabled={passwordLoading}
-                                            className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="px-6 py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {passwordLoading ? 'Đang lưu...' : t('account.lu_thay_i')}
                                         </button>
@@ -300,7 +322,7 @@ function ProfileDashboard() {
                         <button
                             onClick={handleSaveAccountInfo}
                             disabled={editLoading}
-                            className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-lg hover:opacity-90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {editLoading ? 'Đang lưu...' : t('common.save')}
                         </button>

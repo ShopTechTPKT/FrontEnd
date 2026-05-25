@@ -13,20 +13,12 @@ const GlobalWebSocketNotification = () => {
     let retryCount = 0;
 
     const resolveSockJsUrl = () => {
-      const configuredBase = import.meta.env.VITE_HOST_API_BACKEND_SERVICE || "/api";
-      const pageProtocol = window.location.protocol;
-      const base = configuredBase.replace(/\/$/, "");
-
-      if (/^https?:\/\//i.test(base)) {
-        // Prevent mixed-content: upgrade http -> https when current page is https.
-        if (pageProtocol === "https:" && base.startsWith("http://")) {
-          return `${base.replace(/^http:\/\//i, "https://")}/ws`;
-        }
-        return `${base}/ws`;
-      }
-
-      // Relative path works safely for both http and https deployments.
-      return `${base}/ws`;
+      // WebSocket endpoint is registered at /ws on the backend (not under /api).
+      // In dev, Vite proxies /ws → gateway → backend.
+      // In prod, use VITE_WS_URL env var or default to same-origin /ws.
+      const wsUrl = import.meta.env.VITE_WS_URL;
+      if (wsUrl) return wsUrl;
+      return "/ws";
     };
 
     const connectWebSocket = () => {

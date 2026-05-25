@@ -1,0 +1,16 @@
+{
+  "name": "ShopPC",
+  "short_name": "ShopPC",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6d28d9",
+  "description": "ShopPC PWA for shopping and admin operations",
+  "icons": [
+    {
+      "src": "/images/logo/logo_hp.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

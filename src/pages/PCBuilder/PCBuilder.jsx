@@ -131,7 +131,7 @@ const WattBar = ({ watts }) => {
 const ComponentRow = ({ cat, selected, onOpen, onRemove }) => (
   <div className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0 group">
     {/* Icon */}
-    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-violet-50 text-violet-600 shrink-0">
+    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--color-primary-)] text-[var(--color-primary-)] shrink-0">
       {getCatIcon(cat.iconKey)}
     </div>
 
@@ -153,7 +153,7 @@ const ComponentRow = ({ cat, selected, onOpen, onRemove }) => (
 
     <div className="flex items-center gap-2 shrink-0">
       {selected && (
-        <p className="text-sm font-bold text-violet-700 tabular-nums">
+        <p className="text-sm font-bold text-[var(--color-primary-)] tabular-nums">
           {formatCurrency(selected.price)}
         </p>
       )}
@@ -162,8 +162,8 @@ const ComponentRow = ({ cat, selected, onOpen, onRemove }) => (
         onClick={onOpen}
         className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
           selected
-            ? "bg-gray-100 text-gray-700 hover:bg-violet-100 hover:text-violet-700"
-            : "bg-violet-700 text-white hover:bg-violet-800"
+            ? "bg-gray-100 text-gray-700 hover:bg-[var(--color-primary-)] hover:text-[var(--color-primary-)]"
+            : "bg-[var(--color-primary-)] text-white hover:bg-[var(--color-primary-)]"
         }`}
       >
         {selected ? "Đổi" : "Chọn"}
@@ -486,7 +486,7 @@ export default function PCBuilder() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-violet-200 border-t-violet-700 rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-[var(--color-primary-)] border-t-[var(--color-primary-)] rounded-full animate-spin" />
           <p className="text-sm text-gray-500 font-medium">Đang tải linh kiện...</p>
         </div>
       </div>
@@ -496,7 +496,7 @@ export default function PCBuilder() {
   return (
     <div className="min-h-screen bg-gray-50/50">
       {/* ── Page header ── */}
-      <div className="bg-gradient-to-r from-violet-700 to-violet-800 text-white">
+      <div className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -507,13 +507,13 @@ export default function PCBuilder() {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">PC Builder</h1>
-              <p className="text-violet-200 text-sm">Xây dựng cấu hình PC theo ý muốn</p>
+              <p className="text-[var(--color-primary-)] text-sm">Xây dựng cấu hình PC theo ý muốn</p>
             </div>
           </div>
 
           {/* Progress bar */}
           <div className="mt-5">
-            <div className="flex justify-between text-xs text-violet-200 mb-1.5">
+            <div className="flex justify-between text-xs text-[var(--color-primary-)] mb-1.5">
               <span className="font-medium">Tiến độ cấu hình</span>
               <span className="font-semibold">{completedCount}/{PC_CATEGORIES.length} linh kiện đã chọn</span>
             </div>
@@ -537,7 +537,7 @@ export default function PCBuilder() {
         {/* ── Preset quick-select ── */}
         <section className="mb-6">
           <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-1.5">
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-violet-600" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[var(--color-primary-)]" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
             Cấu hình gợi ý
@@ -579,7 +579,7 @@ export default function PCBuilder() {
                 type="text"
                 value={buildName}
                 onChange={(e) => setBuildName(e.target.value)}
-                className="w-full text-base font-semibold text-gray-900 border-0 border-b-2 border-violet-200 focus:border-violet-500 outline-none pb-1 transition-colors bg-transparent"
+                className="w-full text-base font-semibold text-gray-900 border-0 border-b-2 border-[var(--color-primary-)] focus:border-[var(--color-primary-)] outline-none pb-1 transition-colors bg-transparent"
                 placeholder="Đặt tên cho cấu hình..."
               />
               {recentLocalBuilds.length > 0 && (
@@ -590,7 +590,7 @@ export default function PCBuilder() {
                       <button
                         key={item.id}
                         onClick={() => handleLoadRecentBuild(item)}
-                        className="px-2.5 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors"
+                        className="px-2.5 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 hover:bg-[var(--color-primary-)] hover:text-[var(--color-primary-)] hover:border-[var(--color-primary-)] transition-colors"
                       >
                         {item.name}
                       </button>
@@ -628,7 +628,7 @@ export default function PCBuilder() {
                   return (
                     <div key={cat.id} className="flex items-center justify-between text-xs">
                       <span className="text-gray-500 flex items-center gap-1.5">
-                        <span className="text-violet-400 w-3.5 h-3.5 shrink-0">{getCatIcon(cat.iconKey)}</span>
+                        <span className="text-[var(--color-primary-)] w-3.5 h-3.5 shrink-0">{getCatIcon(cat.iconKey)}</span>
                         {comp.name.slice(0, 22)}
                         {comp.name.length > 22 ? "..." : ""}
                       </span>
@@ -649,7 +649,7 @@ export default function PCBuilder() {
               <div className="border-t border-gray-100 pt-3 mb-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-bold text-gray-900">Tổng cộng</span>
-                  <span className="text-lg font-bold text-violet-700 tabular-nums">
+                  <span className="text-lg font-bold text-[var(--color-primary-)] tabular-nums">
                     {formatCurrency(totalPrice)}
                   </span>
                 </div>
@@ -688,7 +688,7 @@ export default function PCBuilder() {
                 <button
                   onClick={handleAddAllToCart}
                   disabled={addingAll || totalPrice === 0}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-violet-700 text-white text-sm font-bold rounded-xl hover:bg-violet-800 disabled:opacity-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-[var(--color-primary-)] text-white text-sm font-bold rounded-xl hover:bg-[var(--color-primary-)] disabled:opacity-50 transition-colors"
                 >
                   {addingAll ? (
                     <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -705,7 +705,7 @@ export default function PCBuilder() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={handleSaveBuild}
-                    className="flex items-center justify-center gap-1.5 py-2.5 border border-violet-200 text-violet-700 text-xs font-semibold rounded-xl hover:bg-violet-50 transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2.5 border border-[var(--color-primary-)] text-[var(--color-primary-)] text-xs font-semibold rounded-xl hover:bg-[var(--color-primary-)] transition-colors"
                   >
                     <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5">
                       <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

@@ -87,8 +87,8 @@ const Favorites = () => {
       <div className="min-h-screen bg-white">
         <Header />
         <div className="container mx-auto px-4 py-20 text-center">
-          <div className="w-16 h-16 bg-violet-50 border-2 border-violet-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <IcHeart filled className="w-8 h-8 text-violet-400" />
+          <div className="w-16 h-16 bg-[var(--color-primary-)] border-2 border-[var(--color-primary-)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <IcHeart filled className="w-8 h-8 text-[var(--color-primary-)]" />
           </div>
           <h2 className="text-2xl font-bold text-gray-700 mb-2">Please login</h2>
           <p className="text-gray-500 mb-6">You need to login to view favorites</p>
@@ -116,12 +116,12 @@ const Favorites = () => {
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-violet-700 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-16 h-16 bg-[var(--color-primary-)] rounded-2xl flex items-center justify-center shadow-lg">
               <IcHeart filled className="text-white w-7 h-7" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Favorite Products</h1>
-              <p className="text-violet-300 text-lg">{favoriteCount} products saved</p>
+              <p className="text-[var(--color-primary-)] text-lg">{favoriteCount} products saved</p>
             </div>
           </div>
         </div>

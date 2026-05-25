@@ -1,42 +1,17 @@
-﻿import React, { useState } from 'react';
-import { FaUserShield, FaPlus, FaEdit, FaTrash, FaSearch, FaCheck, FaTimes } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from "react";
+import { FaUserShield, FaPlus, FaEdit, FaTrash, FaSearch, FaCheck } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import axiosInstance from "../../custom/axios";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const PermissionsPage = () => {
   const { t } = useTranslation();
 
-  const [roles, setRoles] = useState([
-    {
-      id: 1,
-      name: "Admin",
-      description: "Full system access",
-      userCount: 5,
-      permissions: ["create", "read", "update", "delete", "manage_users", "manage_products", "view_reports"]
-    },
-    {
-      id: 2,
-      name: "Manager",
-      description: "Store management access",
-      userCount: 12,
-      permissions: ["create", "read", "update", "manage_products", "view_reports"]
-    },
-    {
-      id: 3,
-      name: "Staff",
-      description: "Basic staff access",
-      userCount: 45,
-      permissions: ["read", "update"]
-    },
-    {
-      id: 4,
-      name: "Customer",
-      description: "Customer access",
-      userCount: 1250,
-      permissions: ["read"]
-    }
-  ]);
+  const [roles, setRoles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const allPermissions = [
+  const fallbackPermissions = [
     { id: "create", name: "Create", description: "Create new records" },
     { id: "read", name: "Read", description: "View records" },
     { id: "update", name: "Update", description: "Edit existing records" },
@@ -47,86 +22,198 @@ const PermissionsPage = () => {
     { id: "manage_orders", name: "Manage Orders", description: "Order management" },
   ];
 
+  const [allPermissions, setAllPermissions] = useState(fallbackPermissions);
   const [selectedRole, setSelectedRole] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [roleForm, setRoleForm] = useState({
+    name: "",
+    description: "",
+    permissions: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [rolesRes, permissionsRes] = await Promise.allSettled([
+          axiosInstance.get("/roles"),
+          axiosInstance.get("/permissions"),
+        ]);
+
+        if (rolesRes.status === "fulfilled") {
+          setRoles(Array.isArray(rolesRes.value.data) ? rolesRes.value.data : []);
+        }
+        if (permissionsRes.status === "fulfilled") {
+          setAllPermissions(
+            Array.isArray(permissionsRes.value.data)
+              ? permissionsRes.value.data
+              : fallbackPermissions,
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch permissions data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const getRoleColor = (roleName) => {
     switch (roleName.toLowerCase()) {
       case 'admin':
         return 'from-red-600 to-pink-600';
       case 'manager':
-        return 'from-violet-600 to-violet-800';
+        return 'from-[var(--color-primary-)] to-[var(--color-primary-)]';
       case 'staff':
-        return 'from-blue-600 to-cyan-600';
+        return 'from-[var(--color-primary-)] to-cyan-600';
       case 'customer':
         return 'from-green-600 to-teal-600';
       default:
-        return 'from-gray-600 to-gray-800';
+        return "from-gray-600 to-gray-800";
     }
   };
 
   const filteredRoles = roles.filter(role =>
-    role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    role.description.toLowerCase().includes(searchTerm.toLowerCase())
+    role.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    role.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const openCreateModal = () => {
+    setSelectedRole(null);
+    setRoleForm({ name: "", description: "", permissions: [] });
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (role) => {
+    setSelectedRole(role);
+    setRoleForm({
+      name: role?.name || "",
+      description: role?.description || "",
+      permissions: Array.isArray(role?.permissions) ? role.permissions : [],
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleTogglePermission = (permId) => {
+    setRoleForm((prev) => ({
+      ...prev,
+      permissions: prev.permissions.includes(permId)
+        ? prev.permissions.filter((id) => id !== permId)
+        : [...prev.permissions, permId],
+    }));
+  };
+
+  const fetchRoles = async () => {
+    const { data } = await axiosInstance.get("/roles");
+    setRoles(Array.isArray(data) ? data : []);
+  };
+
+  const handleSaveRole = async () => {
+    if (!roleForm.name.trim()) {
+      toast.error(t("common.role_name_required", "Role name is required"));
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        name: roleForm.name.trim(),
+        description: roleForm.description.trim(),
+        permissions: roleForm.permissions,
+      };
+      if (selectedRole?.id) {
+        await axiosInstance.put(`/roles/${selectedRole.id}`, payload);
+        toast.success(t("common.updated_successfully", "Updated successfully!"));
+      } else {
+        await axiosInstance.post("/roles", payload);
+        toast.success(t("common.created_successfully", "Created successfully!"));
+      }
+      await fetchRoles();
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to save role:", error);
+      toast.error(t("common.action_failed", "Action failed. Please try again."));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteRole = async (role) => {
+    try {
+      await axiosInstance.delete(`/roles/${role.id}`);
+      setRoles((prev) => prev.filter((r) => r.id !== role.id));
+      toast.success(t("common.deleted_successfully", "Deleted successfully!"));
+    } catch (error) {
+      console.error("Failed to delete role:", error);
+      toast.error(t("common.action_failed", "Action failed. Please try again."));
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 py-8">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="p-4 sm:p-6 space-y-6 animate-pageIn">
+      {loading ? (
+        <div className="space-y-3 py-2" aria-busy="true">
+          {[1, 2, 3, 4].map((row) => (
+            <div key={row} className="admin-skeleton h-16 rounded-xl border border-[var(--color-border)]" />
+          ))}
+        </div>
+      ) : (
+        <>
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white rounded-2xl shadow-2xl p-8 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">{t('common.roles_permissions')}</h1>
-              <p className="text-sky-200">{t('common.manage_user_roles_and')}</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--color-bg)] p-6 rounded-2xl shadow-sm border border-[var(--color-border)]">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary-)] to-purple-600 flex items-center justify-center text-white shadow-lg shadow-[var(--color-primary-)]/50">
+              <FaUserShield size={24} />
             </div>
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--color-text)]">{t("common.roles_permissions")}</h1>
+              <p className="text-sm text-[var(--color-text-secondary)]">{t("common.manage_user_roles_and")}</p>
+            </div>
+          </div>
             <button
-              onClick={() => {
-                setSelectedRole(null);
-                setIsModalOpen(true);
-              }}
-              className="px-6 py-3 bg-white text-slate-900 rounded-lg font-semibold hover:bg-slate-50 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+              onClick={openCreateModal}
+            className="btn-admin-primary px-5 py-2.5 rounded-xl flex items-center gap-2 font-semibold"
             >
               <FaPlus />
               Create Role
             </button>
           </div>
-        </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-violet-600">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="admin-card p-5 border-l-4 border-[var(--color-primary)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">{t('common.total_roles')}</p>
-                <p className="text-3xl font-bold text-gray-900">{roles.length}</p>
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("common.total_roles")}</p>
+                <p className="text-3xl font-bold text-[var(--color-text)]">{roles.length}</p>
               </div>
-              <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center">
-                <FaUserShield className="text-violet-700 text-xl" />
+              <div className="w-12 h-12 bg-[var(--color-primary-light)] rounded-full flex items-center justify-center">
+                <FaUserShield className="text-[var(--color-primary)] text-xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600">
+          <div className="admin-card p-5 border-l-4 border-[var(--color-primary-)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">{t('common.total_users')}</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("common.total_users")}</p>
+                <p className="text-3xl font-bold text-[var(--color-text)]">
                   {roles.reduce((sum, r) => sum + r.userCount, 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <FaUserShield className="text-blue-600 text-xl" />
+              <div className="w-12 h-12 bg-[var(--color-primary-)] rounded-full flex items-center justify-center">
+                <FaUserShield className="text-[var(--color-primary-)] text-xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-600">
+          <div className="admin-card p-5 border-l-4 border-green-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">{t('common.permissions')}</p>
-                <p className="text-3xl font-bold text-gray-900">{allPermissions.length}</p>
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("common.permissions")}</p>
+                <p className="text-3xl font-bold text-[var(--color-text)]">{allPermissions.length}</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <FaCheck className="text-green-600 text-xl" />
@@ -134,12 +221,12 @@ const PermissionsPage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-600">
+          <div className="admin-card p-5 border-l-4 border-yellow-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">{t('common.admin_roles')}</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {roles.filter(r => r.name.toLowerCase() === 'admin').length}
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("common.admin_roles")}</p>
+                <p className="text-3xl font-bold text-[var(--color-text)]">
+                  {roles.filter((r) => r.name?.toLowerCase() === "admin").length}
                 </p>
               </div>
               <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
@@ -150,15 +237,15 @@ const PermissionsPage = () => {
         </div>
 
         {/* Search */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div className="admin-card p-4">
           <div className="relative">
-            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
             <input
               type="text"
               placeholder={t('common.search_roles')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-600 focus:outline-none"
+              className="admin-input w-full pl-10"
             />
           </div>
         </div>
@@ -166,8 +253,8 @@ const PermissionsPage = () => {
         {/* Roles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredRoles.map((role) => (
-            <div key={role.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all">
-              <div className={`bg-gradient-to-r ${getRoleColor(role.name)} p-6`}>
+            <div key={role.id} className="admin-card overflow-hidden hover:shadow-md transition-all">
+              <div className={`bg-gradient-to-r ${getRoleColor(role.name)} p-5`}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -189,15 +276,15 @@ const PermissionsPage = () => {
                 </div>
               </div>
 
-              <div className="p-6">
-                <h4 className="font-semibold text-gray-900 mb-3">{t('remaining.permissions')}</h4>
+              <div className="p-5">
+                <h4 className="font-semibold text-[var(--color-text)] mb-3">{t("remaining.permissions")}</h4>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {role.permissions.map((perm) => (
                     <span
                       key={perm}
-                      className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium flex items-center gap-1"
+                      className="px-2.5 py-1 bg-[var(--color-primary-light)] text-[var(--color-primary)] rounded-full text-xs font-medium flex items-center gap-1"
                     >
-                      <FaCheck className="text-xs" />
+                      <FaCheck className="text-[8px]" />
                       {perm.replace('_', ' ')}
                     </span>
                   ))}
@@ -206,13 +293,15 @@ const PermissionsPage = () => {
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => {
-                      setSelectedRole(role);
-                      setIsModalOpen(true);
+                      openEditModal(role);
                     }}
-                    className="flex-1 py-2 bg-gradient-to-r from-violet-600 to-violet-800 hover:from-violet-700 hover:to-sky-800 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                    className="flex-1 btn-admin-primary py-2 rounded-lg text-sm flex items-center justify-center gap-2"
                   >
                     <FaEdit />{t('account.edit')}</button>
-                  <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-all flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setDeleteTarget(role)}
+                    className="flex-1 py-2 bg-[var(--color-bg-muted)] hover:bg-[var(--color-danger-light)] text-[var(--color-text-secondary)] hover:text-[var(--color-danger)] rounded-lg text-sm flex items-center justify-center gap-2 transition-colors"
+                  >
                     <FaTrash />
                     Delete
                   </button>
@@ -224,21 +313,21 @@ const PermissionsPage = () => {
 
         {/* Empty State */}
         {filteredRoles.length === 0 && (
-          <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FaUserShield className="text-gray-400 text-4xl" />
+          <div className="admin-card p-12 text-center">
+            <div className="w-24 h-24 bg-[var(--color-bg-muted)] rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaUserShield className="text-[var(--color-text-muted)] text-4xl" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('common.no_roles_found')}</h3>
-            <p className="text-gray-600">{t('common.try_adjusting_your_search')}</p>
+            <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">{t("common.no_roles_found")}</h3>
+            <p className="text-[var(--color-text-secondary)]">{t("common.try_adjusting_your_search")}</p>
           </div>
         )}
 
         {/* Edit/Create Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 pt-28">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
-              <div className="bg-gradient-to-r from-violet-600 to-violet-800 text-white p-6">
-                <h2 className="text-2xl font-bold">
+          <div className="admin-modal-overlay">
+            <div className="admin-modal-panel w-full max-w-3xl max-h-[85vh] overflow-y-auto">
+              <div className="p-6 border-b border-[var(--color-border)]">
+                <h2 className="text-xl font-bold text-[var(--color-text)]">
                   {selectedRole ? 'Edit Role' : 'Create New Role'}
                 </h2>
               </div>
@@ -246,41 +335,44 @@ const PermissionsPage = () => {
               <div className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">{t('common.role_name')}</label>
+                    <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">{t("common.role_name")}</label>
                     <input
                       type="text"
                       placeholder={t('common.eg_manager')}
-                      defaultValue={selectedRole?.name || ''}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-600 focus:outline-none"
+                      value={roleForm.name}
+                      onChange={(e) => setRoleForm((prev) => ({ ...prev, name: e.target.value }))}
+                      className="admin-input"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">{t('remaining.description')}</label>
+                    <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">{t("remaining.description")}</label>
                     <textarea
                       placeholder={t('common.describe_the_role')}
-                      defaultValue={selectedRole?.description || ''}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-600 focus:outline-none"
+                      value={roleForm.description}
+                      onChange={(e) => setRoleForm((prev) => ({ ...prev, description: e.target.value }))}
+                      className="admin-input"
                       rows="3"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">{t('common.permissions')}</label>
+                    <label className="block text-sm font-semibold text-[var(--color-text)] mb-3">{t("common.permissions")}</label>
                     <div className="grid grid-cols-2 gap-3">
                       {allPermissions.map((perm) => (
                         <label
                           key={perm.id}
-                          className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg hover:border-sky-400 cursor-pointer transition-all"
+                          className="flex items-center gap-3 p-3 border border-[var(--color-border)] rounded-lg hover:border-[var(--color-primary)] cursor-pointer transition-colors"
                         >
                           <input
                             type="checkbox"
-                            defaultChecked={selectedRole?.permissions.includes(perm.id)}
-                            className="w-5 h-5 text-violet-700 rounded focus:ring-violet-600"
+                            checked={roleForm.permissions.includes(perm.id)}
+                            onChange={() => handleTogglePermission(perm.id)}
+                            className="rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                           />
                           <div>
-                            <p className="font-semibold text-gray-900">{perm.name}</p>
-                            <p className="text-xs text-gray-600">{perm.description}</p>
+                            <p className="font-semibold text-[var(--color-text)] text-sm">{perm.name}</p>
+                            <p className="text-xs text-[var(--color-text-muted)]">{perm.description}</p>
                           </div>
                         </label>
                       ))}
@@ -288,28 +380,43 @@ const PermissionsPage = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6">
-                  <button className="flex-1 py-3 bg-gradient-to-r from-violet-600 to-violet-800 hover:from-violet-700 hover:to-sky-800 text-white rounded-lg font-semibold transition-all">
-                    {selectedRole ? 'Update Role' : 'Create Role'}
+                <div className="flex gap-3 mt-6 border-t border-[var(--color-border)] pt-6">
+                  <button
+                    onClick={handleSaveRole}
+                    disabled={saving}
+                    className="flex-1 btn-admin-primary py-2.5 rounded-lg font-semibold"
+                  >
+                    {saving ? t("common.saving", "Saving...") : selectedRole ? 'Update Role' : 'Create Role'}
                   </button>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                    className="flex-1 py-2.5 bg-[var(--color-bg-muted)] text-[var(--color-text)] rounded-lg font-semibold hover:bg-[var(--color-bg-subtle)] transition-colors"
                   >
-                    {t('common.cancel')}
+                    {t("common.cancel")}
                   </button>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </div>
+        {deleteTarget ? (
+          <ConfirmModal
+            isOpen={Boolean(deleteTarget)}
+            title={t("common.confirm_delete", "Xác nhận xóa")}
+            message={t("common.delete_role_confirm", {
+              defaultValue: `Bạn có chắc muốn xóa "${deleteTarget.name}"? Hành động này không thể hoàn tác.`,
+            })}
+            onConfirm={() => {
+              handleDeleteRole(deleteTarget);
+              setDeleteTarget(null);
+            }}
+            onCancel={() => setDeleteTarget(null)}
+          />
+        ) : null}
+      </>
+      )}
     </div>
   );
 };
 
 export default PermissionsPage;
-
-// Updated: 2025-10-12T16:06:46.691Z
-
-// Updated: 2025-10-12T16:08:59.117Z

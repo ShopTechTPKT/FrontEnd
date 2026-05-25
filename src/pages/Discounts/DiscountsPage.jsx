@@ -69,7 +69,7 @@ const DiscountsPage = () => {
       case 'expired':
         return 'bg-red-100 text-red-700';
       case 'scheduled':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-[var(--color-primary-)] text-[var(--color-primary-)]';
       default:
         return 'bg-gray-100 text-gray-700';
     }
@@ -111,18 +111,18 @@ const DiscountsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-violet-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-[var(--color-primary-)] py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white rounded-2xl shadow-2xl p-8 mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2">{t('common.discount_codes')}</h1>
-              <p className="text-violet-200">{t('common.create_and_manage_promotional')}</p>
+              <p className="text-[var(--color-primary-)]">{t('common.create_and_manage_promotional')}</p>
             </div>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-6 py-3 bg-white text-violet-900 rounded-lg font-semibold hover:bg-violet-50 transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
+              className="px-6 py-3 bg-white text-[var(--color-primary-)] rounded-lg font-semibold hover:bg-[var(--color-primary-)] transition-all transform hover:scale-105 shadow-lg flex items-center gap-2"
             >
               <FaPlus />
               Create New
@@ -132,14 +132,14 @@ const DiscountsPage = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-violet-600">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-[var(--color-primary-)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">{t('common.total_codes')}</p>
                 <p className="text-3xl font-bold text-gray-900">{discounts.length}</p>
               </div>
-              <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
-                <FaTicketAlt className="text-violet-600 text-xl" />
+              <div className="w-12 h-12 bg-[var(--color-primary-)] rounded-full flex items-center justify-center">
+                <FaTicketAlt className="text-[var(--color-primary-)] text-xl" />
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ const DiscountsPage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-[var(--color-primary-)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">{t('common.total_uses')}</p>
@@ -166,8 +166,8 @@ const DiscountsPage = () => {
                   {discounts.reduce((sum, d) => sum + d.usedCount, 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <FaTicketAlt className="text-blue-600 text-xl" />
+              <div className="w-12 h-12 bg-[var(--color-primary-)] rounded-full flex items-center justify-center">
+                <FaTicketAlt className="text-[var(--color-primary-)] text-xl" />
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@ const DiscountsPage = () => {
                 placeholder={t('common.search_by_code_or')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -205,7 +205,7 @@ const DiscountsPage = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none bg-white"
+                className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none bg-white"
               >
                 <option value="all">{t('common.all_status')}</option>
                 <option value="active">{t('remaining.active')}</option>
@@ -220,7 +220,7 @@ const DiscountsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredDiscounts.map((discount) => (
             <div key={discount.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all">
-              <div className="bg-gradient-to-r from-violet-600 to-blue-600 p-4">
+              <div className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -228,7 +228,7 @@ const DiscountsPage = () => {
                     </div>
                     <div>
                       <h3 className="font-bold text-white text-lg">{discount.code}</h3>
-                      <p className="text-violet-100 text-sm">{discount.name}</p>
+                      <p className="text-[var(--color-primary-)] text-sm">{discount.name}</p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(discount.status)}`}>
@@ -242,17 +242,17 @@ const DiscountsPage = () => {
                 <p className="text-gray-700 mb-4">{discount.description}</p>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-violet-50 rounded-lg p-3">
+                  <div className="bg-[var(--color-primary-)] rounded-lg p-3">
                     <p className="text-xs text-gray-600 mb-1">{t('common.discount_value')}</p>
-                    <p className="font-bold text-violet-900">
+                    <p className="font-bold text-[var(--color-primary-)]">
                       {discount.discountType === 'percentage' 
                         ? `${discount.discountValue}%` 
                         : `${discount.discountValue.toLocaleString('vi-VN')}₫`}
                     </p>
                   </div>
-                  <div className="bg-blue-50 rounded-lg p-3">
+                  <div className="bg-[var(--color-primary-)] rounded-lg p-3">
                     <p className="text-xs text-gray-600 mb-1">{t('common.usage')}</p>
-                    <p className="font-bold text-blue-900">
+                    <p className="font-bold text-[var(--color-primary-)]">
                       {discount.usedCount} / {discount.maxUsage}
                     </p>
                   </div>
@@ -268,7 +268,7 @@ const DiscountsPage = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <button className="flex-1 py-2 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all">{t('account.edit')}</button>
+                  <button className="flex-1 py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] hover:from-[var(--color-primary-)] hover:to-[var(--color-primary-)] text-white rounded-lg font-semibold transition-all">{t('account.edit')}</button>
                   <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-semibold transition-all">
                     Delete
                   </button>
@@ -288,7 +288,7 @@ const DiscountsPage = () => {
             <p className="text-gray-600 mb-4">{t('common.try_adjusting_your_filters')}</p>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-6 py-3 bg-gradient-to-r from-violet-600 to-blue-600 text-white rounded-lg font-semibold hover:opacity-90 transition-all inline-flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-lg font-semibold hover:opacity-90 transition-all inline-flex items-center gap-2"
             >
               <FaPlus />
               Create New Discount
@@ -300,7 +300,7 @@ const DiscountsPage = () => {
         {isCreateModalOpen && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 pt-28">
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto">
-              <div className="bg-gradient-to-r from-violet-600 to-blue-600 text-white p-6">
+              <div className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-6">
                 <h2 className="text-2xl font-bold">{t('common.create_new_discount_code')}</h2>
               </div>
 
@@ -314,7 +314,7 @@ const DiscountsPage = () => {
                         placeholder={t('common.eg_summer2025')}
                         value={newDiscount.code}
                         onChange={(e) => setNewDiscount({...newDiscount, code: e.target.value})}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                       />
                     </div>
                     <div>
@@ -324,7 +324,7 @@ const DiscountsPage = () => {
                         placeholder={t('common.eg_summer_sale')}
                         value={newDiscount.name}
                         onChange={(e) => setNewDiscount({...newDiscount, name: e.target.value})}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -335,7 +335,7 @@ const DiscountsPage = () => {
                       placeholder={t('common.describe_the_discount')}
                       value={newDiscount.description}
                       onChange={(e) => setNewDiscount({...newDiscount, description: e.target.value})}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                       rows="3"
                     />
                   </div>
@@ -346,7 +346,7 @@ const DiscountsPage = () => {
                       <select
                         value={newDiscount.discountType}
                         onChange={(e) => setNewDiscount({...newDiscount, discountType: e.target.value})}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none bg-white"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none bg-white"
                       >
                         <option value="percentage">{t('common.percentage')}</option>
                         <option value="fixed">{t('common.fixed_amount')}</option>
@@ -359,7 +359,7 @@ const DiscountsPage = () => {
                         placeholder={newDiscount.discountType === 'percentage' ? '20' : '50000'}
                         value={newDiscount.discountValue}
                         onChange={(e) => setNewDiscount({...newDiscount, discountValue: e.target.value})}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -371,7 +371,7 @@ const DiscountsPage = () => {
                         type="date"
                         value={newDiscount.startDate}
                         onChange={(e) => setNewDiscount({...newDiscount, startDate: e.target.value})}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                       />
                     </div>
                     <div>
@@ -380,7 +380,7 @@ const DiscountsPage = () => {
                         type="date"
                         value={newDiscount.endDate}
                         onChange={(e) => setNewDiscount({...newDiscount, endDate: e.target.value})}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -392,7 +392,7 @@ const DiscountsPage = () => {
                       placeholder={t('common.eg_1000')}
                       value={newDiscount.maxUsage}
                       onChange={(e) => setNewDiscount({...newDiscount, maxUsage: e.target.value})}
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[var(--color-primary-)] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -400,7 +400,7 @@ const DiscountsPage = () => {
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={handleCreateDiscount}
-                    className="flex-1 py-3 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all"
+                    className="flex-1 py-3 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] hover:from-[var(--color-primary-)] hover:to-[var(--color-primary-)] text-white rounded-lg font-semibold transition-all"
                   >{t('common.create_discount')}</button>
                   <button
                     onClick={() => setIsCreateModalOpen(false)}

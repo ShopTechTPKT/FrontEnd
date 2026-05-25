@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
+import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import axiosInstance from "../../custom/axios";
@@ -7,6 +7,7 @@ import { UserContext } from "../../context/UserContext";
 import ScheduleForm from "../Schedule/ScheduleForm";
 import { processAppointmentPrompt } from "../../utils/gemini/geminiHandler";
 import { useTranslation } from "react-i18next";
+import { getWsBaseUrl, getApiBaseUrl } from "../../utils/runtimeUrls";
 
 const STORAGE_KEY = "customer-support-session";
 
@@ -14,7 +15,8 @@ const ChatWindow = () => {
   const { isOpen } = useContext(ChatContext);
   const { user } = useContext(UserContext);
   
-  const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:8081/ws";
+  const WS_URL = getWsBaseUrl();
+  const API_URL = getApiBaseUrl();
 
   const [connected, setConnected] = useState(false);
   const [stompClient, setStompClient] = useState(null);

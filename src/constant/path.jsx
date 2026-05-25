@@ -20,13 +20,20 @@ const path = {
   brands: "/brands",
   blog: "/blog",
   pcBuilder: "/pc-builder",
+  luckyWheel: "/lucky-wheel",
+  referral: "/referral",
+  giftCards: "/gift-cards",
   compare: "/compare",
   favorites: "/favorites",
+  search: "/search",
+  warrantyLookup: "/warranty-lookup",
+  bulkBuy: "/bulk-buy",
 
   // ── Shopping Cart ─────────────────────────────────────
   shoppingCart: "/shopping_card_item",
   shoppingCheckout: "/shopping_card_checkout",
   shoppingPayment: "/shopping_payment",
+  paymentResult: "/payment-result",
   thankYou: "/thank_you_shopping",
 
   // ── Profile / Account ────────────────────────────────

@@ -1,4 +1,5 @@
-import React, { Suspense, lazy, useContext } from "react";
+import React, { Suspense, lazy, useContext, useEffect } from "react";
+import { RouteErrorBoundary } from "../components/ui";
 import {
   BrowserRouter,
   Routes,
@@ -8,6 +9,7 @@ import {
 } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import ProtectedRoute from "../services/ProtectedRoute";
+import Loading from "../components/Loading";
 
 const Layout = lazy(() => import("../pages/Layout/Layout"));
 const Content = lazy(() => import("../components/Content/Content"));
@@ -40,7 +42,8 @@ const Product = lazy(() => import("../components/product/Product"));
 import ScrollToTop from "../components/option/ScrollToTop";
 const VIPCalendar = lazy(() => import("../pages/Calendar/VIPCalendar"));
 const ThankYouPage = lazy(() => import("../pages/ShoppingCard/ThankForShopping"));
-const ShoppingCardItem = lazy(() => import("../pages/ShoppingCard/ShoppingCardItem"));
+const PaymentResult = lazy(() => import("../pages/ShoppingCard/PaymentResult"));
+
 const ShoppingCart = lazy(() => import("../pages/ShoppingCard/ShoppingCart"));
 const Deals = lazy(() => import("../pages/Deals/Deals"));
 const NewArrivals = lazy(() => import("../pages/NewArrivals/NewArrivals"));
@@ -66,23 +69,69 @@ const AnalyticsDashboard = lazy(() => import("../pages/AdminLayout/AnalyticsDash
 const CompareTable = lazy(() => import("../components/product/CompareTable"));
 const LaptopTable = lazy(() => import("../pages/AdminLayout/LaptopTable"));
 const PhoneTable = lazy(() => import("../pages/AdminLayout/PhoneTable"));
+const StockProductPage = lazy(() => import("../pages/AdminLayout/StockProductPage"));
+const ProductImportPage = lazy(() => import("../pages/AdminLayout/ProductImportPage"));
+const CustomerTable = lazy(() => import("../pages/AdminLayout/CustomerTable"));
+const DiscountsTable = lazy(() => import("../pages/AdminLayout/DiscountsTable"));
+const ReviewsTable = lazy(() => import("../pages/AdminLayout/ReviewsTable"));
+const AdminShippedOrders = lazy(() => import("../pages/AdminLayout/AdminShippedOrders"));
+const AdminOrdersPage = lazy(() => import("../pages/AdminLayout/AdminOrdersPage"));
+const UnifiedProductTable = lazy(() => import("../pages/AdminLayout/UnifiedProductTable"));
+const ReturnRequestsPage = lazy(() => import("../pages/AdminLayout/ReturnRequestsPage"));
+const NotificationCenterPage = lazy(() => import("../pages/AdminLayout/NotificationCenterPage"));
+const OrderKanbanPage = lazy(() => import("../pages/AdminLayout/OrderKanbanPage"));
+const BannerManagerPage = lazy(() => import("../pages/AdminLayout/BannerManagerPage"));
+const FlashSaleManager = lazy(() => import("../pages/AdminLayout/FlashSaleManager"));
+const GiftCardManager = lazy(() => import("../pages/AdminLayout/GiftCardManager"));
+const ReferralDashboard = lazy(() => import("../pages/AdminLayout/ReferralDashboard"));
+const EmailCampaignPage = lazy(() => import("../pages/AdminLayout/EmailCampaignPage"));
+const AIAnalyticsPage = lazy(() => import("../pages/AdminLayout/AIAnalyticsPage"));
+const ShippingSettingsPage = lazy(() => import("../pages/AdminLayout/ShippingSettingsPage"));
+const SmartSearchAndAlertsPage = lazy(() => import("../pages/AI/SmartSearchAndAlertsPage"));
+const LuckyWheel = lazy(() => import("../pages/LuckyWheel/LuckyWheel"));
+const ReferralPage = lazy(() => import("../pages/Referral/ReferralPage"));
+const GiftCardPage = lazy(() => import("../pages/GiftCard/GiftCardPage"));
+const SearchResults = lazy(() => import("../pages/SearchResults/SearchResults"));
+const WarrantyLookup = lazy(() => import("../pages/WarrantyLookup/WarrantyLookup"));
+const BulkBuyPage = lazy(() => import("../pages/BulkBuy/BulkBuyPage"));
 const DashboardViewContainer = lazy(() => import("../pages/AdminLayout/components/DashboardViewContainer"));
+const PermissionsPage = lazy(() => import("../pages/Permissions/PermissionsPage"));
+const CSLayout = lazy(() => import("../pages/CustomerService/CSLayout"));
+const CSDashboard = lazy(() => import("../pages/CustomerService/CSDashboard"));
 
 const AppRouter = () => {
   const { getUserRole } = useContext(UserContext);
 
   const userRole = getUserRole();
 
+  useEffect(() => {
+    // Preload critical chunks when idle
+    const preload = () => {
+      const criticalComponents = [
+        () => import("../pages/Laptops/Catalog"),
+        () => import("../pages/All_Products/All_Products"),
+        () => import("../pages/ShoppingCard/ShoppingCart"),
+      ];
+      criticalComponents.forEach(fn => {
+        if (typeof window.requestIdleCallback === "function") {
+          window.requestIdleCallback(() => fn());
+        } else {
+          setTimeout(fn, 2000);
+        }
+      });
+    };
+    if (document.readyState === "complete") {
+      preload();
+    } else {
+      window.addEventListener("load", preload);
+      return () => window.removeEventListener("load", preload);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Suspense
-        fallback={
-          <div className="min-h-screen flex items-center justify-center text-sm text-gray-500">
-            Loading...
-          </div>
-        }
-      >
+      <Suspense fallback={<Loading fullScreen size="lg" />}>
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginWave />} />
@@ -93,19 +142,45 @@ const AppRouter = () => {
           path="/admin"
           element={
             <ProtectedRoute requiredRoles={["admin"]}>
-              <AdminLayout />
+              <RouteErrorBoundary>
+                <AdminLayout />
+              </RouteErrorBoundary>
             </ProtectedRoute>
           }
         >
           <Route index element={<DashboardViewContainer />} />
+          <Route path="dashboard" element={<DashboardViewContainer />} />
+          <Route path="products/unified" element={<UnifiedProductTable />} />
+          <Route path="products/import" element={<ProductImportPage />} />
           <Route path="products/laptops" element={<LaptopTable />} />
           <Route path="products/phones" element={<PhoneTable />} />
+          <Route path="products/:category" element={<StockProductPage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="orders/kanban" element={<OrderKanbanPage />} />
+          <Route path="shipped-orders" element={<AdminShippedOrders />} />
+          <Route path="returns" element={<ReturnRequestsPage />} />
+          <Route path="customers" element={<CustomerTable />} />
+          <Route path="reviews" element={<ReviewsTable />} />
+          <Route path="discounts" element={<DiscountsTable />} />
+          <Route path="promotions" element={<PromotionsManagement />} />
+          <Route path="flash-sales" element={<FlashSaleManager />} />
+          <Route path="gift-cards" element={<GiftCardManager />} />
+          <Route path="referrals" element={<ReferralDashboard />} />
+          <Route path="banners" element={<BannerManagerPage />} />
+          <Route path="email-campaigns" element={<EmailCampaignPage />} />
+          <Route path="settings/shipping" element={<ShippingSettingsPage />} />
+          <Route path="categories" element={<CategoriesManagement />} />
+          <Route path="staff" element={<StaffManagement />} />
+          <Route path="permissions" element={<PermissionsPage />} />
+          <Route path="customer-service" element={<CustomerServiceDashboard />} />
+          <Route path="notifications" element={<NotificationCenterPage />} />
           <Route path="analytics" element={<AnalyticsDashboard />} />
+          <Route path="ai-analytics" element={<AIAnalyticsPage />} />
           <Route path="calendar" element={<VIPCalendar />} />
           <Route path="audit-logs" element={<AuditLogsPage />} />
         </Route>
         {/* Customer/public routes */}
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<RouteErrorBoundary><Layout /></RouteErrorBoundary>}>
           <Route index element={<Content />} />
 
           {/* Minigame route - Requires authentication */}
@@ -130,6 +205,7 @@ const AppRouter = () => {
           <Route path="repair" element={<Repair />} />
           <Route path="our_deal" element={<Our_Deal />} />
           <Route path="thank_you_shopping" element={<ThankYouPage />} />
+          <Route path="payment-result" element={<PaymentResult />} />
 
           {/* New 2025 Ecommerce Pages */}
           <Route path="deals" element={<Deals />} />
@@ -141,6 +217,34 @@ const AppRouter = () => {
           <Route path="pc-builder" element={<PCBuilder />} />
           <Route path="pc-builder/:presetId" element={<PCBuilder />} />
           <Route path="compare" element={<CompareTable />} />
+          <Route path="smart-search" element={<SmartSearchAndAlertsPage />} />
+          <Route path="search" element={<SearchResults />} />
+          <Route path="warranty-lookup" element={<WarrantyLookup />} />
+          <Route path="bulk-buy" element={<BulkBuyPage />} />
+          <Route
+            path="lucky-wheel"
+            element={
+              <ProtectedRoute requireAuth={true} requiredRoles={[]}>
+                <LuckyWheel />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="referral"
+            element={
+              <ProtectedRoute requireAuth={true} requiredRoles={[]}>
+                <ReferralPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="gift-cards"
+            element={
+              <ProtectedRoute requireAuth={true} requiredRoles={[]}>
+                <GiftCardPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Management Pages - Protected by roles */}
           <Route 
@@ -162,41 +266,31 @@ const AppRouter = () => {
           <Route 
             path="customers" 
             element={
-              <ProtectedRoute requiredRoles={["admin"]}>
-                <CustomerManagement />
-              </ProtectedRoute>
+              <Navigate to="/admin/customers" replace />
             } 
           />
           <Route 
             path="promotions" 
             element={
-              <ProtectedRoute requiredRoles={["admin"]}>
-                <PromotionsManagement />
-              </ProtectedRoute>
+              <Navigate to="/admin/promotions" replace />
             } 
           />
           <Route 
             path="categories" 
             element={
-              <ProtectedRoute requiredRoles={["admin"]}>
-                <CategoriesManagement />
-              </ProtectedRoute>
+              <Navigate to="/admin/categories" replace />
             } 
           />
           <Route 
             path="staff" 
             element={
-              <ProtectedRoute requiredRoles={["admin"]}>
-                <StaffManagement />
-              </ProtectedRoute>
+              <Navigate to="/admin/staff" replace />
             } 
           />
           <Route 
             path="customer-service" 
             element={
-              <ProtectedRoute requiredRoles={["admin", "customer_service"]}>
-                <CustomerServiceDashboard />
-              </ProtectedRoute>
+              <Navigate to="/admin/customer-service" replace />
             } 
           />
        
@@ -246,14 +340,7 @@ const AppRouter = () => {
               <ShoppingCart />
             }
           />
-          <Route
-            path="shopping_payment"
-            element={
-              <ProtectedRoute requireAuth={true} requiredRoles={[]}>
-                <ShoppingCardItem />
-              </ProtectedRoute>
-            }
-          />
+
           <Route path="thank_you_shopping" element={<ThankYouPage />} />
           {/* Product routes */}
           <Route path="/product/:id" element={<Product />}>
@@ -272,6 +359,22 @@ const AppRouter = () => {
           <Route path="/i18n-demo" element={<I18nDemo />} />
         </Route>
 
+        {/* CS Staff routes — dedicated layout */}
+        <Route
+          path="/cs"
+          element={
+            <ProtectedRoute requiredRoles={["customer_service", "admin"]}>
+              <RouteErrorBoundary>
+                <CSLayout />
+              </RouteErrorBoundary>
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<CustomerServiceDashboard />} />
+          <Route path="dashboard" element={<CSDashboard />} />
+          <Route path="appointments" element={<Appointments />} />
+        </Route>
+
         {/* Redirect based on role */}
         <Route
           path="/dashboard"
@@ -279,7 +382,7 @@ const AppRouter = () => {
             userRole === "admin" ? (
               <Navigate to="/admin" />
             ) : userRole === "customer_service" ? (
-              <Navigate to="/customer-service" />
+              <Navigate to="/cs" />
             ) : (
               <Navigate to="/" />
             )

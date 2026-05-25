@@ -101,7 +101,7 @@ const TestimonialSlider = ({
   return (
     <div className="relative max-w-3xl mx-auto">
       {/* Card */}
-      <div className="relative bg-white rounded-3xl border border-gray-100 shadow-sm px-10 md:px-16 py-10 overflow-hidden">
+      <div className="relative overflow-hidden rounded-3xl border border-gray-100 bg-white px-10 py-10 shadow-sm dark:border-gray-800 dark:bg-gray-900 md:px-16">
         {/* Decorative gradient quote mark */}
         <div className="absolute top-6 left-8 text-7xl font-serif leading-none bg-gradient-to-br from-violet-200 to-purple-100 bg-clip-text text-transparent select-none pointer-events-none">
           &ldquo;
@@ -149,7 +149,7 @@ const TestimonialSlider = ({
                 </div>
 
                 {/* Comment */}
-                <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-5 line-clamp-4 italic max-w-lg">
+                <p className="mb-5 max-w-lg line-clamp-4 text-sm italic leading-relaxed text-gray-700 dark:text-gray-300 md:text-base">
                   {testimonial.text}
                 </p>
 
@@ -158,7 +158,7 @@ const TestimonialSlider = ({
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
                     {testimonial.author?.[0]?.toUpperCase() || "K"}
                   </div>
-                  <p className="text-sm font-semibold text-gray-900">{testimonial.author}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{testimonial.author}</p>
                 </div>
               </div>
             </div>

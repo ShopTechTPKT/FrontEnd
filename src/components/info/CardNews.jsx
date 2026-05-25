@@ -30,13 +30,12 @@ const CardNews = ({
   };
 
   return (
-    <div className="flex flex-col h-full max-w-sm w-full rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 bg-white border border-gray-100">
-      {/* Image */}
-      <div className="h-48 bg-gray-100 overflow-hidden relative">
+    <div className="group flex h-full w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900">
+      <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-800">
         <img
           src={currentImageUrl}
           alt={displayTitle}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 ease-in-out"
+          className="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
           onError={handleImageError}
           loading="lazy"
         />
@@ -44,11 +43,11 @@ const CardNews = ({
 
       {/* Nội dung */}
       <div className="flex flex-col flex-1 p-5">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 hover:text-violet-700 transition-colors cursor-pointer leading-snug">
+        <h3 className="mb-2 cursor-pointer text-lg font-semibold leading-snug text-gray-800 transition-colors hover:text-violet-700 dark:text-gray-100 dark:hover:text-violet-400">
           {displayTitle}
         </h3>
 
-        <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+        <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
           {displayExcerpt}
         </p>
 

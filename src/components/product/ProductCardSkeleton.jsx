@@ -4,15 +4,14 @@
  */
 export default function ProductCardSkeleton({ count = 8 }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: count }, (_, i) => (
         <div
           key={i}
-          className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
+          className="overflow-hidden rounded-2xl border border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900"
           style={{ animationDelay: `${i * 60}ms` }}
         >
-          {/* Image placeholder */}
-          <div className="aspect-square relative overflow-hidden bg-gray-100">
+          <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800">
             <div className="absolute inset-0 skeleton-shimmer" />
           </div>
 

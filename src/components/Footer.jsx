@@ -3,15 +3,14 @@ import { Link } from "react-router-dom";
 import axiosInstance from "../custom/axios";
 import { useTranslation } from "react-i18next";
 
-/* ── SVG Icons ───────────────────────────────────────────── */
 const IconFacebook = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
     <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
   </svg>
 );
 
 const IconInstagram = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
     <circle cx="12" cy="12" r="4" />
     <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
@@ -19,13 +18,12 @@ const IconInstagram = () => (
 );
 
 const IconYoutube = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
     <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.45A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.97C5.12 20 12 20 12 20s6.88 0 8.59-.45a2.78 2.78 0 001.95-1.97A29 29 0 0023 12a29 29 0 00-.46-5.58z" />
     <polygon fill="white" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
   </svg>
 );
 
-/* ── Footer Link Columns (data-driven) ── */
 const FOOTER_COLUMNS = [
   {
     titleKey: "footer.information.title",
@@ -62,12 +60,12 @@ const SOCIAL_LINKS = [
 ];
 
 const PAYMENT_BADGES = [
-  { label: "VISA",   bg: "bg-blue-600",   text: "text-white",  tracking: "tracking-widest" },
-  { label: "MC",     bg: "bg-red-500",    text: "text-white",  tracking: "tracking-wider" },
-  { label: "PayPal", bg: "bg-blue-500",   text: "text-white",  tracking: "tracking-wide" },
-  { label: "MoMo",   bg: "bg-pink-600",   text: "text-white",  tracking: "tracking-wide" },
-  { label: "VNPay",  bg: "bg-blue-800",   text: "text-white",  tracking: "tracking-wide" },
-  { label: "COD",    bg: "bg-emerald-600",text: "text-white",  tracking: "tracking-wide" },
+  { label: "VISA", bg: "bg-[var(--color-pay-visa)]", text: "text-white", tracking: "tracking-widest" },
+  { label: "MC", bg: "bg-[var(--color-pay-mc)]", text: "text-white", tracking: "tracking-wider" },
+  { label: "PayPal", bg: "bg-[var(--color-pay-paypal)]", text: "text-white", tracking: "tracking-wide" },
+  { label: "MoMo", bg: "bg-[var(--color-pay-momo)]", text: "text-white", tracking: "tracking-wide" },
+  { label: "VNPay", bg: "bg-[var(--color-pay-vnpay)]", text: "text-white", tracking: "tracking-wide" },
+  { label: "COD", bg: "bg-[var(--color-pay-cod)]", text: "text-white", tracking: "tracking-wide" },
 ];
 
 const Footer = () => {
@@ -103,60 +101,52 @@ const Footer = () => {
     }
   };
 
-  const linkClass = "text-sm text-gray-500 hover:text-violet-700 transition-colors duration-200";
+  const linkClass =
+    "text-sm text-gray-400 transition-colors duration-200 hover:text-violet-300";
   const iconBtnClass =
-    "w-9 h-9 rounded-xl flex items-center justify-center text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-100 hover:border-violet-200 transition-all duration-200";
+    "flex h-10 w-10 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-200 transition-all duration-200 hover:border-violet-400 hover:bg-violet-500/20";
 
   return (
-    <footer className="bg-gray-50 text-gray-600 border-t border-gray-200">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-14">
+    <footer className="relative overflow-hidden border-t border-violet-500/20 bg-gradient-to-b from-gray-950 via-gray-900 to-black text-gray-300">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(109,40,217,0.25),transparent)]" />
 
-        {/* Newsletter */}
-        <div className="mb-12 text-center bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-            <span className="text-xs font-semibold text-violet-600 uppercase tracking-widest">Newsletter</span>
+      <div className="relative mx-auto max-w-screen-xl px-4 py-14 sm:px-6">
+        <div className="mb-12 rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-600/90 via-purple-700/85 to-violet-900/90 p-8 text-center shadow-xl shadow-violet-950/40 sm:p-10">
+          <div className="mb-4 inline-flex animate-pulse-subtle items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
+            <span className="text-xs font-bold uppercase tracking-widest text-white">
+              {t("footer.newsletter.badge", { defaultValue: "Giảm 10% — Ưu đãi độc quyền" })}
+            </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">
-            {t("footer.newsletter.title")}
-          </h3>
-          <p className="text-sm text-gray-500 mb-6">
-            {t("footer.newsletter.subtitle")}
-          </p>
-          <form
-            onSubmit={handleNewsletterSubmit}
-            className="flex items-center gap-2 max-w-md mx-auto"
-          >
+          <h3 className="mb-2 text-2xl font-bold tracking-tight text-white">{t("footer.newsletter.title")}</h3>
+          <p className="mb-6 text-sm text-violet-100/90">{t("footer.newsletter.subtitle")}</p>
+          <form onSubmit={handleNewsletterSubmit} className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row">
             <input
               type="email"
               placeholder={t("footer.newsletter.placeholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 h-11 px-4 rounded-xl text-sm text-gray-900 bg-gray-50 border border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder-gray-400 outline-none"
+              className="h-12 flex-1 rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white outline-none backdrop-blur-sm placeholder:text-violet-200/70 focus:border-white/40 focus:ring-2 focus:ring-white/20"
               required
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-11 px-5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-violet-900/30"
+              className="h-12 rounded-xl bg-white px-6 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? "..." : t("footer.newsletter.subscribe")}
             </button>
           </form>
           {messageKey && (
-            <p className={`mt-3 text-xs ${ messageType === "success" ? "text-emerald-600" : "text-red-600" }`}>
+            <p className={`mt-3 text-xs ${messageType === "success" ? "text-emerald-200" : "text-red-200"}`}>
               {t(messageKey)}
             </p>
           )}
         </div>
 
-        {/* Link Columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-4">
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.titleKey}>
-              <h4 className="text-sm font-semibold text-gray-900 mb-4">
-                {t(col.titleKey)}
-              </h4>
+              <h4 className="mb-4 text-sm font-semibold text-white">{t(col.titleKey)}</h4>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.labelKey}>
@@ -170,25 +160,27 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Contact Info */}
-        <div className="mb-10 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
-          <h4 className="text-sm font-semibold text-gray-900 mb-3">
-            {t("footer.address.title")}
-          </h4>
-          <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8">
-            <address className="not-italic text-sm space-y-1.5 flex-1">
-              <p>{t("footer.address.street")}</p>
+        <div className="mb-10 rounded-2xl border border-gray-800 bg-gray-900/50 p-5 sm:p-6">
+          <h4 className="mb-3 text-sm font-semibold text-white">{t("footer.address.title")}</h4>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
+            <address className="flex-1 space-y-1.5 text-sm not-italic text-gray-400">
+              <p className="flex items-start gap-2">
+                <span className="mt-0.5 text-violet-400" aria-hidden>
+                  📍
+                </span>
+                {t("footer.address.street")}
+              </p>
               <p>
                 {t("footer.address.phone")}{" "}
-                <span className="text-violet-700 font-medium">{t("footer.address.phoneNumber")}</span>
+                <span className="font-medium text-violet-300">{t("footer.address.phoneNumber")}</span>
               </p>
               <p>
                 {t("footer.address.email")}{" "}
-                <span className="text-violet-700 font-medium">{t("footer.address.emailAddress")}</span>
+                <span className="font-medium text-violet-300">{t("footer.address.emailAddress")}</span>
               </p>
             </address>
             <div className="text-sm">
-              <p className="font-semibold text-gray-900 mb-1.5">{t("footer.address.openHours")}</p>
+              <p className="mb-1.5 font-semibold text-white">{t("footer.address.openHours")}</p>
               <ul className="space-y-0.5 text-gray-500">
                 <li>{t("footer.address.mondayThursday")}</li>
                 <li>{t("footer.address.friday")}</li>
@@ -198,40 +190,62 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-6 border-t border-gray-100">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mb-8 flex flex-col gap-4 border-y border-gray-800 py-8">
+          <p className="text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+            {t("footer.trust.title", { defaultValue: "Thanh toán & bảo mật" })}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2" aria-label="Payment methods">
+            {PAYMENT_BADGES.map(({ label, bg, text, tracking }) => (
+              <span
+                key={label}
+                className={`inline-flex items-center justify-center rounded-md px-2 py-1 text-[10px] font-bold opacity-90 transition-opacity hover:opacity-100 ${bg} ${text} ${tracking}`}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              SSL
+            </span>
+            <span>{t("footer.trust.secure", { defaultValue: "Thanh toán an toàn" })}</span>
+            <span>{t("footer.trust.shipping", { defaultValue: "Đối tác vận chuyển uy tín" })}</span>
+          </div>
+        </div>
 
-            {/* Social */}
-            <div className="flex gap-2">
-              {SOCIAL_LINKS.map(({ Icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={iconBtnClass}
-                  aria-label={label}
-                >
-                  <Icon />
-                </a>
-              ))}
-            </div>
+        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+          <div className="flex gap-2">
+            {SOCIAL_LINKS.map(({ Icon, label, href }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={iconBtnClass} aria-label={label}>
+                <Icon />
+              </a>
+            ))}
+          </div>
 
-            {/* Payment badges */}
-            <div className="flex gap-1.5 flex-wrap justify-center" aria-label="Payment methods">
-              {PAYMENT_BADGES.map(({ label, bg, text, tracking }) => (
-                <span
-                  key={label}
-                  className={`inline-flex items-center justify-center px-2 py-1 rounded-md text-[10px] font-bold ${bg} ${text} ${tracking} opacity-80 hover:opacity-100 transition-opacity`}
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+            <Link to="/" className="hover:text-violet-300">
+              {t("footer.legal.privacy", { defaultValue: "Privacy" })}
+            </Link>
+            <span className="text-gray-700">|</span>
+            <Link to="/" className="hover:text-violet-300">
+              {t("footer.legal.terms", { defaultValue: "Terms" })}
+            </Link>
+            <span className="text-gray-700">|</span>
+            <Link to="/" className="hover:text-violet-300">
+              {t("footer.legal.cookies", { defaultValue: "Cookies" })}
+            </Link>
+          </div>
 
-            {/* Copyright */}
-            <p className="text-xs text-gray-400">{t("footer.copyright")}</p>
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-4">
+            <p className="text-xs text-gray-500">{t("footer.copyright")}</p>
+            <button
+              type="button"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="rounded-full border border-violet-500/40 px-4 py-2 text-xs font-semibold text-violet-300 transition-colors hover:bg-violet-500/10"
+            >
+              {t("footer.backToTop", { defaultValue: "Lên đầu trang" })}
+            </button>
           </div>
         </div>
       </div>

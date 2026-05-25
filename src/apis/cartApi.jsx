@@ -1,5 +1,12 @@
 import axios from "../custom/axios";
 import notify from "../utils/notify";
+import { clearCacheByPrefix, deleteCachedValue } from "../utils/apiCache";
+
+const invalidateProductCaches = () => {
+  deleteCachedValue("products:all");
+  deleteCachedValue("products:home");
+  clearCacheByPrefix("products:detail:");
+};
 
 // Cart API endpoints
 export const cartApi = {
@@ -31,6 +38,7 @@ export const cartApi = {
       const response = await axios.post(`/cart/user/${userId}/add`, null, {
         params: { productId, quantity },
       });
+      invalidateProductCaches();
       return response.data;
     } catch (error) {
       if (error.response) {
@@ -55,6 +63,7 @@ export const cartApi = {
       const response = await axios.put(`/cart/user/${userId}/update`, null, {
         params: { productId, quantity },
       });
+      invalidateProductCaches();
       return response.data;
     } catch (error) {
       if (error.response) {
@@ -79,6 +88,7 @@ export const cartApi = {
       const response = await axios.delete(`/cart/user/${userId}/remove`, {
         params: { productId },
       });
+      invalidateProductCaches();
       return response.data;
     } catch (error) {
       console.error("Error removing from cart:", error);
@@ -90,6 +100,7 @@ export const cartApi = {
   clearCart: async userId => {
     try {
       const response = await axios.delete(`/cart/user/${userId}/clear`);
+      invalidateProductCaches();
       return response.data;
     } catch (error) {
       console.error("Error clearing cart:", error);

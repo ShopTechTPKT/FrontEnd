@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getOrderTracking } from "../../apis/orderApi";
 import useOrderTracking from "../../hooks/useOrderTracking";
+import ShipperLiveMap from "../../components/tracking/ShipperLiveMap";
+import ShipperInfoCard from "../../components/tracking/ShipperInfoCard";
 
 const STATUS_STEPS = [
   "PENDING",
@@ -135,12 +137,12 @@ const TrackOrder = () => {
               value={orderInput}
               onChange={(e) => setOrderInput(e.target.value)}
               placeholder={t("order.eg_ord2025123456") || "VD: ORD-2025-123"}
-              className="h-11 flex-1 rounded-lg border border-gray-200 px-4 text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+              className="h-11 flex-1 rounded-lg border border-gray-200 px-4 text-sm focus:border-[var(--color-primary-)] focus:ring-2 focus:ring-[var(--color-primary-)]/20"
             />
             <button
               type="submit"
               disabled={loading}
-              className="h-11 rounded-lg bg-violet-700 px-5 text-sm font-semibold text-white hover:bg-violet-800 disabled:opacity-60"
+              className="h-11 rounded-lg bg-[var(--color-primary-)] px-5 text-sm font-semibold text-white hover:bg-[var(--color-primary-)] disabled:opacity-60"
             >
               {loading ? "Đang kiểm tra..." : "Theo dõi"}
             </button>
@@ -150,6 +152,12 @@ const TrackOrder = () => {
 
         {trackingData && (
           <div className="space-y-4">
+            {(currentStatus === "SHIPPING" || currentStatus === "PICKING_UP") && (
+              <>
+                <ShipperInfoCard orderId={trackingData.orderId} />
+                <ShipperLiveMap orderId={trackingData.orderId} />
+              </>
+            )}
             <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -160,7 +168,7 @@ const TrackOrder = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500">Trạng thái hiện tại</p>
-                  <p className="text-lg font-semibold text-violet-700">
+                  <p className="text-lg font-semibold text-[var(--color-primary-)]">
                     {STATUS_LABELS[currentStatus] || currentStatus}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
@@ -192,46 +200,61 @@ const TrackOrder = () => {
               )}
             </div>
 
-            <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-              <h2 className="text-base font-semibold text-gray-900 mb-4">
-                Timeline đơn hàng
+            {/* Timeline Stepper */}
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-6">
+                Hành trình đơn hàng
               </h2>
-              <div className="space-y-3">
+              <div className="relative pl-8 space-y-6 before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-100 dark:before:bg-gray-800">
                 {STATUS_STEPS.map((step, idx) => {
                   const completed =
                     currentStepIndex >= 0
                       ? idx <= currentStepIndex
                       : step === currentStatus;
+                  const isActive = step === currentStatus;
+
                   return (
-                    <div key={step} className="flex items-center gap-3">
+                    <div key={step} className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      {/* Step Indicator Dot */}
                       <div
-                        className={`h-7 w-7 rounded-full border flex items-center justify-center ${
-                          completed
-                            ? "border-violet-600 bg-violet-600 text-white"
-                            : "border-gray-300 bg-white text-gray-400"
+                        className={`absolute -left-8 flex h-7 w-7 items-center justify-center rounded-full border transition-all duration-300 ${
+                          isActive
+                            ? "border-[var(--color-primary-)] bg-[var(--color-primary-)] text-white ring-4 ring-[var(--color-primary-)] dark:ring-[var(--color-primary-)]/50 scale-110"
+                            : completed
+                            ? "border-emerald-600 bg-emerald-600 text-white"
+                            : "border-gray-200 bg-white text-gray-300 dark:border-gray-800 dark:bg-gray-950"
                         }`}
                       >
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          className="h-3.5 w-3.5"
-                          stroke="currentColor"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
+                        {completed ? (
+                          <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        ) : (
+                          <div className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-white" : "bg-gray-300"}`} />
+                        )}
                       </div>
+
+                      {/* Content */}
                       <div className="flex-1">
                         <p
-                          className={`text-sm font-medium ${
-                            completed ? "text-gray-900" : "text-gray-400"
+                          className={`text-sm font-bold transition-colors duration-200 ${
+                            isActive
+                              ? "text-[var(--color-primary-)] dark:text-[var(--color-primary-)]"
+                              : completed
+                              ? "text-gray-850 dark:text-gray-200"
+                              : "text-gray-400"
                           }`}
                         >
                           {STATUS_LABELS[step]}
                         </p>
                       </div>
+
+                      {/* Pulsing indicator for active state */}
+                      {isActive && (
+                        <div className="shrink-0 flex items-center gap-1.5 rounded-full bg-[var(--color-primary-)] px-2.5 py-0.5 text-[10px] font-semibold text-[var(--color-primary-)] dark:bg-[var(--color-primary-)]/30 dark:text-[var(--color-primary-)] animate-pulse">
+                          <span>Đang xử lý</span>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

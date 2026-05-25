@@ -1,9 +1,17 @@
 import axiosInstance from "../custom/axios";
+import { clearCacheByPrefix, deleteCachedValue } from "../utils/apiCache";
+
+const invalidateProductCachesAfterOrder = () => {
+  deleteCachedValue("products:all");
+  deleteCachedValue("products:home");
+  clearCacheByPrefix("products:detail:");
+};
 
 // API tạo đơn hàng
 export const createOrder = async orderData => {
   try {
     const res = await axiosInstance.post("/orders", orderData);
+    invalidateProductCachesAfterOrder();
     return res.data; // trả về OrderDTO
   } catch (error) {
     console.error("Error creating order:", error);
@@ -22,6 +30,7 @@ export const createOrder = async orderData => {
 export const createOrderWithDetails = async orderData => {
   try {
     const res = await axiosInstance.post("/orders/with-details", orderData);
+    invalidateProductCachesAfterOrder();
     return res.data; // trả về OrderDTO
   } catch (error) {
     console.error("Error creating order with details:", error);
@@ -154,6 +163,33 @@ export const updateOrderStatus = async (orderId, status) => {
   }
 };
 
+export const previewOrder = async payload => {
+  const res = await axiosInstance.post("/orders/preview", payload);
+  return res.data;
+};
+
+export const cancelOrder = async (orderId, reason) => {
+  try {
+    const res = await axiosInstance.patch(`/orders/${orderId}/cancel`, {
+      reason: reason || "Customer requested cancellation",
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error cancelling order:", error);
+    throw error;
+  }
+};
+
+export const reorderOrder = async (orderId) => {
+  try {
+    const res = await axiosInstance.post(`/orders/${orderId}/reorder`);
+    return res.data;
+  } catch (error) {
+    console.error("Error reordering:", error);
+    throw error;
+  }
+};
+
 // ============ ORDER TRACKING APIs ============
 
 /**
@@ -218,3 +254,6 @@ export const getOrderTracking = async (userId, orderId) => {
     throw error;
   }
 };
+
+
+

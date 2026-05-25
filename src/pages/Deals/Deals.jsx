@@ -102,7 +102,7 @@ const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
       </div>
 
       <div className="p-3">
-        <div className="text-xs text-violet-600 font-medium mb-1 truncate">{deal.brand}</div>
+        <div className="text-xs text-[var(--color-primary-)] font-medium mb-1 truncate">{deal.brand}</div>
         <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
 
         {/* Rating */}
@@ -117,7 +117,7 @@ const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
 
         {/* Price */}
         <div className="mb-2">
-          <div className="text-base font-bold text-violet-700">{deal.salePrice.toLocaleString("vi-VN")} ₫</div>
+          <div className="text-base font-bold text-[var(--color-primary-)]">{deal.salePrice.toLocaleString("vi-VN")} ₫</div>
           <div className="text-xs text-gray-400 line-through">{deal.originalPrice.toLocaleString("vi-VN")} ₫</div>
         </div>
 
@@ -141,7 +141,7 @@ const DealCard = ({ deal, isFav, onToggleFav, onNavigate, t }) => {
         {/* CTA */}
         <button
           onClick={(e) => { e.stopPropagation(); onNavigate(deal.id); }}
-          className="w-full py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg font-medium hover:opacity-90 transition-colors text-sm flex items-center justify-center gap-2"
+          className="w-full py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-lg font-medium hover:opacity-90 transition-colors text-sm flex items-center justify-center gap-2"
         >
           <IcCart className="w-4 h-4" />
           {t("deals.buyNow")}
@@ -376,7 +376,7 @@ const Deals = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[var(--color-primary-)] to-purple-50 dark:from-gray-950 dark:to-[var(--color-primary-)]/40">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="text-6xl mb-4">😞</div>
           <h2 className="text-2xl font-bold text-red-700 mb-2">{t('deals.error.title')}</h2>
@@ -416,7 +416,7 @@ const Deals = () => {
                 onClick={() => setSelectedTab(tab.id)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 text-sm ${
                   selectedTab === tab.id
-                    ? "bg-violet-700 text-white shadow-sm"
+                    ? "bg-[var(--color-primary-)] text-white shadow-sm"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -443,7 +443,7 @@ const Deals = () => {
                   placeholder={t('deals.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm bg-white"
+                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary-)] focus:border-transparent text-sm bg-white"
                 />
               </div>
             </div>
@@ -456,7 +456,7 @@ const Deals = () => {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-3 py-1.5 rounded-md font-medium transition-all duration-200 flex items-center gap-1.5 text-xs whitespace-nowrap ${
                   selectedCategory === cat.id
-                    ? "bg-violet-700 text-white"
+                    ? "bg-[var(--color-primary-)] text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
                 >
@@ -472,7 +472,7 @@ const Deals = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap ${
                   showFilters 
-                    ? "bg-violet-700 text-white" 
+                    ? "bg-[var(--color-primary-)] text-white" 
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -487,7 +487,7 @@ const Deals = () => {
                   setSortBy(newSortBy);
                   setSortOrder(newSortOrder);
                 }}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm bg-white"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary-)] focus:border-transparent text-sm bg-white"
               >
                 <option value="discount-desc">{t('deals.sort.highDiscount')}</option>
                 <option value="price-asc">{t('deals.sort.lowPrice')}</option>
@@ -517,14 +517,14 @@ const Deals = () => {
                     placeholder={t('deals.filters.from')}
                     value={priceRange.min || ''}
                     onChange={(e) => setPriceRange({...priceRange, min: Number(e.target.value) || 0})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary-)]"
                   />
                   <input
                     type="number"
                     placeholder={t('deals.filters.to')}
                     value={priceRange.max === 100000000 ? '' : priceRange.max}
                     onChange={(e) => setPriceRange({...priceRange, max: Number(e.target.value) || 100000000})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary-)]"
                   />
                 </div>
               </div>
@@ -539,14 +539,14 @@ const Deals = () => {
                     placeholder={t('deals.filters.from')}
                     value={discountRange.min || ''}
                     onChange={(e) => setDiscountRange({...discountRange, min: Number(e.target.value) || 0})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary-)]"
                   />
                   <input
                     type="number"
                     placeholder={t('deals.filters.to')}
                     value={discountRange.max === 100 ? '' : discountRange.max}
                     onChange={(e) => setDiscountRange({...discountRange, max: Number(e.target.value) || 100})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-violet-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary-)]"
                   />
                 </div>
               </div>
@@ -583,7 +583,7 @@ const Deals = () => {
             <p className="text-sm text-gray-500 mb-4">{t('deals.empty.description')}</p>
           <button
             onClick={resetFilters}
-            className="bg-gradient-to-r from-violet-700 to-violet-600 text-white px-5 py-2 rounded-lg hover:opacity-90 transition-colors text-sm"
+            className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white px-5 py-2 rounded-lg hover:opacity-90 transition-colors text-sm"
             >
               {t('deals.empty.resetFilters')}
             </button>

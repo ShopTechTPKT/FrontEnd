@@ -29,7 +29,7 @@ import {
   fetchProductRatingDistribution,
   fetchTopRatedProducts,
   fetchMostFavoritedProducts,
-} from "../../apis/adminStatsApi";
+} from "../../../apis/adminStatsApi";
 
 export const useAdminStats = () => {
   const { t } = useTranslation("translation");

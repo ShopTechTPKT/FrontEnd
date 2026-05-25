@@ -18,7 +18,7 @@ const NotFound = () => {
         <section className="max-w-5xl mx-auto px-6 py-14">
           <div className="relative overflow-hidden rounded-3xl border border-violet-100 bg-white p-8 md:p-12 shadow-sm text-center">
             <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-violet-100/60 blur-2xl" />
-            <div className="absolute -bottom-16 -left-10 w-44 h-44 rounded-full bg-pink-100/50 blur-2xl" />
+            <div className="absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-violet-100/50 blur-2xl dark:bg-violet-900/30" />
             <div className="relative z-10">
               <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-violet-100 text-violet-700 text-4xl font-black mb-4 animate-pulse">
                 404

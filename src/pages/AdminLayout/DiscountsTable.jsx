@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaPlus, FaEdit, FaSearch, FaFilter, FaTicketAlt, FaCalendarAlt, FaPercent, FaToggleOn, FaToggleOff, FaEnvelope } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../../components/Toast';
-import Button from '../../components/ui/Button';
-import StatusNotice from '../../components/ui/StatusNotice';
-import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
-import EmptyState from '../../components/ui/EmptyState';
-import { 
-  fetchDiscounts, 
-  fetchProducts, 
-  createDiscount, 
-  updateDiscount, 
-  activateDiscount, 
+import DiscountsToolbar from './components/discounts/DiscountsToolbar';
+import DiscountsStatCards from './components/discounts/DiscountsStatCards';
+import DiscountsDataTable from './components/discounts/DiscountsDataTable';
+import {
+  fetchDiscounts,
+  fetchProducts,
+  createDiscount,
+  updateDiscount,
+  activateDiscount,
   deactivateDiscount,
   fetchActiveDiscounts,
   fetchExpiredDiscounts,
@@ -23,10 +21,13 @@ import {
   deactivateExpiredDiscounts,
   sendDiscountEmail,
   sendBulkDiscountEmail,
-  fetchAllCustomers
-} from '../../apis/adminApi';
+  fetchAllCustomers,
+} from "../../apis/adminApi";
+import DiscountFormModal from "./components/forms/DiscountFormModal";
+import DiscountEmailModal from "./components/forms/DiscountEmailModal";
+import ConfirmModal from "../../components/ConfirmModal";
 
-const DiscountsTable = ({ theme }) => {
+const DiscountsTable = () => {
   const { t } = useTranslation();
   const { showSuccess, showError, showWarning } = useToast();
   const [discounts, setDiscounts] = useState([]);
@@ -54,12 +55,7 @@ const DiscountsTable = ({ theme }) => {
   const [showCustomerSelector, setShowCustomerSelector] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [isSelectAllMode, setIsSelectAllMode] = useState(false);
-
-  // Theme colors
-  const cardBg = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
-  const borderColor = theme === 'dark' ? 'border-gray-700' : 'border-gray-200';
-  const textColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const secondaryTextColor = theme === 'dark' ? 'text-gray-300' : 'text-gray-600';
+  const [statusToggleTarget, setStatusToggleTarget] = useState(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -124,10 +120,6 @@ const DiscountsTable = ({ theme }) => {
     fetchDiscountsData();
     fetchProductsData();
   }, [fetchDiscountsData, fetchProductsData]);
-
-  useEffect(() => {
-    fetchDiscountsData();
-  }, [fetchDiscountsData]);
 
   const applyAdvancedFilters = async () => {
     try {
@@ -339,6 +331,14 @@ const DiscountsTable = ({ theme }) => {
     }
   };
 
+  const requestToggleStatus = (discount) => {
+    if (!discount?.discountStatus) {
+      handleToggleStatus(discount.id, discount.discountStatus);
+      return;
+    }
+    setStatusToggleTarget(discount);
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN');
   };
@@ -408,6 +408,14 @@ const DiscountsTable = ({ theme }) => {
     setSelectedCustomers([]);
   };
 
+  const closeEmailModal = useCallback(() => {
+    setShowEmailModal(false);
+    setSelectedDiscount(null);
+    setSelectedCustomers([]);
+    setShowCustomerSelector(false);
+    setIsSelectAllMode(false);
+  }, []);
+
   const handleSendEmail = async () => {
     if (!selectedDiscount) return;
     
@@ -434,10 +442,7 @@ const DiscountsTable = ({ theme }) => {
         showSuccess(response.message || `Đã gửi email cho ${selectedCustomers.length} khách hàng!`, 4000, 'top-right');
       }
       
-      setShowEmailModal(false);
-      setSelectedDiscount(null);
-      setSelectedCustomers([]);
-      setShowCustomerSelector(false);
+      closeEmailModal();
     } catch (error) {
       console.error('Error sending email:', error);
       showError('Lỗi khi gửi email: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
@@ -446,725 +451,123 @@ const DiscountsTable = ({ theme }) => {
     }
   };
 
+  const resetDiscountForm = useCallback(() => {
+    setShowForm(false);
+    setEditingDiscount(null);
+    setFormData({
+      name: "",
+      type: "PERCENTAGE",
+      description: "",
+      discountRate: "",
+      discountStatus: true,
+      startDate: "",
+      endDate: "",
+      productId: "",
+    });
+  }, []);
+
+  const handleClearAdvancedFilters = useCallback(() => {
+    setAdvancedFilters({
+      minRate: "",
+      maxRate: "",
+      categoryId: "",
+      dateFrom: "",
+      dateTo: "",
+    });
+    setViewMode("all");
+    fetchDiscountsData();
+  }, [fetchDiscountsData]);
+
   if (loading) {
     return (
-      <div className={`p-6 rounded-lg ${cardBg} border ${borderColor}`}>
-        <div className="py-4">
-          <ProductGridSkeleton count={4} />
+      <div className="admin-card p-6 rounded-[var(--radius-lg)] animate-pageIn">
+        <div className="space-y-3 py-2" aria-busy="true" aria-label={t("admin.ang_ti_d_liu")}>
+          {[1, 2, 3, 4, 5, 6].map((row) => (
+            <div
+              key={row}
+              className="admin-skeleton h-12 rounded-[var(--radius-md)] border border-[var(--color-border)]"
+            />
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className={`p-6 rounded-lg ${cardBg} border ${borderColor}`}>
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h2 className={`text-2xl font-bold ${textColor} mb-2`}>
-              {t('admin.discounts_title') || 'Quản lý Discount Nâng Cao'}
-            </h2>
-            <p className={secondaryTextColor}>
-              {t('admin.discounts_subtitle') || 'Quản lý các chương trình giảm giá và khuyến mãi'}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleBulkDeactivateExpired}
-              variant="primary"
-              icon={<FaCalendarAlt />}
-            >
-              {t('admin.deactivate_expired') || 'Vô hiệu hóa hết hạn'}
-            </Button>
-            <Button
-              onClick={() => setShowForm(true)}
-              variant="primary"
-              icon={<FaPlus />}
-            >
-              {t('admin.add_discount') || 'Thêm Discount'}
-            </Button>
-          </div>
-        </div>
+    <div className="space-y-6 animate-pageIn">
+      <DiscountsToolbar
+        t={t}
+        error={error}
+        onRetryFetch={fetchDiscountsData}
+        onBulkDeactivate={handleBulkDeactivateExpired}
+        onAddClick={() => setShowForm(true)}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+        showAdvancedFilters={showAdvancedFilters}
+        setShowAdvancedFilters={setShowAdvancedFilters}
+        advancedFilters={advancedFilters}
+        setAdvancedFilters={setAdvancedFilters}
+        onApplyAdvancedFilters={applyAdvancedFilters}
+        onClearAdvancedFilters={handleClearAdvancedFilters}
+      />
 
-        {error ? (
-          <div className="mb-4">
-            <StatusNotice
-              tone="error"
-              title="Không tải được dữ liệu discount"
-              message={error}
-              actionText="Thử lại"
-              onAction={fetchDiscountsData}
-            />
-          </div>
-        ) : null}
+      <DiscountsStatCards discounts={discounts} t={t} />
 
-        {/* View Mode Tabs */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {[
-            { key: 'all', label: t('admin.discount_tab_all') || 'Tất cả', icon: FaTicketAlt },
-            { key: 'active', label: t('admin.discount_tab_active') || 'Đang hoạt động', icon: FaToggleOn },
-            { key: 'expired', label: t('admin.discount_tab_expired') || 'Hết hạn', icon: FaCalendarAlt },
-            { key: 'upcoming', label: t('admin.discount_tab_upcoming') || 'Sắp tới', icon: FaCalendarAlt },
-            { key: 'best', label: t('admin.discount_tab_best') || 'Tốt nhất', icon: FaPercent }
-          ].map(({ key, label, icon }) => (
-            <button
-              key={key}
-              onClick={() => setViewMode(key)}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-                viewMode === key
-                  ? 'bg-blue-600 text-white'
-                  : theme === 'dark'
-                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {React.createElement(icon, { size: 14 })}
-              {label}
-            </button>
-          ))}
-        </div>
+      <DiscountsDataTable
+        filteredDiscounts={filteredDiscounts}
+        t={t}
+        getProductName={getProductName}
+        formatDate={formatDate}
+        handleToggleStatus={requestToggleStatus}
+        handleEdit={handleEdit}
+        handleSendEmailClick={handleSendEmailClick}
+      />
 
-        {/* Search and Filters */}
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex-1 min-w-64">
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder={t('admin.discount_search_placeholder') || 'Tìm kiếm discount...'}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg ${
-                  theme === 'dark'
-                    ? 'bg-gray-700 border-gray-600 text-white'
-                    : 'bg-white border-gray-300 text-gray-900'
-                }`}
-              />
-            </div>
-          </div>
+      {showForm ? (
+        <DiscountFormModal
+          editingDiscount={editingDiscount}
+          formData={formData}
+          setFormData={setFormData}
+          products={products}
+          onSubmit={handleSubmit}
+          onCancel={resetDiscountForm}
+        />
+      ) : null}
 
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className={`px-4 py-2 border rounded-lg ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
-            }`}
-          >
-            <option value="all">{t('admin.discount_status_all') || 'Tất cả trạng thái'}</option>
-            <option value="active">{t('admin.discount_status_active') || 'Đang hoạt động'}</option>
-            <option value="inactive">{t('admin.discount_status_inactive') || 'Không hoạt động'}</option>
-          </select>
-
-          {/* Ẩn filter type vì chỉ dùng PERCENTAGE */}
-
-          <button
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            className={`px-4 py-2 border rounded-lg flex items-center gap-2 ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600'
-                : 'bg-white border-gray-300 text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            <FaFilter />
-            {t('admin.discount_advanced_filter') || 'Bộ lọc nâng cao'}
-          </button>
-        </div>
-
-        {/* Advanced Filters */}
-        {showAdvancedFilters && (
-          <div className={`mt-4 p-4 rounded-lg border ${
-            theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-300'
-          }`}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${textColor}`}>
-                  {t('admin.discount_rate_from') || 'Tỷ lệ giảm giá từ (%)'}
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={advancedFilters.minRate}
-                  onChange={(e) => setAdvancedFilters({...advancedFilters, minRate: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded-lg ${
-                    theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                />
-              </div>
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${textColor}`}>
-                  {t('admin.discount_rate_to') || 'Tỷ lệ giảm giá đến (%)'}
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={advancedFilters.maxRate}
-                  onChange={(e) => setAdvancedFilters({...advancedFilters, maxRate: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded-lg ${
-                    theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                />
-              </div>
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${textColor}`}>
-                  {t('admin.discount_category') || 'Danh mục sản phẩm'}
-                </label>
-                <select
-                  value={advancedFilters.categoryId}
-                  onChange={(e) => setAdvancedFilters({...advancedFilters, categoryId: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded-lg ${
-                    theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                >
-                  <option value="">{t('admin.discount_category_all') || 'Tất cả danh mục'}</option>
-                  <option value="1">Monitors</option>
-                  <option value="2">Laptops</option>
-                  <option value="3">Phones</option>
-                  <option value="4">Mice</option>
-                  <option value="5">Keyboards</option>
-                  <option value="6">Processors</option>
-                  <option value="7">Storage</option>
-                  <option value="8">RAM</option>
-                  <option value="9">Headphones</option>
-                  <option value="10">Cases</option>
-                  <option value="11">PCs</option>
-                  <option value="12">PSUs</option>
-                  <option value="13">Mainboards</option>
-                  <option value="14">Mousepads</option>
-                </select>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => {
-                  setAdvancedFilters({
-                    minRate: '',
-                    maxRate: '',
-                    categoryId: '',
-                    dateFrom: '',
-                    dateTo: ''
-                  });
-                  setViewMode('all');
-                  fetchDiscountsData();
-                }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                {t('admin.clear_filters') || 'Xóa bộ lọc'}
-              </button>
-              <button
-                onClick={applyAdvancedFilters}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-              >
-                {t('admin.apply_filters') || 'Áp dụng bộ lọc'}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.discount_total') || 'Tổng Discount'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>{discounts.length}</p>
-            </div>
-            <FaTicketAlt className="text-blue-600 text-xl" />
-          </div>
-        </div>
-
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.discount_active') || 'Đang hoạt động'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>
-                {discounts.filter(d => d.discountStatus).length}
-              </p>
-            </div>
-            <FaToggleOn className="text-green-600 text-xl" />
-          </div>
-        </div>
-
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.discount_expired') || 'Đã hết hạn'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>
-                {discounts.filter(d => !d.discountStatus).length}
-              </p>
-            </div>
-            <FaToggleOff className="text-red-600 text-xl" />
-          </div>
-        </div>
-
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.discount_avg') || 'Giảm giá TB'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>
-                {discounts.length > 0 ? 
-                  (() => {
-                    // Tính trung bình cho tất cả discounts (tất cả đều là PERCENTAGE)
-                    const avg = discounts.reduce((sum, d) => {
-                      const rate = d.discountRate || 0;
-                      // Nếu rate <= 1 thì là decimal (0.3), convert sang phần trăm (30)
-                      const percentage = rate <= 1 ? rate * 100 : rate;
-                      return sum + percentage;
-                    }, 0) / discounts.length;
-                    return avg.toFixed(1) + '%';
-                  })()
-                  : '0%'}
-              </p>
-            </div>
-            <FaPercent className="text-violet-600 text-xl" />
-          </div>
-        </div>
-      </div>
-
-
-      {/* Discounts Table */}
-      <div className={`rounded-lg ${cardBg} border ${borderColor} overflow-hidden`}>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
-              <tr>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.discount_name_col') || 'Tên Discount'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.discount_type_col') || 'Loại'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.discount_rate_col') || 'Tỷ lệ giảm'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.discount_product_col') || 'Sản phẩm'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.discount_time_col') || 'Thời gian'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.discount_status_col') || 'Trạng thái'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.actions') || 'Thao tác'}
-                </th>
-              </tr>
-            </thead>
-            <tbody className={`divide-y ${borderColor}`}>
-              {filteredDiscounts.map((discount) => (
-                <tr key={discount.id} className={`hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                  <td className="px-4 py-4">
-                    <div>
-                      <div className={`text-sm font-medium ${textColor}`}>{discount.name}</div>
-                      <div className={`text-sm ${secondaryTextColor}`}>{discount.description}</div>
-                    </div>
-                  </td>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700`}>
-                      {t('admin.discount_type_percentage') || 'Phần trăm'}
-                    </span>
-                  </td>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    <div className="flex items-center gap-1">
-                      <FaPercent className="text-violet-600" />
-                      <span className="font-medium">
-                        {(discount.discountRate <= 1 ? discount.discountRate * 100 : discount.discountRate).toFixed(1)}%
-                      </span>
-                    </div>
-                  </td>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    {getProductName(discount.productId)}
-                  </td>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    <div className="flex items-center gap-1">
-                      <FaCalendarAlt className="text-gray-400" />
-                      <div>
-                        <div>{t('admin.discount_from') || 'Từ'}: {formatDate(discount.startDate)}</div>
-                        <div>{t('admin.discount_to') || 'Đến'}: {formatDate(discount.endDate)}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleToggleStatus(discount.id, discount.discountStatus)}
-                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        discount.discountStatus 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}
-                    >
-                      {discount.discountStatus
-                        ? t('admin.active') || 'Hoạt động'
-                        : t('admin.inactive') || 'Không hoạt động'}
-                    </button>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleEdit(discount)}
-                        className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
-                      >
-                        <FaEdit />
-                        {t('admin.edit') || 'Sửa'}
-                      </button>
-                      <button
-                        onClick={() => handleSendEmailClick(discount)}
-                        className="text-violet-600 hover:text-violet-900 flex items-center gap-1"
-                      >
-                        <FaEnvelope />
-                        {t('admin.send_email') || 'Gửi Email'}
-                      </button>
-                      {/* Ẩn nút xóa - chỉ cho phép cập nhật trạng thái */}
-                      {/* <button
-                        onClick={() => handleDelete(discount.id)}
-                        className="text-red-600 hover:text-red-900 flex items-center gap-1"
-                      >
-                        <FaTrash />
-                        Xóa
-                      </button> */}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredDiscounts.length === 0 && (
-          <div className="text-center py-8">
-            <EmptyState
-              title="Không tìm thấy discount nào"
-              description="Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm"
-              className="py-2"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className={`p-6 rounded-lg ${cardBg} border ${borderColor} max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto`}>
-            <h3 className={`text-lg font-bold ${textColor} mb-4`}>
-              {editingDiscount ? 'Sửa Discount' : 'Thêm Discount mới'}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className={`block text-sm font-medium ${textColor} mb-1`}>Tên Discount</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className={`w-full px-3 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-                  required
-                />
-              </div>
-
-              {/* Ẩn field type vì chỉ dùng PERCENTAGE */}
-              <input type="hidden" value="PERCENTAGE" />
-
-              <div>
-                <label className={`block text-sm font-medium ${textColor} mb-1`}>Mô tả</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className={`w-full px-3 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-                  rows="3"
-                />
-              </div>
-
-              <div>
-                <label className={`block text-sm font-medium ${textColor} mb-1`}>
-                  Phần trăm giảm (%)
-                </label>
-                <input
-                  type="number"
-                  value={formData.discountRate}
-                  onChange={(e) => setFormData({...formData, discountRate: e.target.value})}
-                  className={`w-full px-3 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-                  required
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  placeholder="VD: 0.3 (cho 30%)"
-                />
-              </div>
-
-              <div>
-                <label className={`block text-sm font-medium ${textColor} mb-1`}>Sản phẩm</label>
-                <select
-                  value={formData.productId}
-                  onChange={(e) => setFormData({...formData, productId: e.target.value})}
-                  className={`w-full px-3 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-                >
-                  <option value="">Tất cả sản phẩm</option>
-                  {products.map(product => (
-                    <option key={product.id} value={product.id}>{product.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className={`block text-sm font-medium ${textColor} mb-1`}>Ngày bắt đầu</label>
-                  <input
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}
-                    className={`w-full px-3 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className={`block text-sm font-medium ${textColor} mb-1`}>Ngày kết thúc</label>
-                  <input
-                    type="date"
-                    value={formData.endDate}
-                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                    className={`w-full px-3 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="discountStatus"
-                  checked={formData.discountStatus}
-                  onChange={(e) => setFormData({...formData, discountStatus: e.target.checked})}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label htmlFor="discountStatus" className={`text-sm font-medium ${textColor}`}>
-                  Kích hoạt discount
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditingDiscount(null);
-                    setFormData({
-                      name: '',
-                      type: '',
-                      description: '',
-                      discountRate: '',
-                      discountStatus: true,
-                      startDate: '',
-                      endDate: '',
-                      productId: ''
-                    });
-                  }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  {editingDiscount ? 'Cập nhật' : 'Thêm mới'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Gửi Email Tri Ân Khách Hàng */}
-      {showEmailModal && selectedDiscount && (
-        <div 
-          className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm"
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)'
+      {showEmailModal && selectedDiscount ? (
+        <DiscountEmailModal
+          discount={selectedDiscount}
+          customers={customers}
+          loadingCustomers={loadingCustomers}
+          selectedCustomers={selectedCustomers}
+          showCustomerSelector={showCustomerSelector}
+          isSelectAllMode={isSelectAllMode}
+          sendingEmail={sendingEmail}
+          onClose={closeEmailModal}
+          onSelectCustomers={handleSelectCustomers}
+          onSelectAllCustomers={handleSelectAllCustomers}
+          onToggleCustomer={toggleCustomerSelection}
+          onRemoveCustomer={removeSelectedCustomer}
+          onClearSelected={clearAllSelected}
+          onSend={handleSendEmail}
+        />
+      ) : null}
+      {statusToggleTarget ? (
+        <ConfirmModal
+          isOpen={Boolean(statusToggleTarget)}
+          title="Xác nhận vô hiệu hóa"
+          message={`Bạn có chắc muốn vô hiệu hóa "${statusToggleTarget.name}"?`}
+          onConfirm={() => {
+            handleToggleStatus(statusToggleTarget.id, statusToggleTarget.discountStatus);
+            setStatusToggleTarget(null);
           }}
-        >
-          <div className={`${cardBg} rounded-lg p-6 w-full max-w-2xl border ${borderColor} shadow-xl`}>
-            <div>
-              <h3 className={`text-xl font-bold ${textColor} mb-4 flex items-center gap-2`}>
-                <FaEnvelope />
-                Gửi Mã Khuyến Mãi Tri Ân
-              </h3>
-              
-              <div className={`mb-4 p-3 rounded-lg border ${borderColor} ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                <p className={`text-sm font-medium ${textColor}`}>
-                  <strong>Khuyến mãi:</strong> {selectedDiscount.name}
-                </p>
-                <p className={`text-sm ${secondaryTextColor}`}>
-                  Giảm giá: {(selectedDiscount.discountRate <= 1 ? selectedDiscount.discountRate * 100 : selectedDiscount.discountRate).toFixed(1)}%
-                </p>
-              </div>
-
-              <div className="space-y-4 mb-4">
-                {/* Action Buttons */}
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={handleSelectCustomers}
-                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                  >
-                    <FaEnvelope />
-                    Chọn Khách
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSelectAllCustomers}
-                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                  >
-                    <FaEnvelope />
-                    Chọn Tất Cả Khách
-                  </button>
-                </div>
-
-                {/* Hiển thị danh sách đã chọn và có thể xóa - CHỈ khi không phải "chọn tất cả" */}
-                {selectedCustomers.length > 0 && !isSelectAllMode && (
-                  <div className={`p-3 rounded-lg border ${theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <p className={`text-sm font-medium ${textColor}`}>
-                        ✓ Đã chọn: <strong>{selectedCustomers.length}</strong> khách hàng
-                      </p>
-                      <button
-                        type="button"
-                        onClick={clearAllSelected}
-                        className="text-xs text-gray-600 hover:text-gray-800 underline"
-                      >
-                        Xóa tất cả
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedCustomers.map((email) => {
-                        const customer = customers.find(c => c.email === email);
-                        return (
-                          <div
-                            key={email}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-md border text-xs ${theme === 'dark' ? 'bg-gray-600 border-gray-500' : 'bg-white border-gray-300'}`}
-                          >
-                            <span className={textColor}>
-                              {customer?.fullName || customer?.name || email}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => removeSelectedCustomer(email)}
-                              className="text-gray-600 hover:text-gray-800 ml-1 font-bold"
-                              title="Xóa khỏi danh sách"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Danh sách khách hàng để chọn */}
-                {showCustomerSelector && (
-                  <div className={`max-h-96 overflow-y-auto border ${borderColor} rounded-lg p-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
-                    {loadingCustomers ? (
-                      <div className="flex items-center justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                        <span className={`ml-3 ${textColor}`}>Đang tải danh sách khách hàng...</span>
-                      </div>
-                    ) : customers.length === 0 ? (
-                      <p className={`text-center py-8 ${secondaryTextColor}`}>Không có khách hàng nào</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {customers.map((customer) => {
-                          const isSelected = selectedCustomers.includes(customer.email);
-                          return (
-                            <label
-                              key={customer.id || customer.email}
-                              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
-                                isSelected
-                                  ? `${theme === 'dark' ? 'bg-gray-700 border-2 border-blue-500' : 'bg-blue-50 border-2 border-blue-500'}`
-                                  : `border ${borderColor} ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => toggleCustomerSelection(customer.email)}
-                                className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
-                              />
-                              <div className="flex-1">
-                                <p className={`font-medium ${textColor}`}>
-                                  {customer.fullName || customer.name || 'Khách hàng'}
-                                </p>
-                                <p className={`text-sm ${secondaryTextColor}`}>
-                                  {customer.email}
-                                </p>
-                              </div>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-end gap-2 mt-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEmailModal(false);
-                    setSelectedDiscount(null);
-                    setSelectedCustomers([]);
-                    setShowCustomerSelector(false);
-                    setIsSelectAllMode(false);
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                  disabled={sendingEmail}
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSendEmail}
-                  disabled={sendingEmail || selectedCustomers.length === 0}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {sendingEmail ? (
-                    <>
-                      <span className="animate-spin">...</span>
-                      Đang gửi...
-                    </>
-                  ) : (
-                    <>
-                      <FaEnvelope />
-                      Gửi Email ({selectedCustomers.length})
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          onCancel={() => setStatusToggleTarget(null)}
+        />
+      ) : null}
     </div>
   );
 };

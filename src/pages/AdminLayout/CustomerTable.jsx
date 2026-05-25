@@ -1,211 +1,300 @@
-import React, { memo, useState } from 'react';
-import { ImageOff, Search } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import axiosInstance from '../../custom/axios';
-import { useToast } from '../../components/Toast';
-import EmptyState from '../../components/ui/EmptyState';
-import Button from '../../components/ui/Button';
+import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
+import { ImageOff, Search, UserCheck, UserX, UserSearch } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import axiosInstance from "../../custom/axios";
+import { fetchAllCustomers } from "../../apis/adminApi";
+import { useToast } from "../../components/Toast";
+import EmptyState from "../../components/ui/EmptyState";
+import Button from "../../components/ui/Button";
+import Pagination from "../../components/ui/Pagination";
+import TableSortHeader from "../../components/ui/TableSortHeader";
+import ProductTableLayout from "./components/products/ProductTableLayout";
 
-// Simplified CustomerTable - read-only with search functionality
-const CustomerTable = memo(
-  ({
+const CustomerTable = memo((props) => {
+  const {
     activeMenu,
-    customers = [],
-    theme = 'dark',
-    onCustomerUpdate
-  }) => {
-    const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [editingStatus, setEditingStatus] = useState({});
-    const { showSuccess, showError } = useToast();
+    customers: customersProp,
+    onCustomerUpdate,
+  } = props;
+  const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingStatus, setEditingStatus] = useState({});
+  const { showSuccess, showError } = useToast();
 
-    if (activeMenu !== 'Customers') return null;
+  const hasInjectedList = customersProp !== undefined;
+  const [fetchedCustomers, setFetchedCustomers] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(!hasInjectedList);
 
-    // Filter customers based on search term
-    const filteredCustomers = searchTerm.trim() === ''
-      ? customers
-      : customers.filter((customer) =>
-          (customer?.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (customer?.phoneNumber || '').toLowerCase().includes(searchTerm.toLowerCase())
-        );
+  // Pagination & Sort
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(15);
+  const [sortConfig, setSortConfig] = useState({ key: "id", direction: "desc" });
 
-    // Define theme-based classes - Modern design
-    const themeClasses = {
-      dark: {
-        container: 'text-gray-100',
-        table: 'bg-gray-800/50 border-gray-700/50',
-        tableHeader: 'bg-gray-800/80 text-gray-200',
-        tableRow: 'hover:bg-gray-800/70 text-gray-200 border-b border-gray-700/30',
-        secondaryText: 'text-gray-400',
-        input: 'bg-gray-800/50 border-gray-600/50 text-gray-200 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-        emptyState: 'text-gray-400',
-      },
-      light: {
-        container: 'text-gray-900',
-        table: 'bg-white border-gray-200',
-        tableHeader: 'bg-gray-50 text-gray-700',
-        tableRow: 'hover:bg-gray-50 text-gray-800 border-b border-gray-200',
-        secondaryText: 'text-gray-600',
-        input: 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-        emptyState: 'text-gray-500',
-      },
-    };
-
-    const currentTheme = themeClasses[theme] || themeClasses.dark;
-
-    // Handle status change
-    const handleStatusChange = async (customerId, newStatus) => {
+  useEffect(() => {
+    if (hasInjectedList) return undefined;
+    let cancelled = false;
+    (async () => {
+      setLoadingCustomers(true);
       try {
-        // Get current customer data - check both id and customerID
-        const customer = customers.find(c => (c.id === customerId) || (c.customerID === customerId));
-        if (!customer) return;
-        
-        // Use id or customerID for API call
-        const userId = customer.id || customer.customerID;
-
-        // Update customer with new status
-        const updatedData = {
-          ...customer,
-          status: newStatus
-        };
-
-        const response = await axiosInstance.put(`/users/${userId}`, updatedData);
-        
-        if (response.data) {
-          showSuccess(`Đã cập nhật trạng thái khách hàng thành ${newStatus === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}`, 3000, 'top-right');
-          const customerKey = customer.id || customer.customerID;
-          setEditingStatus({ ...editingStatus, [customerKey]: false });
-          
-          // Callback to refresh customer list
-          if (onCustomerUpdate) {
-            onCustomerUpdate();
-          }
-        }
-      } catch (error) {
-        console.error('Error updating customer status:', error);
-        showError('Lỗi khi cập nhật trạng thái: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+        const data = await fetchAllCustomers();
+        if (!cancelled) setFetchedCustomers(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) setFetchedCustomers([]);
+      } finally {
+        if (!cancelled) setLoadingCustomers(false);
       }
+    })();
+    return () => {
+      cancelled = true;
     };
+  }, [hasInjectedList]);
 
-    return (
-      <div className={currentTheme.container}>
-        {/* Header Section - Modern design */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-            {t('admin.danh_sch_khch_hng')}
-          </h2>
-          <div className="relative w-full md:w-80">
-            <input
-              type="text"
-              placeholder={t('admin.tm_kim_khch_hng')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2.5 rounded-lg border focus:outline-none transition-all ${currentTheme.input}`}
+  const refreshCustomers = useCallback(async () => {
+    if (hasInjectedList) return;
+    try {
+      const data = await fetchAllCustomers();
+      setFetchedCustomers(Array.isArray(data) ? data : []);
+    } catch {
+      setFetchedCustomers([]);
+    }
+  }, [hasInjectedList]);
+
+  const customers = hasInjectedList ? customersProp ?? [] : fetchedCustomers;
+
+  if (
+    activeMenu !== undefined &&
+    activeMenu !== null &&
+    activeMenu !== "Customers"
+  ) {
+    return null;
+  }
+
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredCustomers = useMemo(() => {
+    const searchLower = searchTerm.toLowerCase();
+    return customers.filter(
+      (customer) =>
+        (customer?.fullName || "").toLowerCase().includes(searchLower) ||
+        (customer?.email || "").toLowerCase().includes(searchLower) ||
+        (customer?.phoneNumber || "").toLowerCase().includes(searchLower) ||
+        (customer?.id || customer?.customerID || "").toString().includes(searchLower)
+    );
+  }, [customers, searchTerm]);
+
+  const sortedCustomers = useMemo(() => {
+    const sortable = [...filteredCustomers];
+    if (sortConfig.key) {
+      sortable.sort((a, b) => {
+        let aVal = a[sortConfig.key];
+        let bVal = b[sortConfig.key];
+        
+        // Handle alias mapping
+        if (sortConfig.key === 'id') {
+          aVal = a.id || a.customerID;
+          bVal = b.id || b.customerID;
+        }
+        
+        if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortable;
+  }, [filteredCustomers, sortConfig]);
+
+  const paginatedCustomers = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return sortedCustomers.slice(start, start + itemsPerPage);
+  }, [sortedCustomers, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, itemsPerPage]);
+
+  const handleStatusChange = async (customerId, newStatus) => {
+    try {
+      const customer = customers.find(
+        (c) => c.id === customerId || c.customerID === customerId
+      );
+      if (!customer) return;
+
+      const userId = customer.id || customer.customerID;
+      const updatedData = {
+        ...customer,
+        status: newStatus,
+      };
+
+      const response = await axiosInstance.put(`/users/${userId}`, updatedData);
+
+      if (response.data) {
+        showSuccess(
+          `Đã cập nhật trạng thái khách hàng thành ${newStatus === "ACTIVE" ? "ACTIVE" : "INACTIVE"}`,
+          3000,
+          "top-right"
+        );
+        const customerKey = customer.id || customer.customerID;
+        setEditingStatus({ ...editingStatus, [customerKey]: false });
+
+        if (onCustomerUpdate) {
+          onCustomerUpdate();
+        } else {
+          await refreshCustomers();
+        }
+      }
+    } catch (error) {
+      console.error("Error updating customer status:", error);
+      showError(
+        "Lỗi khi cập nhật trạng thái: " +
+          (error.response?.data?.message || error.message),
+        5000,
+        "top-right"
+      );
+    }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'KH';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const toolbar = (
+    <div className="relative w-full sm:w-80">
+      <input
+        type="text"
+        placeholder={t("admin.tm_kim_khch_hng")}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="admin-input w-full pl-10 py-2"
+      />
+      <Search
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
+        size={18}
+      />
+    </div>
+  );
+
+  return (
+    <ProductTableLayout
+      title={t("admin.danh_sch_khch_hng")}
+      subtitle="Quản lý thông tin và tài khoản người dùng"
+      itemCount={customers.length}
+      toolbar={toolbar}
+      className="text-[var(--color-text)] space-y-4"
+    >
+      {loadingCustomers && customers.length === 0 ? (
+        <div className="space-y-3 py-2" aria-busy="true">
+          {[1, 2, 3, 4, 5, 6].map((row) => (
+            <div
+              key={row}
+              className="admin-skeleton h-14 rounded-xl border border-[var(--color-border)]"
             />
-            <Search
-              className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentTheme.secondaryText}`}
-              size={20}
-            />
-          </div>
+          ))}
         </div>
-
-        {/* Empty States - Modern design */}
-        {customers.length === 0 && (
-          <div className={`flex flex-col justify-center items-center h-64 rounded-lg ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50'} ${currentTheme.emptyState}`}>
-            <EmptyState title={t('admin.khng_tm_thy_khch')} className="py-0" />
-          </div>
-        )}
-
-        {customers.length > 0 && filteredCustomers.length === 0 && (
-          <div className={`flex flex-col justify-center items-center h-64 rounded-lg ${theme === 'dark' ? 'bg-gray-800/30' : 'bg-gray-50'} ${currentTheme.emptyState}`}>
-            <EmptyState title={t('remaining.khong_tim_thay_khach_hang_phu_hop')} className="py-0" />
-          </div>
-        )}
-
-        {/* Table - Modern design */}
-        {customers.length > 0 && filteredCustomers.length > 0 && (
-          <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-            <table className={`min-w-full ${currentTheme.table}`}>
-              <thead className={currentTheme.tableHeader}>
+      ) : !loadingCustomers && customers.length === 0 ? (
+        <div className="flex flex-col justify-center items-center h-64 rounded-xl bg-[var(--color-bg-muted)] border border-[var(--color-border)] border-dashed">
+          <UserSearch className="mb-4 text-[var(--color-text-muted)] opacity-50" size={48} />
+          <EmptyState title={t("admin.khng_tm_thy_khch")} className="py-0" />
+        </div>
+      ) : !loadingCustomers && filteredCustomers.length === 0 ? (
+        <div className="flex flex-col justify-center items-center h-64 rounded-xl bg-[var(--color-bg-muted)] border border-[var(--color-border)] border-dashed">
+          <UserSearch className="mb-4 text-[var(--color-text-muted)] opacity-50" size={48} />
+          <EmptyState title={t("remaining.khong_tim_thay_khach_hang_phu_hop")} className="py-0" />
+        </div>
+      ) : (
+        <div className="flex flex-col rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="admin-table w-full">
+              <thead>
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('admin.tn_khch_hng')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('common.email')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('common.phone')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">{t('common.address')}</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Trạng thái</th>
+                  <th className="w-16 text-center">Khách hàng</th>
+                  <TableSortHeader label={t("admin.tn_khch_hng")} sortKey="fullName" currentSort={sortConfig} onSort={handleSort} />
+                  <TableSortHeader label={t("common.email")} sortKey="email" currentSort={sortConfig} onSort={handleSort} />
+                  <TableSortHeader label={t("common.phone")} sortKey="phoneNumber" currentSort={sortConfig} onSort={handleSort} />
+                  <th className="max-w-[200px] truncate">{t("common.address")}</th>
+                  <TableSortHeader label="Trạng thái" sortKey="status" currentSort={sortConfig} onSort={handleSort} className="text-right pr-6" />
                 </tr>
               </thead>
               <tbody>
-                {filteredCustomers.map((customer, index) => (
-                  <tr
-                    key={customer.customerID || `customer-${index}`}
-                    className={`transition-all duration-200 ${currentTheme.tableRow}`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {customer.customerID || `#${index + 1}`}
+                {paginatedCustomers.map((customer, index) => {
+                  const customerKey = customer.customerID ?? customer.id ?? `customer-${index}`;
+                  return (
+                  <tr key={customerKey} className="admin-table-row">
+                    <td className="w-16 text-center pl-4 py-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-[var(--color-primary-)] text-indigo-700 flex items-center justify-center font-bold text-sm mx-auto shadow-sm">
+                        {getInitials(customer.fullName)}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {customer.fullName || 'N/A'}
+                    <td>
+                      <div className="font-semibold text-[var(--color-text)]">{customer.fullName || "N/A"}</div>
+                      <div className="text-xs text-[var(--color-text-muted)] font-mono mt-0.5">ID: #{customerKey}</div>
                     </td>
-                    <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                      {customer.email || 'N/A'}
+                    <td className="text-[var(--color-text-secondary)]">{customer.email || "N/A"}</td>
+                    <td className="text-[var(--color-text-secondary)]">{customer.phoneNumber || "N/A"}</td>
+                    <td className="text-[var(--color-text-secondary)]">
+                      <div className="max-w-[200px] truncate" title={customer.address}>
+                        {customer.address || "N/A"}
+                      </div>
                     </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm ${currentTheme.secondaryText}`}>
-                      {customer.phoneNumber || 'N/A'}
-                    </td>
-                    <td className={`px-6 py-4 text-sm ${currentTheme.secondaryText}`}>
-                      <div className="max-w-xs truncate">{customer.address || 'N/A'}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {(() => {
-                        const customerKey = customer.id || customer.customerID;
-                        return editingStatus[customerKey] ? (
+                    <td className="text-right pr-6">
+                      {editingStatus[customerKey] ? (
+                        <div className="flex items-center justify-end gap-2">
                           <select
-                            value={customer.status || 'ACTIVE'}
+                            value={customer.status || "ACTIVE"}
                             onChange={(e) => handleStatusChange(customerKey, e.target.value)}
                             onBlur={() => setEditingStatus({ ...editingStatus, [customerKey]: false })}
-                            className={`px-3 py-1 rounded border ${currentTheme.input} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                            className="admin-input px-2 py-1 text-sm rounded-md w-32"
                             autoFocus
                           >
                             <option value="ACTIVE">ACTIVE</option>
                             <option value="INACTIVE">INACTIVE</option>
                           </select>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              customer.status === 'ACTIVE' 
-                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                                : customer.status === 'INACTIVE'
-                                ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                            }`}>
-                              {customer.status || 'ACTIVE'}
-                            </span>
-                            <Button
-                              onClick={() => setEditingStatus({ ...editingStatus, [customerKey]: true })}
-                              variant="ghost"
-                              size="sm"
-                            >
-                              Sửa
-                            </Button>
-                          </div>
-                        );
-                      })()}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-end gap-3">
+                          <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide flex items-center gap-1 w-fit ${
+                            customer.status === "ACTIVE"
+                              ? "bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/20 dark:border-green-800"
+                              : "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/20 dark:border-red-800"
+                          }`}>
+                            {customer.status === "ACTIVE" ? <UserCheck size={12} /> : <UserX size={12} />}
+                            {customer.status || "ACTIVE"}
+                          </span>
+                          <button
+                            onClick={() => setEditingStatus({ ...editingStatus, [customerKey]: true })}
+                            className="text-[var(--color-primary)] hover:text-[var(--color-primary-)] text-sm font-medium transition-colors"
+                          >
+                            Sửa
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
-        )}
-      </div>
-    );
-  }
-);
+          
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredCustomers.length / itemsPerPage)}
+            totalItems={filteredCustomers.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
+        </div>
+      )}
+    </ProductTableLayout>
+  );
+});
 
 export default CustomerTable;
-// Updated: 2025-10-12T16:06:42.853Z
-
-// Updated: 2025-10-12T16:09:06.544Z

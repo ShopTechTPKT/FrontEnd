@@ -7,6 +7,7 @@ import ProductCard from '../../components/product/ProductCard';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { filterProducts } from '../../apis/productApi';
 import CategoryTabBar from '../../components/ui/CategoryTabBar';
+import { VirtualProductGrid } from '../../components/ui';
 
 function All_Products() {
     const { t } = useTranslation();
@@ -377,29 +378,51 @@ function All_Products() {
                                     </p>
                                 </div>
                             ) : (
-                                <div className={
-                                    viewMode === 'grid'
-                                        ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                                        : "flex flex-col gap-4"
-                                }>
-                                    {displayedProducts.map((product) => {
-                                        try {
-                                            return (
-                                                <ProductCard
-                                                    key={product.productID}
-                                                    product={product}
-                                                />
-                                            );
-                                        } catch (err) {
-                                            console.error("Error rendering product:", product, err);
-                                            return (
-                                                <div key={product.productID} className="p-4 border border-red-300 bg-red-50 rounded">
-                                                    <p className="text-red-700">Lỗi hiển thị sản phẩm: {product.productName}</p>
-                                                </div>
-                                            );
-                                        }
-                                    })}
-                                </div>
+                                viewMode === 'grid' ? (
+                                    <VirtualProductGrid
+                                        products={displayedProducts}
+                                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                                        chunkSize={8}
+                                        minChunkHeight="450px"
+                                        renderItem={(product) => {
+                                            try {
+                                                return (
+                                                    <ProductCard
+                                                        key={product.productID}
+                                                        product={product}
+                                                    />
+                                                );
+                                            } catch (err) {
+                                                console.error("Error rendering product:", product, err);
+                                                return (
+                                                    <div key={product.productID} className="p-4 border border-red-300 bg-red-50 rounded col-span-full">
+                                                        <p className="text-red-700">Lỗi hiển thị sản phẩm: {product.productName}</p>
+                                                    </div>
+                                                );
+                                            }
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="flex flex-col gap-4">
+                                        {displayedProducts.map((product) => {
+                                            try {
+                                                return (
+                                                    <ProductCard
+                                                        key={product.productID}
+                                                        product={product}
+                                                    />
+                                                );
+                                            } catch (err) {
+                                                console.error("Error rendering product:", product, err);
+                                                return (
+                                                    <div key={product.productID} className="p-4 border border-red-300 bg-red-50 rounded">
+                                                        <p className="text-red-700">Lỗi hiển thị sản phẩm: {product.productName}</p>
+                                                    </div>
+                                                );
+                                            }
+                                        })}
+                                    </div>
+                                )
                             )}
                         </main>
                     </div>

@@ -1,19 +1,25 @@
-﻿import formatCurrency from "../../utils/formatCurrency";
-import { useState, useEffect } from "react";
-import { getShippedOrders, updateShippedDate } from "../../apis/orderApi";
-import {
-  FaTruck,
-  FaCalendarAlt,
-  FaEdit,
-  FaSave,
-  FaTimes,
-} from "react-icons/fa";
+import React, { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { FaTruck, FaCalendarAlt, FaEdit, FaSave, FaTimes, FaSearch, FaMapMarkerAlt, FaCheckCircle, FaClock, FaBoxOpen } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { getShippedOrders, updateShippedDate } from "../../apis/orderApi";
+import formatCurrency from "../../utils/formatCurrency";
+import AdminEmptyStateCard from "./components/AdminEmptyStateCard";
+import ProductTableLayout from "./components/products/ProductTableLayout";
+import Pagination from "../../components/ui/Pagination";
 
 const AdminShippedOrders = () => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingOrder, setEditingOrder] = useState(null);
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+
   const [formData, setFormData] = useState({
     shippedDate: "",
     notes: "",
@@ -69,7 +75,7 @@ const AdminShippedOrders = () => {
       if (response.EC === 1) {
         toast.success("Đã cập nhật thời gian giao hàng dự kiến!");
         setEditingOrder(null);
-        fetchShippedOrders(); // Refresh list
+        fetchShippedOrders();
       } else {
         toast.error(response.EM || "Không thể cập nhật thời gian giao hàng");
       }
@@ -79,199 +85,309 @@ const AdminShippedOrders = () => {
     }
   };
 
-  if (loading) {
+  const filteredOrders = useMemo(() => {
+    return orders.filter(order => {
+      const matchesSearch = 
+        order.id.toString().includes(searchTerm) || 
+        order.userId?.toString().includes(searchTerm) ||
+        (order.deliveryAddress && order.deliveryAddress.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesStatus = filterStatus === "all" || order.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+  }, [orders, searchTerm, filterStatus]);
+
+  const sortedOrders = useMemo(() => {
+    return [...filteredOrders].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+  }, [filteredOrders]);
+
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return sortedOrders.slice(start, start + itemsPerPage);
+  }, [sortedOrders, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, itemsPerPage]);
+
+  const toolbar = (
+    <>
+      <div className="relative w-full sm:w-64 max-w-full">
+        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+        <input
+          type="text"
+          placeholder="Tìm theo Mã đơn, Khách hàng, Địa chỉ..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="admin-input w-full pl-10 py-2 text-sm"
+        />
+      </div>
+      <select
+        value={filterStatus}
+        onChange={(e) => setFilterStatus(e.target.value)}
+        className="admin-input py-2 text-sm"
+      >
+        <option value="all">Tất cả trạng thái</option>
+        <option value="SHIPPED">Đang giao hàng (SHIPPED)</option>
+        <option value="DELIVERED">Đã giao thành công (DELIVERED)</option>
+      </select>
+    </>
+  );
+
+  const getStatusVisual = (status, orderDate, shippedDate) => {
+    const isDelivered = status === "DELIVERED";
+    const isShipped = status === "SHIPPED" || isDelivered;
+    
     return (
-      <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading shipped orders...</p>
+      <div className="relative mt-6 mb-4 px-4 hidden sm:block">
+        <div className="absolute top-1/2 left-8 right-8 h-1 bg-[var(--color-border)] -translate-y-1/2 rounded-full z-0">
+          <div 
+            className="absolute top-0 left-0 h-full bg-[var(--color-primary)] rounded-full transition-all duration-500" 
+            style={{ width: isDelivered ? '100%' : isShipped ? '50%' : '0%' }}
+          ></div>
+        </div>
+        
+        <div className="relative z-10 flex justify-between">
+          <div className="flex flex-col items-center">
+            <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-md border-4 border-[var(--color-bg)]">
+              <FaBoxOpen size={16} />
+            </div>
+            <p className="text-xs font-bold text-[var(--color-text)] mt-2">Xác nhận</p>
+            <p className="text-[10px] text-[var(--color-text-muted)]">{new Date(orderDate).toLocaleDateString()}</p>
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md border-4 border-[var(--color-bg)] transition-colors ${isShipped ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)]'}`}>
+              <FaTruck size={16} />
+            </div>
+            <p className={`text-xs font-bold mt-2 ${isShipped ? 'text-[var(--color-text)]' : 'text-[var(--color-text-muted)]'}`}>Giao hàng</p>
+            {shippedDate && <p className="text-[10px] text-[var(--color-text-muted)]">{new Date(shippedDate).toLocaleDateString()}</p>}
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md border-4 border-[var(--color-bg)] transition-colors ${isDelivered ? 'bg-emerald-500 text-white' : 'bg-[var(--color-bg-subtle)] text-[var(--color-text-muted)]'}`}>
+              <FaCheckCircle size={16} />
+            </div>
+            <p className={`text-xs font-bold mt-2 ${isDelivered ? 'text-emerald-600 dark:text-emerald-400' : 'text-[var(--color-text-muted)]'}`}>Hoàn tất</p>
+          </div>
         </div>
       </div>
     );
-  }
+  };
 
   return (
-    <div className="p-6 bg-gray-900 text-gray-200 min-h-screen">
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold flex items-center gap-2">
-          <FaTruck className="text-green-500" />
-          Shipped Orders Management
-        </h2>
-        <p className="text-gray-400 mt-2">
-          Update shipping dates and tracking information for orders in transit
-        </p>
-      </div>
+    <div className="space-y-6 animate-pageIn">
+      <ProductTableLayout 
+        title={t("admin.menu_shipped_orders")}
+        subtitle={t("admin.shipped_orders_page_subtitle")}
+        itemCount={orders.length}
+        toolbar={toolbar}
+      >
+        {loading ? (
+          <div className="grid gap-6">
+            {[1, 2, 3].map((row) => (
+              <div
+                key={row}
+                className="admin-skeleton h-48 rounded-xl border border-[var(--color-border)]"
+              />
+            ))}
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="py-12 border border-dashed border-[var(--color-border)] rounded-2xl bg-[var(--color-bg-subtle)]">
+            <AdminEmptyStateCard
+              icon={<FaTruck className="w-10 h-10 text-[var(--color-text-muted)] opacity-50" />}
+              title={t("admin.no_shipped_orders_title")}
+              description={t("admin.no_shipped_orders_description")}
+            />
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="py-12 border border-dashed border-[var(--color-border)] rounded-2xl bg-[var(--color-bg-subtle)] text-center">
+            <FaSearch className="w-10 h-10 text-[var(--color-text-muted)] opacity-50 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">Không tìm thấy đơn hàng</h3>
+            <p className="text-[var(--color-text-secondary)]">Hãy thử thay đổi từ khóa hoặc bộ lọc trạng thái.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6">
+            {paginatedOrders.map(order => {
+              const isDelivered = order.status === "DELIVERED";
+              
+              return (
+                <div
+                  key={order.id}
+                  className={`admin-card rounded-[var(--radius-xl)] overflow-hidden border transition-all ${isDelivered ? 'border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/10 dark:bg-emerald-900/5' : 'border-[var(--color-border)] hover:border-[var(--color-primary)]/50 hover:shadow-md'}`}
+                >
+                  <div className="p-5 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 gap-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <p className="text-xl font-bold text-[var(--color-text)] font-mono">
+                            #{order.id}
+                          </p>
+                          <span className={`admin-badge ${isDelivered ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800' : 'bg-[var(--color-primary-)] text-[var(--color-primary-)] border border-[var(--color-primary-)] dark:bg-[var(--color-primary-)]/30 dark:text-[var(--color-primary-)] dark:border-[var(--color-primary-)]'}`}>
+                            {order.status}
+                          </span>
+                        </div>
+                        <p className="text-sm text-[var(--color-text-secondary)] flex items-center gap-1.5">
+                          <FaClock className="opacity-70" /> {new Date(order.createdDate).toLocaleString("vi-VN")}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <p className="text-xs text-[var(--color-text-muted)] uppercase font-semibold tracking-wider">Tổng tiền</p>
+                          <p className="text-lg font-bold text-[var(--color-primary)]">{formatCurrency(order.totalPrice)}</p>
+                        </div>
+                        {editingOrder !== order.id && !isDelivered && (
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(order)}
+                            className="p-2.5 rounded-lg bg-[var(--color-bg-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary-subtle)] transition-colors border border-[var(--color-border)]"
+                            title="Chỉnh sửa thời gian giao hàng"
+                          >
+                            <FaEdit size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
 
-      {orders.length === 0 ? (
-        <div className="bg-gray-800 rounded-lg p-12 text-center">
-          <FaTruck className="text-gray-600 text-6xl mx-auto mb-4" />
-          <p className="text-xl text-gray-400">No shipped orders found</p>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {orders.map(order => (
-            <div
-              key={order.id}
-              className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden hover:border-gray-600 transition"
-            >
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Order ID</p>
-                    <p className="text-xl font-semibold text-white">
-                      #{order.id}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 bg-green-900 text-green-300 rounded-full text-xs font-medium">
-                      {order.status}
-                    </span>
-                    {editingOrder !== order.id && (
-                      <button
-                        onClick={() => handleEdit(order)}
-                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
-                        title="Edit shipping date"
-                      >
-                        <FaEdit />
-                      </button>
+                    {/* Timeline Visual */}
+                    {getStatusVisual(order.status, order.createdDate, order.shippedDate)}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-5 border-t border-[var(--color-border)]">
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs text-[var(--color-text-muted)] font-semibold uppercase tracking-wider mb-1">Khách hàng</p>
+                          <p className="text-sm font-medium text-[var(--color-text)]">ID: #{order.userId}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[var(--color-text-muted)] font-semibold uppercase tracking-wider mb-1">Thanh toán</p>
+                          <p className="text-sm font-medium text-[var(--color-text)]">{order.paymentMethod}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs text-[var(--color-text-muted)] font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <FaMapMarkerAlt /> Địa chỉ giao hàng
+                          </p>
+                          <p className="text-sm text-[var(--color-text)] bg-[var(--color-bg-subtle)] p-3 rounded-lg border border-[var(--color-border)] leading-relaxed">
+                            {order.deliveryAddress || "Không có thông tin địa chỉ"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {editingOrder === order.id ? (
+                      <div className="mt-5 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary-subtle)] p-5 space-y-4 animate-in fade-in slide-in-from-top-2">
+                        <div className="flex items-center gap-2 mb-2 border-b border-[var(--color-primary)]/20 pb-3">
+                          <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center">
+                            <FaTruck size={14} />
+                          </div>
+                          <h4 className="font-bold text-[var(--color-text)]">Cập nhật vận chuyển</h4>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div>
+                            <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+                              <FaCalendarAlt className="inline mr-2 opacity-80 text-[var(--color-primary)]" />
+                              Thời gian dự kiến giao
+                            </label>
+                            <input
+                              type="datetime-local"
+                              value={formData.shippedDate}
+                              onChange={e => setFormData({ ...formData, shippedDate: e.target.value })}
+                              className="admin-input w-full bg-[var(--color-bg)]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+                              Ghi chú vận chuyển (Tùy chọn)
+                            </label>
+                            <textarea
+                              disabled
+                              value={formData.notes}
+                              onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                              placeholder="Thêm ghi chú vận chuyển..."
+                              rows={2}
+                              className="admin-input w-full bg-[var(--color-bg)] opacity-70 cursor-not-allowed"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-3">
+                          <button
+                            type="button"
+                            onClick={handleCancel}
+                            className="btn-admin-outline px-5 py-2 rounded-lg font-medium flex items-center gap-2 bg-[var(--color-bg)]"
+                          >
+                            <FaTimes />
+                            Hủy
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSave(order.id)}
+                            className="btn-admin-primary px-5 py-2 rounded-lg font-medium flex items-center gap-2 shadow-md"
+                          >
+                            <FaSave />
+                            Lưu cập nhật
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-5 space-y-2 bg-[var(--color-bg-subtle)] p-4 rounded-xl border border-[var(--color-border)]">
+                        {order.shippedDate ? (
+                          <div className="flex items-center gap-2 text-sm">
+                            <div className="w-6 h-6 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
+                              <FaCalendarAlt size={12} />
+                            </div>
+                            <span className="text-[var(--color-text-muted)] font-medium">
+                              Dự kiến giao:
+                            </span>
+                            <span className="text-[var(--color-text)] font-bold">
+                              {new Date(order.shippedDate).toLocaleString("vi-VN", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-amber-600 dark:text-amber-400 italic">
+                            * Chưa có thời gian giao hàng dự kiến
+                          </p>
+                        )}
+                        {order.notes && (
+                          <div className="text-sm mt-2 flex items-start gap-2 pt-2 border-t border-[var(--color-border)]/50">
+                            <span className="font-semibold text-[var(--color-text)] shrink-0">Ghi chú:</span>
+                            <span className="text-[var(--color-text-secondary)]">{order.notes}</span>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        )}
 
-                {/* Order Info */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pb-4 border-b border-gray-700">
-                  <div>
-                    <p className="text-xs text-gray-400 mb-1">Customer ID</p>
-                    <p className="text-sm font-medium text-white">
-                      {order.userId}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-1">Order Date</p>
-                    <p className="text-sm font-medium text-white">
-                      {new Date(order.createdDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-1">Total Amount</p>
-                    <p className="text-sm font-medium text-white">
-                      {formatCurrency(order.totalPrice)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-1">Payment Method</p>
-                    <p className="text-sm font-medium text-white">
-                      {order.paymentMethod}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Delivery Address */}
-                <div className="mb-4">
-                  <p className="text-xs text-gray-400 mb-1">Delivery Address</p>
-                  <p className="text-sm text-white">{order.deliveryAddress}</p>
-                </div>
-
-                {/* Edit Form or Display Info */}
-                {editingOrder === order.id ? (
-                  <div className="bg-gray-700 rounded-lg p-4 space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        <FaCalendarAlt className="inline mr-2" />
-                        Thời Gian Dự Kiến Giao Hàng
-                      </label>
-                      <input
-                        type="datetime-local"
-                        value={formData.shippedDate}
-                        onChange={e =>
-                          setFormData({
-                            ...formData,
-                            shippedDate: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <p className="text-xs text-gray-400 mt-1">
-                        💡 Thời gian dự kiến giao hàng đến tay khách hàng
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Notes (Optional)
-                      </label>
-                      <textarea
-                        // readOnly
-                        disabled
-                        value={formData.notes}
-                        onChange={e =>
-                          setFormData({ ...formData, notes: e.target.value })
-                        }
-                        placeholder="Add tracking notes or delivery instructions..."
-                        rows="3"
-                        className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white cursor-not-allowed"
-                      />
-                    </div>
-
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => handleSave(order.id)}
-                        className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition flex items-center justify-center gap-2"
-                      >
-                        <FaSave />
-                        Save Changes
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition flex items-center justify-center gap-2"
-                      >
-                        <FaTimes />
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {order.shippedDate && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <FaCalendarAlt className="text-green-400" />
-                        <span className="text-gray-400">Dự kiến giao:</span>
-                        <span className="text-white font-medium">
-                          {new Date(order.shippedDate).toLocaleString("vi-VN", {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                    )}
-                    {order.notes && (
-                      <div className="p-3 bg-gray-700 rounded-lg text-sm text-gray-300">
-                        <span className="font-semibold text-white">
-                          Ghi chú:
-                        </span>{" "}
-                        {order.notes}
-                      </div>
-                    )}
-                    {/* {!order.shippedDate && (
-                      <div className="p-3 bg-yellow-900 border border-yellow-700 rounded-lg text-sm text-yellow-200">
-                        ⚠️ Chưa cập nhật thời gian giao hàng dự kiến. Click edit để thêm.
-                      </div>
-                    )} */}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+        {filteredOrders.length > 0 && (
+          <div className="mt-6 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg)] overflow-hidden shadow-sm">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredOrders.length / itemsPerPage)}
+              totalItems={filteredOrders.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={setItemsPerPage}
+            />
+          </div>
+        )}
+      </ProductTableLayout>
     </div>
   );
 };
 
 export default AdminShippedOrders;
-

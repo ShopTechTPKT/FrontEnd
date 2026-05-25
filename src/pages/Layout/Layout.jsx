@@ -1,5 +1,6 @@
 import Header from "../../components/Header"
 import Footer from "../../components/Footer"
+import MobileBottomNav from "../../components/MobileBottomNav"
 import { Outlet } from "react-router-dom";
 import BackToTop from "../../components/ui/BackToTop";
 import ScrollProgress from "../../components/ui/ScrollProgress";
@@ -23,7 +24,7 @@ function Layout() {
             <ScrollProgress />
             <Header />
             {/* Content area — uses header-height CSS var instead of magic numbers */}
-            <main id="main-content" className="pt-[var(--header-height)]">
+            <main id="main-content" className="pt-[var(--header-height)] pb-16 lg:pb-0">
                 <div className="container-app pt-4">
                     <AutoBreadcrumb className="mb-2" />
                 </div>
@@ -32,6 +33,7 @@ function Layout() {
                 </PageTransition>
             </main>
             <Footer />
+            <MobileBottomNav />
             <BackToTop />
             <CommandSearch />
             <CompareBar />

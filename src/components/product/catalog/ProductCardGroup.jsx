@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { addToCart } from "../../../utils/redux/cartSlice";
+import LazyImage from "../../ui/LazyImage";
 
 /* ── SVG Icons ───────────────────────────────────────── */
 const CartIcon = () => (
@@ -96,11 +97,12 @@ export default function ProductCardGroup({ product }) {
     >
       {/* ── Image area ── */}
       <div className="relative bg-gray-50 overflow-hidden">
-        <img
+        <LazyImage
           src={img}
           alt={name}
           className="w-full h-48 object-contain p-3 group-hover:scale-105 transition-transform duration-400"
-          onError={(e) => { e.target.src = "https://via.placeholder.com/200?text=SP"; }}
+          fallbackSrc="https://via.placeholder.com/200?text=SP"
+          loadingClassName="w-full h-48"
         />
 
         {/* Badges */}

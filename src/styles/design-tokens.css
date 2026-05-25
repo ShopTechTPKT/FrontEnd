@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════════════════════
+   ADVANCED DESIGN TOKENS — container queries, logical props, grids
+   Imported after Tailwind in index.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Container query breakpoints (reference for @container) ─────
+   sm: 20rem, md: 28rem, lg: 36rem, xl: 48rem, 2xl: 64rem
+   Use: class "container-name" + @container / @sm: etc. in CSS modules
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --cq-sm: 20rem;
+  --cq-md: 28rem;
+  --cq-lg: 36rem;
+  --cq-xl: 48rem;
+  --cq-2xl: 64rem;
+
+  /* Aspect ratio presets */
+  --aspect-video: 16 / 9;
+  --aspect-card: 4 / 3;
+  --aspect-square: 1 / 1;
+  --aspect-portrait: 3 / 4;
+
+  /* Grid template presets */
+  --grid-home-categories: repeat(4, minmax(0, 1fr));
+  --grid-home-categories-md: repeat(3, minmax(0, 1fr));
+  --grid-home-categories-sm: repeat(2, minmax(0, 1fr));
+}
+
+/* ── Color-mix hover utilities (primary tint) ─────────────────── */
+.hover-surface-mix {
+  transition: background-color var(--duration-normal, 300ms) var(--ease-in-out-cubic, ease);
+}
+.hover-surface-mix:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-bg));
+}
+.dark .hover-surface-mix:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 14%, var(--color-bg-subtle));
+}
+
+/* ── Logical spacing helpers ─────────────────────────────────── */
+.ms-auto { margin-inline-start: auto; }
+.me-auto { margin-inline-end: auto; }
+.mx-logical {
+  margin-inline: var(--inline-spacing, 1rem);
+}
+.my-logical {
+  margin-block: var(--block-spacing, 1rem);
+}
+.px-logical {
+  padding-inline: var(--inline-spacing, 1rem);
+}
+.py-logical {
+  padding-block: var(--block-spacing, 1rem);
+}
+
+/* ── Aspect ratio boxes ──────────────────────────────────────── */
+.aspect-card {
+  aspect-ratio: var(--aspect-card);
+}
+.aspect-video-box {
+  aspect-ratio: var(--aspect-video);
+}
+
+/* ── Contain intrinsic size presets ──────────────────────────────── */
+.contain-size-card { contain-intrinsic-size: auto 320px; }
+.contain-size-section { contain-intrinsic-size: auto 600px; }

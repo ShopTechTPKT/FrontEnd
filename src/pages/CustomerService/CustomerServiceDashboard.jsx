@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import axiosInstance from "../../custom/axios";
@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 import ChatSidebar from "../../components/Chat/ChatSidebar";
 import ChatWindow from "../../components/Chat/ChatWindow";
 import ScheduleForm from "../../components/Schedule/ScheduleForm";
-import AppointmentBookingForm from "../../components/AppointmentBookingForm"; // Import form m?i
+import AppointmentBookingForm from "../../components/AppointmentBookingForm";
 import StatusNotice from "../../components/ui/StatusNotice";
 import Button from "../../components/ui/Button";
+import { fetchCannedResponses } from "../../apis/chatSupportApi";
 
 const CustomerServiceDashboard = () => {
   const API_URL = import.meta.env.VITE_API_URL || "/api";
@@ -33,10 +34,11 @@ const CustomerServiceDashboard = () => {
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [sessionLoadError, setSessionLoadError] = useState("");
+  const [cannedResponses, setCannedResponses] = useState([]);
 
-  // State qu?n l� Modal
-  const [showScheduleForm, setShowScheduleForm] = useState(false); // Form L?ch tr�nh (Internal/Detail)
-  const [showAppointmentForm, setShowAppointmentForm] = useState(false); // Form �?t h?n (Booking)
+  // Modal states
+  const [showScheduleForm, setShowScheduleForm] = useState(false);
+  const [showAppointmentForm, setShowAppointmentForm] = useState(false);
 
   const { t } = useTranslation("translation");
   const messagesEndRef = useRef(null);
@@ -47,12 +49,12 @@ const CustomerServiceDashboard = () => {
       setSessions(Array.isArray(data) ? data : []);
       setSessionLoadError("");
     } catch (err) {
-      console.error("? Error loading sessions:", err);
-      setSessionLoadError("Kh�ng t?i du?c danh s�ch h?i tho?i. Vui l�ng th? l?i.");
+      console.error("Error loading sessions:", err);
+      setSessionLoadError("Khong tai duoc danh sach hoi thoai. Vui long thu lai.");
     }
   }, [API_URL]);
 
-  // K?t n?i WebSocket
+  // Connect websocket
   useEffect(() => {
     loadSessions();
     const socket = new SockJS(WS_URL);
@@ -77,16 +79,16 @@ const CustomerServiceDashboard = () => {
               const idx = updated.findIndex(s => s.sessionCode === sessionCode);
 
               if (idx !== -1) {
-                // Session d� c� trong list, update n�
+                // Update existing session in list
                 let session = { ...updated[idx] };
-                session.lastMessage = content || (fileUrl ? "�� g?i file" : "");
+                session.lastMessage = content || (fileUrl ? "Da gui file" : "");
                 session.lastMessageFrom = senderType;
                 session.unread = senderType === "CUSTOMER";
 
                 updated.splice(idx, 1);
                 updated.unshift(session);
               } else {
-                // Session chua c� trong list, reload to�n b?
+                // Session not in list yet, reload all
                 loadSessions();
               }
 
@@ -99,10 +101,10 @@ const CustomerServiceDashboard = () => {
               return updated;
             });
 
-            // N?u dang xem session n�y, th�m message v�o chat window
+            // If this session is active, append message
             if (selectedSession?.sessionCode === sessionCode) {
               setMessages(prev => {
-                // Tr�nh duplicate messages
+                // Prevent duplicate messages
                 if (prev.some(m => 
                   m.id === body.id || 
                   (m.senderType === body.senderType && 
@@ -119,24 +121,30 @@ const CustomerServiceDashboard = () => {
         });
       },
       error => {
-        console.error("? WebSocket failed:", error);
+        console.error("WebSocket failed:", error);
         setConnected(false);
       }
     );
 
     return () => {
       if (client.connected)
-        client.disconnect(() => console.log("?? Disconnected"));
+        client.disconnect(() => console.log("Disconnected"));
     };
   }, [WS_URL, loadSessions, selectedSession]);
 
-  // Refresh m?i 15s
+  // Refresh every 15s
   useEffect(() => {
     const interval = setInterval(() => loadSessions(), 15000);
     return () => clearInterval(interval);
   }, [loadSessions]);
 
-  // Khi ch?n session
+  useEffect(() => {
+    fetchCannedResponses()
+      .then((rows) => setCannedResponses(Array.isArray(rows) ? rows : []))
+      .catch(() => setCannedResponses([]));
+  }, []);
+
+  // Select session
   const handleSelectSession = async session => {
     try {
       setSelectedSession(session);
@@ -149,11 +157,11 @@ const CustomerServiceDashboard = () => {
       const res = await axiosInstance.get(`/chat/${session.id}/messages`);
       setMessages(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("? Error selecting session:", err);
+      console.error("Error selecting session:", err);
     }
   };
 
-  // G?i tin nh?n
+  // Send message
   const handleSend = e => {
     e.preventDefault();
     if (!input.trim() || !stompClient || !selectedSession) return;
@@ -174,27 +182,31 @@ const CustomerServiceDashboard = () => {
     setInput("");
   };
 
+  const applyCannedResponse = (text) => {
+    setInput(text);
+  };
+
   return (
-    <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+    <div className="flex h-full bg-[var(--color-bg-muted)] rounded-xl overflow-hidden border border-[var(--color-border)] font-sans">
       <ChatSidebar
         sessions={sessions}
         selectedSession={selectedSession}
         onSelect={handleSelectSession}
       />
 
-      <div className="flex-1 flex flex-col bg-white overflow-hidden">
+      <div className="flex-1 flex flex-col bg-[var(--color-bg)] overflow-hidden">
         {/* Header */}
-      <div className="bg-white border-b border-gray-200 text-gray-900 shadow-sm px-6 py-4">
+      <div className="bg-[var(--color-bg)] border-b border-[var(--color-border)] text-[var(--color-text)] shadow-sm px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-violet-900 to-violet-600 text-white shadow-sm">
-                <span className="text-xl">??</span>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[var(--color-primary-)] to-[var(--color-primary-)] text-white shadow-sm">
+                <span className="text-xl">CS</span>
               </div>
               <div>
                 <h1 className="text-xl font-semibold">
                   {t("dashboard.title")}
                 </h1>
-                <p className="text-sm text-gray-600 mt-0.5 flex items-center gap-2">
+                <p className="text-sm text-[var(--color-text-secondary)] mt-0.5 flex items-center gap-2">
                   <span
                     className={`inline-block w-2 h-2 rounded-full ${
                       connected ? "bg-green-400 animate-pulse" : "bg-red-400"
@@ -203,14 +215,14 @@ const CustomerServiceDashboard = () => {
                   {connected
                     ? t("dashboard.connected")
                     : t("dashboard.disconnected")}{" "}
-                  � {sessions.length} {t("dashboard.active_sessions")}
+                  - {sessions.length} {t("dashboard.active_sessions")}
                 </p>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
-              {/* N�t �?t l?ch h?n (Booking Form) */}
+              {/* Booking form */}
               <Button
                 onClick={() => setShowAppointmentForm(true)}
                 variant="primary"
@@ -233,7 +245,7 @@ const CustomerServiceDashboard = () => {
                 {t("dashboard.btn_book_appointment")}
               </Button>
 
-              {/* N�t L?ch tr�nh (Schedule Form - cho session hi?n t?i) */}
+              {/* Schedule form for active session */}
               <Button
                 onClick={() => setShowScheduleForm(true)}
                 variant="outline"
@@ -256,7 +268,7 @@ const CustomerServiceDashboard = () => {
                 {t("dashboard.btn_schedule")}
               </Button>
 
-              {/* N�t H?i d�p s?n ph?m */}
+              {/* Product FAQ shortcut */}
               <Button
                 onClick={() => navigate("/products")}
                 variant="outline"
@@ -276,7 +288,7 @@ const CustomerServiceDashboard = () => {
                   </svg>
                 }
               >
-                H?i d�p s?n ph?m
+                Hoi dap san pham
               </Button>
             </div>
           </div>
@@ -286,9 +298,9 @@ const CustomerServiceDashboard = () => {
           <div className="px-6 pt-4">
             <StatusNotice
               tone="warning"
-              title="M?t k?t n?i d? li?u"
+              title="Mat ket noi du lieu"
               message={sessionLoadError}
-              actionText="Th? l?i"
+              actionText="Thu lai"
               onAction={loadSessions}
             />
           </div>
@@ -296,34 +308,47 @@ const CustomerServiceDashboard = () => {
 
         {/* Chat Area */}
         {selectedSession ? (
-          <ChatWindow
-            selectedSession={selectedSession}
-            messages={messages}
-            input={input}
-            setInput={setInput}
-            handleSend={handleSend}
-            connected={connected}
-            messagesEndRef={messagesEndRef}
-            onOpenSchedule={() => setShowScheduleForm(true)}
-            stompClient={stompClient}
-            senderName={t("dashboard.staff_name")}
-          />
+          <>
+            <div className="px-4 pt-3 flex gap-2 flex-wrap border-b border-[var(--color-border)]">
+              {cannedResponses.slice(0, 5).map((resp) => (
+                <button
+                  key={resp.id}
+                  onClick={() => applyCannedResponse(resp.text)}
+                  className="text-xs px-2 py-1 rounded-full bg-[var(--color-primary-subtle)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 hover:bg-[var(--color-primary-light)]"
+                >
+                  {resp.id}
+                </button>
+              ))}
+            </div>
+            <ChatWindow
+              selectedSession={selectedSession}
+              messages={messages}
+              input={input}
+              setInput={setInput}
+              handleSend={handleSend}
+              connected={connected}
+              messagesEndRef={messagesEndRef}
+              onOpenSchedule={() => setShowScheduleForm(true)}
+              stompClient={stompClient}
+              senderName={t("dashboard.staff_name")}
+            />
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center flex-1 text-center px-8">
-            <div className="w-24 h-24 mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center text-5xl shadow-sm">
-              ??
+            <div className="w-24 h-24 mb-6 bg-[var(--color-bg-muted)] rounded-3xl flex items-center justify-center text-5xl shadow-sm">
+              CS
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+            <h3 className="text-xl font-semibold text-[var(--color-text)] mb-2">
               {t("dashboard.welcome_title")}
             </h3>
-            <p className="text-gray-500 text-sm max-w-md">
+            <p className="text-[var(--color-text-muted)] text-sm max-w-md">
               {t("dashboard.welcome_subtitle")}
             </p>
           </div>
         )}
       </div>
 
-      {/* 1. Form L?ch tr�nh (ScheduleForm) - D�ng d? xem/s?a chi ti?t d?a tr�n session */}
+      {/* 1. Schedule form for selected session */}
       {showScheduleForm && (
         <ScheduleForm
           onClose={() => setShowScheduleForm(false)}
@@ -331,7 +356,7 @@ const CustomerServiceDashboard = () => {
         />
       )}
 
-      {/* 2. Form �?t h?n (AppointmentBookingForm) - D�ng d? t?o m?i ho�n to�n */}
+      {/* 2. Appointment booking form */}
       <AppointmentBookingForm
         isOpen={showAppointmentForm}
         onClose={() => setShowAppointmentForm(false)}

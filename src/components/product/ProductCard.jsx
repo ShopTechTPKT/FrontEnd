@@ -36,11 +36,6 @@ const ProductCard = ({ product }) => {
   // Derived stock value
   const stock = product.stock ?? product.quantity ?? product.inventory ?? 0;
 
-    isFavorited,
-    loading: favoriteLoading,
-    handleToggleFavorite,
-  } = useFavorites(product?.productID);
-
   const handleClick = () => {
     navigate(`/product/${product.productID}/productAbout`);
   };
@@ -115,12 +110,20 @@ const ProductCard = ({ product }) => {
   const rating = product.rating || product.averageRating || null;
   const ratingDisplay = rating ? parseFloat(rating).toFixed(1) : "4.8";
   // Mini specs: parse from categoryName or seriesName
-  const miniSpecs = product.seriesName || product.categoryName || null;
+  // Priority Badge
+  let topBadge = null;
+  if (hasDiscount) {
+    topBadge = <span className="bg-[#dc2626] text-white text-[11px] font-bold px-2 py-1 rounded-md leading-none shadow-sm">-{discountPct}%</span>;
+  } else if (product.isNew) {
+    topBadge = <span className="bg-[#059669] text-white text-[11px] font-bold px-2 py-1 rounded-md leading-none shadow-sm uppercase">New</span>;
+  } else if (product.isHot) {
+    topBadge = <span className="bg-[#ea580c] text-white text-[11px] font-bold px-2 py-1 rounded-md leading-none shadow-sm uppercase">Hot</span>;
+  }
 
   return (
     <>
       <div
-        className="group product-card-hover relative bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer border border-transparent hover:border-violet-100"
+        className="group product-card-hover relative cursor-pointer overflow-hidden rounded-2xl border border-transparent bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-violet-800"
         onClick={handleClick}
         style={{ willChange: "transform, box-shadow" }}
       >
@@ -137,24 +140,14 @@ const ProductCard = ({ product }) => {
             </Badge>
           )}
 
-          {/* Discount badge */}
-          {hasDiscount && (
-            <span className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none shadow-sm">
-              -{discountPct}%
-            </span>
-          )}
-          {/* HOT badge (if product.isHot) */}
-          {product.isHot && (
-            <span className="bg-gradient-to-r from-red-500 to-amber-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none shadow-sm mt-1">
-              HOT
-            </span>
-          )}
+          {/* Priority Badge */}
+          {topBadge}
         </div>
 
         {/* Installment badge — top right corner */}
         {isExpensive && (
-          <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-semibold px-1.5 py-0.5 rounded-md leading-none whitespace-nowrap">
+          <div className="absolute top-3 right-3 z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <span className="whitespace-nowrap rounded-md border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
               {t("product.installment_zero_percent")}
             </span>
           </div>
@@ -162,10 +155,9 @@ const ProductCard = ({ product }) => {
 
         {/* ── Action Buttons (hover reveal) — when NOT expensive (no installment) ── */}
         <div
-          className={`absolute z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+          className={`absolute z-10 rounded-xl bg-white/90 p-2 opacity-0 shadow-md backdrop-blur-sm transition-opacity duration-200 dark:bg-gray-900/90 group-hover:opacity-100 ${
             isExpensive ? "top-10 right-3" : "top-3 right-3"
           }`}
-          style={{ background: "rgba(255,255,255,0.08)", borderRadius: "0.75rem", padding: "0.5rem" }}
         >
           <div className="flex flex-col gap-2">
             <button
@@ -211,7 +203,7 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* ── Product Image ── */}
-        <div className="aspect-square bg-gray-50/50 flex items-center justify-center p-5 relative overflow-hidden">
+        <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-gray-50/50 p-4 dark:bg-gray-800/50">
           <LazyImage
             src={product.image}
             alt={product.productName}
@@ -254,7 +246,7 @@ const ProductCard = ({ product }) => {
           </div>
 
           {/* Product Name */}
-          <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight tracking-tight">
+          <h3 className="mb-1 line-clamp-2 text-sm font-semibold leading-tight tracking-tight text-gray-900 dark:text-gray-100">
             {product.productName}
           </h3>
 
@@ -264,16 +256,21 @@ const ProductCard = ({ product }) => {
           )}
 
           {/* Price row */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 mt-2">
             <div>
-              {hasDiscount && (
-                <p className="text-[11px] text-gray-400 line-through leading-none">
-                  {formatCurrency(originalPrice)}
-                </p>
-              )}
-              <p className="text-base font-bold text-violet-700 leading-tight">
+              <p className="text-base font-bold leading-none text-red-600 dark:text-red-500">
                 {formatCurrency(price)}
               </p>
+              {hasDiscount && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <p className="text-[11px] text-gray-400 line-through leading-none">
+                    {formatCurrency(originalPrice)}
+                  </p>
+                  <span className="text-[10px] font-medium text-red-500 leading-none">
+                    Tiết kiệm {formatCurrency(originalPrice - price)}
+                  </span>
+                </div>
+              )}
             </div>
             {/* Stock indicator nếu còn ít */}
             {stock > 0 && stock < 10 && (

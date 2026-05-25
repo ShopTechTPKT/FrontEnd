@@ -126,15 +126,15 @@ function MyOrders() {
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
                         order.status === "COMPLETED" ||
                         order.status === "completed"
-                          ? "bg-green-100 text-green-800"
+                          ? "bg-[var(--color-success-light)] text-[var(--color-success-dark)]"
                           : order.status === "PENDING" ||
                             order.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
+                          ? "bg-[var(--color-warning-light)] text-[var(--color-warning-dark)]"
                           : order.status === "CANCELLED" ||
                             order.status === "cancelled"
-                          ? "bg-red-100 text-red-800"
+                          ? "bg-[var(--color-danger-light)] text-[var(--color-danger-dark)]"
                           : order.status === "RETURNED"
-                          ? "bg-blue-100 text-blue-800"
+                          ? "bg-[var(--color-info-light)] text-[var(--color-info-dark)]"
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >

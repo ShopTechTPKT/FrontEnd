@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axiosInstance from "../../custom/axios";
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/ui/Button";
 import StatusNotice from "../../components/ui/StatusNotice";
 
 const defaultFilters = {
@@ -86,36 +85,38 @@ export default function AuditLogsPage() {
   };
 
   const statusClass = (status) => {
-    if (status === "SUCCESS") return "bg-green-100 text-green-700";
-    if (status === "FAILED") return "bg-red-100 text-red-700";
-    return "bg-gray-100 text-gray-700";
+    if (status === "SUCCESS") {
+      return "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 ring-1 ring-emerald-500/25";
+    }
+    if (status === "FAILED") {
+      return "bg-red-500/15 text-red-800 dark:text-red-300 ring-1 ring-red-500/25";
+    }
+    return "bg-[var(--color-bg-muted)] text-[var(--color-text-secondary)] ring-1 ring-[var(--color-border)]";
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 animate-pageIn">
       <div className="max-w-[1400px] mx-auto space-y-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+        <div className="admin-card p-5 rounded-[var(--radius-lg)]">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Nhật ký kiểm toán</h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <h1 className="text-2xl font-bold text-[var(--color-text)]">Nhật ký kiểm toán</h1>
+              <p className="text-sm text-[var(--color-text-muted)] mt-1">
                 Trang này dùng để theo dõi ai đã thực hiện hành động gì, vào thời điểm nào, kết quả thành công hay thất bại
                 để phục vụ kiểm tra, truy vết sự cố và đảm bảo bảo mật.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
                 onClick={() => navigate("/admin")}
-                variant="outline"
+                className="btn-admin-outline"
               >
                 Quay lại Admin
-              </Button>
-              <Button
-                onClick={exportCsv}
-                variant="primary"
-              >
+              </button>
+              <button type="button" onClick={exportCsv} className="btn-admin-primary">
                 Xuất CSV
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -130,28 +131,28 @@ export default function AuditLogsPage() {
           />
         ) : null}
 
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+        <div className="admin-card p-4 rounded-[var(--radius-lg)]">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
             <input
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="admin-input text-sm py-2 dark:bg-gray-900 dark:border-gray-700"
               placeholder="Email người thao tác"
               value={filters.actorEmail}
               onChange={(e) => onChangeFilter("actorEmail", e.target.value)}
             />
             <input
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="admin-input text-sm py-2 dark:bg-gray-900 dark:border-gray-700"
               placeholder="Hành động"
               value={filters.action}
               onChange={(e) => onChangeFilter("action", e.target.value)}
             />
             <input
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="admin-input text-sm py-2 dark:bg-gray-900 dark:border-gray-700"
               placeholder="Loại tài nguyên"
               value={filters.resourceType}
               onChange={(e) => onChangeFilter("resourceType", e.target.value)}
             />
             <select
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="admin-input text-sm py-2 dark:bg-gray-900 dark:border-gray-700"
               value={filters.status}
               onChange={(e) => onChangeFilter("status", e.target.value)}
             >
@@ -160,108 +161,102 @@ export default function AuditLogsPage() {
               <option value="FAILED">Thất bại</option>
             </select>
             <input
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="admin-input text-sm py-2 dark:bg-gray-900 dark:border-gray-700"
               type="datetime-local"
               value={filters.from}
               onChange={(e) => onChangeFilter("from", e.target.value)}
             />
             <input
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="admin-input text-sm py-2 dark:bg-gray-900 dark:border-gray-700"
               type="datetime-local"
               value={filters.to}
               onChange={(e) => onChangeFilter("to", e.target.value)}
             />
-            <Button
+            <button
+              type="button"
               onClick={() => setFilters(defaultFilters)}
-              variant="outline"
-              size="sm"
+              className="btn-admin-outline text-sm py-2 justify-self-start"
             >
               Đặt lại bộ lọc
-            </Button>
-            <Button
-              onClick={fetchLogs}
-              variant="ghost"
-              size="sm"
-            >
+            </button>
+            <button type="button" onClick={fetchLogs} className="btn-admin-primary text-sm py-2 justify-self-start">
               Áp dụng
-            </Button>
+            </button>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-gray-50 text-gray-700">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold">ID</th>
-                  <th className="px-4 py-3 text-left font-semibold">Người thao tác</th>
-                  <th className="px-4 py-3 text-left font-semibold">Hành động</th>
-                  <th className="px-4 py-3 text-left font-semibold">Tài nguyên</th>
-                  <th className="px-4 py-3 text-left font-semibold">Trạng thái</th>
-                  <th className="px-4 py-3 text-left font-semibold">Lý do</th>
-                  <th className="px-4 py-3 text-left font-semibold">Thời gian</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
+        <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-sm">
+          <table className="admin-table text-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Người thao tác</th>
+                <th>Hành động</th>
+                <th>Tài nguyên</th>
+                <th>Trạng thái</th>
+                <th>Lý do</th>
+                <th>Thời gian</th>
+              </tr>
+            </thead>
+            <tbody>
                 {loading && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-gray-500">
+                    <td colSpan={7} className="px-4 py-10 text-center text-[var(--color-text-muted)]">
                       Đang tải dữ liệu nhật ký...
                     </td>
                   </tr>
                 )}
                 {!loading &&
                   data.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-50/70">
-                      <td className="px-4 py-3 text-gray-700">{row.id}</td>
-                      <td className="px-4 py-3 text-gray-700">{row.actorEmail || "-"}</td>
-                      <td className="px-4 py-3 text-gray-700">{row.action || "-"}</td>
-                      <td className="px-4 py-3 text-gray-700">{row.resourceType || "-"}</td>
-                      <td className="px-4 py-3">
+                    <tr key={row.id} className="admin-table-row">
+                      <td className="text-[var(--color-text)]">{row.id}</td>
+                      <td className="text-[var(--color-text)]">{row.actorEmail || "-"}</td>
+                      <td className="text-[var(--color-text)]">{row.action || "-"}</td>
+                      <td className="text-[var(--color-text)]">{row.resourceType || "-"}</td>
+                      <td>
                         <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusClass(row.status)}`}>
                           {row.status === "SUCCESS" ? "Thành công" : row.status === "FAILED" ? "Thất bại" : "Không xác định"}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 max-w-[340px] truncate" title={row.reason || "-"}>
+                      <td className="text-[var(--color-text)] max-w-[340px] truncate" title={row.reason || "-"}>
                         {row.reason || "-"}
                       </td>
-                      <td className="px-4 py-3 text-gray-700">{formatDateTime(row.createdAt)}</td>
+                      <td className="text-[var(--color-text)]">{formatDateTime(row.createdAt)}</td>
                     </tr>
                   ))}
                 {!loading && data.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-gray-500">
+                    <td colSpan={7} className="px-4 py-10 text-center text-[var(--color-text-muted)]">
                       Chưa có dữ liệu nhật ký.
                     </td>
                   </tr>
                 )}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <Button
-            variant="outline"
-            size="sm"
+        <div className="flex flex-wrap items-center gap-3 admin-card p-4 rounded-[var(--radius-lg)]">
+          <button
+            type="button"
+            className="btn-admin-outline text-sm"
             disabled={page <= 0}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
           >
             Trước
-          </Button>
-          <span className="text-sm text-gray-700">
+          </button>
+          <span className="text-sm text-[var(--color-text-secondary)]">
             Trang {page + 1} / {Math.max(totalPages, 1)}
           </span>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
+            className="btn-admin-outline text-sm"
             disabled={page + 1 >= totalPages}
             onClick={() => setPage((p) => p + 1)}
           >
             Sau
-          </Button>
+          </button>
           <select
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="admin-input text-sm py-2 w-auto dark:bg-gray-900 dark:border-gray-700"
             value={size}
             onChange={(e) => setSize(Number(e.target.value))}
           >

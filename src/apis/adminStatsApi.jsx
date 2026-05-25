@@ -19,6 +19,13 @@ export const fetchChatsStats = () => axiosInstance.get(`${prefix}/chats`).then(r
 export const fetchTopProducts = (limit = 10) => axiosInstance.get(`${prefix}/top-products`, { params: { limit } }).then(r => r.data);
 export const fetchSalesByCategory = () => axiosInstance.get(`${prefix}/sales-by-category`).then(r => r.data);
 export const fetchTopCustomers = (limit = 10) => axiosInstance.get(`${prefix}/top-customers`, { params: { limit } }).then(r => r.data);
+export const fetchConversionRate = (startDate, endDate) =>
+  axiosInstance.get(`${prefix}/conversion-rate`, { params: { startDate, endDate } }).then(r => r.data);
+export const downloadRevenueExport = (format = "csv", fromDate, toDate) =>
+  axiosInstance.get(`${prefix}/revenue/export`, {
+    params: { format, from: fromDate, to: toDate },
+    responseType: "blob",
+  });
 
 export const fetchRevenueByDay = (startDate, endDate) => axiosInstance.get(`${prefix}/revenue-by-day`, { params: { startDate, endDate } }).then(r => r.data);
 export const fetchRevenueByMonth = (startYear, endYear) => axiosInstance.get(`${prefix}/revenue-by-month`, { params: { startYear, endYear } }).then(r => r.data);

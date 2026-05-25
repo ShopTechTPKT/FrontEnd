@@ -28,6 +28,11 @@ import {
   updatePlaysAllowedAfterOrder,
 } from "../../apis/orderApi";
 import {
+  createMomoPayment,
+  createVnpayPayment,
+  createZalopayPayment,
+} from "../../apis/paymentGatewayApi";
+import {
   getUserActiveDiscounts,
   useUserDiscount as callUseUserDiscount,
 } from "../../apis/discountApi";
@@ -55,12 +60,9 @@ const ShoppingCardItem = () => {
   const { carts, cartSummary, loading } = useSelector(state => state.cart);
   // Get cart items from Redux
   const reduxCartItems = useSelector(state => state.cart || []);
-
-  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [enteredDiscountCode, setEnteredDiscountCode] = useState("");
   const [discountValue, setDiscountValue] = useState(0);
   const [appliedVoucher, setAppliedVoucher] = useState(null);
-  const [vouchers, setVouchers] = useState([]);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPaymentOptionsOpen, setIsPaymentOptionsOpen] = useState(false);
@@ -174,14 +176,11 @@ const ShoppingCardItem = () => {
     }
   }, [isDiscountModalOpen, user]);
   const availablePaymentMethods = [
-    { id: 4, name: "Apple Pay", value: "ONLINE_BANKING" },
-    { id: 7, name: "Cash", value: "CASH_ON_DELIVERY" },
-    { id: 1, name: "Credit Card", value: "ONLINE_BANKING" },
-    { id: 5, name: "Cryptocurrency", value: "ONLINE_BANKING" },
-    { id: 6, name: "Gift Card", value: "ONLINE_BANKING" },
-    { id: 3, name: "Google Pay", value: "ONLINE_BANKING" },
-    { id: 2, name: "PayPal", value: "ONLINE_BANKING" },
-    { id: 8, name: "VNPAY", value: "ONLINE_BANKING" },
+    { id: 7, name: "Cash on Delivery", value: "CASH_ON_DELIVERY" },
+    { id: 8, name: "VNPAY", value: "VNPAY" },
+    { id: 9, name: "MoMo", value: "MOMO" },
+    { id: 10, name: "ZaloPay", value: "ZALOPAY" },
+    { id: 11, name: "Bank Transfer", value: "BANK_TRANSFER" },
   ];
   useEffect(() => {
     // Chỉ cần dispatch, thunk `loadCartItems` sẽ tự xử lý
@@ -192,19 +191,6 @@ const ShoppingCardItem = () => {
   useEffect(() => {
     const savedCustomerInfo = localStorage.getItem("customerInfo");
     if (savedCustomerInfo) setCustomerInfo(JSON.parse(savedCustomerInfo));
-  }, []);
-
-  // Fetch mock vouchers
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        const { mockVouchers } = await import("../../mockData/vouchers");
-        setVouchers(mockVouchers);
-      } catch (error) {
-        console.error("Lỗi khi tải voucher:", error);
-      }
-    };
-    fetchVouchers();
   }, []);
 
   // Logic to read cart from sessionStorage, keyed by user/guest ID
@@ -358,38 +344,6 @@ const ShoppingCardItem = () => {
   };
 
   // Voucher/Discount Handlers
-  const handleSelectVoucherFromList = voucher => {
-    if (voucher && (voucher.discountRate || voucher.discount)) {
-      let discountAmount = 0;
-
-      // Xử lý theo type từ DB
-      if (voucher.type === "PERCENTAGE") {
-        // discountRate là số thập phân (0.3 = 30%)
-        discountAmount = orderTotalBeforeDiscount * voucher.discountRate;
-      } else if (voucher.type === "FIXED_AMOUNT") {
-        // discountRate là số tiền cố định
-        discountAmount = voucher.discountRate;
-      } else if (voucher.discount) {
-        // Fallback cho mock data cũ
-        discountAmount = (orderTotalBeforeDiscount * voucher.discount) / 100;
-      }
-
-      setDiscountValue(discountAmount);
-      setAppliedVoucher({
-        id: voucher.id || voucher.voucherID,
-        code: voucher.name || voucher.code,
-        discount: voucher.discountRate || voucher.discount,
-        type: voucher.type,
-        expired: false,
-      });
-    } else {
-      setDiscountValue(0);
-      setAppliedVoucher(null);
-    }
-    setShowDiscountModal(false);
-  };
-
-  const handleCloseDiscountModal = () => setShowDiscountModal(false);
 
   // Payment Handlers
   const handlePaymentMethodSelect = method => {
@@ -596,7 +550,7 @@ const ShoppingCardItem = () => {
       const orderWithDetailsData = {
         userId: Number(userId),
         deliveryAddress: customerInfo.fullAddress,
-        paymentMethod: "ONLINE_BANKING", // Enum phía backend
+        paymentMethod: paymentMethod,
         totalPrice: Number(discountedTotal),
         paymentFee: Number(selectedShippingCost),
         status: "PROCESSING",
@@ -644,43 +598,24 @@ const ShoppingCardItem = () => {
       };
       localStorage.setItem("orderDisplay", JSON.stringify(orderDisplayData));
 
-      // Chuyển hướng sang trang thanh toán VNPAY KHÔNG tạo order trước
-      // Sau khi thanh toán thành công, VNPAY (sandbox) sẽ redirect về: /thank_you_shopping?vnp_ResponseCode=00&vnp_Amount=...
-      openConfirm("Bạn có chắc chắn muốn thanh toán qua VNPAY?", () => {
+      let gatewayRes;
+      const gatewayPayload = {
+        amount: Math.round(discountedTotal),
+        orderInfo: `Thanh toan don hang ${Date.now()}`,
+      };
+      if (selectedPaymentName === "MoMo") {
+        gatewayRes = await createMomoPayment(gatewayPayload);
+      } else if (selectedPaymentName === "ZaloPay") {
+        gatewayRes = await createZalopayPayment(gatewayPayload);
+      } else {
+        gatewayRes = await createVnpayPayment(gatewayPayload);
+      }
+
+      // Chuyển hướng sang trang thanh toán tương ứng mà không tạo order trước
+      openConfirm(`Bạn có chắc chắn muốn thanh toán qua ${selectedPaymentName}?`, () => {
         setIsProcessingPayment(true);
         setTimeout(() => {
-          // Tạo form để POST đến service VNPay NodeJS (vnpay_nodejs)
-          const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "http://localhost:8888/order/create_payment_url";
-
-        // Thêm các field cần thiết
-        const authToken = localStorage.getItem("authToken") || "";
-        const fields = {
-          amount: Math.round(discountedTotal),
-          bankCode: "",
-          language: "vn",
-          // Các field bên dưới hiện tại service vnpay_nodejs không dùng,
-          // nhưng giữ lại để có thể mở rộng về sau nếu cần.
-          orderType: "billpayment",
-          orderInfo: `Thanh toan don hang ${Date.now()}`,
-          returnUrl: `${window.location.origin}/thank_you_shopping`,
-          customerEmail: customerInfo.email,
-          customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
-          authToken: authToken,
-        };
-
-        Object.keys(fields).forEach(key => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = fields[key];
-          form.appendChild(input);
-        });
-
-          document.body.appendChild(form);
-
-          form.submit();
+          window.location.href = gatewayRes.paymentUrl;
         }, 1500); // UI delay 1.5s then redirect
       });
     } catch (error) {
@@ -1194,13 +1129,16 @@ const ShoppingCardItem = () => {
                   >
                     {t("payment.buttons.select_payment_first")}
                   </button>
-                ) : paymentMethod === "ONLINE_BANKING" &&
-                  selectedPaymentName === "VNPAY" ? (
+                ) : ["VNPAY", "MOMO", "ZALOPAY"].includes(paymentMethod) ? (
                   <button
                     className="mt-4 w-full rounded-xl bg-amber-400 py-3 px-6 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:bg-amber-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
                     onClick={handleVNPAYPayment}
                   >
-                    {t("payment.buttons.pay_with_vnpay")}
+                    {selectedPaymentName === "MoMo"
+                      ? "Thanh toan voi MoMo"
+                      : selectedPaymentName === "ZaloPay"
+                      ? "Thanh toan voi ZaloPay"
+                      : t("payment.buttons.pay_with_vnpay")}
                   </button>
                 ) : (
                   <button
@@ -1231,4 +1169,5 @@ const ShoppingCardItem = () => {
 };
 
 export default ShoppingCardItem;
+
 

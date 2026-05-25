@@ -1,39 +1,63 @@
 "use client";
-
 import { useState, useContext, useEffect } from "react";
 import Support from "../../components/Support/Support";
 import { Link, useNavigate } from "react-router-dom";
 import path from "../../constant/path";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { clearCart } from "../../utils/redux/cartSlice";
 import { useTranslation } from "react-i18next";
 import formatCurrency from "../../utils/formatCurrency";
 import { UserContext } from "../../context/UserContext";
-import DiscountModal from "../../components/DiscountModal";
 import AddressAutocomplete from "../../components/Orders/AddressAutocomplete";
 import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
 import LoyaltyPointsPanel from "../../components/checkout/LoyaltyPointsPanel";
-import { getLoyaltyBalance } from "../../apis/loyaltyApi";
-// import { getActiveDiscounts } from "../../apis/discountApi";
+import { getLoyaltyBalance, redeemLoyaltyPoints } from "../../apis/loyaltyApi";
+import { validateCouponCode } from "../../apis/couponApi";
+import { previewOrder, createOrderWithDetails, updatePlaysAllowedAfterOrder } from "../../apis/orderApi";
+import {
+  createMomoPayment,
+  createVnpayPayment,
+  createZalopayPayment,
+} from "../../apis/paymentGatewayApi";
+import notify from "../../utils/notify";
+import momoQr from "../../assets/images/products/product_qr_1.png";
 
-// Component tượng trưng cho Order Summary (đã chỉnh sửa để nhận prop và hiển thị dữ liệu thật)
-const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) => {
-  // useTranslation hook must be at the top level
+const ONLINE_PAYMENT_METHODS = new Set(["vnpay", "momo", "zalopay"]);
+
+const getUnitPriceFromCheckoutItem = item => {
+  if (typeof item?.unitPrice === "number") return item.unitPrice;
+  if (typeof item?.price === "number") return item.price;
+  if (typeof item?.price === "string") {
+    const parsed = parseFloat(item.price.replace(/[^\d.-]/g, "")) || 0;
+    return parsed;
+  }
+  if (item?.totalPrice && item?.quantity) {
+    const qty = Number(item.quantity) || 1;
+    return Number(item.totalPrice) / qty;
+  }
+  return 0;
+};
+
+const mapCheckoutMethodToBackend = method => {
+  switch (method) {
+    case "vnpay": return "VNPAY";
+    case "momo": return "MOMO";
+    case "zalopay": return "ZALOPAY";
+    case "bank": return "BANK_TRANSFER";
+    case "cod": default: return "CASH_ON_DELIVERY";
+  }
+};
+
+const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0, couponDiscount = 0, previewTotals = null }) => {
   const { t } = useTranslation();
 
-  //get order data from localstorage
-  // const orderData = JSON.parse(localStorage.getItem("orderData")) || {};
-  //calcute subtotal from cartItems of orderData
   const getUnitPrice = item => {
-    // Prefer numeric unitPrice if available
     if (typeof item?.unitPrice === "number") return item.unitPrice;
-    // Fallback to price string like "11.495.000 ₫"
     if (typeof item?.price === "string") {
       const parsed = parseFloat(item.price.replace(/[^\d.-]/g, "")) || 0;
       return parsed;
     }
-    // Fallback to number in price field
     if (typeof item?.price === "number") return item.price;
-    // Last resort: derive from totalPrice/quantity
     if (item?.totalPrice && item?.quantity) {
       const q = Number(item.quantity) || 1;
       return Number(item.totalPrice) / q;
@@ -46,10 +70,13 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
     const qty = Number(item?.quantity) || 1;
     return total + unit * qty;
   }, 0);
-  const total = Math.max(0, subtotal + selectedShippingCost - loyaltyDiscount);
+  const total = Math.max(0, subtotal + selectedShippingCost - loyaltyDiscount - couponDiscount);
+  const displayedSubtotal = Number(previewTotals?.subtotal ?? subtotal);
+  const displayedShipping = Number(previewTotals?.shipping ?? selectedShippingCost);
+  const displayedTotal = Number(previewTotals?.grandTotal ?? total);
 
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sticky top-28">
       <h2 className="mb-3 text-base font-semibold text-gray-900">
         {t("payment.thank_you.order_summary")}
       </h2>
@@ -61,8 +88,8 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
         ) : (
           cartItems.map(item => (
             <div
-              className="flex items-center justify-between"
-              key={item.productID}
+              className="flex items-center justify-between gap-4"
+              key={item.productID || item.productId || item.id}
               style={{ width: "100%" }}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -74,7 +101,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
                       item.product?.imageUrl ||
                       "/placeholder.svg"
                     }
-                    alt={item.productName}
+                    alt={item.productName || item.product?.name}
                     className="w-full h-full object-contain"
                     onError={e => {
                       e.currentTarget.src = "/placeholder.svg";
@@ -83,14 +110,14 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
                 </div>
                 <div className="min-w-0 flex-1">
                   <h6 className="text-sm font-medium text-gray-800 truncate">
-                    {item.productName}
+                    {item.productName || item.product?.name}
                   </h6>
                   <p className="text-xs text-gray-500">
                     x{Number(item.quantity) || 1}
                   </p>
                 </div>
               </div>
-              <span className="text-sm font-semibold text-gray-900">
+              <span className="text-sm font-semibold text-gray-900 shrink-0">
                 {formatCurrency(getUnitPrice(item) * (Number(item.quantity) || 1))}
               </span>
             </div>
@@ -102,7 +129,15 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               <span className="text-sm text-emerald-600">Giảm từ điểm thưởng</span>
               <span className="text-sm font-semibold text-emerald-600">
                 -
-                {formatCurrency(loyaltyDiscount)}
+                {formatCurrency(Number(previewTotals?.loyaltyDiscount ?? loyaltyDiscount))}
+              </span>
+            </div>
+          )}
+          {couponDiscount > 0 && (
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-emerald-600">Giảm từ mã giảm giá</span>
+              <span className="text-sm font-semibold text-emerald-600">
+                -{formatCurrency(Number(previewTotals?.discount ?? couponDiscount))}
               </span>
             </div>
           )}
@@ -111,7 +146,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               {t("payment.checkout.subtotal")}
             </span>
             <span className="text-sm font-semibold text-gray-900">
-              {formatCurrency(subtotal)}
+              {formatCurrency(displayedSubtotal)}
             </span>
           </div>
           <div className="flex items-center justify-between mt-1">
@@ -119,7 +154,7 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
               {t("payment.checkout.shipping")}
             </span>
             <span className="text-sm font-semibold text-gray-900">
-              {formatCurrency(selectedShippingCost)}
+              {formatCurrency(displayedShipping)}
             </span>
           </div>
         </div>
@@ -129,8 +164,8 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
             <span className="text-sm font-semibold text-gray-800">
               {t("payment.checkout.total")}
             </span>
-            <span className="text-base font-bold text-violet-700">
-              {formatCurrency(total)}
+            <span className="text-base font-bold text-[var(--color-primary-)]">
+              {formatCurrency(displayedTotal)}
             </span>
           </div>
         </div>
@@ -140,648 +175,313 @@ const OrderSummary = ({ cartItems, selectedShippingCost, loyaltyDiscount = 0 }) 
 };
 
 function ShoppingCard_CheckOut() {
-  // const location = useLocation()
-  // All hooks must be called at the top level
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const cartItems = useSelector(state => state.cart.carts);
-  const [selectedShippingOption, setSelectedShippingOption] =
-    useState("standard");
-  const { user } = useContext(UserContext); // Lấy thông tin user từ UserContext
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.carts || []);
+  const [selectedShippingOption, setSelectedShippingOption] = useState("standard");
+  const { user } = useContext(UserContext);
 
-  // Tính toán phí vận chuyển dựa trên tùy chọn đã chọn
   const shippingCost = selectedShippingOption === "standard" ? 20000 : 0;
 
-  var id;
-  if (user) {
-    id = user.id;
-  } else {
-    id = 0;
-  }
-  const [email, setEmail] = useState(user?.email || ""); // Sử dụng optional chaining
-  const [firstName, setFirstName] = useState(
-    user?.fullName?.split(" ")[0] || ""
-  ); // Sử dụng optional chaining
-  const [lastName, setLastName] = useState(
-    user?.fullName?.split(" ").slice(1).join(" ") || ""
-  ); // Sử dụng optional chaining
-  const [streetAddress, setStreetAddress] = useState(user?.address || ""); // Sử dụng optional chaining
-  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || ""); // Sử dụng optional chaining
+  var id = user ? user.id : 0;
+  const [email, setEmail] = useState(user?.email || "");
+  const [firstName, setFirstName] = useState(user?.fullName?.split(" ")[0] || "");
+  const [lastName, setLastName] = useState(user?.fullName?.split(" ").slice(1).join(" ") || "");
+  const [streetAddress, setStreetAddress] = useState(user?.address || "");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
   const [country, setCountry] = useState({ selectedOption: "vietnam" });
   const [stateProvince, setState] = useState({ selectedOption: "" });
   const [city, setCity] = useState("");
-  // State để lưu lỗi
   const [errors, setErrors] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [loyaltyBalance, setLoyaltyBalance] = useState(0);
-  const [loyaltyApplied, setLoyaltyApplied] = useState({
-    points: 0,
-    discountAmount: 0,
-  });
+  const [loyaltyApplied, setLoyaltyApplied] = useState({ points: 0, discountAmount: 0 });
+  const [couponCode, setCouponCode] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewTotals, setPreviewTotals] = useState(null);
+  const [note, setNote] = useState("");
   const isCartEmpty = !cartItems || cartItems.length === 0;
 
   const subtotal = cartItems.reduce((total, item) => {
-    const unit = typeof item?.unitPrice === "number" ? item.unitPrice : Number(item?.price) || 0;
+    const unit = getUnitPriceFromCheckoutItem(item);
     const qty = Number(item?.quantity) || 1;
     return total + unit * qty;
   }, 0);
   const cartTotal = subtotal + shippingCost;
+  const finalCheckoutTotal = Number(
+    previewTotals?.grandTotal ?? Math.max(0, cartTotal - loyaltyApplied.discountAmount - couponDiscount)
+  );
 
-  // --- Auto-detect city/province/country from shipping address ---
-  const removeVietnameseTones = str => {
-    return String(str)
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "D")
-      .toLowerCase();
-  };
-
-  // Map a few common provinces/cities -> option values defined in <select>
-  const PROVINCE_MAP = [
-    { code: "hanoi", keywords: ["ha noi", "hanoi", "thu do ha noi"] },
-    {
-      code: "hochiminh",
-      keywords: ["tp.hcm", "ho chi minh", "hcm", "thanh pho ho chi minh"],
-    },
-    { code: "danang", keywords: ["da nang", "danang"] },
-    { code: "cantho", keywords: ["can tho", "cantho"] },
-    { code: "haiphong", keywords: ["hai phong", "haiphong"] },
-    { code: "binhduong", keywords: ["binh duong", "binhduong", "bd"] },
-    { code: "dongnai", keywords: ["dong nai", "dongnai"] },
-    { code: "khanhhoa", keywords: ["khanh hoa", "khanhhoa", "nha trang"] },
-    { code: "quangninh", keywords: ["quang ninh", "quangninh"] },
-    { code: "nghean", keywords: ["nghe an", "nghean", "vinh"] },
-    { code: "thai nguyen", keywords: ["thai nguyen", "thainguyen"] },
-  ];
-
-  const detectProvinceCode = address => {
-    const norm = removeVietnameseTones(address || "");
-    for (const p of PROVINCE_MAP) {
-      if (p.keywords.some(k => norm.includes(k))) return p.code;
-    }
-    return "";
-  };
-
-  // Try to guess city from address by using the segment before province or last district segment
-  const detectCityFromAddress = (address, provinceCode) => {
-    if (!address) return "";
-    const parts = address
-      .split(",")
-      .map(p => p.trim())
-      .filter(Boolean);
-    if (parts.length >= 2) {
-      // If we detected province by name, try to find that segment, else take second last
-      const normParts = parts.map(removeVietnameseTones);
-      const provinceMatchIndex = (() => {
-        if (!provinceCode) return -1;
-        const province = PROVINCE_MAP.find(p => p.code === provinceCode);
-        if (!province) return -1;
-        return normParts.findIndex(segment =>
-          province.keywords.some(k => segment.includes(k))
-        );
-      })();
-      if (provinceMatchIndex > 0) {
-        return parts[provinceMatchIndex - 1];
-      }
-      // Fallback: take the second last segment as city/district
-      return parts[parts.length - 2];
-    }
-    return "";
-  };
-
-  // Auto-fill when shipping address changes
   useEffect(() => {
-    if (!streetAddress || streetAddress.trim().length < 3) return;
-    const provinceCode = detectProvinceCode(streetAddress);
-    if (provinceCode) {
-      setState({ selectedOption: provinceCode });
-      // default country to Vietnam when we detect a VN province
-      setCountry(prev =>
-        prev?.selectedOption ? prev : { selectedOption: "vietnam" }
-      );
-
-      const guessedCity = detectCityFromAddress(streetAddress, provinceCode);
-      if (guessedCity) setCity(guessedCity);
-    } else {
-      // If cannot detect province, keep current selections; user can pick manually
-      const guessedCity = detectCityFromAddress(streetAddress, "");
-      if (guessedCity) setCity(guessedCity);
+    if (isCartEmpty) {
+      setPreviewTotals(null);
+      return;
     }
-  }, [streetAddress]);
+    const timer = setTimeout(async () => {
+      try {
+        const payload = {
+          items: cartItems.map((item) => ({
+            quantity: Number(item?.quantity || 1),
+            unitPrice: Number(getUnitPriceFromCheckoutItem(item)),
+          })),
+          shipping: Number(shippingCost),
+          discount: Number(couponDiscount || 0),
+          loyaltyDiscount: Number(loyaltyApplied.discountAmount || 0),
+          tax: 0,
+        };
+        const response = await previewOrder(payload);
+        setPreviewTotals(response || null);
+      } catch {
+        setPreviewTotals(null);
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [cartItems, shippingCost, couponDiscount, loyaltyApplied.discountAmount, isCartEmpty]);
 
   useEffect(() => {
     const userId = user?.id || user?.customerID || user?.customerId;
     if (!userId) return;
-    getLoyaltyBalance(userId)
-      .then((balance) => setLoyaltyBalance(balance))
-      .catch(() => setLoyaltyBalance(0));
+    getLoyaltyBalance(userId).then(setLoyaltyBalance).catch(() => setLoyaltyBalance(0));
   }, [user]);
 
-  const handleNext = e => {
-    e?.preventDefault(); // hỗ trợ gọi onClick không truyền event
-    // Only check once when component mounts
-    // if (!user) {
-    //   if (window.confirm(t("cart.please_login_to_view_cart"))) {
-    //     navigate(path.login);
-    //     return;
-    //   } else {
-    //     // If user cancels the confirmation, navigate back to previous page
-    //     navigate(-1);
-    //   }
-    // }
-    // Empty dependency array so it only runs once
+  const handleApplyCoupon = async () => {
+    const code = couponCode.trim();
+    if (!code) {
+      setCouponMessage("Vui lòng nhập mã giảm giá.");
+      setCouponDiscount(0);
+      return;
+    }
+    try {
+      setCouponLoading(true);
+      const data = await validateCouponCode({ code, orderTotal: cartTotal });
+      if (!data?.valid) {
+        setCouponDiscount(0);
+        setCouponMessage(data?.message || "Mã giảm giá không hợp lệ.");
+        return;
+      }
+      setCouponDiscount(Number(data?.discountAmount || 0));
+      setCouponMessage(data?.message || "Áp dụng mã giảm giá thành công.");
+    } catch (error) {
+      setCouponDiscount(0);
+      setCouponMessage(error?.response?.data?.message || "Không thể kiểm tra mã giảm giá lúc này.");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
-    // Kiểm tra các trường bắt buộc
+  const handlePlaceOrder = async (e) => {
+    e?.preventDefault();
+    if (isSubmitting) return;
+
     const newErrors = {};
     if (!email.trim()) newErrors.email = t("form.email_required");
     if (!firstName.trim()) newErrors.firstName = t("form.first_name_required");
     if (!lastName.trim()) newErrors.lastName = t("form.last_name_required");
-
-    // if (!phoneNumber.trim()) newErrors.phoneNumber = t("form.phone_required");
     if (!city.trim()) newErrors.city = t("form.city_required");
-    if (!country.selectedOption) newErrors.country = t("form.country_required");
-    // Nếu có lỗi, đặt lỗi vào state và focus vào ô đầu tiên bị lỗi
+    const normalizedPhone = String(phoneNumber || "").replace(/\s+/g, "");
+    if (!normalizedPhone) newErrors.phoneNumber = "Vui lòng nhập số điện thoại.";
+    else if (!/^0(?:3|5|7|8|9)[0-9]{8}$/.test(normalizedPhone)) newErrors.phoneNumber = "Số điện thoại chưa đúng định dạng VN.";
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       const firstErrorField = Object.keys(newErrors)[0];
       document.getElementById(firstErrorField)?.focus();
       return;
     }
+    if (!paymentMethod) {
+      notify.error("Vui lòng chọn phương thức thanh toán!");
+      return;
+    }
+    
+    setErrors({});
+    setIsSubmitting(true);
 
-    // Nếu không có lỗi, lưu shipping cost và chuyển hướng
-    localStorage.setItem("selectedShippingCost", shippingCost);
-    //address la cac field shipping address+ city, state, province+ country
+    const provinceName = typeof stateProvince.selectedOption === 'string' ? stateProvince.selectedOption : "";
+    const countryName = typeof country.selectedOption === 'string' ? country.selectedOption : "";
+    
+    const fullAddress = [streetAddress, city, provinceName, countryName]
+      .filter(Boolean)
+      .join(", ");
+      
+    const backendPaymentMethod = mapCheckoutMethodToBackend(paymentMethod);
+    const userId = Number(id || 0);
 
-    // Lưu thông tin khách hàng vào localStorage
-    const customerInfo = {
-      id,
-      firstName,
-      lastName,
-      email,
-      fullAddress:
-        streetAddress +
-        ", " +
-        city +
-        ", " +
-        stateProvince.selectedOption +
-        ", " +
-        country.selectedOption,
-      phoneNumber,
+    if (!userId) {
+      notify.error("Vui lòng đăng nhập để tiếp tục.");
+      navigate(path.login);
+      setIsSubmitting(false);
+      return;
+    }
+
+    const orderWithDetailsData = {
+      userId,
+      deliveryAddress: fullAddress,
+      paymentMethod: backendPaymentMethod,
+      totalPrice: Number(finalCheckoutTotal),
+      paymentFee: Number(shippingCost),
+      status: "PROCESSING",
+      notes: note,
+      usedPoint: 0,
+      usedAt: null,
+      createdDate: new Date().toLocaleDateString("en-CA"),
+      items: cartItems.map(item => ({
+        productId: Number(item.productId || item.product?.id || item.productID || item.id),
+        amount: Number(item.quantity) || 1,
+        unitPrice: Number(getUnitPriceFromCheckoutItem(item)),
+      })),
     };
-    localStorage.setItem("customerInfo", JSON.stringify(customerInfo));
-    localStorage.setItem("paymentMethod", paymentMethod);
-    localStorage.setItem("loyaltyRedemption", JSON.stringify(loyaltyApplied));
 
-    navigate(path.shopping_payment);
-  };
+    if (ONLINE_PAYMENT_METHODS.has(paymentMethod)) {
+      try {
+        sessionStorage.setItem("pendingOrder", JSON.stringify(orderWithDetailsData));
+        sessionStorage.setItem("loyaltyRedemption", JSON.stringify(loyaltyApplied));
+        
+        const gatewayPayload = {
+          amount: Math.round(finalCheckoutTotal),
+          orderInfo: `Thanh toan don hang ${Date.now()}`,
+        };
+        let gatewayRes;
+        if (paymentMethod === "momo") gatewayRes = await createMomoPayment(gatewayPayload);
+        else if (paymentMethod === "zalopay") gatewayRes = await createZalopayPayment(gatewayPayload);
+        else gatewayRes = await createVnpayPayment(gatewayPayload);
 
-  const handleShippingChange = event => {
-    setSelectedShippingOption(event.target.value);
+        if (!gatewayRes?.paymentUrl) throw new Error("Payment URL is missing");
+        window.location.href = gatewayRes.paymentUrl;
+        return;
+      } catch (error) {
+        notify.error("Không thể khởi tạo giao dịch thanh toán.");
+        setIsSubmitting(false);
+        return;
+      }
+    } else {
+      // CASH ON DELIVERY
+      try {
+        const orderResponse = await createOrderWithDetails(orderWithDetailsData);
+        const createdOrderId = orderResponse.id || orderResponse.orderID;
+
+        if (loyaltyApplied.points > 0) {
+          try {
+            await redeemLoyaltyPoints({ userId, points: Number(loyaltyApplied.points), orderId: Number(createdOrderId) });
+          } catch (redeemError) {
+            console.error("Lỗi redeem loyalty points:", redeemError);
+          }
+        }
+        localStorage.setItem("lastOrderId", String(createdOrderId));
+        dispatch(clearCart(userId));
+        
+        updatePlaysAllowedAfterOrder(userId)
+          .then(updatedUser => {
+            if (updatedUser) localStorage.setItem("user", JSON.stringify(updatedUser));
+          }).catch(err => console.error("Failed to update plays:", err));
+
+        notify.success("Đặt hàng thành công!");
+        navigate(path.thankYou);
+      } catch (err) {
+        notify.error("Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau.");
+        setIsSubmitting(false);
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/90 font-sans py-8 sm:py-10">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-primary-)]/50 via-white to-gray-50/90 font-sans py-8 sm:py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <nav className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
-            <Link
-              to={path.home}
-              className="text-violet-600 hover:text-violet-700 transition-colors"
-            >
-              {t("payment.checkout.breadcrumb_home")}
-            </Link>
+            <Link to={path.home} className="text-[var(--color-primary-)] hover:text-[var(--color-primary-)]">{t("payment.checkout.breadcrumb_home")}</Link>
             <span className="text-gray-300">/</span>
-            <Link
-              to={path.card}
-              className="text-violet-600 hover:text-violet-700 transition-colors"
-            >
-              {t("payment.checkout.breadcrumb_cart")}
-            </Link>
+            <Link to={path.card} className="text-[var(--color-primary-)] hover:text-[var(--color-primary-)]">{t("payment.checkout.breadcrumb_cart")}</Link>
             <span className="text-gray-300">/</span>
-            <span className="font-medium text-gray-700">
-              {t("payment.checkout.breadcrumb_checkout")}
-            </span>
+            <span className="font-medium text-gray-700">{t("payment.checkout.breadcrumb_checkout")}</span>
           </nav>
           <h1 className="mt-6 text-2xl sm:text-3xl font-semibold text-gray-900 tracking-tight">
             {t("payment.checkout.checkout_title")}
           </h1>
-          {/* Premium 3-step progress indicator */}
-          <div className="mt-6 rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50/70 to-purple-50/70 p-5">
-            {/* Step labels row */}
-            <div className="flex items-center justify-between relative">
-              {/* Connector lines */}
-              <div className="absolute left-0 right-0 top-4 flex items-center px-4 pointer-events-none" aria-hidden>
-                <div className="flex-1 h-0.5 bg-violet-600 rounded-full" />
-                <div className="flex-1 h-0.5 bg-gray-200 rounded-full" />
-              </div>
-
-              {/* Step 1 — Active */}
-              <div className="flex flex-col items-center gap-1 z-10">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center shadow-md shadow-violet-300/50">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <span className="text-xs font-bold text-violet-700 whitespace-nowrap">Địa chỉ</span>
-              </div>
-
-              {/* Step 2 — Pending */}
-              <div className="flex flex-col items-center gap-1 z-10">
-                <div className="w-9 h-9 rounded-full border-2 border-gray-200 bg-white text-gray-400 flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
-                </div>
-                <span className="text-xs text-gray-400 whitespace-nowrap">Thanh toán</span>
-              </div>
-
-              {/* Step 3 — Pending */}
-              <div className="flex flex-col items-center gap-1 z-10">
-                <div className="w-9 h-9 rounded-full border-2 border-gray-200 bg-white text-gray-400 flex items-center justify-center">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9 12l2 2 4-4" />
-                    <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-                  </svg>
-                </div>
-                <span className="text-xs text-gray-400 whitespace-nowrap">Xác nhận</span>
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="mt-4 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
-              <div className="h-full w-1/3 bg-gradient-to-r from-violet-600 to-purple-500 rounded-full transition-all duration-500" />
-            </div>
-          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Shipping Address Form */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-lg font-semibold text-gray-900">
-              {t("payment.checkout.shipping_information")}
-            </h2>
-            <form className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-gray-600 mb-1.5">
-                  {t("payment.checkout.email")}
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-                    <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-                  </span>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    className={`block w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-50 border text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all ${
-                      errors.email ? "border-red-400 bg-red-50" : "border-gray-200"
-                    }`}
-                    placeholder="email@example.com"
-                  />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-7 space-y-6">
+            {/* Shipping Info */}
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="mb-5 text-lg font-semibold text-gray-900">{t("payment.checkout.shipping_information")}</h2>
+              <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t("payment.checkout.email")}</label>
+                  <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} className={`block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30 ${errors.email ? "border-red-400 bg-red-50" : ""}`} />
+                  {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                 </div>
-                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
-              </div>
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.first_name")}
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
-                    errors.firstName ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.firstName && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.firstName}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.last_name")}
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  value={lastName}
-                  onChange={e => setLastName(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
-                    errors.lastName ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.lastName && (
-                  <p className="text-sm text-red-500 mt-1">{errors.lastName}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="streetAddress"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.street_address")}
-                </label>
-                <AddressAutocomplete
-                  value={streetAddress}
-                  onChange={setStreetAddress}
-                  placeholder="Nhập số nhà, tên đường..."
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
-                    errors.streetAddress ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.streetAddress && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.streetAddress}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.city")}
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30"
-                  onChange={e => setCity(e.target.value)}
-                  value={city}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="stateProvince"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.state_province")}
-                </label>
-                <select
-                  id="stateProvince"
-                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm focus:border-violet-500 focus:ring-violet-500/30"
-                  onChange={e => setState({ selectedOption: e.target.value })}
-                  value={stateProvince.selectedOption}
-                >
-                  <option value="">
-                    {t("payment.checkout.select_region")}
-                  </option>
-                  <option value="hanoi">{t("cart.h_ni")}</option>
-                  <option value="hochiminh">{t("cart.h_ch_minh")}</option>
-                  <option value="haiphong">{t("cart.hi_phng")}</option>
-                  <option value="danang">{t("cart.nng")}</option>
-                  <option value="cantho">{t("cart.cn_th")}</option>
-                  <option value="angiang">{t("cart.an_giang")}</option>
-                  <option value="bacgiang">{t("cart.bc_giang")}</option>
-                  <option value="backan">{t("cart.bc_kn")}</option>
-                  <option value="baclieu">{t("cart.bc_liu")}</option>
-                  <option value="bacninh">{t("cart.bc_ninh")}</option>
-                  <option value="bentre">{t("cart.bn_tre")}</option>
-                  <option value="binhdinh">{t("cart.bnh_nh")}</option>
-                  <option value="binhduong">{t("cart.bnh_dng")}</option>
-                  <option value="binhphuoc">{t("cart.bnh_phc")}</option>
-                  <option value="binhthuan">{t("cart.bnh_thun")}</option>
-                  <option value="camau">{t("cart.c_mau")}</option>
-                  <option value="caobang">{t("cart.cao_bng")}</option>
-                  <option value="daklak">{t("cart.k_lk")}</option>
-                  <option value="daknong">{t("cart.k_nng")}</option>
-                  <option value="dienbien">{t("cart.in_bin")}</option>
-                  <option value="dongnai">{t("cart.ng_nai")}</option>
-                  <option value="dongthap">{t("cart.ng_thp")}</option>
-                  <option value="gialai">{t("cart.gia_lai")}</option>
-                  <option value="hagiang">{t("cart.h_giang")}</option>
-                  <option value="hanam">{t("cart.h_nam")}</option>
-                  <option value="hatinh">{t("cart.h_tnh")}</option>
-                  <option value="haiduong">{t("cart.hi_dng")}</option>
-                  <option value="haugiang">{t("cart.hu_giang")}</option>
-                  <option value="hoabinh">{t("cart.ha_bnh")}</option>
-                  <option value="hungyen">{t("cart.hng_yn")}</option>
-                  <option value="khanhhoa">{t("cart.khnh_ha")}</option>
-                  <option value="kiengiang">{t("cart.kin_giang")}</option>
-                  <option value="kontum">{t("cart.kon_tum")}</option>
-                  <option value="laichau">{t("cart.lai_chu")}</option>
-                  <option value="lamdong">{t("cart.lm_ng")}</option>
-                  <option value="langson">{t("cart.lng_sn")}</option>
-                  <option value="laocai">{t("cart.lo_cai")}</option>
-                  <option value="longan">{t("cart.long_an")}</option>
-                  <option value="namdinh">{t("cart.nam_nh")}</option>
-                  <option value="nghean">{t("cart.ngh_an")}</option>
-                  <option value="ninhbinh">{t("cart.ninh_bnh")}</option>
-                  <option value="ninhthuan">{t("cart.ninh_thun")}</option>
-                  <option value="phutho">{t("cart.ph_th")}</option>
-                  <option value="phuyen">{t("cart.ph_yn")}</option>
-                  <option value="quangbinh">{t("cart.qung_bnh")}</option>
-                  <option value="quangnam">{t("cart.qung_nam")}</option>
-                  <option value="quangngai">{t("cart.qung_ngi")}</option>
-                  <option value="quangninh">{t("cart.qung_ninh")}</option>
-                  <option value="quangtri">{t("cart.qung_tr")}</option>
-                  <option value="soctrang">{t("cart.sc_trng")}</option>
-                  <option value="sonla">{t("cart.sn_la")}</option>
-                  <option value="tayninh">{t("cart.ty_ninh")}</option>
-                  <option value="thaibinh">{t("cart.thi_bnh")}</option>
-                  <option value="thainguyen">{t("cart.thi_nguyn")}</option>
-                  <option value="thanhhoa">{t("cart.thanh_ha")}</option>
-                  <option value="thuathienhue">{t("cart.tha_thin_hu")}</option>
-                  <option value="tiengiang">{t("cart.tin_giang")}</option>
-                  <option value="travinh">{t("cart.tr_vinh")}</option>
-                  <option value="tuyenquang">{t("cart.tuyn_quang")}</option>
-                  <option value="vinhlong">{t("cart.vnh_long")}</option>
-                  <option value="vinhphuc">{t("cart.vnh_phc")}</option>
-                  <option value="yenbai">{t("cart.yn_bi")}</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.country")}
-                </label>
-                <select
-                  id="country"
-                  className="mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm focus:border-violet-500 focus:ring-violet-500/30"
-                  onChange={e => setCountry({ selectedOption: e.target.value })}
-                  value={country.selectedOption}
-                >
-                  <option value="vietnam">{t("cart.vit_nam")}</option>
-                  <option value="us">{t("cart.united_states")}</option>
-                  <option value="china">{t("cart.china")}</option>
-                  <option value="japan">{t("cart.japan")}</option>
-                  <option value="korea">{t("cart.south_korea")}</option>
-                  <option value="singapore">{t("cart.singapore")}</option>
-                  <option value="thailand">{t("cart.thailand")}</option>
-                  <option value="malaysia">{t("cart.malaysia")}</option>
-                  <option value="indonesia">{t("cart.indonesia")}</option>
-                  <option value="philippines">{t("cart.philippines")}</option>
-                  <option value="australia">{t("cart.australia")}</option>
-                  <option value="uk">{t("cart.united_kingdom")}</option>
-                  <option value="france">{t("cart.france")}</option>
-                  <option value="germany">{t("cart.germany")}</option>
-                  <option value="canada">{t("cart.canada")}</option>
-                  <option value="russia">{t("cart.russia")}</option>
-                  <option value="india">{t("cart.india")}</option>
-                  <option value="brazil">{t("cart.brazil")}</option>
-                  <option value="mexico">{t("cart.mexico")}</option>
-                  <option value="southafrica">{t("cart.south_africa")}</option>
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  {t("payment.checkout.phone")}
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={phoneNumber}
-                  onChange={e => setPhoneNumber(e.target.value)}
-                  className={`mt-1 block w-full h-10 rounded-md bg-gray-50 border border-gray-200 px-3 text-sm placeholder-gray-400 focus:border-violet-500 focus:ring-violet-500/30 ${
-                    errors.phoneNumber ? "border-red-500" : ""
-                  }`}
-                />
-                {errors.phoneNumber && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.phoneNumber}
-                  </p>
-                )}
-              </div>
-            </form>
-          </div>
-
-          {/* Order Summary */}
-          <div>
-            <OrderSummary
-              cartItems={cartItems}
-              selectedShippingCost={shippingCost}
-              loyaltyDiscount={loyaltyApplied.discountAmount}
-            />
-
-            <LoyaltyPointsPanel
-              available={loyaltyBalance}
-              cartTotal={cartTotal}
-              onApply={(data) => setLoyaltyApplied(data)}
-            />
-
-            {/* Shipping Options */}
-            <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <h2 className="mb-3 text-base font-semibold text-gray-900">
-                {t("payment.checkout.shipping_options")}
-              </h2>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      name="shipping"
-                      id="standard"
-                      className="form-radio h-4 w-4 border-gray-300 text-violet-600 focus:ring-violet-400"
-                      value="standard"
-                      checked={selectedShippingOption === "standard"}
-                      onChange={handleShippingChange}
-                    />
-                    <label
-                      htmlFor="standard"
-                      className="ml-2 text-sm text-gray-700"
-                    >
-                      {t("payment.checkout.standard_shipping")}
-                    </label>
-                  </div>
-                  <span className="text-sm text-gray-700">
-                    {formatCurrency(20000)}
-                  </span>
+                <div>
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">{t("payment.checkout.first_name")}</label>
+                  <input type="text" id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} className={`block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30 ${errors.firstName ? "border-red-500" : ""}`} />
+                  {errors.firstName && <p className="text-sm text-red-500 mt-1">{errors.firstName}</p>}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      name="shipping"
-                      id="pickup"
-                      className="form-radio h-4 w-4 border-gray-300 text-violet-600 focus:ring-violet-400"
-                      value="pickup"
-                      checked={selectedShippingOption === "pickup"}
-                      onChange={handleShippingChange}
-                    />
-                    <label
-                      htmlFor="pickup"
-                      className="ml-2 text-sm text-gray-700"
-                    >
-                      {t("payment.checkout.pickup_store")}
-                    </label>
-                  </div>
+                <div>
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">{t("payment.checkout.last_name")}</label>
+                  <input type="text" id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} className={`block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30 ${errors.lastName ? "border-red-500" : ""}`} />
+                  {errors.lastName && <p className="text-sm text-red-500 mt-1">{errors.lastName}</p>}
                 </div>
-                <p className="text-xs text-gray-500 ml-6">
-                  {t("payment.checkout.pickup_address")}
-                </p>
-              </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700 mb-1">{t("payment.checkout.street_address")}</label>
+                  <AddressAutocomplete value={streetAddress} onChange={setStreetAddress} placeholder="Nhập số nhà, tên đường..." className={`block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30 ${errors.streetAddress ? "border-red-500" : ""}`} />
+                </div>
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">{t("payment.checkout.city")}</label>
+                  <input type="text" id="city" value={city} onChange={e => setCity(e.target.value)} className={`block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30 ${errors.city ? "border-red-500" : ""}`} />
+                  {errors.city && <p className="text-sm text-red-500 mt-1">{errors.city}</p>}
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">{t("payment.checkout.phone")}</label>
+                  <input type="tel" id="phone" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} className={`block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30 ${errors.phoneNumber ? "border-red-500" : ""}`} />
+                  {errors.phoneNumber && <p className="text-sm text-red-500 mt-1">{errors.phoneNumber}</p>}
+                </div>
+              </form>
             </div>
 
-            {/* Payment Method */}
-            <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <h2 className="mb-4 text-base font-semibold text-gray-900 flex items-center gap-2">
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-violet-600">
-                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.8"/>
-                  <path d="M2 10h20" stroke="currentColor" strokeWidth="1.8"/>
-                </svg>
-                Phương thức thanh toán
-              </h2>
-              <PaymentMethodSelector
-                selected={paymentMethod}
-                onChange={setPaymentMethod}
-              />
-            </div>
-          </div>
-        </div>
+            {/* Payment & Rewards Info */}
+            <LoyaltyPointsPanel available={loyaltyBalance} cartTotal={cartTotal} onApply={setLoyaltyApplied} />
 
-        {/* Next Button */}
-        <div className="mt-10 flex items-center justify-between gap-3 flex-wrap">
-          <p className="text-xs text-gray-500">
-            {t("payment.checkout.shipping")} {formatCurrency(shippingCost)} - {t("payment.checkout.total")}{" "}
-            <span className="font-semibold text-violet-700">
-              {formatCurrency(Math.max(0, cartTotal - loyaltyApplied.discountAmount))}
-            </span>
-          </p>
-          <button
-            type="button"
-            onClick={e => {
-              if (isCartEmpty) { e.preventDefault(); return; }
-              handleNext();
-            }}
-            disabled={isCartEmpty}
-            className={`flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold shadow-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 ${
-              isCartEmpty
-                ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                : "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:shadow-lg hover:shadow-violet-300/50 hover:-translate-y-0.5 active:translate-y-0"
-            }`}
-          >
-            {t("payment.checkout.next_button")}
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="mb-3 text-lg font-semibold text-gray-900">Mã giảm giá</h2>
+              <div className="flex items-center gap-2">
+                <input type="text" value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Nhập mã giảm giá" className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[var(--color-primary-)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-)]/30" />
+                <button type="button" onClick={handleApplyCoupon} disabled={couponLoading} className="rounded-xl bg-[var(--color-primary-)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--color-primary-)] disabled:opacity-60">{couponLoading ? "..." : "Áp dụng"}</button>
+              </div>
+              {couponMessage && <p className={`mt-2 text-xs ${couponDiscount > 0 ? "text-emerald-600" : "text-red-500"}`}>{couponMessage}</p>}
+            </div>
+
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">Phương thức thanh toán</h2>
+              <PaymentMethodSelector selected={paymentMethod} onChange={setPaymentMethod} />
+              {paymentMethod === "momo" && (
+                <div className="mt-4 rounded-xl border border-pink-100 bg-pink-50 p-4">
+                  <p className="text-sm font-medium text-pink-700 mb-2">Quét QR MoMo</p>
+                  <img src={momoQr} alt="MoMo QR" className="h-36 w-36 rounded-md border border-pink-200 bg-white p-2 object-contain" />
+                </div>
+              )}
+            </div>
+            
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">Ghi chú đơn hàng</h2>
+              <textarea rows={3} value={note} onChange={e => setNote(e.target.value)} placeholder="Nhập ghi chú (nếu có)" className="block w-full rounded-md border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-[var(--color-primary-)] focus:ring-[var(--color-primary-)]/30" />
+            </div>
+
+          </div>
+
+          <div className="lg:col-span-5">
+            <OrderSummary cartItems={cartItems} selectedShippingCost={shippingCost} loyaltyDiscount={loyaltyApplied.discountAmount} couponDiscount={couponDiscount} previewTotals={previewTotals} />
+            <button type="button" onClick={handlePlaceOrder} disabled={isCartEmpty || isSubmitting} className={`mt-6 w-full flex justify-center items-center gap-2 rounded-xl px-8 py-4 text-lg font-bold shadow-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-)] focus-visible:ring-offset-2 ${isCartEmpty || isSubmitting ? "cursor-not-allowed bg-gray-200 text-gray-500" : "bg-gradient-to-r from-[var(--color-primary-)] to-purple-600 text-white hover:shadow-lg hover:shadow-[var(--color-primary-)]/50 hover:-translate-y-0.5 active:translate-y-0"}`}>
+              {isSubmitting ? "Đang xử lý..." : "Đặt hàng"}
+              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
       </div>
-      <Support></Support>
     </div>
   );
 }
 
 export default ShoppingCard_CheckOut;
-
-

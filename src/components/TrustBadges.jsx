@@ -44,11 +44,11 @@ const IconHeadset = () => (
 
 /* ── Badges data ─────────────────────────────────── */
 const BADGES = [
-  { icon: <IconTruck />,   label: "Mien phi giao hang",    sub: "Don tu 500.000d",        gradient: "from-blue-500 to-cyan-500",     glow: "shadow-blue-100" },
-  { icon: <IconShield />,  label: "Bao hanh chinh hang",  sub: "12 - 36 thang",           gradient: "from-violet-500 to-purple-600", glow: "shadow-violet-100" },
-  { icon: <IconReturn />,  label: "Doi tra de dang",       sub: "Trong vong 15 ngay",      gradient: "from-emerald-500 to-teal-500", glow: "shadow-emerald-100" },
-  { icon: <IconLock />,    label: "Thanh toan an toan",   sub: "VNPAY - MoMo - COD",      gradient: "from-orange-500 to-amber-500", glow: "shadow-orange-100" },
-  { icon: <IconHeadset />, label: "Ho tro 24/7",           sub: "Hotline: 1800-9999",      gradient: "from-pink-500 to-rose-500",   glow: "shadow-pink-100" },
+  { icon: <IconTruck />,   label: "Mien phi giao hang",    sub: "Don tu 500.000d",        gradient: "from-violet-500 to-purple-600", glow: "shadow-violet-100" },
+  { icon: <IconShield />,  label: "Bao hanh chinh hang",  sub: "12 - 36 thang",           gradient: "from-violet-600 to-purple-700", glow: "shadow-violet-100" },
+  { icon: <IconReturn />,  label: "Doi tra de dang",       sub: "Trong vong 15 ngay",      gradient: "from-purple-500 to-violet-600", glow: "shadow-violet-100" },
+  { icon: <IconLock />,    label: "Thanh toan an toan",   sub: "VNPAY - MoMo - COD",      gradient: "from-violet-700 to-fuchsia-600", glow: "shadow-violet-100" },
+  { icon: <IconHeadset />, label: "Ho tro 24/7",           sub: "Hotline: 1800-9999",      gradient: "from-purple-600 to-violet-600",   glow: "shadow-violet-100" },
 ];
 
 /* ── Stats counters ──────────────────────────────── */
@@ -64,10 +64,10 @@ const TrustBadges = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white border-y border-gray-100">
+    <div className="border-y border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-950">
       {/* ── Badge strip ── */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-5">
-        <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap overflow-x-auto">
+      <div className="mx-auto max-w-screen-xl px-4 py-5 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 overflow-x-auto sm:flex-nowrap">
           {BADGES.map((badge, i) => (
             <div
               key={i}

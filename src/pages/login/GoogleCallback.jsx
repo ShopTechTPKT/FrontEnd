@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import notify from '../../utils/notify';
 
 // OAuth2 callback — uses raw axios with full URL to avoid interceptor redirect loops
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081';
+const API_URL = import.meta.env.DEV ? "" : (import.meta.env.VITE_API_URL ?? "");
 
 export default function GoogleCallback() {
   const navigate = useNavigate();

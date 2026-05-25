@@ -1,116 +1,53 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
-import { ImageOff, Search, Plus, Pencil } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
+import { ImageOff, Search, Plus, Pencil, Trash2, LayoutGrid, List } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import formatCurrency from "../../utils/formatCurrency";
-import Button from '../../components/ui/Button';
-import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
-import EmptyState from '../../components/ui/EmptyState';
-import { useProductCRUD, CATEGORY_IDS } from './hooks/useProductCRUD';
+import Button from "../../components/ui/Button";
+import EmptyState from "../../components/ui/EmptyState";
+import Pagination from "../../components/ui/Pagination";
+import TableSortHeader from "../../components/ui/TableSortHeader";
+import { useProductCRUD, CATEGORY_IDS } from "./hooks/useProductCRUD";
+import PhoneForm, {
+  CATEGORY_BRAND_MAPPING_PHONE,
+} from "./components/forms/PhoneForm";
+import ProductTableLayout from "./components/products/ProductTableLayout";
 
-const CATEGORY_BRAND_MAPPING = {
-  52: 'iPhone',
-  53: 'Samsung',
-  54: 'Xiaomi',
-};
-
-const PhoneForm = ({
-  phone = {},
-  onSave,
-  onCancel,
-  formTitle,
-  theme,
-  validCategoryIds = [52, 53, 54],
-}) => {
-  const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    name: phone?.name || '',
-    description: phone?.description || '',
-    unitPrice: phone?.unitPrice || '',
-    quantity: phone?.quantity || '',
-    categoryId: phone?.categoryId || '',
-    imageUrl: phone?.imageUrl || '',
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'unitPrice' || name === 'quantity' ? parseFloat(value) || value : 
-              name === 'categoryId' ? (value === '' ? '' : parseInt(value)) : value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await onSave(formData);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className={`w-full max-w-2xl rounded-xl shadow-2xl p-6 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
-        <h3 className="text-xl font-bold mb-4">{formTitle}</h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Tên điện thoại</label>
-              <input name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Hãng</label>
-              <select name="categoryId" value={formData.categoryId} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required>
-                <option value="">-- Chọn hãng --</option>
-                {validCategoryIds.map(id => <option key={id} value={id}>{CATEGORY_BRAND_MAPPING[id]}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Giá</label>
-              <input type="number" name="unitPrice" value={formData.unitPrice} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Số lượng</label>
-              <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" required />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Mô tả</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" rows="3" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Link ảnh</label>
-            <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} className="w-full p-2 border rounded dark:bg-gray-700" />
-          </div>
-          <div className="flex justify-end space-x-3 mt-6">
-            <Button type="button" onClick={onCancel} variant="ghost">{t('common.cancel')}</Button>
-            <Button type="submit" variant="primary">Lưu</Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-const PhoneTable = memo(({ theme = 'light' }) => {
+const PhoneTable = memo(() => {
   const { t } = useTranslation();
   const { performOperation } = useProductCRUD();
   const [phones, setPhones] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [formState, setFormState] = useState({ isOpen: false, currentPhone: null, type: 'add' });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState("list"); // 'list' | 'grid'
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
+  // Sort
+  const [sortConfig, setSortConfig] = useState({ key: "id", direction: "desc" });
+  
+  // Bulk selection
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  const [formState, setFormState] = useState({
+    isOpen: false,
+    currentPhone: null,
+    type: "add",
+  });
 
   const fetchPhones = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8081/api/products', {
-        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+      const response = await fetch("http://localhost:8081/api/products", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
       });
       if (response.ok) {
         const data = await response.json();
         const phoneIds = CATEGORY_IDS.phone;
-        setPhones(data.filter(p => phoneIds.includes(p.categoryId)));
+        setPhones(data.filter((p) => phoneIds.includes(p.categoryId)));
       }
     } finally {
       setLoading(false);
@@ -122,79 +59,331 @@ const PhoneTable = memo(({ theme = 'light' }) => {
   }, [fetchPhones]);
 
   const handleSave = async (formData) => {
-    const op = formState.type === 'add' ? 'create' : 'update';
+    const op = formState.type === "add" ? "create" : "update";
     const id = formState.currentPhone?.id || formState.currentPhone?.productID;
-    await performOperation(op, 'phone', formData, id);
-    setFormState({ isOpen: false, currentPhone: null, type: 'add' });
+    await performOperation(op, "phone", formData, id);
+    setFormState({ isOpen: false, currentPhone: null, type: "add" });
     fetchPhones();
   };
 
-  const filteredPhones = phones.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedIds(paginatedData.map(l => l.id || l.productID));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectOne = (e, id) => {
+    if (e.target.checked) {
+      setSelectedIds(prev => [...prev, id]);
+    } else {
+      setSelectedIds(prev => prev.filter(item => item !== id));
+    }
+  };
+
+  // 1. Filter
+  const filteredData = useMemo(() => {
+    return phones.filter(
+      (p) =>
+        p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.id || p.productID)?.toString().includes(searchTerm)
+    );
+  }, [phones, searchTerm]);
+
+  // 2. Sort
+  const sortedData = useMemo(() => {
+    const sortableItems = [...filteredData];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+        
+        // Handle alias mapping
+        if (sortConfig.key === 'id') {
+          aValue = a.id || a.productID;
+          bValue = b.id || b.productID;
+        } else if (sortConfig.key === 'unitPrice') {
+          aValue = Number(aValue) || 0;
+          bValue = Number(bValue) || 0;
+        } else if (sortConfig.key === 'quantity') {
+          aValue = Number(aValue) || 0;
+          bValue = Number(bValue) || 0;
+        } else if (sortConfig.key === 'brand') {
+          aValue = CATEGORY_BRAND_MAPPING_PHONE[a.categoryId] || "";
+          bValue = CATEGORY_BRAND_MAPPING_PHONE[b.categoryId] || "";
+        }
+
+        if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [filteredData, sortConfig]);
+
+  // 3. Paginate
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return sortedData.slice(start, start + itemsPerPage);
+  }, [sortedData, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedIds([]);
+  }, [searchTerm, itemsPerPage]);
+  
+  const getStockBadge = (quantity) => {
+    if (quantity <= 0) return <span className="admin-badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Hết hàng</span>;
+    if (quantity <= 5) return <span className="admin-badge bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Sắp hết ({quantity})</span>;
+    return <span className="admin-badge bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Còn hàng</span>;
+  };
+
+  const toolbar = (
+    <>
+      {selectedIds.length > 0 ? (
+        <div className="flex items-center gap-2 bg-[var(--color-primary-)] dark:bg-[var(--color-primary-)]/20 px-3 py-1.5 rounded-lg border border-[var(--color-primary-)] dark:border-[var(--color-primary-)]">
+          <span className="text-sm font-medium text-[var(--color-primary-)] dark:text-[var(--color-primary-)]">{selectedIds.length} đã chọn</span>
+          <div className="h-4 w-px bg-[var(--color-primary-)] dark:bg-[var(--color-primary-)] mx-1"></div>
+          <button className="text-red-500 hover:text-red-700 p-1 rounded transition-colors" title="Xóa đã chọn">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      ) : (
+        <Button
+          onClick={() =>
+            setFormState({ isOpen: true, currentPhone: null, type: "add" })
+          }
+          variant="primary"
+          icon={<Plus size={18} />}
+        >
+          {t("admin.thm")}
+        </Button>
+      )}
+      <div className="relative w-full sm:w-64">
+        <input
+          type="text"
+          placeholder="Tìm kiếm điện thoại..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="admin-input w-full pl-10 py-2"
+        />
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
+          size={18}
+        />
+      </div>
+    </>
+  );
+
+  const viewToggle = (
+    <div className="flex items-center bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-lg p-0.5">
+      <button 
+        onClick={() => setViewMode("list")}
+        className={`p-1.5 rounded-md transition-colors ${viewMode === "list" ? "bg-[var(--color-bg)] shadow-sm text-[var(--color-primary)]" : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"}`}
+        title="List view"
+      >
+        <List size={16} />
+      </button>
+      <button 
+        onClick={() => setViewMode("grid")}
+        className={`p-1.5 rounded-md transition-colors ${viewMode === "grid" ? "bg-[var(--color-bg)] shadow-sm text-[var(--color-primary)]" : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"}`}
+        title="Grid view"
+      >
+        <LayoutGrid size={16} />
+      </button>
+    </div>
+  );
 
   return (
-    <div className={`p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">{t('admin.menu_phone')}</h2>
-        <div className="flex items-center space-x-4">
-          <Button onClick={() => setFormState({ isOpen: true, currentPhone: null, type: 'add' })} variant="primary" icon={<Plus size={18} />}>
-            Thêm mới
-          </Button>
-          <div className="relative w-64">
-            <input
-              type="text"
-              placeholder="Tìm kiếm điện thoại..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border dark:bg-gray-800"
+    <ProductTableLayout 
+      title={t("admin.menu_phone")}
+      subtitle="Quản lý danh sách điện thoại di động"
+      itemCount={phones.length}
+      toolbar={toolbar}
+      viewToggle={viewToggle}
+    >
+      {loading ? (
+        <div className="space-y-3 py-2" aria-busy="true">
+          {[1, 2, 3, 4, 5, 6].map((row) => (
+            <div
+              key={row}
+              className="admin-skeleton h-14 rounded-xl border border-[var(--color-border)]"
             />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-          </div>
+          ))}
         </div>
-      </div>
+      ) : phones.length === 0 ? (
+        <EmptyState title="Không có điện thoại" />
+      ) : (
+        <div className="flex flex-col rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-sm overflow-hidden">
+          {viewMode === "list" ? (
+            <div className="overflow-x-auto">
+              <table className="admin-table w-full">
+                <thead>
+                  <tr>
+                    <th className="w-12 text-center pl-4">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] bg-[var(--color-bg)]"
+                        checked={selectedIds.length === paginatedData.length && paginatedData.length > 0}
+                        onChange={handleSelectAll}
+                      />
+                    </th>
+                    <th>Ảnh</th>
+                    <TableSortHeader label="Tên sản phẩm" sortKey="name" currentSort={sortConfig} onSort={handleSort} />
+                    <TableSortHeader label="Giá" sortKey="unitPrice" currentSort={sortConfig} onSort={handleSort} />
+                    <TableSortHeader label="Kho" sortKey="quantity" currentSort={sortConfig} onSort={handleSort} />
+                    <TableSortHeader label="Hãng" sortKey="brand" currentSort={sortConfig} onSort={handleSort} />
+                    <th className="text-right pr-6">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedData.map((phone) => {
+                    const id = phone.id || phone.productID;
+                    const isSelected = selectedIds.includes(id);
+                    return (
+                    <tr key={id} className={`admin-table-row transition-colors ${isSelected ? 'bg-[var(--color-primary-)]/50 dark:bg-[var(--color-primary-)]/10' : ''}`}>
+                      <td className="w-12 text-center pl-4">
+                        <input 
+                          type="checkbox" 
+                          className="rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] bg-[var(--color-bg)]"
+                          checked={isSelected}
+                          onChange={(e) => handleSelectOne(e, id)}
+                        />
+                      </td>
+                      <td>
+                        {phone.imageUrl ? (
+                          <div className="w-12 h-12 rounded-lg border border-[var(--color-border)] overflow-hidden bg-[var(--color-bg)] group relative">
+                            <img
+                              src={phone.imageUrl}
+                              alt={phone.name}
+                              className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)] flex items-center justify-center text-[var(--color-text-muted)]">
+                            <ImageOff size={20} />
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <div className="font-medium text-[var(--color-text)]">{phone.name}</div>
+                        <div className="text-xs text-[var(--color-text-muted)] mt-0.5">ID: #{id}</div>
+                      </td>
+                      <td className="font-semibold text-[var(--color-text)]">{formatCurrency(phone.unitPrice)}</td>
+                      <td>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="font-medium">{phone.quantity}</span>
+                          {getStockBadge(phone.quantity)}
+                        </div>
+                      </td>
+                      <td>
+                        <span className="px-2.5 py-1 bg-[var(--color-bg-muted)] rounded-md text-xs font-medium text-[var(--color-text-secondary)]">
+                          {CATEGORY_BRAND_MAPPING_PHONE[phone.categoryId] || "N/A"}
+                        </span>
+                      </td>
+                      <td className="text-right pr-6">
+                        <Button
+                          onClick={() =>
+                            setFormState({
+                              isOpen: true,
+                              currentPhone: phone,
+                              type: "edit",
+                            })
+                          }
+                          variant="ghost"
+                          size="sm"
+                          icon={<Pencil size={16} />}
+                        />
+                      </td>
+                    </tr>
+                  )})}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {paginatedData.map((phone) => {
+                const id = phone.id || phone.productID;
+                const isSelected = selectedIds.includes(id);
+                return (
+                  <div key={id} className={`group relative bg-[var(--color-bg)] border rounded-xl overflow-hidden transition-all hover:shadow-md ${isSelected ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]' : 'border-[var(--color-border)]'}`}>
+                    <div className="absolute top-2 left-2 z-10">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] shadow-sm bg-[var(--color-bg)]"
+                        checked={isSelected}
+                        onChange={(e) => handleSelectOne(e, id)}
+                      />
+                    </div>
+                    <div className="absolute top-2 right-2 z-10">
+                      {getStockBadge(phone.quantity)}
+                    </div>
+                    
+                    <div className="aspect-square bg-[var(--color-bg)] border-b border-[var(--color-border)] p-4 flex items-center justify-center">
+                      {phone.imageUrl ? (
+                        <img src={phone.imageUrl} alt={phone.name} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <ImageOff size={40} className="text-[var(--color-text-muted)] opacity-50" />
+                      )}
+                    </div>
+                    
+                    <div className="p-3">
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">{CATEGORY_BRAND_MAPPING_PHONE[phone.categoryId] || "Unknown Brand"}</p>
+                      <h3 className="text-sm font-semibold text-[var(--color-text)] line-clamp-2 mb-2 min-h-[2.5rem]" title={phone.name}>{phone.name}</h3>
+                      <div className="flex items-center justify-between mt-auto">
+                        <span className="font-bold text-[var(--color-primary)]">{formatCurrency(phone.unitPrice)}</span>
+                        <button
+                          onClick={() => setFormState({ isOpen: true, currentPhone: phone, type: "edit" })}
+                          className="p-1.5 rounded-md text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-subtle)] hover:text-[var(--color-primary)] transition-colors"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-      {loading ? <ProductGridSkeleton count={5} /> : (
-        <div className="overflow-x-auto rounded-lg border dark:border-gray-700">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase">Ảnh</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase">Tên sản phẩm</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase">Giá</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase">Kho</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase">Hãng</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase">Hành động</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredPhones.map((phone) => (
-                <tr key={phone.id || phone.productID}>
-                  <td className="px-6 py-4">
-                    {phone.imageUrl ? <img src={phone.imageUrl} alt="" className="h-12 w-12 object-cover rounded" /> : <ImageOff size={24} />}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium">{phone.name}</td>
-                  <td className="px-6 py-4 text-sm">{formatCurrency(phone.unitPrice)}</td>
-                  <td className="px-6 py-4 text-sm">{phone.quantity}</td>
-                  <td className="px-6 py-4 text-sm">{CATEGORY_BRAND_MAPPING[phone.categoryId] || 'N/A'}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <Button onClick={() => setFormState({ isOpen: true, currentPhone: phone, type: 'edit' })} variant="ghost" size="sm" icon={<Pencil size={16} />} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredData.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </div>
       )}
 
-      {formState.isOpen && (
+      {formState.isOpen ? (
         <PhoneForm
           phone={formState.currentPhone}
           onSave={handleSave}
-          onCancel={() => setFormState({ isOpen: false, currentPhone: null, type: 'add' })}
-          formTitle={formState.type === 'add' ? 'Thêm Điện Thoại' : 'Sửa Điện Thoại'}
-          theme={theme}
+          onCancel={() =>
+            setFormState({
+              isOpen: false,
+              currentPhone: null,
+              type: "add",
+            })
+          }
+          formTitle={
+            formState.type === "add" ? "Thêm Điện Thoại" : "Sửa Điện Thoại"
+          }
         />
-      )}
-    </div>
+      ) : null}
+    </ProductTableLayout>
   );
 });
 

@@ -22,3 +22,8 @@ export const redeemLoyaltyPoints = async ({ userId, points, orderId }) => {
   });
   return response.data;
 };
+
+export const getLoyaltyTier = async (userId) => {
+  const response = await axiosInstance.get(`/loyalty/tier/${userId}`);
+  return response.data;
+};

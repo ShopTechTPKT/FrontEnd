@@ -1,5 +1,5 @@
-﻿import { useState } from 'react';
-import { FaUsers, FaUserShield, FaEnvelope, FaPhone, FaMapMarkerAlt, FaEdit, FaTrash, FaPlus, FaSearch, FaStar } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaUsers, FaUserShield, FaEnvelope, FaPhone, FaEdit, FaTrash, FaPlus, FaSearch, FaStar } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
 const CustomerManagement = () => {
@@ -109,10 +109,10 @@ const CustomerManagement = () => {
 
   const getTierBadge = (tier) => {
     const colors = {
-      VIP: 'bg-gradient-to-r from-violet-800 to-violet-900 text-white',
+      VIP: 'bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white',
       Gold: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white',
       Silver: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white',
-      Regular: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+      Regular: 'bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white'
     };
 
     return (
@@ -137,17 +137,17 @@ const CustomerManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="animate-pageIn pb-10">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaUsers className="text-6xl mb-4 text-violet-400" />
+              <FaUsers className="text-6xl mb-4 text-[var(--color-primary-)]" />
               <h1 className="text-5xl font-bold mb-3">{t('customer.customer_management')}</h1>
-              <p className="text-xl text-violet-300">{t('customer.manage_your_customer_database')}</p>
+              <p className="text-xl text-[var(--color-primary-)]">{t('customer.manage_your_customer_database')}</p>
             </div>
-            <button className="bg-white text-violet-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            <button type="button" className="bg-white text-[var(--color-primary-)] px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
               <FaPlus />
               Add New Customer
             </button>
@@ -156,7 +156,7 @@ const CustomerManagement = () => {
       </div>
 
       {/* Filters */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-md">
+      <div className="sticky top-0 z-30 admin-header-glass border-b border-[var(--color-border)] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-wrap gap-3 mb-6">
             {Object.entries(tierConfig).map(([key, config]) => {
@@ -168,8 +168,8 @@ const CustomerManagement = () => {
                   onClick={() => setFilterTier(key)}
                   className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                     filterTier === key
-                      ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
-                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600'
+                      ? 'bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white shadow-lg scale-105'
+                      : 'bg-[var(--color-bg)] text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-[var(--color-primary-)]'
                   }`}
                 >
                   <Icon />
@@ -181,13 +181,13 @@ const CustomerManagement = () => {
 
           {/* Search */}
           <div className="relative">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
             <input
               type="text"
               placeholder={t('customer.search_by_name_email')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+              className="admin-input w-full pl-12 pr-4 py-3 rounded-[var(--radius-lg)] dark:bg-gray-900 dark:border-gray-700"
             />
           </div>
         </div>
@@ -195,93 +195,86 @@ const CustomerManagement = () => {
 
       {/* Customers Table */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gradient-to-r from-violet-800 to-violet-900 text-white">
-                <tr>
-                  <th className="px-6 py-4 text-left font-semibold">{t('admin.customer_id')}</th>
-                  <th className="px-6 py-4 text-left font-semibold">{t('customer.name')}</th>
-                  <th className="px-6 py-4 text-left font-semibold">{t('customer.contact')}</th>
-                  <th className="px-6 py-4 text-left font-semibold">{t('customer.tier')}</th>
-                  <th className="px-6 py-4 text-left font-semibold">{t('customer.orders')}</th>
-                  <th className="px-6 py-4 text-left font-semibold">{t('customer.total_spent')}</th>
-                  <th className="px-6 py-4 text-left font-semibold">{t('admin.status')}</th>
-                  <th className="px-6 py-4 text-center font-semibold">{t('customer.actions')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCustomers.map((customer, index) => (
-                  <tr 
-                    key={customer.id}
-                    className={`border-b border-gray-200 hover:bg-violet-50 transition-colors ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                    }`}
-                  >
-                    <td className="px-6 py-4">
-                      <span className="font-bold text-violet-600">{customer.id}</span>
+        <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-lg">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>{t('admin.customer_id')}</th>
+                <th>{t('customer.name')}</th>
+                <th>{t('customer.contact')}</th>
+                <th>{t('customer.tier')}</th>
+                <th>{t('customer.orders')}</th>
+                <th>{t('customer.total_spent')}</th>
+                <th>{t('admin.status')}</th>
+                <th className="text-center">{t('customer.actions')}</th>
+              </tr>
+            </thead>
+            <tbody>
+                {filteredCustomers.map((customer) => (
+                  <tr key={customer.id} className="admin-table-row">
+                    <td>
+                      <span className="font-bold text-[var(--color-primary)]">{customer.id}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-violet-700 rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary-)] to-[var(--color-primary-)] rounded-full flex items-center justify-center text-white font-bold">
                           {customer.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">{customer.name}</p>
-                          <p className="text-xs text-gray-500">Joined {new Date(customer.joinDate).toLocaleDateString('vi-VN')}</p>
+                          <p className="font-semibold text-[var(--color-text)]">{customer.name}</p>
+                          <p className="text-xs text-[var(--color-text-muted)]">Joined {new Date(customer.joinDate).toLocaleDateString('vi-VN')}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <FaEnvelope className="text-violet-600" />
+                        <div className="flex items-center gap-2 text-sm text-[var(--color-text)]">
+                          <FaEnvelope className="text-[var(--color-primary-)]" />
                           {customer.email}
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <FaPhone className="text-violet-600" />
+                        <div className="flex items-center gap-2 text-sm text-[var(--color-text)]">
+                          <FaPhone className="text-[var(--color-primary-)]" />
                           {customer.phone}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       {getTierBadge(customer.tier)}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="font-bold text-gray-900">{customer.totalOrders}</span>
-                      <p className="text-xs text-gray-500">Last: {new Date(customer.lastOrder).toLocaleDateString('vi-VN')}</p>
+                    <td>
+                      <span className="font-bold text-[var(--color-text)]">{customer.totalOrders}</span>
+                      <p className="text-xs text-[var(--color-text-muted)]">Last: {new Date(customer.lastOrder).toLocaleDateString('vi-VN')}</p>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="font-bold text-gray-900">
+                    <td>
+                      <span className="font-bold text-[var(--color-text)]">
                         {customer.totalSpent.toLocaleString('vi-VN')}₫
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       {getStatusBadge(customer.status)}
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       <div className="flex items-center justify-center gap-2">
-                        <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <button type="button" className="p-2 btn-admin-outline rounded-lg">
                           <FaEdit />
                         </button>
-                        <button className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        <button type="button" className="p-2 btn-admin-primary bg-red-600 hover:bg-red-700 border-0 rounded-lg">
                           <FaTrash />
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
 
         {/* Empty State */}
         {filteredCustomers.length === 0 && (
           <div className="text-center py-12">
-            <FaUsers className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('customer.no_customers_found')}</h3>
-            <p className="text-gray-600">{t('customer.try_adjusting_your_filters')}</p>
+            <FaUsers className="text-6xl text-[var(--color-text-muted)] mx-auto mb-4 opacity-60" />
+            <h3 className="text-2xl font-bold text-[var(--color-text)] mb-2">{t('customer.no_customers_found')}</h3>
+            <p className="text-[var(--color-text-secondary)]">{t('customer.try_adjusting_your_filters')}</p>
           </div>
         )}
       </div>
@@ -289,20 +282,20 @@ const CustomerManagement = () => {
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-violet-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-6 rounded-2xl shadow-lg">
             <FaUsers className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{customers.length}</p>
-            <p className="text-violet-100">{t('customer.total_customers')}</p>
+            <p className="text-[var(--color-primary-)]">{t('customer.total_customers')}</p>
           </div>
           <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg">
             <FaUserShield className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{customers.filter(c => c.tier === t('customer.vip')).length}</p>
             <p className="text-green-100">{t('customer.vip_customers')}</p>
           </div>
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-6 rounded-2xl shadow-lg">
             <FaStar className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{customers.filter(c => c.status === 'active').length}</p>
-            <p className="text-blue-100">{t('customer.active_customers')}</p>
+            <p className="text-[var(--color-primary-)]">{t('customer.active_customers')}</p>
           </div>
           <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white p-6 rounded-2xl shadow-lg">
             <FaStar className="text-4xl mb-3" />

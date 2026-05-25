@@ -111,7 +111,7 @@ const ShoppingCart = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-violet-50/50 via-white to-gray-50/80 pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--color-primary-50)]/50 via-white to-gray-50/80 pb-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Breadcrumb — tối giản */}
         <Breadcrumb
@@ -160,7 +160,7 @@ const ShoppingCart = () => {
 
         {!loading && cartItems.length === 0 ? (
           <div className="rounded-2xl border border-gray-100 bg-white px-6 py-14 sm:py-16 text-center shadow-sm">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-violet-50 text-violet-600">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-primary-50)] text-[var(--color-primary-600)]">
               <svg
                 className="h-7 w-7"
                 fill="none"
@@ -181,7 +181,7 @@ const ShoppingCart = () => {
               {t("common.catalog_no_products_hint")}
             </p>
             <Link to={path.home} className="inline-block mt-8">
-              <span className="inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors">
+              <span className="inline-flex items-center justify-center rounded-xl bg-[var(--color-primary-600)] px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-[var(--color-primary-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] focus-visible:ring-offset-2 transition-colors">
                 {t("cart.tip_tc_mua_sm")}
               </span>
             </Link>
@@ -227,11 +227,11 @@ const ShoppingCart = () => {
               </div>
 
               <aside className="mt-8 lg:mt-0 lg:col-span-4">
-                <div className="rounded-2xl border border-violet-100/80 bg-white p-5 sm:p-6 shadow-sm lg:sticky lg:top-28">
+                <div className="rounded-2xl border border-[var(--color-primary-100)]/80 bg-white p-5 sm:p-6 shadow-sm lg:sticky lg:top-28">
                   <h2 className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     {t("order.subtotal")}
                   </h2>
-                  <p className="mt-2 text-2xl font-semibold text-violet-700 tabular-nums">
+                  <p className="mt-2 text-2xl font-semibold text-[var(--color-primary-700)] tabular-nums">
                     {formatCurrency(subtotal)}
                   </p>
                   <p className="mt-3 text-xs text-gray-500 leading-relaxed">
@@ -241,7 +241,7 @@ const ShoppingCart = () => {
                   <button
                     type="button"
                     onClick={handleCheckout}
-                    className="mt-6 w-full rounded-xl bg-violet-600 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 transition-colors lg:hidden"
+                    className="mt-6 w-full rounded-xl bg-[var(--color-primary-600)] py-3 text-sm font-medium text-white shadow-sm hover:bg-[var(--color-primary-700)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] focus-visible:ring-offset-2 transition-colors lg:hidden"
                   >
                     {t("cart.checkout")}
                   </button>

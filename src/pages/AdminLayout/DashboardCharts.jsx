@@ -4,44 +4,19 @@ import {
   LineChart, Line, BarChart, Bar, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
-
-/**
- * DashboardCharts — Admin analytics dashboard with revenue trends,
- * top products, and customer growth visualization using Recharts.
- */
+import { 
+  fetchOverview, 
+  fetchTopProducts, 
+  fetchRevenueByDay, 
+  fetchRevenueByMonth,
+  fetchOrdersTrend 
+} from "../../apis/adminStatsApi";
 
 const PERIODS = [
-  { label: "7 ngay", value: "7d" },
-  { label: "30 ngay", value: "30d" },
-  { label: "12 thang", value: "12m" },
+  { label: "7 ngày", value: "7d" },
+  { label: "30 ngày", value: "30d" },
+  { label: "12 tháng", value: "12m" },
 ];
-
-// Mock data for demo — replace with real API calls
-const generateMockRevenue = (period) => {
-  const count = period === "7d" ? 7 : period === "30d" ? 30 : 12;
-  return Array.from({ length: count }, (_, i) => ({
-    date: period === "12m" ? `T${i + 1}` : `${i + 1}`,
-    revenue: Math.floor(Math.random() * 50000000) + 10000000,
-    orders: Math.floor(Math.random() * 50) + 10,
-  }));
-};
-
-const MOCK_TOP_PRODUCTS = [
-  { name: "MacBook Pro M3", totalSold: 156, revenue: 7800000000 },
-  { name: "iPhone 15 Pro", totalSold: 234, revenue: 6084000000 },
-  { name: "iPad Air M2", totalSold: 98, revenue: 1960000000 },
-  { name: "AirPods Pro", totalSold: 312, revenue: 1872000000 },
-  { name: "Apple Watch S9", totalSold: 87, revenue: 1131000000 },
-  { name: "Samsung Galaxy S24", totalSold: 145, revenue: 2900000000 },
-  { name: "Dell XPS 15", totalSold: 67, revenue: 2680000000 },
-  { name: "Sony WH-1000XM5", totalSold: 201, revenue: 1608000000 },
-];
-
-const MOCK_CUSTOMER_GROWTH = Array.from({ length: 12 }, (_, i) => ({
-  month: `T${i + 1}`,
-  newCustomers: Math.floor(Math.random() * 100) + 20,
-  totalCustomers: 500 + i * 50 + Math.floor(Math.random() * 30),
-}));
 
 const formatVND = (value) => {
   if (value >= 1000000000) return `${(value / 1000000000).toFixed(1)}B`;
@@ -53,34 +28,123 @@ const formatVND = (value) => {
 export default function DashboardCharts() {
   const { t } = useTranslation();
   const [period, setPeriod] = useState("30d");
+  
+  const [overview, setOverview] = useState({ totalRevenue: 0, totalOrders: 0, avgOrderValue: 0 });
   const [revenueData, setRevenueData] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
+  const [customerGrowth, setCustomerGrowth] = useState([]);
 
   useEffect(() => {
-    setRevenueData(generateMockRevenue(period));
-  }, [period]);
+    fetchOverview().then(res => {
+      if (res && res.data) {
+        setOverview({
+          totalRevenue: res.data.totalRevenue || 0,
+          totalOrders: res.data.totalOrders || 0,
+          avgOrderValue: res.data.totalOrders ? (res.data.totalRevenue / res.data.totalOrders) : 0
+        });
+      } else if (res && res.totalRevenue !== undefined) {
+        setOverview({
+          totalRevenue: res.totalRevenue || 0,
+          totalOrders: res.totalOrders || 0,
+          avgOrderValue: res.totalOrders ? (res.totalRevenue / res.totalOrders) : 0
+        });
+      }
+    }).catch(console.error);
 
-  const totalRevenue = revenueData.reduce((s, d) => s + d.revenue, 0);
-  const totalOrders = revenueData.reduce((s, d) => s + d.orders, 0);
-  const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    fetchTopProducts(10).then(res => {
+       if (res && res.data) {
+         setTopProducts(res.data.map(p => ({
+           name: p.productName || p.name,
+           totalSold: p.totalSold || p.quantity,
+           revenue: p.revenue || p.totalRevenue
+         })));
+       }
+    }).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    const endDate = new Date();
+    let startDate = new Date();
+    
+    if (period === "7d" || period === "30d") {
+      if (period === "7d") {
+        startDate.setDate(endDate.getDate() - 6);
+      } else {
+        startDate.setDate(endDate.getDate() - 29);
+      }
+      const startStr = startDate.toISOString().split('T')[0];
+      const endStr = endDate.toISOString().split('T')[0];
+      
+      fetchRevenueByDay(startStr, endStr).then(res => {
+        if (res && res.data) {
+           const mapped = res.data.map(item => ({
+             date: item.date,
+             revenue: item.revenue || item.totalRevenue || 0,
+             orders: item.ordersCount || item.orders || 0
+           }));
+           setRevenueData(mapped);
+        }
+      }).catch(console.error);
+      
+      fetchOrdersTrend(startStr, endStr).then(res => {
+        if (res && res.data) {
+          let cum = 0;
+          const mapped = res.data.map(item => {
+             cum += (item.ordersCount || item.orders || 0);
+             return {
+               month: item.date,
+               totalCustomers: cum,
+               newCustomers: item.ordersCount || item.orders || 0
+             };
+          });
+          setCustomerGrowth(mapped);
+        }
+      }).catch(console.error);
+
+    } else if (period === "12m") {
+      const year = endDate.getFullYear();
+      fetchRevenueByMonth(year, year).then(res => {
+        if (res && res.data) {
+           const mapped = res.data.map(item => ({
+             date: `T${item.month}`,
+             revenue: item.revenue || item.totalRevenue || 0,
+             orders: item.ordersCount || item.orders || 0
+           }));
+           setRevenueData(mapped);
+           
+           let cum = 0;
+           const growth = res.data.map(item => {
+              cum += (item.ordersCount || item.orders || 0);
+              return {
+                 month: `T${item.month}`,
+                 totalCustomers: cum,
+                 newCustomers: item.ordersCount || item.orders || 0
+              };
+           });
+           setCustomerGrowth(growth);
+        }
+      }).catch(console.error);
+    }
+  }, [period]);
 
   return (
     <div className="space-y-8">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SummaryCard
-          label={t("dashboard.total_revenue") || "Tong doanh thu"}
-          value={formatVND(totalRevenue)}
+          label={t("dashboard.total_revenue") || "Tổng doanh thu"}
+          value={formatVND(overview.totalRevenue)}
           suffix=" VND"
           color="violet"
         />
         <SummaryCard
-          label={t("dashboard.total_orders") || "Tong don hang"}
-          value={totalOrders}
+          label={t("dashboard.total_orders") || "Tổng đơn hàng"}
+          value={overview.totalOrders}
           color="blue"
         />
         <SummaryCard
-          label={t("dashboard.avg_order") || "Trung binh/don"}
-          value={formatVND(avgOrder)}
+          label={t("dashboard.avg_order") || "Trung bình/đơn"}
+          value={formatVND(overview.avgOrderValue)}
           suffix=" VND"
           color="emerald"
         />
@@ -94,7 +158,7 @@ export default function DashboardCharts() {
             onClick={() => setPeriod(p.value)}
             className={`px-4 py-1.5 text-sm rounded-lg font-medium transition-colors ${
               period === p.value
-                ? "bg-violet-700 text-white"
+                ? "bg-[var(--color-primary-)] text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -104,7 +168,7 @@ export default function DashboardCharts() {
       </div>
 
       {/* Revenue Trend */}
-      <ChartCard title={t("dashboard.revenue_trend") || "Xu huong doanh thu"}>
+      <ChartCard title={t("dashboard.revenue_trend") || "Xu hướng doanh thu"}>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -127,22 +191,22 @@ export default function DashboardCharts() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Products */}
-        <ChartCard title={t("dashboard.top_products") || "Top san pham ban chay"}>
+        <ChartCard title={t("dashboard.top_products") || "Top sản phẩm bán chạy"}>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={MOCK_TOP_PRODUCTS} layout="vertical">
+            <BarChart data={topProducts} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis type="number" tickFormatter={formatVND} tick={{ fontSize: 11 }} />
               <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 11 }} />
               <Tooltip formatter={(v) => formatVND(v)} />
-              <Bar dataKey="totalSold" name="So luong" fill="#7c3aed" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="totalSold" name="Số lượng" fill="#7c3aed" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
 
         {/* Customer Growth */}
-        <ChartCard title={t("dashboard.customer_growth") || "Tang truong khach hang"}>
+        <ChartCard title={t("dashboard.customer_growth") || "Tăng trưởng đơn hàng"}>
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={MOCK_CUSTOMER_GROWTH}>
+            <AreaChart data={customerGrowth}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="month" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
@@ -151,7 +215,7 @@ export default function DashboardCharts() {
               <Area
                 type="monotone"
                 dataKey="totalCustomers"
-                name="Tong KH"
+                name="Tổng đơn"
                 stroke="#7c3aed"
                 fill="#ede9fe"
                 strokeWidth={2}
@@ -159,7 +223,7 @@ export default function DashboardCharts() {
               <Area
                 type="monotone"
                 dataKey="newCustomers"
-                name="KH moi"
+                name="Đơn mới"
                 stroke="#06b6d4"
                 fill="#cffafe"
                 strokeWidth={2}
@@ -174,8 +238,8 @@ export default function DashboardCharts() {
 
 function SummaryCard({ label, value, suffix = "", color = "violet" }) {
   const colors = {
-    violet: "bg-violet-50 text-violet-700 border-violet-200",
-    blue: "bg-blue-50 text-blue-700 border-blue-200",
+    violet: "bg-[var(--color-primary-)] text-[var(--color-primary-)] border-[var(--color-primary-)]",
+    blue: "bg-[var(--color-primary-)] text-[var(--color-primary-)] border-[var(--color-primary-)]",
     emerald: "bg-emerald-50 text-emerald-700 border-emerald-200",
   };
   return (

@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import zip from "../../assets/images/ProductDetail/zip.png";
 
 import axiosInstance from "../../custom/axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Loading from "../Loading";
 
@@ -87,6 +87,21 @@ export default function ProductDetail() {
                   </span>
                 ))}
               </div>
+            </div>
+
+            <div className="mb-6 rounded-xl border border-violet-200 bg-violet-50 p-4">
+              <p className="text-sm font-semibold text-violet-900">
+                Mua trên 10 sản phẩm? Nhận báo giá ưu đãi cho doanh nghiệp.
+              </p>
+              <p className="mt-1 text-xs text-violet-700">
+                Gửi yêu cầu nhanh, đội ngũ ShopPC sẽ phản hồi giá tốt nhất cho số lượng lớn.
+              </p>
+              <Link
+                to={`/bulk-buy?productId=${product?.id || ""}&productName=${encodeURIComponent(product?.productName || "")}`}
+                className="mt-3 inline-flex items-center rounded-lg bg-violet-700 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-800"
+              >
+                Gửi yêu cầu báo giá
+              </Link>
             </div>
 
             {/* Contact & SKU */}
@@ -198,4 +213,4 @@ const IcMessage = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
   </svg>
-);
+);

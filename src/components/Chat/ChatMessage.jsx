@@ -1,5 +1,5 @@
-﻿const ChatMessage = ({ message }) => {
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
+const ChatMessage = ({ message }) => {
+  const API_URL = import.meta.env.DEV ? "/api" : (import.meta.env.VITE_API_URL || "/api");
   const fileUrl = message.fileUrl 
     ? (message.fileUrl.startsWith("http") 
         ? message.fileUrl 

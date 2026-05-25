@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { FaTags, FaPercent, FaCalendarAlt, FaFire, FaPlus, FaEdit, FaTrash, FaToggleOn, FaToggleOff, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -105,7 +105,7 @@ const PromotionsManagement = () => {
   const getStatusBadge = (status) => {
     const config = {
       active: { label: t('common.active'), color: 'bg-green-100 text-green-800 border-green-300', icon: FaToggleOn },
-      scheduled: { label: t('common.scheduled'), color: 'bg-blue-100 text-blue-800 border-blue-300', icon: FaCalendarAlt },
+      scheduled: { label: t('common.scheduled'), color: 'bg-[var(--color-primary-)] text-[var(--color-primary-)] border-[var(--color-primary-)]', icon: FaCalendarAlt },
       expired: { label: t('common.expired'), color: 'bg-red-100 text-red-800 border-red-300', icon: FaToggleOff }
     };
 
@@ -125,17 +125,17 @@ const PromotionsManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="animate-pageIn pb-10">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaTags className="text-6xl mb-4 text-violet-400" />
+              <FaTags className="text-6xl mb-4 text-[var(--color-primary-)]" />
               <h1 className="text-5xl font-bold mb-3">{t('deals.promotions_management')}</h1>
-              <p className="text-xl text-violet-300">{t('deals.create_and_manage_promotional')}</p>
+              <p className="text-xl text-[var(--color-primary-)]">{t('deals.create_and_manage_promotional')}</p>
             </div>
-            <button className="bg-white text-violet-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            <button type="button" className="bg-white text-[var(--color-primary-)] px-8 py-4 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
               <FaPlus />
 {t('deals.create_new_promotion')}
             </button>
@@ -144,7 +144,7 @@ const PromotionsManagement = () => {
       </div>
 
       {/* Filters */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-md">
+      <div className="sticky top-0 z-30 admin-header-glass border-b border-[var(--color-border)] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-wrap gap-3 mb-6">
             {Object.entries(statusConfig).map(([key, config]) => {
@@ -155,8 +155,8 @@ const PromotionsManagement = () => {
                   onClick={() => setFilterStatus(key)}
                   className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     filterStatus === key
-                      ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
-                      : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600'
+                      ? 'bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white shadow-lg scale-105'
+                      : 'bg-[var(--color-bg)] text-[var(--color-text)] border-2 border-[var(--color-border)] hover:border-[var(--color-primary-)]'
                   }`}
                 >
                   {config.label} ({count})
@@ -167,13 +167,13 @@ const PromotionsManagement = () => {
 
           {/* Search */}
           <div className="relative">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
             <input
               type="text"
               placeholder={t('deals.search_by_promotion_name')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+              className="admin-input w-full pl-12 pr-4 py-3 rounded-[var(--radius-lg)] dark:bg-gray-900 dark:border-gray-700"
             />
           </div>
         </div>
@@ -185,10 +185,10 @@ const PromotionsManagement = () => {
           {filteredPromotions.map(promo => (
             <div 
               key={promo.id}
-              className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="admin-card rounded-[var(--radius-xl)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-[var(--color-border)]"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-violet-800 to-violet-900 text-white p-4">
+              <div className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-sm opacity-75">{promo.id}</span>
                   {promo.status === 'active' && <FaFire className="text-orange-400 text-xl animate-pulse" />}
@@ -209,7 +209,7 @@ const PromotionsManagement = () => {
                 {/* Status */}
                 <div className="flex items-center justify-between mb-4">
                   {getStatusBadge(promo.status)}
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs text-[var(--color-text-secondary)]">
                     {promo.usageCount} / {promo.usageLimit || '∞'} {t('deals.used')}
                   </span>
                 </div>
@@ -217,13 +217,13 @@ const PromotionsManagement = () => {
                 {/* Usage Progress */}
                 {promo.usageLimit && (
                   <div className="mb-4">
-                    <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <div className="flex justify-between text-xs text-[var(--color-text-muted)] mb-1">
                       <span>{t('deals.usage')}</span>
                       <span>{getUsagePercentage(promo)}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-[var(--color-bg-muted)] rounded-full h-2">
                       <div 
-                        className="bg-gradient-to-r from-violet-600 to-violet-800 h-2 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] h-2 rounded-full transition-all duration-500"
                         style={{ width: `${getUsagePercentage(promo)}%` }}
                       ></div>
                     </div>
@@ -231,27 +231,27 @@ const PromotionsManagement = () => {
                 )}
 
                 {/* Description */}
-                <p className="text-sm text-gray-600 mb-4 italic">
+                <p className="text-sm text-[var(--color-text-secondary)] mb-4 italic">
                   {promo.description}
                 </p>
 
                 {/* Details */}
-                <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
+                <div className="space-y-2 mb-4 pb-4 border-b border-[var(--color-border)]">
                   <div className="flex items-center gap-2 text-sm">
-                    <FaCalendarAlt className="text-violet-600" />
-                    <span className="text-gray-700">
+                    <FaCalendarAlt className="text-[var(--color-primary-)]" />
+                    <span className="text-[var(--color-text)]">
                       {new Date(promo.startDate).toLocaleDateString('vi-VN')} - {new Date(promo.endDate).toLocaleDateString('vi-VN')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <FaPercent className="text-violet-600" />
-                    <span className="text-gray-700">
+                    <FaPercent className="text-[var(--color-primary-)]" />
+                    <span className="text-[var(--color-text)]">
                       {t('deals.min_purchase')}: {promo.minPurchase.toLocaleString('vi-VN')}₫
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <FaTags className="text-violet-600" />
-                    <span className="text-gray-700">
+                    <FaTags className="text-[var(--color-primary-)]" />
+                    <span className="text-[var(--color-text)]">
                       {promo.applicableProducts.join(', ')}
                     </span>
                   </div>
@@ -259,9 +259,9 @@ const PromotionsManagement = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                  <button type="button" className="flex-1 btn-admin-outline py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold">
                     <FaEdit />{t('account.edit')}</button>
-                  <button className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                  <button type="button" className="flex-1 btn-admin-primary bg-red-600 hover:bg-red-700 border-0 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold">
                     <FaTrash />
 {t('common.delete')}
                   </button>
@@ -274,9 +274,9 @@ const PromotionsManagement = () => {
         {/* Empty State */}
         {filteredPromotions.length === 0 && (
           <div className="text-center py-12">
-            <FaTags className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('deals.no_promotions_found')}</h3>
-            <p className="text-gray-600">{t('customer.try_adjusting_your_filters')}</p>
+            <FaTags className="text-6xl text-[var(--color-text-muted)] mx-auto mb-4 opacity-60" />
+            <h3 className="text-2xl font-bold text-[var(--color-text)] mb-2">{t('deals.no_promotions_found')}</h3>
+            <p className="text-[var(--color-text-secondary)]">{t('customer.try_adjusting_your_filters')}</p>
           </div>
         )}
       </div>
@@ -289,15 +289,15 @@ const PromotionsManagement = () => {
             <p className="text-3xl font-bold">{promotions.filter(p => p.status === 'active').length}</p>
             <p className="text-green-100">{t('deals.active_promotions')}</p>
           </div>
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-6 rounded-2xl shadow-lg">
             <FaCalendarAlt className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{promotions.filter(p => p.status === 'scheduled').length}</p>
-            <p className="text-blue-100">{t('common.scheduled')}</p>
+            <p className="text-[var(--color-primary-)]">{t('common.scheduled')}</p>
           </div>
-          <div className="bg-gradient-to-br from-violet-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-6 rounded-2xl shadow-lg">
             <FaTags className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{promotions.length}</p>
-            <p className="text-violet-100">{t('deals.total_campaigns')}</p>
+            <p className="text-[var(--color-primary-)]">{t('deals.total_campaigns')}</p>
           </div>
           <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-6 rounded-2xl shadow-lg">
             <FaFire className="text-4xl mb-3" />

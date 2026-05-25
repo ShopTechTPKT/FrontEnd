@@ -21,6 +21,7 @@ import NotifyMeButton from "./NotifyMeButton";
 import RecommendationPanel from "./RecommendationPanel";
 import ProductBundlePanel from "./ProductBundlePanel";
 import InstallmentCalculatorPanel from "./InstallmentCalculatorPanel";
+import PriceSparkline from "./PriceSparkline";
 import { getActiveBundles } from "../../apis/bundleApi";
 import {
   getProductRecommendations,
@@ -645,7 +646,7 @@ const handleSubmitReview = async () => {
                   {formatCurrency(price)}
                 </p>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap mb-4">
                 <span className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
                   -25%
                 </span>
@@ -653,6 +654,14 @@ const handleSubmitReview = async () => {
                   Khuyến mãi đặc biệt
                 </span>
               </div>
+              
+              {/* Price Sparkline & History Tracking */}
+              {product.productID && (
+                <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/50 p-3 dark:border-gray-800 dark:bg-gray-800/30">
+                  <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Xu hướng giá & Đặt báo động</p>
+                  <PriceSparkline productId={product.productID} currentPrice={price} />
+                </div>
+              )}
             </div>
 
             {/* Options Selector */}

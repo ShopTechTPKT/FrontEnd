@@ -2,53 +2,60 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./components/layout/AdminSidebar";
 import AdminHeader from "./components/layout/AdminHeader";
+import axiosInstance from "../../custom/axios";
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [pendingOrders, setPendingOrders] = useState(0);
 
   useEffect(() => {
-    // Sync with document theme
-    const isDark = document.documentElement.classList.contains("dark");
-    setDarkMode(isDark);
-    
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === "class") {
-          setDarkMode(document.documentElement.classList.contains("dark"));
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, { attributes: true });
-    return () => observer.disconnect();
+    let mounted = true;
+    const fetchPendingOrders = async () => {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const { data } = await axiosInstance.get("/orders/count/status/PENDING");
+        if (mounted) setPendingOrders(Number(data) || 0);
+      } catch {
+        if (mounted) setPendingOrders(0);
+      }
+    };
+    fetchPendingOrders();
+    const timer = setInterval(fetchPendingOrders, 60000);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
   }, []);
 
-  const mainBg = "bg-gray-50 dark:bg-gray-900";
-  const textColor = "text-gray-900 dark:text-gray-100";
+  const mainBg = "bg-[var(--color-bg-muted)]";
+  const textColor = "text-[var(--color-text)]";
 
   return (
     <div className={`admin-layout flex h-screen w-full ${mainBg} ${textColor} relative overflow-hidden`}>
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 z-40 lg:hidden bg-black/45 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]"
+          role="presentation"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <AdminSidebar 
-        isSidebarOpen={isSidebarOpen} 
-        setIsSidebarOpen={setIsSidebarOpen} 
-        darkMode={darkMode} 
+      <AdminSidebar
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+        pendingOrders={pendingOrders}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Header */}
-        <AdminHeader 
-          setIsSidebarOpen={setIsSidebarOpen} 
-          darkMode={darkMode} 
+        <AdminHeader
+          setIsSidebarOpen={setIsSidebarOpen}
+          pendingOrders={pendingOrders}
         />
 
         {/* Main Content Area */}

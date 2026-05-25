@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import formatCurrency from "../../utils/formatCurrency";
 import { useRecentlyViewed } from "../../hooks/useRecentlyViewed";
+import LazyImage from "../ui/LazyImage";
 
 /**
  * RecentlyViewed — Displays recently viewed products carousel.
@@ -48,7 +49,12 @@ export default function RecentlyViewed() {
               className="snap-start min-w-[170px] sm:min-w-[190px] max-w-[190px] border border-gray-200 rounded-xl p-3 bg-white hover:border-violet-300 hover:shadow-sm transition-all"
             >
               <div className="w-full h-28 bg-gray-50 rounded-lg flex items-center justify-center p-2">
-                <img src={image} alt={name} className="max-w-full max-h-full object-contain" />
+                <LazyImage
+                  src={image}
+                  alt={name}
+                  className="max-w-full max-h-full object-contain"
+                  loadingClassName="w-full h-full"
+                />
               </div>
               <p className="mt-2 text-xs text-gray-800 line-clamp-2 min-h-[2.4rem]">{name}</p>
               <p className="mt-1 text-sm font-semibold text-violet-700">{formatCurrency(price)}</p>

@@ -65,6 +65,21 @@ const METHODS = [
     accent: "border-violet-300 bg-violet-50",
     dot: "bg-violet-500",
   },
+  {
+    id: "zalopay",
+    label: "ZaloPay",
+    sub: "Thanh toán qua ví ZaloPay",
+    icon: (
+      <div className="w-10 h-6 flex items-center justify-center">
+        <svg viewBox="0 0 48 20" className="w-10">
+          <rect width="48" height="20" rx="3" fill="#0068FF"/>
+          <text x="6" y="14" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial">ZaloPay</text>
+        </svg>
+      </div>
+    ),
+    accent: "border-violet-300 bg-violet-50",
+    dot: "bg-violet-500",
+  },
 ];
 
 const PaymentMethodSelector = ({ selected, onChange }) => {

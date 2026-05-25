@@ -1,805 +1,283 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserContext";
-import { changePassword } from "../../apis/userApi";
-import Support from "../../components/Support/Support";
-import UserOrders from "../../components/UserOrder/UserOder";
-import UserFavorites from "../../components/UserFavorites/UserFavorites";
-import OrderTracking from "../../components/OrderTracking/OrderTracking";
-import UserDiscounts from "../../components/UserDiscounts/UserDiscounts";
-import LoyaltyHistory from "../../components/UserProfile/LoyaltyHistory";
+import { getUserById, getUserByEmail, updateUserById } from "../../services/UserServices";
+import { getLoyaltyTier } from "../../apis/loyaltyApi";
+import { getUserAnalytics } from "../../apis/userApi";
+import { SidebarNav } from "../../components/ui";
+import notify from "../../utils/notify";
 import path from "../../constant/path";
-import {
-  getUserById,
-  getUserByEmail,
-  updateUserById,
-} from "../../services/UserServices";
+
+import ProfileHeader from "./components/ProfileHeader";
+import AccountInfoTab from "./components/AccountInfoTab";
+import AddressBookTab from "./components/AddressBookTab";
+import NotificationTab from "./components/NotificationTab";
+import ReviewHistoryTab from "./components/ReviewHistoryTab";
+
+import { lazy, Suspense } from "react";
+const UserOrders = lazy(() => import("../../components/UserOrder/UserOder"));
+const UserFavorites = lazy(() => import("../../components/UserFavorites/UserFavorites"));
+const OrderTracking = lazy(() => import("../../components/OrderTracking/OrderTracking"));
+const UserDiscounts = lazy(() => import("../../components/UserDiscounts/UserDiscounts"));
+const LoyaltyHistory = lazy(() => import("../../components/UserProfile/LoyaltyHistory"));
+const Support = lazy(() => import("../../components/Support/Support"));
+const ReturnRequestTab = lazy(() => import("./components/ReturnRequestTab"));
+const SpendingDashboardTab = lazy(() => import("./components/SpendingDashboardTab"));
+const AchievementsTab = lazy(() => import("./components/AchievementsTab"));
+const DailyCheckIn = lazy(() => import("./components/DailyCheckIn"));
+const PriceAlertsTab = lazy(() => import("./components/PriceAlertsTab"));
+
+const TabLoader = () => (
+  <div className="profile-card flex items-center justify-center py-16">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-primary)] border-t-transparent" />
+  </div>
+);
+
+const Icons = {
+  user: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
+  mapPin: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
+  orders: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>,
+  heart: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>,
+  truck: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg>,
+  rotate: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 4v6h6M20 20v-6h-6M20 10A8 8 0 005.3 7M4 14a8 8 0 0014.7 3" /></svg>,
+  tag: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>,
+  star: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>,
+  support: <svg className="h-full w-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+};
 
 function UserProfile() {
   const { t } = useTranslation();
-
   const location = useLocation();
   const { user, updateUser } = useContext(UserContext);
 
-  // Lấy tab từ query parameter nếu có
-  const searchParams = new URLSearchParams(location.search);
-  const tabFromQuery = searchParams.get("tab");
-  const [accountInfo, setAccountInfo] = useState({
-    fullName: "",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    gender: "",
-    birthDate: "",
-  });
-  //   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editAccountInfo, setEditAccountInfo] = useState({
-    fullName: "",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    gender: "",
-    birthDate: "",
-  });
-  // State để theo dõi trạng thái chỉnh sửa địa chỉ
-  //   const [isEditingAddress, setIsEditingAddress] = useState(false);
-  // State cho giá trị đang chỉnh sửa
-  //   const [editingAddressValue, setEditingAddressValue] = useState("");
-  //   const addressInputRef = useRef(null);
-
-  // state quản lý đổi mật khẩu
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
-    useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [changePasswordError, setChangePasswordError] = useState("");
-  const [changePasswordSuccess, setChangePasswordSuccess] = useState(false);
-
-  // State để quản lý tab hiện tại
+  const tabFromQuery = new URLSearchParams(location.search).get("tab");
   const [activeTab, setActiveTab] = useState(tabFromQuery || "account-info");
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [resolvedUserId, setResolvedUserId] = useState(null);
+  const [accountInfo, setAccountInfo] = useState({ fullName: "", email: "", phoneNumber: "", address: "", gender: "", birthDate: "", cumulativePoints: 0 });
+  const [editAccountInfo, setEditAccountInfo] = useState({ fullName: "", email: "", phoneNumber: "", address: "", gender: "", birthDate: "" });
+  const [tierData, setTierData] = useState(null);
+  const [stats, setStats] = useState({ totalOrders: 0, pendingOrders: 0 });
 
-  // Cập nhật activeTab khi có query parameter
   useEffect(() => {
-    if (tabFromQuery) {
-      setActiveTab(tabFromQuery);
-    }
+    if (tabFromQuery) setActiveTab(tabFromQuery);
   }, [tabFromQuery]);
 
-  // Hàm để điều hướng đến tab theo dõi đơn hàng
-  const navigateToOrderTracking = () => {
-    setActiveTab("order-tracking");
-  };
-
-  // State để lưu userId thực tế sau khi resolve
-  const [resolvedUserId, setResolvedUserId] = useState(null);
-
-  const handleOpenChangePasswordModal = () => {
-    setIsChangePasswordModalOpen(!isChangePasswordModalOpen);
-    if (!isChangePasswordModalOpen) {
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-      setChangePasswordError("");
-      setChangePasswordSuccess(false);
-    }
-  };
-
-  const handleCloseChangePasswordModal = () => {
-    setIsChangePasswordModalOpen(false);
-  };
-
-  const handlePasswordInputChange = e => {
-    const { name, value } = e.target;
-    if (name === "currentPassword") setCurrentPassword(value);
-    else if (name === "newPassword") setNewPassword(value);
-    else if (name === "confirmNewPassword") setConfirmNewPassword(value);
-  };
-
-  const handleChangePasswordSubmit = async () => {
-    setChangePasswordError("");
-    setChangePasswordSuccess(false);
-
-    if (newPassword !== confirmNewPassword) {
-      setChangePasswordError("Mật khẩu mới và xác nhận mật khẩu không khớp.");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setChangePasswordError("Mật khẩu mới phải có ít nhất 6 ký tự.");
-      return;
-    }
-
-    try {
-      if (!resolvedUserId) {
-        setChangePasswordError(
-          "Không thể đổi mật khẩu. Vui lòng đăng nhập lại để lấy thông tin đầy đủ."
-        );
-        return;
-      }
-
-      // Gọi API thật thay vì mock
-      await changePassword(resolvedUserId, {
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-      });
-
-      setChangePasswordSuccess(true);
-      setTimeout(handleCloseChangePasswordModal, 1500); // Đóng modal sau khi thành công
-    } catch (error) {
-      console.error("Lỗi khi đổi mật khẩu:", error);
-      // Xử lý lỗi từ backend
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Lỗi khi đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.";
-      setChangePasswordError(errorMessage);
-    }
-  };
   let userId = null;
-
   if (user) {
-    userId =
-      user.id || user.customerID || user.userId || user.customerId || user.ID;
-
+    userId = user.id || user.customerID || user.userId || user.customerId || user.ID;
     if (!userId) {
-      const userKeys = Object.keys(user);
-      const idKey = userKeys.find(
-        key =>
-          key.toLowerCase().includes("id") &&
-          typeof user[key] === "number" &&
-          user[key] > 0
-      );
-      if (idKey) {
-        userId = user[idKey];
-      }
+      const idKey = Object.keys(user).find((k) => k.toLowerCase().includes("id") && typeof user[k] === "number" && user[k] > 0);
+      if (idKey) userId = user[idKey];
     }
-
-    //  dùng email để tìm user
-    if (!userId && user.email) {
-      // set userId = "email" để trigger việc tìm user bằng email
-      userId = "find_by_email";
-    }
+    if (!userId && user.email) userId = "find_by_email";
   }
+
   useEffect(() => {
     const fetchUser = async () => {
-      // Kiểm tra xem có userId không (người dùng đã đăng nhập)
-      if (!userId) {
-        return;
-      }
-
-      // Tránh fetch lại nếu đã có resolvedUserId và userId không phải là "find_by_email"
-      if (
-        resolvedUserId &&
-        userId !== "find_by_email" &&
-        userId === resolvedUserId
-      ) {
-        return;
-      }
-
+      if (!userId) return;
+      if (resolvedUserId && userId !== "find_by_email" && userId === resolvedUserId) return;
       try {
         let data = null;
-
-        // Nếu userId là "find_by_email", thử tìm user bằng email từ API
         if (userId === "find_by_email" && user?.email) {
           data = await getUserByEmail(user.email);
-
-          if (data) {
-            // Cập nhật userId thực tế từ API response
-            setResolvedUserId(data.id);
-          } else {
-            // Fallback nếu không tìm thấy user
-            data = {
-              id: null,
-              fullName: user.fullName || user.email,
-              email: user.email,
-              phoneNumber: user.phoneNumber || "",
-              address: user.address || "",
-              gender: user.gender || "MALE",
-              dob: user.birthDate || user.dob || "",
-              status: "ACTIVE",
-              cumulativePoints: 0,
-              roleId: null,
-            };
-          }
+          if (data) setResolvedUserId(data.id);
+          else data = { fullName: user.fullName || user.email, email: user.email, phoneNumber: "", address: "", gender: "MALE", dob: "", cumulativePoints: 0 };
         } else if (userId && userId !== "find_by_email") {
-          // Sử dụng getUserById như bình thường
           data = await getUserById(userId);
           setResolvedUserId(userId);
         }
-
         if (data) {
-          setAccountInfo({
-            fullName: data.fullName || "",
-            email: data.email || "",
-            phoneNumber: data.phoneNumber || "",
-            address: data.address || "",
-            gender: data.gender || "",
-            birthDate: data.dob || "",
-            status: data.status || "ACTIVE",
-            cumulativePoints: data.cumulativePoints || 0,
-            roleId: data.roleId || null,
-          });
-
-          setEditAccountInfo({
-            fullName: data.fullName || "",
-            email: data.email || "",
-            phoneNumber: data.phoneNumber || "",
-            address: data.address || "",
-            gender: data.gender || "",
-            birthDate: data.dob || "",
-          });
-
-          //dung voi useContext
-          //   updateUser({
-          //     id: data.id,
-          //     fullName: data.fullName,
-          //     email: data.email,
-          //     phoneNumber: data.phoneNumber,
-          //     address: data.address,
-          //     gender: data.gender,
-          //     birthDate: data.dob,
-          //   });
+          const info = { fullName: data.fullName || "", email: data.email || "", phoneNumber: data.phoneNumber || "", address: data.address || "", gender: data.gender || "", birthDate: data.dob || "", status: data.status || "ACTIVE", cumulativePoints: data.cumulativePoints || 0, roleId: data.roleId || null };
+          setAccountInfo(info);
+          setEditAccountInfo({ fullName: info.fullName, email: info.email, phoneNumber: info.phoneNumber, address: info.address, gender: info.gender, birthDate: info.birthDate });
         }
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin người dùng:", error);
+      } catch (err) {
+        console.error("Error fetching user:", err);
       }
     };
-
     fetchUser();
-  }, [userId, user?.email]); // Thêm user?.email để tránh loop khi user object thay đổi
+  }, [userId, user?.email]);
 
-  // Đồng bộ form chỉnh sửa với thông tin tài khoản hiện có để hỗ trợ chỉnh sửa trực tiếp
   useEffect(() => {
-    setEditAccountInfo({
-      fullName: accountInfo.fullName || "",
-      email: accountInfo.email || "",
-      phoneNumber: accountInfo.phoneNumber || "",
-      address: accountInfo.address || "",
-      gender:
-        typeof accountInfo.gender === "boolean"
-          ? accountInfo.gender
-          : accountInfo.gender || "",
-      birthDate: accountInfo.birthDate || "",
-    });
-  }, [
-    accountInfo.fullName,
-    accountInfo.email,
-    accountInfo.phoneNumber,
-    accountInfo.address,
-    accountInfo.gender,
-    accountInfo.birthDate,
-  ]);
+    const loadSummary = async () => {
+      if (!resolvedUserId) return;
+      try {
+        const [tier, analytics] = await Promise.all([getLoyaltyTier(resolvedUserId), getUserAnalytics(resolvedUserId)]);
+        setTierData(tier);
+        setStats((prev) => ({ ...prev, totalOrders: Number(analytics?.totalOrders || 0) }));
+      } catch (error) {
+        console.error("Error loading profile summary:", error);
+      }
+    };
+    loadSummary();
+  }, [resolvedUserId]);
 
-
-  const handleEditInputChange = e => {
-    const { name, value } = e.target;
-    setEditAccountInfo(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  useEffect(() => {
+    setEditAccountInfo({ fullName: accountInfo.fullName || "", email: accountInfo.email || "", phoneNumber: accountInfo.phoneNumber || "", address: accountInfo.address || "", gender: accountInfo.gender || "", birthDate: accountInfo.birthDate || "" });
+  }, [accountInfo.fullName, accountInfo.email, accountInfo.phoneNumber, accountInfo.address, accountInfo.gender, accountInfo.birthDate]);
 
   const handleSaveAccountInfo = async () => {
-    // Kiểm tra xem có resolvedUserId không
     if (!resolvedUserId) {
-      alert(
-        "Không thể cập nhật thông tin. Vui lòng đăng nhập lại để lấy thông tin đầy đủ."
-      );
+      notify.error("Không thể cập nhật. Vui lòng đăng nhập lại.");
       return;
     }
-
     try {
-      const updatedData = {
-        ...accountInfo, // giữ lại các trường khác như status, cumulativePoints, role, v.v.
-        fullName: editAccountInfo.fullName,
-        email: editAccountInfo.email,
-        phoneNumber: editAccountInfo.phoneNumber,
-        address: editAccountInfo.address,
-        gender: editAccountInfo.gender,
-        dob: editAccountInfo.birthDate,
-      };
+      const updatedData = { ...accountInfo, fullName: editAccountInfo.fullName, email: editAccountInfo.email, phoneNumber: editAccountInfo.phoneNumber, address: editAccountInfo.address, gender: editAccountInfo.gender, dob: editAccountInfo.birthDate };
       const response = await updateUserById(resolvedUserId, updatedData);
-
       if (response) {
-        alert("Thông tin tài khoản đã được cập nhật thành công!");
+        notify.success(t("account.updated_success", { defaultValue: "Cập nhật thành công!" }));
         setAccountInfo(updatedData);
-        // Cập nhật UserContext một cách an toàn - chỉ cập nhật các trường cần thiết
-        // và không thay đổi id để tránh trigger useEffect
         setTimeout(() => {
-          updateUser({
-            ...user,
-            fullName: updatedData.fullName,
-            phoneNumber: updatedData.phoneNumber,
-            address: updatedData.address,
-            gender: updatedData.gender,
-            // Không cập nhật email và id để tránh conflict
-          });
+          updateUser({ ...user, fullName: updatedData.fullName, phoneNumber: updatedData.phoneNumber, address: updatedData.address, gender: updatedData.gender });
         }, 100);
-      } else {
-        alert("Có lỗi xảy ra khi cập nhật thông tin.");
       }
-    } catch (error) {
-      console.error("Lỗi khi cập nhật thông tin tài khoản:", error);
-      alert("Lỗi khi cập nhật thông tin.");
+    } catch (err) {
+      console.error("Update error:", err);
+      notify.error("Lỗi cập nhật thông tin");
     }
   };
 
-  // Hiển thị thông báo nếu người dùng chưa đăng nhập hoặc không có userId hợp lệ
-  if (!user || (!userId && userId !== "find_by_email") || userId === 1) {
+  const navItems = useMemo(
+    () => [
+      { section: "Tài khoản" },
+      { id: "account-info", label: t("account.account_information"), icon: Icons.user },
+      { id: "address-book", label: t("account.address_book"), icon: Icons.mapPin },
+      { id: "notifications", label: "Thông báo", icon: Icons.support, badge: 0 },
+      { divider: true },
+      { section: "Mua sắm" },
+      { id: "my-orders", label: t("account.my_orders"), icon: Icons.orders },
+      { id: "favorites", label: t("account.favourite_products"), icon: Icons.heart },
+      { id: "order-tracking", label: t("account.order_tracking"), icon: Icons.truck },
+      { id: "return-requests", label: "Yêu cầu đổi trả", icon: Icons.rotate },
+      { divider: true },
+      { section: "Ưu đãi" },
+      { id: "my-discounts", label: t("account.my_discounts") || "Mã giảm giá", icon: Icons.tag },
+      { id: "loyalty-history", label: "Lịch sử điểm thưởng", icon: Icons.star },
+      { id: "achievements", label: "Thành tựu", icon: Icons.star },
+      { id: "spending-dashboard", label: "Thống kê chi tiêu", icon: Icons.star },
+      { id: "price-alerts", label: "Báo động giá", icon: Icons.support },
+      { id: "review-history", label: "Lịch sử đánh giá", icon: Icons.star },
+      { id: "daily-checkin", label: "Điểm danh hằng ngày", icon: Icons.star },
+      { divider: true },
+      { id: "support", label: t("nav.support", { defaultValue: "Hỗ trợ" }), icon: Icons.support },
+    ],
+    [t]
+  );
+
+  if (!user || (!userId && userId !== "find_by_email")) {
     return (
-      <div className="bg-gray-100 min-h-screen font-sans flex items-center justify-center">
-        <div className="bg-white rounded-md shadow-md p-8 text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            {!user ? "Vui lòng đăng nhập" : "Lỗi thông tin người dùng"}
-          </h2>
-          <p className="text-gray-600 mb-4">
-            {!user
-              ? "Bạn cần đăng nhập để xem thông tin tài khoản."
-              : "Không thể lấy thông tin người dùng. Vui lòng đăng nhập lại."}
-          </p>
-          <Link
-            to={path.login}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded"
-          >
-            {!user ? "Đăng nhập" : "Đăng nhập lại"}
-          </Link>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="profile-card max-w-sm text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-bg-muted)] text-3xl">🔒</div>
+          <h2 className="mb-2 text-lg font-bold text-[var(--color-text)]">{t("account.please_login", { defaultValue: "Vui lòng đăng nhập" })}</h2>
+          <p className="mb-5 text-sm text-[var(--color-text-muted)]">Bạn cần đăng nhập để xem thông tin tài khoản.</p>
+          <Link to={path.login} className="btn-primary">Đăng nhập</Link>
         </div>
       </div>
     );
   }
 
+  const renderTab = () => {
+    if (!resolvedUserId && activeTab !== "account-info" && activeTab !== "address-book") {
+      return (
+        <div className="profile-card py-12 text-center">
+          <p className="text-[var(--color-text-muted)]">Đang tải thông tin người dùng...</p>
+          <div className="mx-auto mt-3 h-6 w-6 animate-spin rounded-full border-2 border-[var(--color-primary)] border-t-transparent" />
+        </div>
+      );
+    }
+
+    switch (activeTab) {
+      case "account-info":
+        return <AccountInfoTab accountInfo={accountInfo} editAccountInfo={editAccountInfo} setEditAccountInfo={setEditAccountInfo} onSave={handleSaveAccountInfo} resolvedUserId={resolvedUserId} />;
+      case "address-book":
+        return <AddressBookTab userId={resolvedUserId} />;
+      case "my-orders":
+        return <Suspense fallback={<TabLoader />}><UserOrders userId={resolvedUserId} /></Suspense>;
+      case "favorites":
+        return <Suspense fallback={<TabLoader />}><UserFavorites userId={resolvedUserId} /></Suspense>;
+      case "order-tracking":
+        return <Suspense fallback={<TabLoader />}><OrderTracking userId={resolvedUserId} onNavigateToTracking={() => setActiveTab("order-tracking")} /></Suspense>;
+      case "my-discounts":
+        return <Suspense fallback={<TabLoader />}><UserDiscounts userId={resolvedUserId} /></Suspense>;
+      case "return-requests":
+        return <Suspense fallback={<TabLoader />}><ReturnRequestTab userId={resolvedUserId} /></Suspense>;
+      case "loyalty-history":
+        return <Suspense fallback={<TabLoader />}><LoyaltyHistory userId={resolvedUserId} /></Suspense>;
+      case "achievements":
+        return <Suspense fallback={<TabLoader />}><AchievementsTab userId={resolvedUserId} /></Suspense>;
+      case "spending-dashboard":
+        return <Suspense fallback={<TabLoader />}><SpendingDashboardTab userId={resolvedUserId} /></Suspense>;
+      case "price-alerts":
+        return <Suspense fallback={<TabLoader />}><PriceAlertsTab userId={resolvedUserId} /></Suspense>;
+      case "notifications":
+        return <NotificationTab userId={resolvedUserId} />;
+      case "review-history":
+        return <ReviewHistoryTab userId={resolvedUserId} />;
+      case "daily-checkin":
+        return <Suspense fallback={<TabLoader />}><DailyCheckIn userId={resolvedUserId} /></Suspense>;
+      case "support":
+        return <Suspense fallback={<TabLoader />}><Support /></Suspense>;
+      default:
+        return <AccountInfoTab accountInfo={accountInfo} editAccountInfo={editAccountInfo} setEditAccountInfo={setEditAccountInfo} onSave={handleSaveAccountInfo} resolvedUserId={resolvedUserId} />;
+    }
+  };
+
+  const mobileTabs = navItems.filter((i) => i.id);
+  const activeTabIndex = mobileTabs.findIndex((i) => i.id === activeTab);
+
+  const onTabsTouchStart = (e) => {
+    setTouchStartX(e.touches?.[0]?.clientX ?? null);
+  };
+
+  const onTabsTouchEnd = (e) => {
+    if (touchStartX === null) return;
+    const endX = e.changedTouches?.[0]?.clientX ?? touchStartX;
+    const delta = touchStartX - endX;
+    const threshold = 48;
+
+    if (Math.abs(delta) >= threshold && activeTabIndex >= 0) {
+      if (delta > 0 && activeTabIndex < mobileTabs.length - 1) {
+        setActiveTab(mobileTabs[activeTabIndex + 1].id);
+      } else if (delta < 0 && activeTabIndex > 0) {
+        setActiveTab(mobileTabs[activeTabIndex - 1].id);
+      }
+    }
+    setTouchStartX(null);
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen font-sans">
-      <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <p className="text-sm text-gray-500 mb-6">
-          <Link to={path.home} className="text-blue-500 hover:underline">
-            {t("product.home")}
-          </Link>
-          {" / "}
-          {location.pathname === path.profile && "My Dashboard"}
-        </p>
-        <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-          My Dashboard
-        </h1>
+    <div className="container-app animate-pageIn py-6 lg:py-8">
+      <ProfileHeader accountInfo={accountInfo} user={user} stats={stats} tierData={tierData} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <div className="bg-white rounded-md shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4"></h2>
-            <ul className="space-y-2">
-              <li>
-                <button
-                  onClick={() => setActiveTab("account-info")}
-                  className={`block text-left w-full text-blue-500 font-medium hover:text-blue-700 ${
-                    activeTab === "account-info" ? "font-bold" : ""
-                  }`}
-                >
-                  {t("account.account_information")}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveTab("address-book")}
-                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
-                    activeTab === "address-book"
-                      ? "font-bold text-blue-600"
-                      : ""
-                  }`}
-                >
-                  {t("account.address_book")}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveTab("my-orders")}
-                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
-                    activeTab === "my-orders" ? "font-bold text-blue-600" : ""
-                  }`}
-                >
-                  {t("account.my_orders")}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveTab("favorites")}
-                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
-                    activeTab === "favorites" ? "font-bold text-blue-600" : ""
-                  }`}
-                >
-                  {t("account.favourite_products")}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveTab("order-tracking")}
-                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
-                    activeTab === "order-tracking"
-                      ? "font-bold text-blue-600"
-                      : ""
-                  }`}
-                >
-                  {t("account.order_tracking")}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveTab("my-discounts")}
-                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
-                    activeTab === "my-discounts"
-                      ? "font-bold text-blue-600"
-                      : ""
-                  }`}
-                >
-                  {t("account.my_discounts") || "Mã giảm giá"}
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveTab("loyalty-history")}
-                  className={`block text-left w-full text-gray-700 hover:text-gray-900 ${
-                    activeTab === "loyalty-history"
-                      ? "font-bold text-blue-600"
-                      : ""
-                  }`}
-                >
-                  Lịch sử điểm thưởng
-                </button>
-              </li>
-            </ul>
-
-            <div className="mt-6 bg-gray-100 rounded-md p-4">
-              <h3 className="text-sm font-semibold text-gray-600 mb-2">
-                {t("product.compare_products")}
-              </h3>
-              <p className="text-gray-500 text-sm">
-                {t("account.you_have_no_items")}
-              </p>
-            </div>
-
-            <div className="mt-4 bg-gray-100 rounded-md p-4">
-              <h3 className="text-sm font-semibold text-gray-600 mb-2">
-                {t("common.my_wish_list")}
-              </h3>
-              <p className="text-gray-500 text-sm">
-                {t("common.you_have_no_items")}
-              </p>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-3 bg-white rounded-md shadow-md p-6">
-            {activeTab === "account-info" && (
-              <>
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  {t("account.account_information")}
-                </h2>
-
-                {/* Contact Information - Inline editable form */}
-                <div className="mb-6 border-b pb-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="fullName"
-                        className="block text-gray-700 text-sm font-medium mb-1"
-                      >
-                        {t("account.full_name")}
-                      </label>
-                      <input
-                        type="text"
-                        id="fullName"
-                        name="fullName"
-                        value={editAccountInfo.fullName}
-                        onChange={handleEditInputChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-gray-700 text-sm font-medium mb-1"
-                      >
-                        {t("cart.email")}
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={editAccountInfo.email}
-                        onChange={handleEditInputChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="phoneNumber"
-                        className="block text-gray-700 text-sm font-medium mb-1"
-                      >
-                        {t("account.phone_number")}
-                      </label>
-                      <input
-                        type="text"
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        value={editAccountInfo.phoneNumber}
-                        onChange={handleEditInputChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="address"
-                        className="block text-gray-700 text-sm font-medium mb-1"
-                      >
-                        {t("account.address")}
-                      </label>
-                      <input
-                        type="text"
-                        id="address"
-                        name="address"
-                        value={editAccountInfo.address}
-                        onChange={handleEditInputChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="gender"
-                        className="block text-gray-700 text-sm font-medium mb-1"
-                      >
-                        {t("account.gender") || "Giới tính"}
-                      </label>
-                      <select
-                        id="gender"
-                        name="gender"
-                        value={editAccountInfo.gender}
-                        onChange={e =>
-                          setEditAccountInfo(prev => ({
-                            ...prev,
-                            gender: e.target.value,
-                          }))
-                        }
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
-                      >
-                        <option value="MALE">Nam</option>
-                        <option value="FEMALE">Nữ</option>
-                        <option value="OTHER">Khác</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="birthDate"
-                        className="block text-gray-700 text-sm font-medium mb-1"
-                      >
-                        {t("account.birth_date") || "Ngày sinh"}
-                      </label>
-                      <input
-                        type="date"
-                        id="birthDate"
-                        name="birthDate"
-                        value={(editAccountInfo.birthDate || "").slice(0, 10)}
-                        onChange={handleEditInputChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex flex-col gap-3">
-                    <button
-                      className={`px-4 py-2 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 cursor-pointer ${
-                        resolvedUserId
-                          ? "bg-gradient-to-r from-violet-700 to-violet-600 hover:opacity-90 focus:ring-violet-500"
-                          : "bg-gray-400 cursor-not-allowed"
-                      }`}
-                      onClick={handleSaveAccountInfo}
-                      disabled={!resolvedUserId}
-                    >
-                      {t("common.save")}
-                    </button>
-
-                    <div className="mt-2">
-                      <button
-                        className={`text-sm font-medium flex items-center gap-2 ${
-                          resolvedUserId
-                            ? "text-blue-600 hover:text-blue-700 cursor-pointer"
-                            : "text-gray-400 cursor-not-allowed"
-                        }`}
-                        onClick={handleOpenChangePasswordModal}
-                        disabled={!resolvedUserId}
-                      >
-                        {t("account.change_password")}
-                        <svg
-                          className={`w-4 h-4 transition-transform duration-200 ${
-                            isChangePasswordModalOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </button>
-
-                      {/* Expandable form section */}
-                      {isChangePasswordModalOpen && resolvedUserId && (
-                        <div className="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-6 transition-all duration-300 ease-in-out">
-                          <h3 className="text-base font-medium text-gray-900 mb-4">{t("account.i_mt_khu")}</h3>
-                          
-                          <div className="space-y-4 mb-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">{t("account.mt_khu_hin_ti")}</label>
-                              <input
-                                type="password"
-                                name="currentPassword"
-                                value={currentPassword}
-                                onChange={handlePasswordInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition bg-white"
-                                placeholder="Nhập mật khẩu hiện tại"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">{t("account.mt_khu_mi")}</label>
-                              <input
-                                type="password"
-                                name="newPassword"
-                                value={newPassword}
-                                onChange={handlePasswordInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition bg-white"
-                                placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">{t("account.xc_nhn_mt_khu")}</label>
-                              <input
-                                type="password"
-                                name="confirmNewPassword"
-                                value={confirmNewPassword}
-                                onChange={handlePasswordInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition bg-white"
-                                placeholder="Nhập lại mật khẩu mới"
-                              />
-                            </div>
-                          </div>
-
-                          {changePasswordError && (
-                            <div className="p-3 bg-red-50 border border-red-200 rounded-lg mb-4">
-                              <p className="text-red-700 text-sm">{changePasswordError}</p>
-                            </div>
-                          )}
-
-                          {changePasswordSuccess && (
-                            <div className="p-3 bg-green-50 border border-green-200 rounded-lg mb-4">
-                              <p className="text-green-700 text-sm">{t("account.i_mt_khu_thnh")}</p>
-                            </div>
-                          )}
-
-                          <div className="flex gap-3">
-                            <button
-                              onClick={handleChangePasswordSubmit}
-                              className="px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded-lg hover:opacity-90 transition text-sm font-medium"
-                            >
-                              {t("account.lu_thay_i")}
-                            </button>
-                            <button
-                              onClick={handleCloseChangePasswordModal}
-                              className="px-6 py-2 border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-100 transition text-sm font-medium"
-                            >
-                              {t("common.cancel")}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {!resolvedUserId && (
-                      <p className="text-sm text-orange-600">
-                        Một số chức năng bị hạn chế do không tìm thấy ID người
-                        dùng.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {activeTab === "my-orders" &&
-              (!resolvedUserId ? (
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    {t("account.my_orders")}
-                  </h2>
-                  <p className="text-gray-500">
-                    Không thể hiển thị đơn hàng. Vui lòng đăng nhập lại để lấy
-                    thông tin đầy đủ.
-                  </p>
-                </div>
-              ) : (
-                <UserOrders userId={resolvedUserId} />
-              ))}
-
-            {activeTab === "favorites" &&
-              (!resolvedUserId ? (
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    {t("account.favourite_products")}
-                  </h2>
-                  <p className="text-gray-500">
-                    Không thể hiển thị danh sách yêu thích. Vui lòng đăng nhập
-                    lại để lấy thông tin đầy đủ.
-                  </p>
-                </div>
-              ) : (
-                <UserFavorites userId={resolvedUserId} />
-              ))}
-
-            {activeTab === "order-tracking" &&
-              (!resolvedUserId ? (
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    {t("account.order_tracking")}
-                  </h2>
-                  <p className="text-gray-500">
-                    Không thể hiển thị theo dõi đơn hàng. Vui lòng đăng nhập lại
-                    để lấy thông tin đầy đủ.
-                  </p>
-                </div>
-              ) : (
-                <OrderTracking
-                  userId={resolvedUserId}
-                  onNavigateToTracking={navigateToOrderTracking}
-                />
-              ))}
-
-            {activeTab === "address-book" && (
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  {t("account.address_book")}
-                </h2>
-                <p className="text-gray-500">
-                  Tính năng sổ địa chỉ đang được phát triển...
-                </p>
-              </div>
-            )}
-
-            {activeTab === "my-discounts" &&
-              (!resolvedUserId ? (
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    {t("account.my_discounts") || "Mã giảm giá của tôi"}
-                  </h2>
-                  <p className="text-gray-500">
-                    Không thể hiển thị mã giảm giá. Vui lòng đăng nhập lại để
-                    lấy thông tin đầy đủ.
-                  </p>
-                </div>
-              ) : (
-                <UserDiscounts userId={resolvedUserId} />
-              ))}
-
-            {activeTab === "loyalty-history" &&
-              (!resolvedUserId ? (
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    Lịch sử điểm thưởng
-                  </h2>
-                  <p className="text-gray-500">
-                    Không thể hiển thị lịch sử điểm. Vui lòng đăng nhập lại để
-                    lấy thông tin đầy đủ.
-                  </p>
-                </div>
-              ) : (
-                <LoyaltyHistory userId={resolvedUserId} />
-              ))}
-          </div>
+      <div className="mb-4 lg:hidden">
+        <div className="profile-tabs rounded-2xl border border-gray-200 bg-white p-1.5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          {mobileTabs.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id)}
+              className={`profile-tab rounded-xl border-0 px-3 py-2 text-xs sm:text-sm ${
+                activeTab === item.id ? "active bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300" : ""
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <Support></Support>
+      <div className="profile-layout">
+        <div className="hidden lg:block">
+          <SidebarNav items={navItems} activeId={activeTab} onChange={setActiveTab} />
+        </div>
+
+        <div className="min-w-0" onTouchStart={onTabsTouchStart} onTouchEnd={onTabsTouchEnd}>
+          {renderTab()}
+        </div>
+      </div>
     </div>
   );
 }

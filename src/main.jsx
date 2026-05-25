@@ -19,6 +19,12 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
+
 // Updated: 2025-10-12T16:06:36.901Z
 
 // Updated: 2025-10-12T16:09:08.953Z

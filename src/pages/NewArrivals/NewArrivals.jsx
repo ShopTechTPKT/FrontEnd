@@ -120,17 +120,17 @@ const NewArrivals = () => {
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-20 overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 via-transparent to-violet-600/10 animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary-)]/10 via-transparent to-[var(--color-primary-)]/10 animate-pulse"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center">
-            <div className="inline-block mb-4 px-6 py-2 bg-gradient-to-r from-violet-700 to-violet-600 rounded-full font-semibold animate-bounce">
+            <div className="inline-block mb-4 px-6 py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] rounded-full font-semibold animate-bounce">
               ðŸŽ‰ Fresh Stock Just Arrived!
             </div>
-            <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-white to-violet-300 bg-clip-text text-transparent">
+            <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-white to-[var(--color-primary-)] bg-clip-text text-transparent">
               New Arrivals
             </h1>
-            <p className="text-xl text-violet-300 mb-8">
+            <p className="text-xl text-[var(--color-primary-)] mb-8">
               Discover the latest tech innovations - Be the first to own them!
             </p>
             <div className="flex items-center justify-center gap-8 text-sm">
@@ -161,8 +161,8 @@ const NewArrivals = () => {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   selectedCategory === cat
-                    ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600 hover:text-violet-600'
+                    ? 'bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white shadow-lg scale-105'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-[var(--color-primary-)] hover:text-[var(--color-primary-)]'
                 }`}
               >
                 {cat}
@@ -178,12 +178,12 @@ const NewArrivals = () => {
           {filteredProducts.map(product => (
             <div 
               key={product.id}
-              className="group relative bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-violet-600 transition-all duration-500"
+              className="group relative bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-[var(--color-primary-)] transition-all duration-500"
               onMouseEnter={() => setHoveredProduct(product.id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               {/* Badge */}
-              <div className="absolute top-4 left-4 z-10 px-4 py-2 bg-gradient-to-r from-violet-800 to-violet-900 text-white rounded-lg font-bold shadow-lg">
+              <div className="absolute top-4 left-4 z-10 px-4 py-2 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-lg font-bold shadow-lg">
                 {product.badge}
               </div>
 
@@ -219,10 +219,10 @@ const NewArrivals = () => {
 
               {/* Content */}
               <div className="p-6">
-                <div className="text-sm text-violet-600 font-semibold mb-2">
+                <div className="text-sm text-[var(--color-primary-)] font-semibold mb-2">
                   {product.category}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-violet-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-[var(--color-primary-)] transition-colors">
                   {product.name}
                 </h3>
 
@@ -239,7 +239,7 @@ const NewArrivals = () => {
 
                 {/* Price */}
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-3xl font-bold bg-gradient-to-r from-violet-800 to-violet-900 bg-clip-text text-transparent">
+                  <span className="text-3xl font-bold bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] bg-clip-text text-transparent">
                     ${product.price}
                   </span>
                   <span className="text-sm text-green-600 font-semibold bg-green-50 px-3 py-1 rounded-full">
@@ -249,8 +249,8 @@ const NewArrivals = () => {
 
                 {/* Buttons */}
                 <div className="flex gap-3">
-                  <button className="flex-1 py-3 bg-gradient-to-r from-violet-800 to-violet-900 text-white rounded-xl font-bold hover:scale-105 transition-transform duration-300 shadow-lg">{t('common.add_to_cart')}</button>
-                  <button className="px-6 py-3 border-2 border-violet-600 text-violet-600 rounded-xl font-bold hover:bg-violet-50 transition-colors">{t('common.details')}</button>
+                  <button className="flex-1 py-3 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white rounded-xl font-bold hover:scale-105 transition-transform duration-300 shadow-lg">{t('common.add_to_cart')}</button>
+                  <button className="px-6 py-3 border-2 border-[var(--color-primary-)] text-[var(--color-primary-)] rounded-xl font-bold hover:bg-[var(--color-primary-)] transition-colors">{t('common.details')}</button>
                 </div>
               </div>
             </div>
@@ -262,10 +262,10 @@ const NewArrivals = () => {
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-4">{t('common.stay_updated')}</h2>
-          <p className="text-xl text-violet-300 mb-8">
+          <p className="text-xl text-[var(--color-primary-)] mb-8">
             Get notified when new products arrive
           </p>
-          <button className="px-12 py-4 bg-gradient-to-r from-violet-700 to-violet-600 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg">{t('common.notify_me')}</button>
+          <button className="px-12 py-4 bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg">{t('common.notify_me')}</button>
         </div>
       </div>
     </div>

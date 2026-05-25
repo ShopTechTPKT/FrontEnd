@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { FaStar, FaRegStar, FaThumbsUp, FaReply, FaFilter, FaSearch, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
-import { fetchReviews, updateReview } from '../../apis/adminApi';
-import { useToast } from '../../components/Toast';
-import ProductGridSkeleton from '../../components/ui/ProductGridSkeleton';
-import StatusNotice from '../../components/ui/StatusNotice';
-import EmptyState from '../../components/ui/EmptyState';
-import Button from '../../components/ui/Button';
+import React, { useState, useEffect, useMemo } from "react";
+import { FaStar, FaRegStar, FaReply, FaFilter, FaSearch, FaUserCircle } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { fetchReviews, updateReview } from "../../apis/adminApi";
+import { useToast } from "../../components/Toast";
+import StatusNotice from "../../components/ui/StatusNotice";
+import EmptyState from "../../components/ui/EmptyState";
+import Button from "../../components/ui/Button";
+import ProductTableLayout from "./components/products/ProductTableLayout";
+import ReviewReplyModal from "./components/forms/ReviewReplyModal";
+import Pagination from "../../components/ui/Pagination";
+import TableSortHeader from "../../components/ui/TableSortHeader";
 
-const ReviewsTable = ({ theme }) => {
+const ReviewsTable = () => {
   const { t } = useTranslation();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterRating, setFilterRating] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRating, setFilterRating] = useState("all");
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
+
   const [selectedReview, setSelectedReview] = useState(null);
   const [showReplyModal, setShowReplyModal] = useState(false);
-  const [replyText, setReplyText] = useState('');
+  const [replyText, setReplyText] = useState("");
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
   const { showSuccess, showError } = useToast();
-
-  // Theme colors
-  const cardBg = theme === 'dark' ? 'bg-gray-800' : 'bg-white';
-  const borderColor = theme === 'dark' ? 'border-gray-700' : 'border-gray-200';
-  const textColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
-  const secondaryTextColor = theme === 'dark' ? 'text-gray-300' : 'text-gray-600';
 
   useEffect(() => {
     fetchReviewsData();
@@ -35,11 +37,11 @@ const ReviewsTable = ({ theme }) => {
     try {
       setLoading(true);
       const data = await fetchReviews();
-      setReviews(data);
+      setReviews(Array.isArray(data) ? data : []);
       setError(null);
-    } catch (error) {
-      console.error('Error fetching reviews:', error);
-      setError(error.message);
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
+      setError(err.message);
       setReviews([]);
     } finally {
       setLoading(false);
@@ -47,54 +49,99 @@ const ReviewsTable = ({ theme }) => {
   };
 
   const renderStars = (rating) => {
-    return [...Array(5)].map((_, index) => (
-      index < rating ? 
-        <FaStar key={index} className="text-yellow-400" /> : 
-        <FaRegStar key={index} className="text-gray-300" />
-    ));
+    return [...Array(5)].map((_, index) =>
+      index < rating ? (
+        <FaStar key={index} className="text-amber-400 drop-shadow-sm" />
+      ) : (
+        <FaRegStar key={index} className="text-[var(--color-text-muted)] opacity-50" />
+      ),
+    );
   };
 
-  const filteredReviews = reviews.filter(review => {
-    const matchesRating = filterRating === 'all' || review.rating === parseInt(filterRating);
-    const matchesSearch = 
-      review.comment?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      review.productId?.toString().includes(searchTerm.toLowerCase());
-    return matchesRating && matchesSearch;
-  });
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredReviews = useMemo(() => {
+    return reviews.filter((review) => {
+      const matchesRating = filterRating === "all" || review.rating === parseInt(filterRating, 10);
+      const matchesSearch =
+        (review.comment && review.comment.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (review.productId && review.productId.toString().includes(searchTerm.toLowerCase()));
+      return matchesRating && matchesSearch;
+    });
+  }, [reviews, filterRating, searchTerm]);
+
+  const sortedReviews = useMemo(() => {
+    const sortable = [...filteredReviews];
+    if (sortConfig.key) {
+      sortable.sort((a, b) => {
+        let aVal = a[sortConfig.key];
+        let bVal = b[sortConfig.key];
+        
+        if (sortConfig.key === 'createdAt') {
+          aVal = new Date(aVal).getTime();
+          bVal = new Date(bVal).getTime();
+        }
+        
+        if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortable;
+  }, [filteredReviews, sortConfig]);
+
+  const paginatedReviews = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return sortedReviews.slice(start, start + itemsPerPage);
+  }, [sortedReviews, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterRating, itemsPerPage]);
 
   const handleReply = (review) => {
     setSelectedReview(review);
-    setReplyText(review.reply || ''); // Nếu có reply sẵn thì load vào
+    setReplyText(review.reply || "");
     setShowReplyModal(true);
   };
 
   const handleSubmitReply = async () => {
     if (!replyText.trim()) {
-      showError('Vui lòng nhập nội dung phản hồi', 3000, 'top-right');
+      showError("Vui lòng nhập nội dung phản hồi", 3000, "top-right");
       return;
     }
 
     try {
       setIsSubmittingReply(true);
-      // Gọi API update review với reply
       await updateReview(selectedReview.id, {
         ...selectedReview,
-        reply: replyText.trim()
+        reply: replyText.trim(),
       });
 
-      // Cập nhật lại danh sách reviews
-      setReviews(reviews.map(review => 
-        review.id === selectedReview.id 
-          ? { ...review, reply: replyText.trim() }
-          : review
-      ));
+      setReviews(
+        reviews.map((review) =>
+          review.id === selectedReview.id
+            ? { ...review, reply: replyText.trim() }
+            : review,
+        ),
+      );
 
-      showSuccess('Đã gửi phản hồi thành công!', 3000, 'top-right');
+      showSuccess("Đã gửi phản hồi thành công!", 3000, "top-right");
       setShowReplyModal(false);
-      setReplyText('');
-    } catch (error) {
-      console.error('Error submitting reply:', error);
-      showError('Lỗi khi gửi phản hồi: ' + (error.response?.data?.message || error.message), 5000, 'top-right');
+      setReplyText("");
+    } catch (err) {
+      console.error("Error submitting reply:", err);
+      showError(
+        "Lỗi khi gửi phản hồi: " + (err.response?.data?.message || err.message),
+        5000,
+        "top-right",
+      );
     } finally {
       setIsSubmittingReply(false);
     }
@@ -102,289 +149,224 @@ const ReviewsTable = ({ theme }) => {
 
   const handleCloseReplyModal = () => {
     setShowReplyModal(false);
-    setReplyText('');
+    setReplyText("");
     setSelectedReview(null);
   };
 
-  // Delete review disabled in UI; keep stub to avoid unused handler
-
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN');
+    return new Date(dateString).toLocaleDateString("vi-VN", {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
   };
 
-  if (loading) {
-    return (
-      <div className={`p-6 rounded-lg ${cardBg} border ${borderColor}`}>
-        <div className="py-4">
-          <ProductGridSkeleton count={4} />
-        </div>
+  const calculateRatingStats = () => {
+    if (reviews.length === 0) return { avg: 0, dist: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } };
+    const dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    let sum = 0;
+    reviews.forEach(r => {
+      if (dist[r.rating] !== undefined) dist[r.rating]++;
+      sum += r.rating;
+    });
+    return { avg: (sum / reviews.length).toFixed(1), dist };
+  };
+
+  const stats = calculateRatingStats();
+
+  const toolbar = (
+    <>
+      <div className="relative flex-1 min-w-[min(100%,18rem)] max-w-xl">
+        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" />
+        <input
+          type="text"
+          placeholder={t("admin.reviews_search_placeholder") || "Tìm theo nội dung review hoặc Product ID..."}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="admin-input w-full pl-10 py-2 text-sm"
+        />
       </div>
-    );
-  }
+      <div className="flex items-center gap-2 shrink-0">
+        <FaFilter className="text-[var(--color-text-muted)] shrink-0" />
+        <select
+          value={filterRating}
+          onChange={(e) => setFilterRating(e.target.value)}
+          className="admin-input py-2 text-sm min-w-[10rem]"
+        >
+          <option value="all">Tất cả đánh giá</option>
+          <option value="5">5 sao</option>
+          <option value="4">4 sao</option>
+          <option value="3">3 sao</option>
+          <option value="2">2 sao</option>
+          <option value="1">1 sao</option>
+        </select>
+      </div>
+    </>
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className={`p-6 rounded-lg ${cardBg} border ${borderColor}`}>
-        <h2 className={`text-2xl font-bold ${textColor} mb-2`}>
-          {t('admin.reviews_title') || 'Quản lý Reviews'}
-        </h2>
-        <p className={secondaryTextColor}>
-          {t('admin.reviews_subtitle') || 'Quản lý và phản hồi đánh giá sản phẩm'}
-        </p>
-      </div>
-
-      {error ? (
-        <StatusNotice
-          tone="error"
-          title="Không tải được dữ liệu reviews"
-          message={error}
-          actionText="Thử lại"
-          onAction={fetchReviewsData}
-        />
-      ) : null}
-
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.reviews_total') || 'Tổng Reviews'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>{reviews.length}</p>
-            </div>
-            <FaStar className="text-violet-600 text-xl" />
-          </div>
-        </div>
-
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.reviews_avg') || 'Đánh giá TB'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>
-                {reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : '0.0'}
-              </p>
-            </div>
-            <FaStar className="text-green-600 text-xl" />
-          </div>
-        </div>
-
-        <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className={`text-sm ${secondaryTextColor}`}>
-                {t('admin.reviews_five_star') || 'Reviews 5 sao'}
-              </p>
-              <p className={`text-2xl font-bold ${textColor}`}>
-                {reviews.filter(r => r.rating === 5).length}
-              </p>
-            </div>
-            <FaStar className="text-yellow-600 text-xl" />
-          </div>
-        </div>
-      </div>
-
-      {/* Search and Filter */}
-      <div className={`p-4 rounded-lg ${cardBg} border ${borderColor}`}>
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder={
-                t('admin.reviews_search_placeholder') ||
-                'Tìm kiếm theo nội dung review hoặc Product ID...'
-              }
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <FaFilter className="text-gray-600" />
-            <select
-              value={filterRating}
-              onChange={(e) => setFilterRating(e.target.value)}
-              className={`px-4 py-2 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-gray-700 text-white' : 'bg-white text-gray-900'}`}
-            >
-              <option value="all">{t('admin.filter_all_reviews') || 'Tất cả đánh giá'}</option>
-              <option value="5">{t('admin.filter_5_stars') || '5 sao'}</option>
-              <option value="4">{t('admin.filter_4_stars') || '4 sao'}</option>
-              <option value="3">{t('admin.filter_3_stars') || '3 sao'}</option>
-              <option value="2">{t('admin.filter_2_stars') || '2 sao'}</option>
-              <option value="1">{t('admin.filter_1_star') || '1 sao'}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Reviews Table */}
-      <div className={`rounded-lg ${cardBg} border ${borderColor} overflow-hidden`}>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
-              <tr>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.review_id_label') || 'ID'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.review_product_id_label') || 'Product ID'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.review_rating_label') || 'Đánh giá'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.review_content_label') || 'Nội dung'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.review_created_at_label') || 'Ngày tạo'}
-                </th>
-                <th className={`px-4 py-3 text-left text-xs font-medium ${secondaryTextColor} uppercase tracking-wider`}>
-                  {t('admin.actions') || 'Thao tác'}
-                </th>
-              </tr>
-            </thead>
-            <tbody className={`divide-y ${borderColor}`}>
-              {filteredReviews.map((review) => (
-                <tr key={review.id} className={`hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    #{review.id}
-                  </td>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    <span className="font-medium">Product #{review.productId}</span>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1">
-                      {renderStars(review.rating)}
-                      <span className={`ml-2 text-sm ${textColor}`}>({review.rating}/5)</span>
-                    </div>
-                  </td>
-                  <td className={`px-4 py-4 text-sm ${textColor}`}>
-                    <div className="max-w-xs truncate">
-                      {review.comment || t('admin.no_content') || 'Không có nội dung'}
-                    </div>
-                  </td>
-                  <td className={`px-4 py-4 whitespace-nowrap text-sm ${textColor}`}>
-                    {formatDate(review.createdAt)}
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={() => handleReply(review)}
-                        variant="ghost"
-                        size="sm"
-                        icon={<FaReply />}
-                      >
-                        {t('admin.reply_button') || 'Phản hồi'}
-                      </Button>
-                      {/* Ẩn nút xóa theo yêu cầu */}
-                      {/* <button
-                        onClick={() => handleDeleteReview(review.id)}
-                        className="text-red-600 hover:text-red-900 flex items-center gap-1"
-                      >
-                        <FaTrash />
-                        Xóa
-                      </button> */}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredReviews.length === 0 && (
-          <div className="text-center py-8">
-            <EmptyState
-              title={t('admin.no_reviews_found') || 'Không tìm thấy review nào'}
-              description={t('admin.try_adjust_filters') || 'Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm'}
-              className="py-2"
+    <div className="space-y-6 animate-pageIn">
+      <ProductTableLayout 
+        title={t("admin.reviews_title") || "Quản lý Đánh Giá"}
+        subtitle={t("admin.reviews_subtitle") || "Kiểm duyệt, theo dõi và phản hồi đánh giá của khách hàng"}
+        itemCount={reviews.length}
+        toolbar={toolbar}
+      >
+        {error && (
+          <div className="mb-6">
+            <StatusNotice
+              tone="error"
+              title="Không tải được dữ liệu reviews"
+              message={error}
+              actionText="Thử lại"
+              onAction={fetchReviewsData}
             />
           </div>
         )}
-      </div>
 
-      {/* Reply Modal với backdrop blur */}
-      {showReplyModal && selectedReview && (
-        <div 
-          className="fixed inset-0 backdrop-blur-md bg-opacity-0 flex items-center justify-center z-50"
-          onClick={handleCloseReplyModal}
-        >
-          <div 
-            className={`p-6 rounded-lg ${cardBg} border ${borderColor} max-w-2xl w-full mx-4 shadow-2xl`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className={`text-xl font-bold ${textColor} mb-4`}>
-              {t('admin.reply_review') || 'Phản hồi Review'}
-            </h3>
-            
-            {/* Thông tin review gốc */}
-            <div className={`mb-6 p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'} border ${borderColor}`}>
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className={`text-xs ${secondaryTextColor} mb-1`}>Review ID: #{selectedReview.id} | Product ID: #{selectedReview.productId}</p>
-                  <div className="flex items-center gap-2 mb-2">
-                    {renderStars(selectedReview.rating)}
-                    <span className={`text-sm ${textColor} font-medium`}>({selectedReview.rating}/5)</span>
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div className="admin-card p-6 flex items-center justify-between col-span-1 lg:col-span-1 rounded-[var(--radius-xl)] bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-bg-subtle)]">
+            <div>
+              <p className="text-sm text-[var(--color-text-secondary)] font-medium mb-1">Điểm trung bình</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-black text-[var(--color-text)]">{stats.avg}</span>
+                <span className="text-lg text-[var(--color-text-muted)] font-medium">/ 5</span>
               </div>
-              <p className={`text-sm ${textColor} italic`}>
-                "{selectedReview.comment || t('admin.no_content') || 'Không có nội dung'}"
-              </p>
-              {selectedReview.reply && (
-                <div className={`mt-3 pt-3 border-t ${borderColor}`}>
-                  <p className={`text-xs font-semibold ${secondaryTextColor} mb-1`}>
-                    {t('admin.current_reply') || 'Phản hồi hiện tại:'}
-                  </p>
-                  <p className={`text-sm ${textColor}`}>{selectedReview.reply}</p>
-                </div>
-              )}
+              <div className="flex items-center gap-1 mt-2">
+                {renderStars(Math.round(stats.avg))}
+              </div>
+              <p className="text-xs text-[var(--color-text-muted)] mt-2">Dựa trên {reviews.length} lượt đánh giá</p>
             </div>
-
-            {/* Form phản hồi */}
-            <div className="mb-6">
-              <label className={`block text-sm font-medium ${textColor} mb-2`}>
-                {t('admin.reply_content_label') || 'Nội dung phản hồi'}
-              </label>
-              <textarea
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                placeholder={
-                  t('admin.reply_placeholder') || 'Nhập phản hồi của bạn cho bình luận này...'
-                }
-                rows="5"
-                className={`w-full px-4 py-3 border ${borderColor} rounded-lg focus:border-blue-500 focus:outline-none resize-none ${
-                  theme === 'dark' ? 'bg-gray-700 text-white placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'
-                }`}
-                disabled={isSubmittingReply}
-              />
+            <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center border-4 border-amber-50 dark:border-amber-900/10 shadow-inner">
+              <FaStar className="text-4xl" />
             </div>
+          </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end gap-3">
-              <Button
-                onClick={handleCloseReplyModal}
-                disabled={isSubmittingReply}
-                variant="outline"
-              >
-                {t('common.cancel') || t('admin.cancel') || 'Hủy'}
-              </Button>
-              <Button
-                onClick={handleSubmitReply}
-                disabled={isSubmittingReply || !replyText.trim()}
-                variant="primary"
-              >
-                {isSubmittingReply
-                  ? t('admin.sending') || 'Đang gửi...'
-                  : t('admin.send_reply') || 'Gửi phản hồi'}
-              </Button>
+          <div className="admin-card p-6 col-span-1 lg:col-span-2 rounded-[var(--radius-xl)] bg-[var(--color-bg)]">
+            <h3 className="text-sm font-semibold text-[var(--color-text)] mb-4">Phân bố đánh giá</h3>
+            <div className="space-y-2.5">
+              {[5, 4, 3, 2, 1].map(star => {
+                const count = stats.dist[star] || 0;
+                const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                return (
+                  <div key={star} className="flex items-center gap-3 text-sm">
+                    <div className="flex items-center gap-1 w-12 shrink-0 font-medium text-[var(--color-text-secondary)]">
+                      {star} <FaStar className="text-amber-400 text-[10px]" />
+                    </div>
+                    <div className="flex-1 h-2.5 bg-[var(--color-bg-muted)] rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-1000 ${star >= 4 ? 'bg-emerald-500' : star === 3 ? 'bg-amber-400' : 'bg-red-500'}`}
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                    <div className="w-10 text-right text-[var(--color-text-muted)] tabular-nums text-xs font-semibold">
+                      {count}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
+
+        {loading ? (
+          <div className="space-y-3 py-2" aria-busy="true">
+            {[1, 2, 3, 4, 5, 6].map((row) => (
+              <div key={row} className="admin-skeleton h-16 rounded-xl border border-[var(--color-border)]" />
+            ))}
+          </div>
+        ) : filteredReviews.length === 0 ? (
+          <div className="text-center py-12 border border-dashed border-[var(--color-border)] rounded-2xl bg-[var(--color-bg-subtle)]">
+            <EmptyState
+              title={t("admin.no_reviews_found") || "Không tìm thấy review nào"}
+              description={t("admin.try_adjust_filters") || "Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm"}
+              className="py-2"
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-bg)] shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="admin-table w-full">
+                <thead>
+                  <tr>
+                    <th className="w-16 text-center">User</th>
+                    <TableSortHeader label="Sản phẩm" sortKey="productId" currentSort={sortConfig} onSort={handleSort} />
+                    <TableSortHeader label="Đánh giá" sortKey="rating" currentSort={sortConfig} onSort={handleSort} />
+                    <TableSortHeader label="Nội dung review" sortKey="comment" currentSort={sortConfig} onSort={handleSort} />
+                    <TableSortHeader label="Thời gian" sortKey="createdAt" currentSort={sortConfig} onSort={handleSort} />
+                    <th className="text-right pr-6">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedReviews.map((review) => (
+                    <tr key={review.id} className="admin-table-row">
+                      <td className="w-16 text-center pl-4 py-3">
+                        <div className="w-10 h-10 rounded-full bg-[var(--color-bg-muted)] border border-[var(--color-border)] text-[var(--color-text-muted)] flex items-center justify-center mx-auto">
+                          <FaUserCircle size={28} className="opacity-50" />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="font-semibold text-[var(--color-text)]">Product #{review.productId}</div>
+                        <div className="text-[10px] text-[var(--color-text-muted)] font-mono uppercase">Rev ID: {review.id}</div>
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-1.5 bg-[var(--color-bg-subtle)] w-fit px-2 py-1 rounded-lg border border-[var(--color-border)]">
+                          {renderStars(review.rating)}
+                          <span className="ml-1 text-xs font-bold text-[var(--color-text)]">
+                            {review.rating}.0
+                          </span>
+                        </div>
+                      </td>
+                      <td className="max-w-xs">
+                        <div className="text-sm text-[var(--color-text)] font-medium line-clamp-2">
+                          {review.comment || <span className="text-[var(--color-text-muted)] italic">Không có nội dung</span>}
+                        </div>
+                        {review.reply && (
+                          <div className="mt-2 text-xs bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 p-2 rounded border border-indigo-100 dark:border-indigo-800 line-clamp-1 flex items-center gap-1.5">
+                            <FaReply className="shrink-0" />
+                            {review.reply}
+                          </div>
+                        )}
+                      </td>
+                      <td className="text-xs text-[var(--color-text-secondary)]">
+                        {formatDate(review.createdAt)}
+                      </td>
+                      <td className="text-right pr-6">
+                        <Button
+                          onClick={() => handleReply(review)}
+                          variant={review.reply ? "ghost" : "primary"}
+                          size="sm"
+                          icon={<FaReply />}
+                        >
+                          {review.reply ? "Sửa phản hồi" : "Phản hồi ngay"}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredReviews.length / itemsPerPage)}
+              totalItems={filteredReviews.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={setItemsPerPage}
+            />
+          </div>
+        )}
+      </ProductTableLayout>
+
+      {showReplyModal && selectedReview && (
+        <ReviewReplyModal
+          selectedReview={selectedReview}
+          replyText={replyText}
+          onReplyChange={setReplyText}
+          isSubmittingReply={isSubmittingReply}
+          onClose={handleCloseReplyModal}
+          onSubmit={handleSubmitReply}
+        />
       )}
     </div>
   );

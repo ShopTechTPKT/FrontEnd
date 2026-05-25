@@ -41,6 +41,13 @@ const SLIDES = [
 
 const AUTOPLAY_INTERVAL = 7000; // 7s — thoải mái hơn
 
+const removeVietnameseTones = (str) =>
+  str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+
 const HeroBanner = ({ products = [] }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -84,21 +91,16 @@ const HeroBanner = ({ products = [] }) => {
   const goPrev = () => goTo((current - 1 + SLIDES.length) % SLIDES.length);
 
   // ── Search ─────────────────────────────────────────────────
-  const removeVietnameseTones = (str) =>
-    str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "D");
-
-  const filteredProducts = products.filter((p) => {
-    if (!debouncedSearchTerm.trim()) return false;
-    const q = removeVietnameseTones(debouncedSearchTerm.toLowerCase());
-    const name = removeVietnameseTones(
-      (p.productName || p.item?.productName || "").toLowerCase()
-    );
-    return name.includes(q);
-  });
+  const filteredProducts = React.useMemo(() => {
+    if (!debouncedSearchTerm.trim()) return [];
+    return products.filter((p) => {
+      const q = removeVietnameseTones(debouncedSearchTerm.toLowerCase());
+      const name = removeVietnameseTones(
+        (p.productName || p.item?.productName || "").toLowerCase()
+      );
+      return name.includes(q);
+    });
+  }, [products, debouncedSearchTerm]);
 
   const visibleSuggestions = filteredProducts.slice(0, 7);
 
@@ -187,6 +189,8 @@ const HeroBanner = ({ products = [] }) => {
             alt={t(s.titleKey)}
             className="w-full h-full object-cover"
             loading={idx === 0 ? "eager" : "lazy"}
+            fetchPriority={idx === 0 ? "high" : "auto"}
+            decoding={idx === 0 ? "sync" : "async"}
           />
           {/* Gradient overlay */}
           <div className={`absolute inset-0 bg-gradient-to-r ${s.accent}`} />

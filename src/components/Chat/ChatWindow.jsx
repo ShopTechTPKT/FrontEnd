@@ -1,7 +1,8 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import ChatMessage from "./ChatMessage";
 import { useTranslation } from "react-i18next";
+import { getApiBaseUrl } from "../../utils/runtimeUrls";
 
 const ChatWindow = ({
   selectedSession,
@@ -20,7 +21,7 @@ const ChatWindow = ({
   const [filePreviewUrl, setFilePreviewUrl] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
+  const API_URL = getApiBaseUrl();
 
   // Cleanup preview URL khi component unmount hoặc file thay đổi
   useEffect(() => {

@@ -1,12 +1,13 @@
 ﻿import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import formatCurrency from "../../utils/formatCurrency";
-import { getOrdersByUser } from "../../apis/orderApi";
+import { cancelOrder, getOrdersByUser, reorderOrder } from "../../apis/orderApi";
 import OrderDetailModal from "./OrderDetailModal";
 import ProductGridSkeleton from "../ui/ProductGridSkeleton";
 import StatusNotice from "../ui/StatusNotice";
 import EmptyState from "../ui/EmptyState";
 import Button from "../ui/Button";
+import notify from "../../utils/notify";
 
 const UserOrders = ({ userId }) => {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ const UserOrders = ({ userId }) => {
   const [error, setError] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [actionLoadingOrderId, setActionLoadingOrderId] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -94,6 +96,36 @@ const UserOrders = ({ userId }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedOrderId(null);
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    const reason = window.prompt("Lý do hủy đơn hàng:");
+    if (reason === null) return;
+    try {
+      setActionLoadingOrderId(orderId);
+      await cancelOrder(orderId, reason || "Customer requested cancellation");
+      notify.success("Đã hủy đơn hàng");
+      await fetchOrders();
+    } catch (error) {
+      console.error("Cancel order error:", error);
+      notify.error(error?.response?.data?.message || "Không thể hủy đơn hàng");
+    } finally {
+      setActionLoadingOrderId(null);
+    }
+  };
+
+  const handleReorder = async (orderId) => {
+    try {
+      setActionLoadingOrderId(orderId);
+      await reorderOrder(orderId);
+      notify.success("Đặt lại đơn thành công");
+      await fetchOrders();
+    } catch (error) {
+      console.error("Reorder error:", error);
+      notify.error(error?.response?.data?.message || "Không thể đặt lại đơn hàng");
+    } finally {
+      setActionLoadingOrderId(null);
+    }
   };
 
   if (loading) {
@@ -240,6 +272,28 @@ const UserOrders = ({ userId }) => {
                         }
                       >
                       </Button>
+
+                      {(order.status === "PENDING" || order.status === "CONFIRMED") && (
+                        <Button
+                          onClick={() => handleCancelOrder(order.id)}
+                          variant="danger"
+                          size="sm"
+                          loading={actionLoadingOrderId === order.id}
+                        >
+                          Hủy đơn
+                        </Button>
+                      )}
+
+                      {order.status === "DELIVERED" && (
+                        <Button
+                          onClick={() => handleReorder(order.id)}
+                          variant="outline"
+                          size="sm"
+                          loading={actionLoadingOrderId === order.id}
+                        >
+                          Đặt lại
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>

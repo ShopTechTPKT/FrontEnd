@@ -1,5 +1,9 @@
 import axiosInstance from "../custom/axios";
+import { deleteCachedValue, getOrFetchWithCache } from "../utils/apiCache";
 const API_URL = "/users";
+const USER_CACHE_TTL_MS = 2 * 60 * 1000;
+
+const getUserCacheKey = userId => `users:profile:${userId}`;
 
 // ============ USER PROFILE ENDPOINTS ============
 
@@ -7,8 +11,14 @@ const API_URL = "/users";
  * Get user info by ID
  */
 export const getUserById = async (id) => {
-  const response = await axiosInstance.get(`${API_URL}/${id}`);
-  return response.data;
+  return getOrFetchWithCache({
+    key: getUserCacheKey(id),
+    ttlMs: USER_CACHE_TTL_MS,
+    fetcher: async () => {
+      const response = await axiosInstance.get(`${API_URL}/${id}`);
+      return response.data;
+    },
+  });
 };
 
 /**
@@ -18,8 +28,14 @@ export const getUserById = async (id) => {
  */
 export const getUserInfo = async (userId) => {
   try {
-    const response = await axiosInstance.get(`${API_URL}/${userId}`);
-    return response.data;
+    return getOrFetchWithCache({
+      key: getUserCacheKey(userId),
+      ttlMs: USER_CACHE_TTL_MS,
+      fetcher: async () => {
+        const response = await axiosInstance.get(`${API_URL}/${userId}`);
+        return response.data;
+      },
+    });
   } catch (error) {
     console.error("Error fetching user info:", error);
     throw error;
@@ -260,6 +276,7 @@ export const getActiveDiscounts = async (userId) => {
 export const updateUserProfile = async (userId, userInfo) => {
   try {
     const response = await axiosInstance.put(`${API_URL}/${userId}`, userInfo);
+    deleteCachedValue(getUserCacheKey(userId));
     return response.data;
   } catch (error) {
     console.error("Error updating user profile:", error);
@@ -276,6 +293,7 @@ export const updateUserProfile = async (userId, userInfo) => {
 export const changePassword = async (userId, passwordData) => {
   try {
     const response = await axiosInstance.post(`${API_URL}/${userId}/change-password`, passwordData);
+    deleteCachedValue(getUserCacheKey(userId));
     return response.data;
   } catch (error) {
     console.error("Error changing password:", error);
@@ -305,4 +323,24 @@ export const consumeGamePlay = async (userId) => {
     console.error("Error consuming game play:", error);
     throw error;
   }
+};
+
+export const getUserAnalytics = async (userId) => {
+  const response = await axiosInstance.get(`/users/${userId}/analytics`);
+  return response.data;
+};
+
+export const getUserMonthlyAnalytics = async (userId) => {
+  const response = await axiosInstance.get(`/users/${userId}/analytics/monthly`);
+  return Array.isArray(response.data) ? response.data : [];
+};
+
+export const getUserCategoryAnalytics = async (userId) => {
+  const response = await axiosInstance.get(`/users/${userId}/analytics/categories`);
+  return Array.isArray(response.data) ? response.data : [];
+};
+
+export const getUserSavingsAnalytics = async (userId) => {
+  const response = await axiosInstance.get(`/users/${userId}/analytics/savings`);
+  return response.data;
 };

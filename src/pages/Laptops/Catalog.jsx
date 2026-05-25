@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import ProductGridSkeleton from "../../components/ui/ProductGridSkeleton";
 import EmptyState from "../../components/ui/EmptyState";
 import Button from "../../components/ui/Button";
+import { VirtualProductGrid } from "../../components/ui";
 
 /** Sort toàn bộ danh sách trước khi phân trang (tránh sort chỉ trong 1 trang). */
 function sortCatalogProducts(products, sortOption) {
@@ -445,19 +446,22 @@ export default function Catalog() {
 
     {/* Dạng Grid */}
     {!loading && viewMode === "grid" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fadeIn">
-            {sortedProducts.length > 0 ? (
-                sortedProducts.map((product) => (
-                    
-                    <ProductCard key={product.id || product.productID} product={product} /> 
-                ))
-            ) : (
-              <EmptyState
-                title={t("common.catalog_no_products")}
-                description={t("common.catalog_no_products_hint")}
-              />
-            )}
-        </div>
+      sortedProducts.length > 0 ? (
+        <VirtualProductGrid
+          products={sortedProducts}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fadeIn"
+          chunkSize={4}
+          minChunkHeight="450px"
+          renderItem={(product) => (
+            <ProductCard key={product.id || product.productID} product={product} />
+          )}
+        />
+      ) : (
+        <EmptyState
+          title={t("common.catalog_no_products")}
+          description={t("common.catalog_no_products_hint")}
+        />
+      )
     )}
 
     {/* Dạng List - Đã thêm logic kiểm tra sortedProducts.length */}

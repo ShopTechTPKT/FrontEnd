@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { FaFolder, FaLaptop, FaDesktop, FaMobileAlt, FaKeyboard, FaMouse, FaHeadphones, FaPlus, FaEdit, FaTrash, FaBox, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -92,23 +92,23 @@ const CategoriesManagement = () => {
   const totalProducts = categories.reduce((sum, cat) => sum + cat.productCount, 0);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="animate-pageIn pb-10">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaFolder className="text-6xl mb-4 text-violet-400" />
+              <FaFolder className="text-6xl mb-4 text-[var(--color-primary-)]" />
               <h1 className="text-5xl font-bold mb-3">{t('category.categories_management')}</h1>
-              <p className="text-xl text-violet-300">{t('category.organize_your_product_catalog')}</p>
+              <p className="text-xl text-[var(--color-primary-)]">{t('category.organize_your_product_catalog')}</p>
             </div>
             <div className="flex gap-4">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <p className="text-violet-300 text-sm mb-1">{t('category.categories')}</p>
+                <p className="text-[var(--color-primary-)] text-sm mb-1">{t('category.categories')}</p>
                 <p className="text-4xl font-bold">{categories.length}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <p className="text-violet-300 text-sm mb-1">{t('common.products')}</p>
+                <p className="text-[var(--color-primary-)] text-sm mb-1">{t('common.products')}</p>
                 <p className="text-4xl font-bold">{totalProducts}</p>
               </div>
             </div>
@@ -117,21 +117,21 @@ const CategoriesManagement = () => {
       </div>
 
       {/* Search & Actions */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-md">
+      <div className="sticky top-0 z-30 admin-header-glass border-b border-[var(--color-border)] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex gap-4">
             {/* Search */}
             <div className="relative flex-1">
-              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
               <input
                 type="text"
                 placeholder={t('category.search_categories')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+                className="admin-input w-full pl-12 pr-4 py-3 rounded-[var(--radius-lg)] dark:bg-gray-900 dark:border-gray-700"
               />
             </div>
-            <button className="bg-gradient-to-r from-violet-800 to-violet-900 text-white px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-lg flex items-center gap-2">
+            <button type="button" className="btn-admin-primary px-8 py-3 rounded-[var(--radius-lg)] font-bold shrink-0 flex items-center gap-2">
               <FaPlus />
               Add Category
             </button>
@@ -147,45 +147,45 @@ const CategoriesManagement = () => {
             return (
               <div 
                 key={category.id}
-                className="group bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="group admin-card rounded-[var(--radius-xl)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 border border-[var(--color-border)]"
               >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-violet-800 to-violet-900 text-white p-6 relative overflow-hidden">
+                <div className="bg-gradient-to-r from-[var(--color-primary-)] to-[var(--color-primary-)] text-white p-6 relative overflow-hidden">
                   <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full"></div>
                   <div className="relative">
-                    <Icon className="text-5xl mb-4 text-violet-300" />
+                    <Icon className="text-5xl mb-4 text-[var(--color-primary-)]" />
                     <h3 className="font-bold text-2xl mb-2">{category.name}</h3>
-                    <p className="text-sm text-violet-200">{category.id}</p>
+                    <p className="text-sm text-[var(--color-primary-)]">{category.id}</p>
                   </div>
                 </div>
 
                 {/* Body */}
                 <div className="p-6">
                   {/* Description */}
-                  <p className="text-gray-600 mb-4 text-sm">
+                  <p className="text-[var(--color-text-secondary)] mb-4 text-sm">
                     {category.description}
                   </p>
 
                   {/* Stats */}
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-[var(--color-border)]">
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">{t('category.total_products')}</p>
-                      <p className="text-2xl font-bold text-violet-600">{category.productCount}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">{t('category.total_products')}</p>
+                      <p className="text-2xl font-bold text-[var(--color-primary-)]">{category.productCount}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 mb-1">{t('category.subcategories')}</p>
-                      <p className="text-2xl font-bold text-gray-900">{category.subcategories.length}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-1">{t('category.subcategories')}</p>
+                      <p className="text-2xl font-bold text-[var(--color-text)]">{category.subcategories.length}</p>
                     </div>
                   </div>
 
                   {/* Subcategories */}
                   <div className="mb-4">
-                    <p className="text-xs font-semibold text-gray-700 mb-2">{t('remaining.subcategories')}</p>
+                    <p className="text-xs font-semibold text-[var(--color-text)] mb-2">{t('remaining.subcategories')}</p>
                     <div className="flex flex-wrap gap-2">
                       {category.subcategories.slice(0, 3).map((sub, index) => (
                         <span 
                           key={index}
-                          className="px-3 py-1 bg-violet-100 text-violet-800 rounded-full text-xs font-medium"
+                          className="px-3 py-1 bg-[var(--color-primary-)] text-[var(--color-primary-)] rounded-full text-xs font-medium"
                         >
                           {sub}
                         </span>
@@ -199,15 +199,15 @@ const CategoriesManagement = () => {
                   </div>
 
                   {/* Date */}
-                  <p className="text-xs text-gray-500 mb-4">
+                  <p className="text-xs text-[var(--color-text-muted)] mb-4">
                     Created: {new Date(category.createdDate).toLocaleDateString('vi-VN')}
                   </p>
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                    <button type="button" className="flex-1 btn-admin-outline py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold">
                       <FaEdit />{t('account.edit')}</button>
-                    <button className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                    <button type="button" className="flex-1 btn-admin-primary bg-red-600 hover:bg-red-700 border-0 py-2 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold">
                       <FaTrash />
                       Delete
                     </button>
@@ -221,22 +221,22 @@ const CategoriesManagement = () => {
         {/* Empty State */}
         {filteredCategories.length === 0 && (
           <div className="text-center py-12">
-            <FaFolder className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('category.no_categories_found')}</h3>
-            <p className="text-gray-600">{t('common.try_adjusting_your_search')}</p>
+            <FaFolder className="text-6xl text-[var(--color-text-muted)] mx-auto mb-4 opacity-60" />
+            <h3 className="text-2xl font-bold text-[var(--color-text)] mb-2">{t('category.no_categories_found')}</h3>
+            <p className="text-[var(--color-text-secondary)]">{t('common.try_adjusting_your_search')}</p>
           </div>
         )}
       </div>
 
       {/* Quick Stats */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('category.category_statistics')}</h2>
+        <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">{t('category.category_statistics')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.slice(0, 4).map((category, index) => {
             const Icon = category.icon;
             const colors = [
-              'from-violet-600 to-violet-700',
-              'from-blue-500 to-blue-600',
+              'from-[var(--color-primary-)] to-[var(--color-primary-)]',
+              'from-[var(--color-primary-)] to-[var(--color-primary-)]',
               'from-green-500 to-green-600',
               'from-orange-500 to-orange-600'
             ];

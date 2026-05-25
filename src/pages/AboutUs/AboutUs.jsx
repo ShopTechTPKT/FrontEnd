@@ -6,6 +6,7 @@ import a3 from "../../assets/images/aboutus/anh3.png";
 import a4 from "../../assets/images/aboutus/anh4.png";
 import a5 from "../../assets/images/aboutus/anh5.png";
 import { useTranslation } from 'react-i18next';
+import { getAllReviews } from '../../apis/reviewProductApi';
 
 export default function AboutUs() {
   const { t } = useTranslation();
@@ -15,19 +16,29 @@ export default function AboutUs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch reviews từ Mock Data
+    // Fetch reviews tu API
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        // Import mock reviews service
-        const { getAllReviews } = await import('../../mockData/reviews');
         const data = await getAllReviews();
+        if (data?.EC === 1) {
+          const formattedTestimonials = (data?.DT || [])
+            .filter(item => item?.comment)
+            .slice(0, 10)
+            .map(item => ({
+              comment: item.comment,
+              customerName:
+                item.customerName ||
+                item.userName ||
+                item.fullName ||
+                "Khach hang ShopPC",
+            }));
           setTestimonials(formattedTestimonials);
         } else {
-          throw new Error(data.EM || "Lỗi lấy đánh giá");
+          throw new Error(data?.EM || "Loi lay danh gia");
         }
       } catch (err) {
-        setError(err.message);
+        setError(err?.message || "Loi lay danh gia");
       } finally {
         setLoading(false);
       }
@@ -80,7 +91,7 @@ export default function AboutUs() {
             </div>
             <div className="md:w-1/2 mt-6 md:mt-0">
               <div className="p-4 rounded-lg">
-                <img src={a1} alt={t('about.shop_interior')} className="w-full rounded-lg" />
+                <img src={a1} alt={t('about.shop_interior')} className="w-full rounded-lg" loading="lazy" />
               </div>
             </div>
           </div>
@@ -90,7 +101,7 @@ export default function AboutUs() {
         <section className="py-12">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 md:pr-6">
-              <img src={a2} alt={t('about.keyboard')} className="w-full rounded-lg" />
+              <img src={a2} alt={t('about.keyboard')} className="w-full rounded-lg" loading="lazy" />
             </div>
             <div className="md:w-1/2 mt-6 md:mt-0">
               <div className="flex items-center mb-4">
@@ -127,7 +138,7 @@ export default function AboutUs() {
               <p className="text-sm italic">{t('about.performance_compared_to_i711700')}</p>
             </div>
             <div className="md:w-1/2 mt-6 md:mt-0">
-              <img src={a3} alt={t('about.gaming_pc_with_green')} className="w-full rounded-lg" />
+              <img src={a3} alt={t('about.gaming_pc_with_green')} className="w-full rounded-lg" loading="lazy" />
             </div>
           </div>
         </section>
@@ -136,7 +147,7 @@ export default function AboutUs() {
         <section className="py-12">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 md:pr-6">
-              <img src={a4} alt={t('about.pc_case_with_rgb')} className="w-full rounded-lg" />
+              <img src={a4} alt={t('about.pc_case_with_rgb')} className="w-full rounded-lg" loading="lazy" />
             </div>
             <div className="md:w-1/2 mt-6 md:mt-0">
               <div className="flex items-center mb-4">
@@ -172,7 +183,7 @@ export default function AboutUs() {
               </p>
             </div>
             <div className="md:w-1/2 mt-6 md:mt-0">
-              <img src={a5} alt={t('about.gaming_pc_with_blue')} className="w-full rounded-lg" />
+              <img src={a5} alt={t('about.gaming_pc_with_blue')} className="w-full rounded-lg" loading="lazy" />
             </div>
           </div>
         </section>
@@ -219,3 +230,4 @@ export default function AboutUs() {
 // Updated: 2025-10-12T16:06:23.384Z
 
 // Updated: 2025-10-12T16:08:52.302Z
+

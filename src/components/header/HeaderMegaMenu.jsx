@@ -15,7 +15,7 @@ function HeaderMegaMenu({ onNavigate }) {
   const prefetchedRef = React.useRef(false);
 
   const itemClass =
-    "block w-full text-left px-2 py-1.5 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors";
+    "block w-full rounded-lg px-2 py-1.5 text-left text-sm text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 dark:text-gray-300 dark:hover:bg-violet-950/50 dark:hover:text-violet-300";
 
   const previewCards = [
     {
@@ -49,15 +49,15 @@ function HeaderMegaMenu({ onNavigate }) {
 
   return (
     <div
-      className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[820px] max-w-[calc(100vw-2rem)] z-20 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200"
+      className="invisible absolute left-1/2 top-full z-[var(--z-popover)] w-[820px] max-w-[calc(100vw-2rem)] -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
       onMouseEnter={handlePrefetch}
     >
-      <div className="bg-white border border-gray-200 rounded-xl shadow-md shadow-gray-200/40 p-5">
+      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-md shadow-gray-200/40 dark:border-gray-700 dark:bg-gray-900">
         <div className="grid grid-cols-[2fr_1fr] gap-5">
           <div className="grid grid-cols-4 gap-5">
             {sections.map((section) => (
               <div key={section.titleKey}>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2.5 px-2">
+                <h3 className="mb-2.5 px-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
                   {t(section.titleKey)}
                 </h3>
                 {section.items.map((item, idx) => (
@@ -89,12 +89,12 @@ function HeaderMegaMenu({ onNavigate }) {
                   }
                   onNavigate("/products", { list: card.list });
                 }}
-                className="w-full text-left rounded-lg border border-gray-100 hover:border-violet-200 hover:bg-violet-50/40 transition-colors overflow-hidden"
+                className="w-full overflow-hidden rounded-lg border border-gray-100 text-left transition-colors hover:border-violet-200 hover:bg-violet-50/40 dark:border-gray-700 dark:hover:border-violet-700 dark:hover:bg-violet-950/30"
               >
                 <img src={card.image} alt={card.title} className="h-20 w-full object-cover" loading="lazy" />
                 <div className="p-2.5">
-                  <p className="text-xs font-semibold text-gray-900">{card.title}</p>
-                  <p className="text-[11px] text-gray-500 mt-0.5">{card.subtitle}</p>
+                  <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">{card.title}</p>
+                  <p className="mt-0.5 text-[11px] text-gray-500 dark:text-gray-400">{card.subtitle}</p>
                 </div>
               </button>
             ))}

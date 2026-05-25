@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
-export default function PieChartWithDetails({ data, darkMode, title }) {
+export default function PieChartWithDetails({ data, title }) {
   const { t } = useTranslation("translation");
   const normalized = Array.isArray(data) ? data : [data];
   const entries = normalized.slice(0, 8);
@@ -14,7 +14,7 @@ export default function PieChartWithDetails({ data, darkMode, title }) {
   if (total === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <p className={`text-lg ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+        <p className="text-lg text-[var(--color-text-muted)]">
           {t("admin.no_data")}
         </p>
       </div>
@@ -33,7 +33,7 @@ export default function PieChartWithDetails({ data, darkMode, title }) {
 
   return (
     <div className="w-full h-full flex flex-col p-4">
-      <h3 className={`text-lg font-bold text-center mb-4 ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
+      <h3 className="text-lg font-bold text-center mb-4 text-[var(--color-text)]">
         {title}
       </h3>
       <div className="flex-grow">
@@ -54,13 +54,18 @@ export default function PieChartWithDetails({ data, darkMode, title }) {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: darkMode ? "#1F2937" : "#FFFFFF",
-                borderColor: darkMode ? "#374151" : "#E5E7EB",
-                color: darkMode ? "#F3F4F6" : "#1F2937"
+                backgroundColor: "var(--color-bg)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-text)",
               }}
               formatter={(value) => value.toLocaleString()}
             />
-            <Legend verticalAlign="bottom" height={36}/>
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              wrapperStyle={{ color: "var(--color-text-secondary)" }}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
