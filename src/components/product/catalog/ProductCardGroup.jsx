@@ -91,7 +91,7 @@ export default function ProductCardGroup({ product }) {
   return (
     <div
       className="group relative bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer
-                 hover:-translate-y-1 hover:shadow-lg hover:border-violet-100
+                 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-100
                  transition-all duration-300"
       onClick={() => navigate(`/product/${pid}/productAbout`)}
     >
@@ -113,7 +113,7 @@ export default function ProductCardGroup({ product }) {
             </span>
           )}
           {badge && (
-            <span className="bg-violet-700 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none">
+            <span className="bg-indigo-700 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md leading-none">
               MỚI
             </span>
           )}
@@ -133,7 +133,7 @@ export default function ProductCardGroup({ product }) {
             <button
               onClick={handleAddToCart}
               className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-lg
-                         bg-violet-700 text-white text-xs font-semibold hover:bg-violet-800 transition-colors"
+                         bg-indigo-700 text-white text-xs font-semibold hover:bg-indigo-800 transition-colors"
               aria-label="Thêm vào giỏ hàng"
             >
               <CartIcon />

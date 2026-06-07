@@ -43,7 +43,7 @@ export default function SmartSearchAndAlertsPage() {
         <h2 className="font-semibold mb-3">Trending Search Keywords</h2>
         <div className="flex flex-wrap gap-2">
           {keywords.map((k) => (
-            <span key={`${k.id}-${k.keyword}`} className="px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-sm">
+            <span key={`${k.id}-${k.keyword}`} className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-sm">
               {k.keyword}
             </span>
           ))}
@@ -55,7 +55,7 @@ export default function SmartSearchAndAlertsPage() {
         <div className="flex flex-wrap gap-3">
           <input value={productId} onChange={(e) => setProductId(e.target.value)} placeholder="Product ID" className="px-3 py-2 border rounded-lg dark:bg-gray-900" />
           <input value={targetPrice} onChange={(e) => setTargetPrice(e.target.value)} placeholder="Target price" className="px-3 py-2 border rounded-lg dark:bg-gray-900" />
-          <button onClick={submitAlert} className="px-3 py-2 rounded-lg bg-violet-600 text-white">Set Alert</button>
+          <button onClick={submitAlert} className="px-3 py-2 rounded-lg bg-indigo-600 text-white">Set Alert</button>
         </div>
       </div>
 

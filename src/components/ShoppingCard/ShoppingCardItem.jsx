@@ -171,7 +171,7 @@ function CartItem({ item, onQuantityChange, onRemove }) {
         {/* Decrease button */}
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           onClick={handleDecreaseClick}
         >
           <svg
@@ -198,14 +198,14 @@ function CartItem({ item, onQuantityChange, onRemove }) {
               handleQuantityChange(Math.max(1, value));
             }}
             min="1"
-            className="h-9 w-12 rounded-lg border border-gray-200 text-center text-sm font-medium text-gray-800 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/30"
+            className="h-9 w-12 rounded-lg border border-gray-200 text-center text-sm font-medium text-gray-800 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30"
           />
         </div>
 
         {/* Increase button */}
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
           onClick={() => handleQuantityChange(quantity + 1)}
         >
           <svg

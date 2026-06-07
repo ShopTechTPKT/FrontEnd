@@ -42,7 +42,7 @@ export default function ProductCardSkeleton({ count = 8 }) {
 
             {/* Price row */}
             <div className="flex items-center justify-between pt-1">
-              <div className="h-5 bg-violet-100/80 rounded-full w-24 relative overflow-hidden">
+              <div className="h-5 bg-indigo-100/80 rounded-full w-24 relative overflow-hidden">
                 <div className="absolute inset-0 skeleton-shimmer" />
               </div>
               <div className="h-8 w-8 bg-gray-100 rounded-lg relative overflow-hidden">

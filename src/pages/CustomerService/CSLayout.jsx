@@ -23,7 +23,7 @@ const CSLayout = () => {
       <aside className={`cs-sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="p-5 border-b border-[var(--color-border)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary-)] to-purple-700 text-white flex items-center justify-center font-bold text-sm shadow-md">CS</div>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary-)] to-indigo-700 text-white flex items-center justify-center font-bold text-sm shadow-md">CS</div>
             <div>
               <h2 className="font-bold text-sm text-[var(--color-text)]">Customer Service</h2>
               <p className="text-[10px] text-[var(--color-text-muted)]">Support Panel</p>

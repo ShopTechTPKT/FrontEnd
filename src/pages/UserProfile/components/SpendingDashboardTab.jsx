@@ -67,7 +67,7 @@ export default function SpendingDashboardTab({ userId }) {
   if (loading) {
     return (
       <div className="profile-card flex flex-col items-center justify-center py-20 text-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet-600 border-t-transparent mb-3" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent mb-3" />
         <p className="text-sm text-gray-500">Đang tải phân tích chi tiêu cá nhân...</p>
       </div>
     );
@@ -79,9 +79,9 @@ export default function SpendingDashboardTab({ userId }) {
       <div className="grid gap-4 sm:grid-cols-2">
         {/* Total Spending */}
         <div className="relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-xs transition-all hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-violet-500/5 blur-xl"></div>
+          <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 rounded-full bg-indigo-500/5 blur-xl"></div>
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-950/40 dark:text-violet-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400">
               <Wallet className="h-6 w-6" />
             </div>
             <div>
@@ -115,7 +115,7 @@ export default function SpendingDashboardTab({ userId }) {
         {/* Monthly spending bar chart */}
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs dark:border-gray-800 dark:bg-gray-900">
           <div className="mb-4 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-violet-600" />
+            <BarChart3 className="h-5 w-5 text-indigo-600" />
             <h4 className="font-bold text-gray-900 dark:text-gray-100">Chi tiêu theo tháng</h4>
           </div>
           {monthly.length > 0 ? (
@@ -142,7 +142,7 @@ export default function SpendingDashboardTab({ userId }) {
         {/* Category spending pie chart */}
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs dark:border-gray-800 dark:bg-gray-900">
           <div className="mb-4 flex items-center gap-2">
-            <PieChartIcon className="h-5 w-5 text-violet-600" />
+            <PieChartIcon className="h-5 w-5 text-indigo-600" />
             <h4 className="font-bold text-gray-900 dark:text-gray-100">Phân loại chi tiêu</h4>
           </div>
           {categories.length > 0 ? (
@@ -168,15 +168,15 @@ export default function SpendingDashboardTab({ userId }) {
       </div>
 
       {/* Smart Recommendations Tips */}
-      <div className="rounded-2xl border border-violet-100 bg-violet-50/50 p-5 dark:border-violet-950/40 dark:bg-violet-950/10">
+      <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5 dark:border-indigo-950/40 dark:bg-indigo-950/10">
         <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-400 mt-0.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-400 mt-0.5">
             <Lightbulb className="h-5 w-5" />
           </div>
           <div>
-            <h4 className="font-bold text-violet-900 dark:text-violet-300">Gợi ý mua sắm thông minh</h4>
-            <p className="text-sm text-violet-700 dark:text-violet-400 mt-1 leading-relaxed">
-              Dựa trên dữ liệu chi tiêu, danh mục ưu tiên dự đoán cho lần mua sắm tiếp theo của bạn là <span className="font-bold text-violet-900 dark:text-violet-200 uppercase">{predictedNextPurchase}</span>. Nhấp vào các gợi ý sản phẩm tại trang chủ để nhận thêm nhiều ưu đãi.
+            <h4 className="font-bold text-indigo-900 dark:text-indigo-300">Gợi ý mua sắm thông minh</h4>
+            <p className="text-sm text-indigo-700 dark:text-indigo-400 mt-1 leading-relaxed">
+              Dựa trên dữ liệu chi tiêu, danh mục ưu tiên dự đoán cho lần mua sắm tiếp theo của bạn là <span className="font-bold text-indigo-900 dark:text-indigo-200 uppercase">{predictedNextPurchase}</span>. Nhấp vào các gợi ý sản phẩm tại trang chủ để nhận thêm nhiều ưu đãi.
             </p>
           </div>
         </div>

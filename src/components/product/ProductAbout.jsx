@@ -58,7 +58,7 @@ const QuantitySelector = ({ quantity, setQuantity }) => {
         type="button"
         onClick={handleDecrease}
         disabled={quantity <= 1}
-        className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 font-bold text-base leading-none"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150 font-bold text-base leading-none"
         aria-label="Giảm số lượng"
       >
         <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"><path d="M5 12h14"/></svg>
@@ -79,7 +79,7 @@ const QuantitySelector = ({ quantity, setQuantity }) => {
       <button
         type="button"
         onClick={handleIncrease}
-        className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-sm hover:shadow-violet-300/50 hover:scale-105 transition-all duration-150"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500 text-white shadow-sm hover:bg-indigo-600 active:scale-[0.97] transition-all duration-150"
         aria-label="Tăng số lượng"
       >
         <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -555,7 +555,7 @@ const handleSubmitReview = async () => {
       {/* Breadcrumb & Social Icons */}
       <div className="flex justify-between items-center text-sm mb-6">
         <div className="text-gray-600">
-          <span className="hover:text-violet-600 transition cursor-pointer">
+          <span className="hover:text-indigo-600 transition cursor-pointer">
             {t("product.home")} / {product.categoryName} /{" "}
           </span>
           <span className="text-gray-400">{product.seriesName}</span>
@@ -604,7 +604,7 @@ const handleSubmitReview = async () => {
               navigator.clipboard.writeText(window.location.href);
               notify.success("Đã copy link sản phẩm!");
             }}
-            className="text-gray-500 hover:text-violet-600 transition p-2 hover:bg-violet-50 rounded-full"
+            className="text-gray-500 hover:text-indigo-600 transition p-2 hover:bg-indigo-50 rounded-full"
           >
             <IcShare className="w-5 h-5" />
           </button>
@@ -642,12 +642,12 @@ const handleSubmitReview = async () => {
             <div className="mb-6 pb-6 border-b border-gray-100">
               <div className="flex items-baseline gap-3 mb-2 flex-wrap">
                 <p className="text-gray-400 line-through text-base">{formatCurrency(originalPrice)}</p>
-                <p className="text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-violet-700 to-purple-600 bg-clip-text text-transparent">
+                <p className="text-3xl lg:text-4xl font-extrabold text-indigo-600">
                   {formatCurrency(price)}
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-wrap mb-4">
-                <span className="bg-gradient-to-r from-violet-600 to-purple-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                <span className="bg-indigo-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
                   -25%
                 </span>
                 <span className="text-xs font-medium text-green-600 bg-green-50 px-2.5 py-1 rounded-full border border-green-200">
@@ -669,19 +669,19 @@ const handleSubmitReview = async () => {
               <div>
                 <p className="text-sm font-semibold text-gray-700 mb-3">
                   Màu sắc:{" "}
-                  <span className="font-normal text-violet-600">Xanh dương</span>
+                  <span className="font-normal text-indigo-600">Xanh dương</span>
                 </p>
                 <div className="flex space-x-3">
                   <div
-                    className="w-10 h-10 rounded-full bg-blue-900 border-2 border-violet-500 cursor-pointer ring-2 ring-violet-200 shadow-sm"
+                    className="w-10 h-10 rounded-full bg-blue-900 border-2 border-indigo-500 cursor-pointer ring-2 ring-indigo-200 shadow-sm"
                     title="Blue"
                   ></div>
                   <div
-                    className="w-10 h-10 rounded-full bg-red-600 border-2 border-gray-300 hover:border-violet-400 cursor-pointer transition"
+                    className="w-10 h-10 rounded-full bg-red-600 border-2 border-gray-300 hover:border-indigo-400 cursor-pointer transition"
                     title="Red"
                   ></div>
                   <div
-                    className="w-10 h-10 rounded-full bg-gray-700 border-2 border-gray-300 hover:border-violet-400 cursor-pointer transition"
+                    className="w-10 h-10 rounded-full bg-gray-700 border-2 border-gray-300 hover:border-indigo-400 cursor-pointer transition"
                     title="Gray"
                   ></div>
                 </div>
@@ -704,7 +704,7 @@ const handleSubmitReview = async () => {
           {/* Column 3: Buy Box & Service/Payment Info */}
           <div className="col-span-1 lg:col-span-1 space-y-5">
             {/* Quantity and Action Buttons - Simplified */}
-            <div ref={buyBoxRef} className="bg-white rounded-2xl p-5 border border-violet-100 shadow-sm shadow-violet-100/40 hover:shadow-md transition-shadow">
+            <div ref={buyBoxRef} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
               {/* Quantity row */}
               <div className="flex items-center justify-between mb-5">
                 <label htmlFor="quantity-selector" className="text-sm font-semibold text-gray-700 cursor-pointer">
@@ -717,7 +717,7 @@ const handleSubmitReview = async () => {
                 <NotifyMeButton productId={product.productID} className="mb-3" />
               ) : (
                 <button
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-bold py-3.5 rounded-xl hover:shadow-lg hover:shadow-violet-300/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 mb-3"
+                  className="w-full flex items-center justify-center gap-2 bg-indigo-500 text-white text-sm font-bold py-3.5 rounded-xl hover:bg-indigo-600 active:scale-[0.97] transition-all duration-150 mb-3"
                   onClick={() => handleAddToCart(product, quantity)}
                 >
                   <IcCart className="w-5 h-5" />
@@ -735,8 +735,8 @@ const handleSubmitReview = async () => {
             <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <IcHeadset className="w-5 h-5 text-violet-600" />
+                  <div className="w-10 h-10 bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <IcHeadset className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{t("product.free_support")}</p>
@@ -745,8 +745,8 @@ const handleSubmitReview = async () => {
                 </div>
                 
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <IcPercentage className="w-5 h-5 text-violet-600" />
+                  <div className="w-10 h-10 bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <IcPercentage className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{t("product.best_price_guarantee")}</p>
@@ -785,7 +785,7 @@ const handleSubmitReview = async () => {
                 {t("product.own_it_now")}{" "}
                 <a
                   href="#"
-                  className="text-violet-600 font-medium hover:underline"
+                  className="text-indigo-600 font-medium hover:underline"
                 >
                   {t("product.learn_more")}
                 </a>
@@ -869,8 +869,8 @@ const handleSubmitReview = async () => {
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
-                          <span className="text-violet-600 font-semibold text-sm">
+                        <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 flex items-center justify-center">
+                          <span className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
                             {(review.reviewerName || "A")[0].toUpperCase()}
                           </span>
                         </div>
@@ -928,14 +928,14 @@ const handleSubmitReview = async () => {
                       </div>
                     )}
                     {review.reply && (
-                      <div className="mt-3 ml-8 pl-4 border-l-2 border-violet-200 bg-violet-50 rounded-r-lg p-3">
+                      <div className="mt-3 ml-8 pl-4 border-l-2 border-indigo-200 bg-indigo-50/50 rounded-r-lg p-3">
                         <div className="flex items-center space-x-2 mb-2">
                           <img
                             src={logo}
                             alt="Shop Solid Phere"
                             className="w-6 h-6 rounded object-contain"
                           />
-                          <span className="font-semibold text-violet-700 text-sm">
+                          <span className="font-semibold text-indigo-600 text-sm">
                             Shop Solid Phere
                           </span>
                         </div>
@@ -976,7 +976,7 @@ const handleSubmitReview = async () => {
                     className={`w-full p-3 border rounded-lg text-sm focus:ring-1 outline-none transition-all ${
                       validationError
                         ? "border-red-300 focus:border-red-400 focus:ring-red-200"
-                        : "border-gray-200 focus:border-violet-400 focus:ring-violet-200"
+                        : "border-gray-200 focus:border-indigo-400 focus:ring-indigo-200"
                     }`}
                     rows="3"
                     placeholder={t("reviews.placeholder_comment")}
@@ -1034,7 +1034,7 @@ const handleSubmitReview = async () => {
 
                   <button
                     onClick={handleSubmitReview}
-                    className="mt-3 px-4 py-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors"
+                    className="mt-3 px-4 py-2 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 active:scale-[0.97] transition-all"
                   >
                     {t("reviews.submit_button")}
                   </button>
@@ -1044,7 +1044,7 @@ const handleSubmitReview = async () => {
                   <p className="text-sm text-gray-600">
                     <a
                       href="/login"
-                      className="text-violet-600 font-medium hover:underline"
+                      className="text-indigo-600 font-medium hover:underline"
                     >
                       {t("product.login")}
                     </a>{" "}
@@ -1055,7 +1055,7 @@ const handleSubmitReview = async () => {
 
               {reviews.length > 3 && (
                 <button
-                  className="w-full py-2 text-sm text-violet-600 hover:text-violet-700 font-medium flex items-center justify-center space-x-1 transition-colors"
+                  className="w-full py-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center justify-center space-x-1 transition-colors"
                   onClick={() => setShowAll(!showAll)}
                 >
                   <span>

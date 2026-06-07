@@ -53,7 +53,7 @@ function Avatar({
       ) : (
         <span
           className={[
-            "flex items-center justify-center rounded-full bg-violet-100 font-semibold text-violet-700 dark:bg-violet-900/60 dark:text-violet-200",
+            "flex items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-200",
             sizeMap[size] || sizeMap.md,
             ringClass,
             status ? statusRing[status] || "" : "",

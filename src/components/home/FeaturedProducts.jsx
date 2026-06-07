@@ -14,8 +14,8 @@ function toCardProduct(p) {
     productName: p.productName ?? src.productName ?? src.name,
     image: p.image ?? src.image ?? src.imageUrl,
     price: p.price ?? src.price ?? src.unitPrice,
-    inStock: p.inStock ?? (src.stock ?? 0) > 0,
-    stock: p.stock ?? src.stock,
+    inStock: p.inStock ?? (src.quantity ?? src.stock ?? 0) > 0,
+    stock: p.stock ?? src.stock ?? src.quantity,
     rating: src.rating ?? src.averageRating,
     isHot: src.isHot,
     isNew: src.isNew,
@@ -87,7 +87,7 @@ function FeaturedProducts({ products = [], loading = false }) {
             {t("home.featuredTitle", { defaultValue: "Sản phẩm nổi bật" })}
           </h2>
         </div>
-        <Link to="/products" className="text-sm font-semibold text-violet-700 hover:text-violet-800 dark:text-violet-400">
+        <Link to="/products" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">
           {t("common.view_all", { defaultValue: "Xem tất cả" })} →
         </Link>
       </div>

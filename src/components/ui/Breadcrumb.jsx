@@ -35,7 +35,7 @@ function Breadcrumb({ items = [], className = "" }) {
             ) : (
               <Link
                 to={item.to}
-                className="text-gray-500 hover:text-violet-700 transition-colors truncate"
+                className="text-gray-500 hover:text-indigo-700 transition-colors truncate"
               >
                 {item.label}
               </Link>

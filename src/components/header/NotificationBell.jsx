@@ -112,7 +112,7 @@ function NotificationBell() {
     <div className="relative" ref={panelRef}>
       <button
         type="button"
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 min-h-[44px] min-w-[44px]"
+        className="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
         onClick={() => setOpen((prev) => !prev)}
         aria-label="Notifications"
       >
@@ -132,7 +132,7 @@ function NotificationBell() {
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Thông báo</p>
             <button
               type="button"
-              className="text-xs font-medium text-violet-700 hover:text-violet-800"
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-700"
               onClick={() => {
                 setOpen(false);
                 navigate("/userProfile?tab=notifications");
@@ -153,7 +153,7 @@ function NotificationBell() {
                     type="button"
                     onClick={() => markRead(item)}
                     className={`w-full border-b border-gray-100 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50 ${
-                      isRead ? "" : "bg-violet-50/50"
+                      isRead ? "" : "bg-indigo-50/40"
                     }`}
                   >
                     <p className={`text-sm ${isRead ? "text-gray-700 dark:text-gray-200" : "font-semibold text-gray-900 dark:text-gray-100"}`}>

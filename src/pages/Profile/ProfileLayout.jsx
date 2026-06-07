@@ -29,7 +29,7 @@ function ProfileLayout() {
   return (
     <div className="bg-gray-50/30 min-h-screen font-sans">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-white to-violet-50/30 border-b border-gray-200">
+      <div className="bg-gradient-to-r from-white to-indigo-50/30 border-b border-gray-200">
         <div className="max-w-screen-xl mx-auto py-6 px-4 sm:px-6">
           <Breadcrumb
             items={[
@@ -55,7 +55,7 @@ function ProfileLayout() {
                   to={item.to}
                   className={`flex items-center px-4 py-3 text-sm font-medium transition-colors border-l-[3px] ${
                     isActive(item)
-                      ? "border-violet-700 bg-violet-50 text-violet-700"
+                      ? "border-indigo-700 bg-indigo-50 text-indigo-700"
                       : "border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   } ${idx > 0 ? "border-t border-t-gray-50" : ""}`}
                 >

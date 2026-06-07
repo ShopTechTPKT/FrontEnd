@@ -260,7 +260,7 @@ function UserProfile() {
               type="button"
               onClick={() => setActiveTab(item.id)}
               className={`profile-tab rounded-xl border-0 px-3 py-2 text-xs sm:text-sm ${
-                activeTab === item.id ? "active bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300" : ""
+                activeTab === item.id ? "active bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300" : ""
               }`}
             >
               {item.label}

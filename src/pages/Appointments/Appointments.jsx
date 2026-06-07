@@ -187,9 +187,9 @@ export default function Appointments() {
       {/* Hero */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-16">
         <div className="text-center">
-          <FaCalendarAlt className="text-6xl mx-auto mb-4 text-violet-400" />
+          <FaCalendarAlt className="text-6xl mx-auto mb-4 text-indigo-400" />
           <h1 className="text-5xl font-bold mb-4">Đặt lịch sửa chữa</h1>
-          <p className="text-xl text-violet-300">
+          <p className="text-xl text-indigo-300">
             Đặt lịch hẹn nhanh chóng – tiện lợi
           </p>
         </div>
@@ -260,8 +260,8 @@ export default function Appointments() {
                     onClick={() => setForm({ ...form, service: s.name })}
                     className={`p-4 border-2 rounded-xl ${
                       form.service === s.name
-                        ? "bg-violet-900 text-white border-violet-600"
-                        : "border-gray-300 hover:border-violet-600"
+                        ? "bg-indigo-900 text-white border-indigo-600"
+                        : "border-gray-300 hover:border-indigo-600"
                     }`}
                   >
                     <div className="text-2xl mb-1">{s.icon}</div>
@@ -310,7 +310,7 @@ export default function Appointments() {
               ></textarea>
             </div>
 
-            <button className="w-full bg-violet-900 text-white py-4 rounded-xl font-bold hover:scale-105 transition-transform">
+            <button className="w-full bg-indigo-900 text-white py-4 rounded-xl font-bold hover:scale-105 transition-transform">
               Đặt lịch hẹn
             </button>
           </form>
@@ -341,7 +341,7 @@ export default function Appointments() {
                   <p className="text-gray-700 flex items-center gap-2">
                     <FaClock /> {apt.expectedArrival}
                   </p>
-                  <p className="mt-2 text-violet-700 flex items-center gap-2">
+                  <p className="mt-2 text-indigo-700 flex items-center gap-2">
                     <FaTools /> {apt.notes}
                   </p>
                   <p className="italic text-sm text-gray-600">{apt.notes}</p>
@@ -365,7 +365,7 @@ export default function Appointments() {
             </div>
           )}
 
-          <div className="mt-8 bg-gradient-to-r from-violet-800 to-violet-900 text-white p-6 rounded-2xl">
+          <div className="mt-8 bg-gradient-to-r from-indigo-800 to-indigo-900 text-white p-6 rounded-2xl">
             <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
               <FaMapMarkerAlt /> Địa điểm sửa chữa
             </h3>

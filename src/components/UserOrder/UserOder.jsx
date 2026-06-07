@@ -47,7 +47,7 @@ const UserOrders = ({ userId }) => {
       case "CONFIRMED":
         return "bg-blue-100 text-blue-700";
       case "SHIPPED":
-        return "bg-violet-100 text-violet-700";
+        return "bg-indigo-100 text-indigo-700";
       case "DELIVERED":
         return "bg-green-100 text-green-700";
       case "CANCELLED":

@@ -15,7 +15,7 @@ function HeaderMegaMenu({ onNavigate }) {
   const prefetchedRef = React.useRef(false);
 
   const itemClass =
-    "block w-full rounded-lg px-2 py-1.5 text-left text-sm text-gray-600 transition-colors hover:bg-violet-50 hover:text-violet-700 dark:text-gray-300 dark:hover:bg-violet-950/50 dark:hover:text-violet-300";
+    "block w-full rounded-lg px-2 py-1.5 text-left text-sm text-gray-600 transition-colors hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-300";
 
   const previewCards = [
     {
@@ -89,7 +89,7 @@ function HeaderMegaMenu({ onNavigate }) {
                   }
                   onNavigate("/products", { list: card.list });
                 }}
-                className="w-full overflow-hidden rounded-lg border border-gray-100 text-left transition-colors hover:border-violet-200 hover:bg-violet-50/40 dark:border-gray-700 dark:hover:border-violet-700 dark:hover:bg-violet-950/30"
+                className="w-full overflow-hidden rounded-lg border border-gray-100 text-left transition-colors hover:border-indigo-200 hover:bg-indigo-50/40 dark:border-gray-700 dark:hover:border-indigo-700 dark:hover:bg-indigo-950/30"
               >
                 <img src={card.image} alt={card.title} className="h-20 w-full object-cover" loading="lazy" />
                 <div className="p-2.5">
@@ -118,7 +118,7 @@ function HeaderSupportMenu({ links, isCustomerService }) {
           <a
             key={link.to}
             href={link.to}
-            className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+            className="block px-4 py-2 text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
           >
             {t(link.labelKey)}
           </a>
@@ -128,7 +128,7 @@ function HeaderSupportMenu({ links, isCustomerService }) {
             <div className="my-1 border-t border-gray-100" />
             <a
               href="/customer-service"
-              className="block px-4 py-2 text-sm text-gray-600 hover:text-violet-700 hover:bg-violet-50 transition-colors"
+              className="block px-4 py-2 text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
             >
               {t("support.customerService")}
             </a>

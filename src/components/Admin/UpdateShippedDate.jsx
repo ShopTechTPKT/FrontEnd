@@ -99,7 +99,7 @@ const UpdateShippedDate = () => {
                       <p className="font-bold">
                         {order.totalPrice?.toLocaleString("vi-VN")} VND
                       </p>
-                      <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded">
+                      <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded">
                         {order.status}
                       </span>
                     </div>

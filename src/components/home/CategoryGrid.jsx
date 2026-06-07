@@ -6,12 +6,12 @@ import { fetchCategories } from "../../apis/categoryApi";
 import { CATEGORY_IDS } from "../header/navData";
 
 const FALLBACK = [
-  { icon: Laptop, labelKey: "categories.laptops", list: CATEGORY_IDS.laptop, gradient: "from-violet-600 to-purple-600", count: null },
-  { icon: Monitor, labelKey: "categories.pcParts", list: CATEGORY_IDS.pc, gradient: "from-violet-500 to-violet-700", count: null },
-  { icon: Mouse, labelKey: "categories.gamingGear", list: [...CATEGORY_IDS.mouse, ...CATEGORY_IDS.keyboard], gradient: "from-purple-600 to-violet-700", count: null },
-  { icon: Smartphone, labelKey: "categories.smartDevice", list: CATEGORY_IDS.phone, gradient: "from-violet-700 to-purple-700", count: null },
-  { icon: Tv2, labelKey: "categories.monitor", list: CATEGORY_IDS.monitor, gradient: "from-violet-600 to-fuchsia-600", count: null },
-  { icon: Headphones, labelKey: "categories.headphone", list: CATEGORY_IDS.headphone, gradient: "from-purple-700 to-violet-800", count: null },
+  { icon: Laptop, labelKey: "categories.laptops", list: CATEGORY_IDS.laptop, gradient: "from-indigo-600 to-indigo-700", count: null },
+  { icon: Monitor, labelKey: "categories.pcParts", list: CATEGORY_IDS.pc, gradient: "from-indigo-500 to-indigo-600", count: null },
+  { icon: Mouse, labelKey: "categories.gamingGear", list: [...CATEGORY_IDS.mouse, ...CATEGORY_IDS.keyboard], gradient: "from-indigo-600 to-indigo-500", count: null },
+  { icon: Smartphone, labelKey: "categories.smartDevice", list: CATEGORY_IDS.phone, gradient: "from-indigo-700 to-indigo-800", count: null },
+  { icon: Tv2, labelKey: "categories.monitor", list: CATEGORY_IDS.monitor, gradient: "from-indigo-600 to-indigo-500", count: null },
+  { icon: Headphones, labelKey: "categories.headphone", list: CATEGORY_IDS.headphone, gradient: "from-indigo-700 to-indigo-800", count: null },
 ];
 
 function CategoryGrid() {
@@ -25,15 +25,15 @@ function CategoryGrid() {
       const api = await fetchCategories();
       if (cancelled || !api?.length) return;
       const mapped = api
-        .filter((c) => c && (c.name || c.categoryName))
-        .slice(0, 8)
-        .map((c, i) => ({
-          icon: [Laptop, Monitor, Mouse, Smartphone, Tv2, Headphones][i % 6],
-          label: c.name || c.categoryName,
-          id: c.categoryId ?? c.id,
-          productCount: c.productCount ?? c.count,
-          gradient: "from-violet-600 to-purple-600",
-        }));
+          .filter((c) => c && (c.name || c.categoryName))
+          .slice(0, 8)
+          .map((c, i) => ({
+            icon: [Laptop, Monitor, Mouse, Smartphone, Tv2, Headphones][i % 6],
+            label: c.name || c.categoryName,
+            id: c.categoryId ?? c.id,
+            productCount: c.productCount ?? c.count,
+            gradient: "from-indigo-600 to-indigo-500",
+          }));
       if (mapped.length >= 4) setRows(mapped);
     })();
     return () => {
@@ -70,11 +70,11 @@ function CategoryGrid() {
               key={cat.labelKey || cat.label || idx}
               type="button"
               onClick={onClick}
-              className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 text-left shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-violet-700 motion-safe:animate-fadeInUp"
+              className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-700 motion-safe:animate-fadeInUp"
               style={{ animationDelay: `${idx * 60}ms` }}
             >
               <div
-                className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient || "from-violet-600 to-purple-600"} text-white shadow-md transition-transform duration-300 group-hover:scale-110`}
+                className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${cat.gradient || "from-indigo-600 to-indigo-500"} text-white shadow-sm transition-transform duration-200 group-hover:scale-110`}
               >
                 <Icon className="h-6 w-6" strokeWidth={1.75} />
               </div>

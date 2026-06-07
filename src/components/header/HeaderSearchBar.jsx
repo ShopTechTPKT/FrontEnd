@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { fetchTrendingKeywords } from "../../apis/aiApi";
@@ -142,9 +142,9 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
   return (
     <div ref={rootRef} className={["relative w-full max-w-xl", className].filter(Boolean).join(" ")}>
       <div className="relative">
-        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </span>
         <input
@@ -157,7 +157,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
             if (e.key === "Enter") goSearch(q);
           }}
           placeholder={t("header.searchPlaceholder", { defaultValue: "Tìm sản phẩm, danh mục..." })}
-          className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50/80 py-2 pl-10 pr-24 text-sm text-gray-900 placeholder:text-gray-400 backdrop-blur-sm transition-colors focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-900"
+          className="h-9 w-full rounded-xl border border-slate-200 bg-white py-1.5 pl-10 pr-28 text-sm text-slate-900 placeholder:text-slate-400 transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/8 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-950"
           autoComplete="off"
         />
         <div className="absolute inset-y-0 right-1 flex items-center gap-1">
@@ -176,7 +176,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
           <button
             type="button"
             onClick={() => goSearch(q)}
-            className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-700"
+            className="rounded-lg bg-indigo-600 px-3.5 py-1 text-xs font-semibold text-white hover:bg-indigo-700 active:scale-[0.96] transition-all shadow-sm shadow-indigo-500/10 mr-0.5"
           >
             {t("common.search", { defaultValue: "Tìm" })}
           </button>
@@ -184,10 +184,10 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
       </div>
 
       {open && (
-        <div className="absolute left-0 right-0 top-full z-[var(--z-popover)] mt-2 max-h-[min(70vh,420px)] overflow-y-auto rounded-2xl border border-gray-100 bg-white p-3 shadow-xl dark:border-gray-700 dark:bg-gray-900">
+        <div className="absolute left-0 right-0 top-full z-[var(--z-popover)] mt-1.5 max-h-[min(70vh,420px)] overflow-y-auto rounded-xl border border-slate-100 bg-white p-3.5 shadow-xl dark:border-slate-800 dark:bg-slate-950">
           {suggestions.length > 0 && (
             <section className="mb-3">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 {t("header.suggestions", { defaultValue: "Gợi ý sản phẩm" })}
               </p>
               <ul className="space-y-1">
@@ -195,21 +195,21 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
                   <li key={p.id || p.productId || p.name}>
                     <button
                       type="button"
-                      className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left hover:bg-violet-50 dark:hover:bg-violet-950/40"
+                      className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-colors"
                       onClick={() => {
                         const id = p.id || p.productId;
                         setOpen(false);
                         navigate(id ? `/product/${id}` : `/products?search=${encodeURIComponent(p.name || "")}`);
                       }}
                     >
-                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                      <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-slate-50 dark:bg-slate-900">
                         {p.imageUrl || p.thumbnail ? (
                           <img src={p.imageUrl || p.thumbnail} alt="" className="h-full w-full object-cover" loading="lazy" />
                         ) : null}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">{p.name || p.productName}</p>
-                        <p className="text-xs text-violet-600 dark:text-violet-400">{formatPrice(p)}</p>
+                        <p className="truncate text-sm font-medium text-slate-950 dark:text-slate-100">{p.name || p.productName}</p>
+                        <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">{formatPrice(p)}</p>
                       </div>
                     </button>
                   </li>
@@ -220,7 +220,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
 
           {trending.length > 0 && (
             <section className="mb-3">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 {t("header.trending", { defaultValue: "Xu hướng" })}
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -228,7 +228,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
                   <button
                     key={kw}
                     type="button"
-                    className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-violet-100 hover:text-violet-800 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-violet-950/60"
+                    className="rounded-full bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 dark:bg-slate-900 dark:text-slate-350 dark:hover:bg-indigo-950/55 dark:hover:text-indigo-300 transition-colors"
                     onClick={() => goSearch(kw)}
                   >
                     {kw}
@@ -240,7 +240,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
 
           {recent.length > 0 && (
             <section className="mb-3">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 {t("header.recentSearches", { defaultValue: "Tìm gần đây" })}
               </p>
               <ul className="space-y-0.5">
@@ -248,7 +248,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
                   <li key={r}>
                     <button
                       type="button"
-                      className="w-full rounded-lg px-2 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+                      className="w-full rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-350 dark:hover:bg-slate-900/60 transition-colors"
                       onClick={() => goSearch(r)}
                     >
                       {r}
@@ -261,7 +261,7 @@ export default function HeaderSearchBar({ className = "", autoFocus = false, onN
 
           <button
             type="button"
-            className="mt-1 w-full rounded-xl border border-violet-200 py-2 text-center text-xs font-semibold text-violet-700 hover:bg-violet-50 dark:border-violet-800 dark:text-violet-300 dark:hover:bg-violet-950/50"
+            className="mt-1 w-full rounded-xl border border-slate-200 py-2.5 text-center text-xs font-semibold text-indigo-600 hover:bg-indigo-50/50 hover:border-indigo-200 dark:border-slate-800 dark:text-indigo-300 dark:hover:bg-indigo-950/30 transition-colors"
             onClick={() => goSearch(q || recent[0] || trending[0] || "")}
             disabled={!q.trim() && !recent[0] && !trending[0]}
           >

@@ -1,7 +1,7 @@
 import axios from "axios";
 import promptTextTemplate from "./text.txt";
 
-const GEMINI_PROXY_URL = "http://localhost:8081/api/gemini";
+const GEMINI_PROXY_URL = "http://localhost:8080/api/gemini";
 
 // ========== 1. Tạo thời gian ISO theo múi giờ Việt Nam ==========
 function getCurrentDateTimeISO_VN() {

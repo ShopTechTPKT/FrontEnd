@@ -198,7 +198,7 @@ const NotificationTab = ({ userId }) => {
               type="checkbox"
               checked={soundEnabled}
               onChange={(e) => setSoundEnabled(e.target.checked)}
-              className="accent-violet-600"
+              className="accent-indigo-600"
             />
             Âm báo
           </label>

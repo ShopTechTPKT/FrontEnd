@@ -95,9 +95,9 @@ const AddressAutocomplete = ({ value, onChange, placeholder, error, className })
             <li 
               key={item.place_id || index}
               onClick={() => handleSelectSuggestion(item)}
-              className="px-4 py-3 hover:bg-violet-50 cursor-pointer flex gap-3 items-start transition-colors"
+              className="px-4 py-3 hover:bg-indigo-50 cursor-pointer flex gap-3 items-start transition-colors"
             >
-              <FaMapMarkerAlt className="text-violet-500 mt-1 flex-shrink-0" />
+              <FaMapMarkerAlt className="text-indigo-500 mt-1 flex-shrink-0" />
               <div className="text-sm text-gray-700">
                 {item.display_name}
               </div>

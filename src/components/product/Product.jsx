@@ -136,39 +136,39 @@ export default function Product() {
                 to={`/product/${id}/productAbout`}
                 className={`relative px-4 lg:px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   activeNav === "about"
-                    ? "bg-white text-violet-600 shadow-sm"
+                    ? "bg-white text-indigo-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 {t("product.about_product")}
                 {activeNav === "about" && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-violet-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-indigo-600 rounded-full"></span>
                 )}
               </Link>
               <Link
                 to={`/product/${id}/productDetail`}
                 className={`relative px-4 lg:px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   activeNav === "detail"
-                    ? "bg-white text-violet-600 shadow-sm"
+                    ? "bg-white text-indigo-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 {t("common.details")}
                 {activeNav === "detail" && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-violet-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-indigo-600 rounded-full"></span>
                 )}
               </Link>
               <Link
                 to={`/product/${id}/productSpeccs`}
                 className={`relative px-4 lg:px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   activeNav === "specs"
-                    ? "bg-white text-violet-600 shadow-sm"
+                    ? "bg-white text-indigo-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 {t("product.specs")}
                 {activeNav === "specs" && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-violet-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-indigo-600 rounded-full"></span>
                 )}
               </Link>
             </div>
@@ -191,7 +191,7 @@ export default function Product() {
                   <button
                     onClick={handleDecrease}
                     disabled={quantity <= 1}
-                    className="w-7 h-7 flex items-center justify-center text-gray-600 hover:text-violet-600 hover:bg-white rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-7 h-7 flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:bg-white rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <IcMinus className="w-4 h-4" />
                   </button>
@@ -200,7 +200,7 @@ export default function Product() {
                   </span>
                   <button
                     onClick={handleIncrease}
-                    className="w-7 h-7 flex items-center justify-center text-gray-600 hover:text-violet-600 hover:bg-white rounded transition"
+                    className="w-7 h-7 flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:bg-white rounded transition"
                   >
                     <IcPlus className="w-4 h-4" />
                   </button>
@@ -209,7 +209,7 @@ export default function Product() {
                 {/* Action Buttons */}
                 <button
                   onClick={() => handleClickAddToCart(product)}
-                  className="flex items-center space-x-2 bg-gradient-to-r from-violet-700 to-violet-600 text-white px-5 py-2.5 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-indigo-700 to-indigo-600 text-white px-5 py-2.5 rounded-lg hover:opacity-90 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <span className="text-sm font-medium">
                     {t("common.add_to_cart")}

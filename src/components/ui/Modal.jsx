@@ -19,8 +19,8 @@ function Modal({
   onClose,
   title,
   size = "md",
-  animation = "fade",
-  backdropBlur = true,
+  animation = "scale",
+  backdropBlur = false,
   closeOnBackdrop = true,
   closeOnEscape = true,
   drawer,
@@ -89,10 +89,7 @@ function Modal({
       style={{ zIndex: "var(--z-modal)" }}
     >
       <div
-        className={[
-          "absolute inset-0 bg-black/50 transition-opacity",
-          backdropBlur ? "backdrop-blur-sm" : "",
-        ].join(" ")}
+        className="absolute inset-0 bg-black/40 transition-opacity"
         onClick={closeOnBackdrop ? onClose : undefined}
         aria-hidden
       />
@@ -103,10 +100,10 @@ function Modal({
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
         className={[
-          "relative max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900",
+          "relative max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-gray-900",
           isDrawer
             ? `fixed ${drawerPanel}`
-            : [sizeClasses[size] || sizeClasses.md, panelAnim[animation] || panelAnim.fade].join(" "),
+            : [sizeClasses[size] || sizeClasses.md, panelAnim[animation] || panelAnim.scale].join(" "),
           className,
         ].join(" ")}
         onClick={(e) => e.stopPropagation()}
@@ -138,7 +135,7 @@ function Modal({
 Modal.Footer = function ModalFooter({ className = "", children }) {
   return (
     <div
-      className={`mt-5 flex items-center justify-end gap-3 border-t border-gray-100 pt-5 dark:border-gray-700 ${className}`}
+      className={`mt-5 flex items-center justify-end gap-3 border-t border-slate-100 pt-5 dark:border-slate-800 ${className}`}
     >
       {children}
     </div>

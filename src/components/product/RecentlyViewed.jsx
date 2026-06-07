@@ -46,7 +46,7 @@ export default function RecentlyViewed() {
             <Link
               key={id}
               to={`/product/${id}/productAbout`}
-              className="snap-start min-w-[170px] sm:min-w-[190px] max-w-[190px] border border-gray-200 rounded-xl p-3 bg-white hover:border-violet-300 hover:shadow-sm transition-all"
+              className="snap-start min-w-[170px] sm:min-w-[190px] max-w-[190px] border border-gray-200 rounded-xl p-3 bg-white hover:border-indigo-300 hover:shadow-sm transition-all"
             >
               <div className="w-full h-28 bg-gray-50 rounded-lg flex items-center justify-center p-2">
                 <LazyImage
@@ -57,7 +57,7 @@ export default function RecentlyViewed() {
                 />
               </div>
               <p className="mt-2 text-xs text-gray-800 line-clamp-2 min-h-[2.4rem]">{name}</p>
-              <p className="mt-1 text-sm font-semibold text-violet-700">{formatCurrency(price)}</p>
+              <p className="mt-1 text-sm font-semibold text-indigo-700">{formatCurrency(price)}</p>
             </Link>
           );
         })}

@@ -1,15 +1,20 @@
-﻿import React from "react";
+import React from "react";
 
-export default function ChatBoxButton({ icon, onClick, unreadCount, theme }) {
-  const labelDotClass = "bg-violet-500";
+export default function ChatBoxButton({ icon, onClick, unreadCount, theme = {} }) {
+  const labelDotClass = "bg-indigo-500";
+
+  const animateColor = theme?.animateColor || "bg-indigo-600";
+  const buttonBg = theme?.buttonBg || "bg-indigo-600";
+  const textPrimary = theme?.textPrimary || "text-white";
+  const accentGlow = theme?.accentGlow || "shadow-lg shadow-indigo-500/20";
 
   return (
     <div className="group relative">
-      <div className={`absolute -inset-2 rounded-full ${theme.animateColor} animate-ping opacity-10`} />
-      <div className={`absolute -inset-1 rounded-full ${theme.animateColor} animate-pulse opacity-15 delay-200`} />
+      {/* Premium static hover glow instead of continuous animate-ping CPU load */}
+      <div className={`absolute -inset-1 rounded-full ${animateColor} opacity-0 transition-opacity duration-300 group-hover:opacity-10`} />
 
       {unreadCount > 0 && (
-        <div className="absolute -right-2 -top-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white animate-bounce">
+        <div className="absolute -right-2 -top-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
           {unreadCount > 9 ? "9+" : unreadCount}
         </div>
       )}
@@ -27,9 +32,9 @@ export default function ChatBoxButton({ icon, onClick, unreadCount, theme }) {
 
       <button
         onClick={onClick}
-        className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border border-white/20 ${theme.buttonBg} ${theme.textPrimary} ${theme.accentGlow} backdrop-blur-sm transition-all duration-200 ease-out hover:scale-105 focus:outline-none`}
+        className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border border-white/20 ${buttonBg} ${textPrimary} ${accentGlow} backdrop-blur-sm transition-all duration-200 ease-out hover:scale-105 focus:outline-none`}
       >
-        <div className={`${theme.buttonBg} absolute inset-0 -z-10 rounded-full`} />
+        <div className={`${buttonBg} absolute inset-0 -z-10 rounded-full`} />
         <div className="transform transition-transform duration-200 group-hover:scale-110">{icon}</div>
       </button>
     </div>

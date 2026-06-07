@@ -48,10 +48,10 @@ const ProductSlider = ({
           <button
             onClick={goToPrev}
             disabled={currentIndex === 0}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 -translate-x-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-md ${
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 -translate-x-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150 shadow-md ${
               currentIndex === 0
                 ? "bg-white text-gray-300 cursor-not-allowed shadow-sm"
-                : "bg-gradient-to-br from-violet-600 to-purple-600 text-white hover:shadow-violet-200/60 hover:scale-110"
+                : "bg-indigo-500 text-white hover:bg-indigo-600 active:scale-[0.97]"
             }`}
             aria-label="Previous"
           >
@@ -63,10 +63,10 @@ const ProductSlider = ({
           <button
             onClick={goToNext}
             disabled={currentIndex >= maxIndex}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 translate-x-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-md ${
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 translate-x-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150 shadow-md ${
               currentIndex >= maxIndex
                 ? "bg-white text-gray-300 cursor-not-allowed shadow-sm"
-                : "bg-gradient-to-br from-violet-600 to-purple-600 text-white hover:shadow-violet-200/60 hover:scale-110"
+                : "bg-indigo-500 text-white hover:bg-indigo-600 active:scale-[0.97]"
             }`}
             aria-label="Next"
           >
@@ -111,8 +111,8 @@ const ProductSlider = ({
               aria-label={`Go to slide ${index + 1}`}
               className={`rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? "w-6 h-2 bg-gradient-to-r from-violet-600 to-purple-500"
-                  : "w-2 h-2 bg-gray-200 hover:bg-violet-300"
+                  ? "w-6 h-2 bg-indigo-500"
+                  : "w-2 h-2 bg-gray-200 hover:bg-indigo-200"
               }`}
             />
           ))}

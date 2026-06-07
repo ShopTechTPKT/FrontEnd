@@ -62,7 +62,7 @@ export default function CompareTable() {
         </p>
         <button
           onClick={() => navigate("/")}
-          className="px-6 py-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800 transition-colors"
+          className="px-6 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition-colors"
         >
           {t("common.continue_shopping") || "Tiếp tục mua sắm"}
         </button>
@@ -76,7 +76,7 @@ export default function CompareTable() {
       label: t("product.price") || "Giá",
       key: "price",
       render: (val) => (
-        <span className="text-lg font-bold text-violet-700">
+        <span className="text-lg font-bold text-indigo-700">
           {formatCurrency(val)}
         </span>
       ),
@@ -158,7 +158,7 @@ export default function CompareTable() {
                     </button>
                     <button
                       onClick={() => handleAddToCart(product)}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-md bg-violet-700 text-white hover:bg-violet-800"
+                      className="px-3 py-1.5 text-xs font-semibold rounded-md bg-indigo-700 text-white hover:bg-indigo-800"
                     >
                       {t("product.add_to_cart")}
                     </button>
@@ -188,7 +188,7 @@ export default function CompareTable() {
                     <td
                       key={product.productID}
                       className={`p-4 text-center text-sm border-l border-gray-50 ${
-                        isBest ? "bg-violet-50" : ""
+                        isBest ? "bg-indigo-50" : ""
                       }`}
                     >
                       {row.render
@@ -199,7 +199,7 @@ export default function CompareTable() {
                           </span>
                         )}
                       {isBest && (
-                        <span className="block text-xs text-violet-600 font-medium mt-1">
+                        <span className="block text-xs text-indigo-600 font-medium mt-1">
                           {t("compare.best_price") || "Giá tốt nhất"}
                         </span>
                       )}

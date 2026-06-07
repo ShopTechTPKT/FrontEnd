@@ -76,7 +76,7 @@ export default function DailyCheckInModal() {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
       <div className="animate-zoomIn w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl overflow-hidden relative">
         {/* Background Decoration */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-violet-200 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-200 rounded-full blur-3xl opacity-50"></div>
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-orange-200 rounded-full blur-3xl opacity-50"></div>
 
         <button 
@@ -118,7 +118,7 @@ export default function DailyCheckInModal() {
                     checked 
                       ? "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-md shadow-emerald-500/20" 
                       : isToday 
-                        ? "border-2 border-violet-500 bg-violet-50 text-violet-700 shadow-sm"
+                        ? "border-2 border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
                         : "bg-gray-50 text-gray-400 border border-gray-100"
                   }`}
                 >
@@ -144,7 +144,7 @@ export default function DailyCheckInModal() {
             className={`w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-all ${
               checkedInToday 
                 ? "bg-emerald-500 shadow-emerald-500/30" 
-                : "bg-gradient-to-r from-violet-600 to-purple-600 hover:scale-105 hover:shadow-violet-600/30 active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
+                : "bg-gradient-to-r from-indigo-600 to-indigo-600 hover:scale-105 hover:shadow-indigo-600/30 active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
             }`}
           >
             {checkedInToday ? "Đã điểm danh" : loading ? "Đang xử lý..." : "Điểm danh ngay"}

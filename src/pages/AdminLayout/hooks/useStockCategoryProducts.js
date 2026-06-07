@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useProductCRUD, CATEGORY_IDS } from "./useProductCRUD";
 
-const API_URL = "http://localhost:8081/api";
+const API_URL = "http://localhost:8080/api";
 
 /**
  * Load products for a stock hardware category (RAM, storage, …).

@@ -96,13 +96,13 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-violet-50 via-white to-purple-50">
+    <div className="min-h-screen flex bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
       {/* ── Left Brand Panel (hidden on mobile) ── */}
-      <div className="hidden lg:flex lg:w-[45%] xl:w-[42%] relative overflow-hidden flex-col justify-between p-12 bg-gradient-to-br from-violet-700 via-violet-600 to-purple-700">
+      <div className="hidden lg:flex lg:w-[45%] xl:w-[42%] relative overflow-hidden flex-col justify-between p-12 bg-gradient-to-br from-indigo-700 via-indigo-600 to-indigo-700">
         {/* Background decoration */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/5 rounded-full" />
-          <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-purple-900/30 rounded-full" />
+          <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-indigo-900/30 rounded-full" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/[0.03] rounded-full" />
         </div>
 
@@ -124,9 +124,9 @@ const LoginPage = () => {
           <div>
             <h1 className="text-4xl font-extrabold text-white leading-tight">
               Chào mừng đến<br />
-              <span className="text-violet-200">ShopPC Premium</span>
+              <span className="text-indigo-200">ShopPC Premium</span>
             </h1>
-            <p className="mt-3 text-violet-200 text-base leading-relaxed max-w-xs">
+            <p className="mt-3 text-indigo-200 text-base leading-relaxed max-w-xs">
               Trải nghiệm mua sắm công nghệ đỉnh cao — hàng chính hãng, giá tốt nhất thị trường.
             </p>
           </div>
@@ -135,12 +135,12 @@ const LoginPage = () => {
           <ul className="space-y-3">
             {FEATURES.map((f, i) => (
               <li key={i} className="flex items-center gap-3.5">
-                <div className="w-9 h-9 flex-shrink-0 rounded-xl bg-white/15 flex items-center justify-center text-violet-100 backdrop-blur-sm">
+                <div className="w-9 h-9 flex-shrink-0 rounded-xl bg-white/15 flex items-center justify-center text-indigo-100 backdrop-blur-sm">
                   {f.icon}
                 </div>
                 <div>
                   <p className="text-white font-semibold text-sm">{f.title}</p>
-                  <p className="text-violet-300 text-xs">{f.desc}</p>
+                  <p className="text-indigo-300 text-xs">{f.desc}</p>
                 </div>
               </li>
             ))}
@@ -149,7 +149,7 @@ const LoginPage = () => {
 
         {/* Bottom tagline */}
         <div className="relative z-10">
-          <p className="text-violet-300 text-xs">© 2025 ShopPC — Công nghệ đến tay bạn</p>
+          <p className="text-indigo-300 text-xs">© 2025 ShopPC — Công nghệ đến tay bạn</p>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ const LoginPage = () => {
                 onClick={() => { setIsSignUp(false); setError(""); }}
                 className={`flex-1 py-2 text-sm font-semibold rounded-xl transition-all duration-200 ${
                   !isSignUp
-                    ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md"
+                    ? "bg-gradient-to-r from-indigo-600 to-indigo-600 text-white shadow-md"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -174,7 +174,7 @@ const LoginPage = () => {
                 onClick={() => { setIsSignUp(true); setError(""); }}
                 className={`flex-1 py-2 text-sm font-semibold rounded-xl transition-all duration-200 ${
                   isSignUp
-                    ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md"
+                    ? "bg-gradient-to-r from-indigo-600 to-indigo-600 text-white shadow-md"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -211,7 +211,7 @@ const LoginPage = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Nguyễn Văn A"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -226,7 +226,7 @@ const LoginPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="example@email.com"
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     autoComplete="email"
                   />
                 </div>
@@ -241,7 +241,7 @@ const LoginPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-11 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-11 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                     autoComplete={isSignUp ? "new-password" : "current-password"}
                   />
                   <button
@@ -257,7 +257,7 @@ const LoginPage = () => {
 
               {!isSignUp && (
                 <div className="flex justify-end">
-                  <button type="button" className="text-xs text-violet-600 hover:text-violet-800 font-medium transition-colors">
+                  <button type="button" className="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
                     {t("common.forgot_your_password") || "Quên mật khẩu?"}
                   </button>
                 </div>
@@ -279,7 +279,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold text-sm rounded-xl shadow-md shadow-violet-300/40 hover:shadow-violet-400/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-600 text-white font-bold text-sm rounded-xl shadow-md shadow-indigo-300/40 hover:shadow-indigo-400/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -318,7 +318,7 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => { setIsSignUp((v) => !v); setError(""); }}
-                className="text-violet-600 font-semibold hover:underline"
+                className="text-indigo-600 font-semibold hover:underline"
               >
                 {isSignUp ? "Đăng nhập ngay" : "Đăng ký miễn phí"}
               </button>

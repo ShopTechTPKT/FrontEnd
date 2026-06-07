@@ -87,7 +87,7 @@ export default function DashboardView({ darkMode }) {
   return (
     <div className="p-4 lg:p-6 space-y-6 overflow-y-auto h-full animate-pageIn">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-[var(--color-primary-)] to-purple-800 text-white p-6 md:p-8 shadow-lg">
+      <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-[var(--color-primary-)] to-indigo-800 text-white p-6 md:p-8 shadow-lg">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-[var(--color-primary-)]/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4"></div>
         
@@ -262,7 +262,7 @@ export default function DashboardView({ darkMode }) {
             <div className="space-y-0 max-h-[300px] overflow-auto divide-y divide-[var(--color-border)]">
               {recentReviews.map((item) => (
                 <div key={item.id} className="text-sm py-3 flex gap-3 px-1 -mx-1 transition-colors hover:bg-[var(--color-bg-subtle)] cursor-pointer" onClick={() => navigate("/admin/reviews")}>
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary-)] to-purple-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary-)] to-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
                     {(item.userName || item.userId || "U").toString().slice(0, 1).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -384,7 +384,7 @@ const ACTIVITY_FEED_ACCENTS = [
 
 const STAT_ICONS = {
   revenue: {
-    gradient: "from-[var(--color-primary-)] to-purple-600",
+    gradient: "from-[var(--color-primary-)] to-indigo-600",
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />

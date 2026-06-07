@@ -116,32 +116,40 @@ const Header = () => {
     <header
       className={`font-sans fixed left-0 right-0 top-0 z-[var(--z-sticky)] transition-all duration-300 lg:translate-y-0 ${
         hideOnScrollMobile ? "-translate-y-full" : "translate-y-0"
-      } ${isScrolled ? "shadow-md" : ""}`}
+      } ${isScrolled ? "shadow-sm" : ""}`}
     >
       {/* Top bar đơn giản - desktop lg+ */}
       <div
-        className={`hidden border-b border-gray-100/80 bg-white/95 text-xs transition-all duration-300 dark:border-[var(--color-border)] dark:bg-[var(--color-bg)]/95 lg:flex lg:items-center lg:justify-between lg:px-8 lg:py-1.5 ${
+        className={`hidden border-b border-slate-100 bg-slate-50/50 text-[11px] transition-all duration-300 dark:border-slate-800/60 dark:bg-slate-900/20 lg:flex lg:items-center lg:justify-between lg:px-8 lg:py-1 ${
           isScrolled ? "!hidden" : ""
         }`}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-2 text-gray-600 dark:text-gray-300">
-          <span className="rounded-full border border-violet-100 bg-violet-50 px-2.5 py-1 font-medium text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300">
+        <div className="flex min-w-0 flex-1 items-center gap-3 text-slate-500 dark:text-gray-400">
+          <span className="font-medium text-slate-500 dark:text-gray-400 text-[11px] tracking-wide flex items-center gap-1.5">
+            <svg className="h-3 w-3 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
             Miễn phí vận chuyển từ 500.000đ
           </span>
-          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300">
+          <span className="h-3 w-[1px] bg-slate-200 dark:bg-slate-800" />
+          <span className="font-medium text-slate-500 dark:text-gray-400 text-[11px] tracking-wide flex items-center gap-1.5">
+            <svg className="h-3 w-3 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
             Đổi trả trong 7 ngày
           </span>
-          <Link to="/contact" className="hidden shrink-0 text-gray-600 hover:text-violet-700 dark:text-gray-300 xl:inline">
+          <span className="h-3 w-[1px] bg-slate-200 dark:bg-slate-800 hidden xl:inline" />
+          <Link to="/contact" className="hidden shrink-0 text-slate-500 hover:text-indigo-600 dark:text-gray-400 xl:inline transition-colors">
             Liên hệ hỗ trợ
           </Link>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          <span className="hidden text-gray-500 md:inline dark:text-gray-400">
-            Hotline: <strong className="text-gray-800 dark:text-gray-200">1900 1234</strong>
+          <span className="hidden text-slate-500 md:inline dark:text-gray-400">
+            Hotline: <strong className="font-semibold text-slate-700 dark:text-slate-200">1900 1234</strong>
           </span>
           <a
             href="#"
-            className="flex h-6 w-6 items-center justify-center text-gray-400 transition-colors hover:text-violet-600"
+            className="flex h-6 w-6 items-center justify-center text-slate-400 transition-colors hover:text-indigo-500"
             aria-label="Facebook"
           >
             <IconFacebook className="h-3.5 w-3.5" />
@@ -152,17 +160,17 @@ const Header = () => {
       </div>
 
       <div
-        className={`relative border-b border-gray-200/80 transition-all duration-300 dark:border-[var(--color-border)] ${
-          isScrolled ? "bg-white/90 py-2 backdrop-blur-xl dark:bg-[var(--color-bg)]/90" : "bg-white py-2 dark:bg-[var(--color-bg)]"
+        className={`relative border-b border-slate-100 transition-colors duration-300 dark:border-slate-900 ${
+          isScrolled ? "bg-white py-1.5 dark:bg-slate-950 shadow-sm" : "bg-white py-2.5 dark:bg-slate-950"
         }`}
       >
-        <div className="container-app flex flex-col gap-2 lg:gap-3">
-          <div className="flex items-center justify-between gap-2 lg:gap-4">
-            <Link to={path.home} className="group shrink-0 transition-transform duration-300 hover:scale-[1.02]">
+        <div className="container-app flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-4">
+            <Link to={path.home} className="group shrink-0 transition-transform duration-200 active:scale-95">
               <img
                 src={logo}
                 alt={t("remaining.logo")}
-                className={`transition-all duration-300 ${isScrolled ? "h-8" : "h-9 lg:h-10"}`}
+                className={`transition-all duration-300 ${isScrolled ? "h-7" : "h-8 lg:h-[34px]"}`}
               />
             </Link>
 
@@ -180,7 +188,7 @@ const Header = () => {
             />
           </div>
 
-          <nav className="hidden border-t border-gray-100 pt-1 dark:border-[var(--color-border)] lg:block">
+          <nav className="hidden border-t border-slate-100 pt-1 dark:border-slate-900 lg:block">
             <DesktopNav onNavigate={handleNavigate} isCustomerService={isCustomerService} />
           </nav>
         </div>

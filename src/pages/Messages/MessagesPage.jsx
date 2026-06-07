@@ -69,17 +69,17 @@ const MessagesPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-violet-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white rounded-2xl shadow-2xl p-8 mb-8">
           <h1 className="text-4xl font-bold mb-2">{t('common.customer_messages')}</h1>
-          <p className="text-violet-200">{t('common.chat_with_customers_in')}</p>
+          <p className="text-indigo-200">{t('common.chat_with_customers_in')}</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-violet-600">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-600">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">{t('common.active_chats')}</p>
@@ -87,8 +87,8 @@ const MessagesPage = () => {
                   {conversations.filter(c => c.status === 'active').length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
-                <FaComment className="text-violet-600 text-xl" />
+              <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                <FaComment className="text-indigo-600 text-xl" />
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@ const MessagesPage = () => {
                     placeholder={t('common.search_conversations')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-violet-500 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -145,12 +145,12 @@ const MessagesPage = () => {
                   <div
                     key={conv.id}
                     onClick={() => setSelectedConversation(conv)}
-                    className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-violet-50 transition-colors ${
-                      selectedConversation?.id === conv.id ? 'bg-violet-100' : ''
+                    className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-indigo-50 transition-colors ${
+                      selectedConversation?.id === conv.id ? 'bg-indigo-100' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-violet-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
                         {conv.customerName.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -159,7 +159,7 @@ const MessagesPage = () => {
                             {conv.customerName}
                           </h4>
                           {conv.unread > 0 && (
-                            <span className="bg-violet-700 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            <span className="bg-indigo-700 text-white text-xs font-bold px-2 py-1 rounded-full">
                               {conv.unread}
                             </span>
                           )}
@@ -178,9 +178,9 @@ const MessagesPage = () => {
               {selectedConversation ? (
                 <>
                   {/* Chat Header */}
-                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-violet-50 to-blue-50">
+                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-blue-50">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-violet-500 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold">
                         {selectedConversation.customerName.charAt(0)}
                       </div>
                       <div>
@@ -205,7 +205,7 @@ const MessagesPage = () => {
                         <div className={`max-w-md ${msg.sender === 'staff' ? 'order-2' : 'order-1'}`}>
                           <div className={`px-4 py-3 rounded-2xl ${
                             msg.sender === 'staff'
-                              ? 'bg-gradient-to-r from-violet-600 to-blue-600 text-white'
+                              ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white'
                               : 'bg-white text-gray-900 shadow-md'
                           }`}>
                             <p>{msg.text}</p>
@@ -229,11 +229,11 @@ const MessagesPage = () => {
                         value={messageInput}
                         onChange={(e) => setMessageInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                        className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                        className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:outline-none"
                       />
                       <button
                         onClick={handleSendMessage}
-                        className="px-6 py-3 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all transform hover:scale-105 shadow-md flex items-center gap-2"
+                        className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all transform hover:scale-105 shadow-md flex items-center gap-2"
                       >
                         <FaPaperPlane />
                         Send

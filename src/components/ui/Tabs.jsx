@@ -4,17 +4,17 @@ const listVariant = {
   line: "border-b border-gray-200 dark:border-gray-700 gap-1",
   enclosed: "rounded-xl bg-gray-100 p-1 dark:bg-gray-800 gap-0",
   "soft-rounded": "gap-2",
-  "solid-rounded": "rounded-xl bg-violet-100/60 p-1 dark:bg-violet-950/40 gap-0",
+  "solid-rounded": "rounded-xl bg-indigo-100/60 p-1 dark:bg-indigo-950/40 gap-0",
 };
 
 const tabVariant = {
-  line: "rounded-t-lg border-b-2 border-transparent px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 data-[active=true]:border-violet-600 data-[active=true]:text-violet-700 dark:text-gray-400 dark:hover:text-gray-100 dark:data-[active=true]:text-violet-300",
+  line: "rounded-t-lg border-b-2 border-transparent px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 data-[active=true]:border-indigo-500 data-[active=true]:text-indigo-600 dark:text-gray-400 dark:hover:text-gray-100 dark:data-[active=true]:text-indigo-300",
   enclosed:
-    "rounded-lg px-4 py-2 text-sm font-medium text-gray-600 data-[active=true]:bg-white data-[active=true]:text-violet-700 data-[active=true]:shadow-sm dark:text-gray-300 dark:data-[active=true]:bg-gray-900 dark:data-[active=true]:text-violet-300",
+    "rounded-lg px-4 py-2 text-sm font-medium text-gray-600 data-[active=true]:bg-white data-[active=true]:text-indigo-600 data-[active=true]:shadow-sm dark:text-gray-300 dark:data-[active=true]:bg-gray-900 dark:data-[active=true]:text-indigo-300",
   "soft-rounded":
-    "rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 data-[active=true]:bg-violet-600 data-[active=true]:text-white dark:text-gray-300 dark:hover:bg-gray-800",
+    "rounded-full px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 data-[active=true]:bg-indigo-500 data-[active=true]:text-white dark:text-gray-300 dark:hover:bg-gray-800",
   "solid-rounded":
-    "rounded-lg px-4 py-2 text-sm font-medium text-violet-800/80 data-[active=true]:bg-violet-600 data-[active=true]:text-white dark:text-violet-200",
+    "rounded-lg px-4 py-2 text-sm font-medium text-indigo-800/80 data-[active=true]:bg-indigo-600 data-[active=true]:text-white dark:text-indigo-200",
 };
 
 function Tabs({
@@ -88,7 +88,7 @@ function Tabs({
             {t.icon}
             {t.label}
             {t.badge != null ? (
-              <span className="rounded-full bg-violet-100 px-1.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-900 dark:text-violet-200">
+              <span className="rounded-full bg-indigo-100 px-1.5 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200">
                 {t.badge}
               </span>
             ) : null}

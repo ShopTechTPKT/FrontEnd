@@ -106,7 +106,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }) => {
         };
       case "SHIPPED":
         return {
-          color: "bg-violet-100 text-violet-800",
+          color: "bg-indigo-100 text-indigo-800",
           icon: <FaShippingFast className="w-3 h-3" />,
           text: t("my_order.shipped"),
         };

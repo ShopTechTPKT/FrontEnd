@@ -57,24 +57,24 @@ const ReviewsPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-violet-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white rounded-2xl shadow-2xl p-8 mb-8">
           <h1 className="text-4xl font-bold mb-2">{t('common.product_reviews')}</h1>
-          <p className="text-violet-200">{t('common.manage_and_respond_to')}</p>
+          <p className="text-indigo-200">{t('common.manage_and_respond_to')}</p>
         </div>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-violet-600">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-600">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">{t('common.total_reviews')}</p>
                 <p className="text-3xl font-bold text-gray-900">{reviews.length}</p>
               </div>
-              <div className="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center">
-                <FaStar className="text-violet-600 text-xl" />
+              <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                <FaStar className="text-indigo-600 text-xl" />
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ const ReviewsPage = () => {
                 placeholder={t('common.search_by_product_or')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none"
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
@@ -141,7 +141,7 @@ const ReviewsPage = () => {
               <select
                 value={filterRating}
                 onChange={(e) => setFilterRating(e.target.value)}
-                className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-violet-500 focus:outline-none bg-white"
+                className="px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:outline-none bg-white"
               >
                 <option value="all">{t('common.all_ratings')}</option>
                 <option value="5">{t('common.5_stars')}</option>
@@ -162,7 +162,7 @@ const ReviewsPage = () => {
                 {/* Review Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-violet-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                       {review.userName.charAt(0)}
                     </div>
                     <div>
@@ -178,7 +178,7 @@ const ReviewsPage = () => {
                 {/* Product Name */}
                 <div className="mb-3">
                   <span className="text-sm text-gray-600">{t('common.product')}</span>
-                  <span className="font-semibold text-violet-600">{review.productName}</span>
+                  <span className="font-semibold text-indigo-600">{review.productName}</span>
                 </div>
 
                 {/* Review Comment */}
@@ -187,7 +187,7 @@ const ReviewsPage = () => {
                 {/* Review Actions */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-2 text-gray-600 hover:text-violet-600 transition-colors">
+                    <button className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
                       <FaThumbsUp />
                       <span className="text-sm">{review.helpful} helpful</span>
                     </button>
@@ -198,7 +198,7 @@ const ReviewsPage = () => {
                       <span className="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">{t('common.pending')}</span>
                     )}
                   </div>
-                  <button className="px-6 py-2 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all transform hover:scale-105 shadow-md flex items-center gap-2">
+                  <button className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all transform hover:scale-105 shadow-md flex items-center gap-2">
                     <FaReply />
                     {review.replied ? 'View Reply' : 'Reply'}
                   </button>

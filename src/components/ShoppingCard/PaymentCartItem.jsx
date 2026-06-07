@@ -50,7 +50,7 @@ const PaymentCartItem = ({ item }) => {
       </div>
 
       <div className="shrink-0 text-right">
-        <p className="text-sm font-semibold text-violet-700 tabular-nums sm:text-base">
+        <p className="text-sm font-semibold text-indigo-700 tabular-nums sm:text-base">
           {formatCurrency(itemTotal)}
         </p>
       </div>

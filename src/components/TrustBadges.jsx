@@ -44,11 +44,11 @@ const IconHeadset = () => (
 
 /* ── Badges data ─────────────────────────────────── */
 const BADGES = [
-  { icon: <IconTruck />,   label: "Mien phi giao hang",    sub: "Don tu 500.000d",        gradient: "from-violet-500 to-purple-600", glow: "shadow-violet-100" },
-  { icon: <IconShield />,  label: "Bao hanh chinh hang",  sub: "12 - 36 thang",           gradient: "from-violet-600 to-purple-700", glow: "shadow-violet-100" },
-  { icon: <IconReturn />,  label: "Doi tra de dang",       sub: "Trong vong 15 ngay",      gradient: "from-purple-500 to-violet-600", glow: "shadow-violet-100" },
-  { icon: <IconLock />,    label: "Thanh toan an toan",   sub: "VNPAY - MoMo - COD",      gradient: "from-violet-700 to-fuchsia-600", glow: "shadow-violet-100" },
-  { icon: <IconHeadset />, label: "Ho tro 24/7",           sub: "Hotline: 1800-9999",      gradient: "from-purple-600 to-violet-600",   glow: "shadow-violet-100" },
+  { icon: <IconTruck />,   label: "Mien phi giao hang",    sub: "Don tu 500.000d",        gradient: "from-indigo-500 to-indigo-600", glow: "shadow-indigo-100" },
+  { icon: <IconShield />,  label: "Bao hanh chinh hang",  sub: "12 - 36 thang",           gradient: "from-indigo-600 to-indigo-700", glow: "shadow-indigo-100" },
+  { icon: <IconReturn />,  label: "Doi tra de dang",       sub: "Trong vong 15 ngay",      gradient: "from-indigo-500 to-indigo-600", glow: "shadow-indigo-100" },
+  { icon: <IconLock />,    label: "Thanh toan an toan",   sub: "VNPAY - MoMo - COD",      gradient: "from-indigo-600 to-indigo-700", glow: "shadow-indigo-100" },
+  { icon: <IconHeadset />, label: "Ho tro 24/7",           sub: "Hotline: 1800-9999",      gradient: "from-indigo-500 to-indigo-600",   glow: "shadow-indigo-100" },
 ];
 
 /* ── Stats counters ──────────────────────────────── */
@@ -87,12 +87,12 @@ const TrustBadges = () => {
       </div>
 
       {/* ── Stats strip ── */}
-      <div className="border-t border-gray-50 bg-gradient-to-r from-violet-50/50 via-white to-violet-50/50">
+      <div className="border-t border-gray-50 bg-gradient-to-r from-indigo-50/20 via-white to-indigo-50/20">
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {STATS.map((stat, i) => (
               <div key={i} className="flex flex-col items-center text-center">
-                <p className="text-lg font-bold text-violet-700 tabular-nums leading-none">
+                <p className="text-lg font-bold text-indigo-600 tabular-nums leading-none">
                   <AnimatedCounter
                     target={stat.value}
                     duration={1800}

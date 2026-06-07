@@ -14,10 +14,10 @@ const DesktopNav = ({ onNavigate, isCustomerService }) => {
   const isActive = (targetPath) => location.pathname === targetPath;
 
   const navLinkClass = (active) =>
-    `px-3 py-2 rounded-lg transition-colors font-medium ${
+    `px-3.5 py-1.5 rounded-lg transition-all duration-150 font-medium text-[13px] tracking-wide ${
       active
-        ? "text-violet-700 bg-violet-50 border-b-2 border-violet-700 dark:text-violet-300 dark:bg-violet-950/50"
-        : "text-gray-600 hover:text-violet-700 hover:bg-violet-50/60 dark:text-gray-300 dark:hover:bg-violet-950/30"
+        ? "text-indigo-600 bg-indigo-50/80 font-semibold dark:text-indigo-400 dark:bg-indigo-950/45"
+        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-900/40"
     }`;
 
   return (
@@ -37,13 +37,13 @@ const DesktopNav = ({ onNavigate, isCustomerService }) => {
       <li>
         <Link
           to="/pc-builder"
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg font-semibold text-sm transition-all ${
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-semibold text-[13px] tracking-wide transition-all active:scale-[0.96] ${
             isActive("/pc-builder")
-              ? "text-white bg-violet-700"
-              : "text-violet-700 hover:text-white hover:bg-violet-700 dark:text-violet-300"
+              ? "text-white bg-indigo-600 shadow-sm shadow-indigo-500/10"
+              : "text-indigo-600 bg-indigo-50/50 hover:text-white hover:bg-indigo-600 dark:text-indigo-300 dark:bg-indigo-950/30 dark:hover:bg-indigo-600 dark:hover:text-white"
           }`}
         >
-          <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2" />
             <path d="M8 21h8M12 17v4" />
           </svg>
@@ -53,7 +53,7 @@ const DesktopNav = ({ onNavigate, isCustomerService }) => {
       <li>
         <Link to="/deals" className={`relative ${navLinkClass(isActive("/deals"))}`}>
           {t("nav.deals")}
-          <span className="absolute -top-1 -right-3 animate-pulse rounded-full bg-red-500 px-1 py-0.5 text-[8px] font-bold leading-none text-white">
+          <span className="absolute -top-0.5 -right-2 rounded-full bg-red-500 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm shadow-red-500/20">
             {t("nav.hotBadge")}
           </span>
         </Link>
@@ -64,7 +64,7 @@ const DesktopNav = ({ onNavigate, isCustomerService }) => {
         </Link>
       </li>
       <li className="group relative">
-        <button type="button" className="flex items-center gap-1 rounded-lg px-3 py-2 text-gray-700 transition-colors hover:bg-violet-50 hover:text-violet-700 dark:text-gray-200 dark:hover:bg-violet-950/40">
+        <button type="button" className="flex items-center gap-1 rounded-lg px-3.5 py-1.5 text-[13px] tracking-wide font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-900/40 transition-all duration-150">
           <span>{t("nav.support")}</span>
           <IconChevronDown className="h-3 w-3 transition-transform duration-200 group-hover:rotate-180" />
         </button>

@@ -82,8 +82,7 @@ function sortCatalogProducts(products, sortOption) {
 export default function Catalog() {
 
   const location = useLocation()
-  const { search } = useLocation(); // Lấy search từ URL, ví dụ: ?search=query
-  const queryParams = new URLSearchParams(search);
+  const queryParams = new URLSearchParams(location.search);
   const textSearch = queryParams.get("search"); // Lấy giá trị của tham số 'search'
   const navigate = useNavigate();
 
@@ -92,6 +91,7 @@ export default function Catalog() {
   const { t } = useTranslation();
 
   const [products, setProducts] = useState([]);
+  const [dbProducts, setDbProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [viewMode, setViewMode] = useState("grid"); // "grid" hoặc "list"
@@ -140,7 +140,7 @@ export default function Catalog() {
           
           formattedProducts = filteredByCategory.map((item) => ({
             ...item,
-            inStock: item.stock > 0,
+            inStock: (item.quantity ?? item.stock ?? 0) > 0,
           }));
         } else {
           // Xử lý theo textSearch
@@ -150,7 +150,7 @@ export default function Catalog() {
             if (search === "gaming") {
               formattedProducts = rawProducts.filter((item) => (item.categoryId === 46 && item.name.includes("Gaming"))).map((item) => ({
                 ...item,
-                inStock: item.stock > 0,
+                inStock: (item.quantity ?? item.stock ?? 0) > 0,
               }));
             } else {
               // Tìm kiếm theo tên sản phẩm hoặc mô tả
@@ -162,18 +162,19 @@ export default function Catalog() {
                 return productName.includes(searchTerm) || productDesc.includes(searchTerm);
               }).map((item) => ({
                 ...item,
-                inStock: item.stock > 0,
+                inStock: (item.quantity ?? item.stock ?? 0) > 0,
               }));
             }
           } else {
             // Không có search, hiển thị tất cả
             formattedProducts = rawProducts.map((item) => ({
               ...item,
-              inStock: item.stock > 0,
+              inStock: (item.quantity ?? item.stock ?? 0) > 0,
             }));
           }
         }
 
+          setDbProducts(rawProducts);
           setProducts(formattedProducts);
           setFilteredProducts(formattedProducts);
       } catch (error) {
@@ -186,7 +187,7 @@ export default function Catalog() {
     };
 
     fetchProducts();
-  }, [textSearch, list, brand]);
+  }, [textSearch, location.key]);
   // Trong function Catalog():
   const [filters, setFilters] = useState([
     { label: "CUSTOM PCS (24)" },
@@ -325,7 +326,7 @@ export default function Catalog() {
         <img
           src={banner1}
           alt=""
-          className="mb-2 w-full max-h-[200px] sm:max-h-[240px] object-cover rounded-xl border border-violet-100/80 shadow-sm"
+          className="mb-2 w-full max-h-[200px] sm:max-h-[240px] object-cover rounded-xl border border-indigo-100/80 shadow-sm"
         />
         {/* <Breadcrumb
           items={[
@@ -343,7 +344,7 @@ export default function Catalog() {
         <div className="">
           <Button
             variant="ghost"
-            className="w-full justify-start text-gray-600 hover:text-violet-700"
+            className="w-full justify-start text-gray-600 hover:text-indigo-700"
             onClick={() => navigate("/")}
             icon={
               <svg
@@ -408,6 +409,7 @@ export default function Catalog() {
           <SidebarFilters
             products={filteredProducts}
             allProducts={products}
+            dbProducts={dbProducts}
             onApplyFilters={filteredProducts => {
               setFilteredProducts(filteredProducts);
             }}

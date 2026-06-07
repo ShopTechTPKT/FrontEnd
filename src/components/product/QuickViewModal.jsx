@@ -63,7 +63,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
       <div className="flex flex-col md:flex-row gap-6">
         {/* Product Image */}
         <div className="md:w-1/2 relative bg-gray-50 rounded-2xl flex items-center justify-center p-6 border border-gray-100 overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-50/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           <img
             src={product.image || product.imageUrl}
             alt={product.productName || product.name}
@@ -81,7 +81,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
         <div className="md:w-1/2 flex flex-col">
           {/* Category pill */}
           {product.categoryName && (
-            <span className="inline-flex w-fit items-center px-2.5 py-0.5 rounded-full bg-violet-50 border border-violet-200 text-[11px] font-semibold text-violet-700 mb-2">
+            <span className="inline-flex w-fit items-center px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-[11px] font-semibold text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-900 dark:text-indigo-400 mb-2">
               {product.categoryName}
             </span>
           )}
@@ -104,7 +104,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-2xl font-bold text-violet-700">
+            <span className="text-2xl font-bold text-indigo-600">
               {formatCurrency(price)}
             </span>
             <span className="text-sm text-gray-400 line-through">
@@ -122,7 +122,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
           <div className="flex gap-3">
             <button
               onClick={handleAddToCart}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-semibold shadow-md shadow-violet-200/50 hover:shadow-violet-300/60 hover:-translate-y-0.5 transition-all duration-200"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-indigo-500 text-white text-sm font-semibold shadow-sm hover:bg-indigo-600 active:scale-[0.97] transition-all"
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -131,7 +131,7 @@ export default function QuickViewModal({ product, isOpen, onClose }) {
             </button>
             <button
               onClick={handleViewDetails}
-              className="flex-1 py-2.5 rounded-xl border border-violet-200 text-violet-700 text-sm font-semibold hover:bg-violet-50 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-900 active:scale-[0.97] transition-all"
             >
               {t("product.view_details") || "Xem chi tiet"}
             </button>

@@ -30,17 +30,17 @@ export default function WhyChooseUs() {
           return (
             <div
               key={f.titleKey}
-              className="motion-safe:animate-fadeInUp rounded-2xl border border-white/20 bg-white/70 p-6 shadow-lg backdrop-blur-md dark:border-violet-500/20 dark:bg-gray-900/70"
+              className="motion-safe:animate-fadeInUp rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-gray-900"
               style={{ animationDelay: `${i * 80}ms` }}
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 text-white shadow-md">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400 shadow-sm">
                 <Icon className="h-6 w-6" strokeWidth={1.75} />
               </div>
               <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">{t(f.titleKey, { defaultValue: "Ưu điểm" })}</h3>
               <p className="mt-2 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
                 {t(f.descKey, { defaultValue: "Mô tả ngắn về dịch vụ." })}
               </p>
-              <p className="mt-4 text-2xl font-bold tabular-nums text-violet-700 dark:text-violet-400">
+              <p className="mt-4 text-2xl font-bold tabular-nums text-indigo-600 dark:text-indigo-400">
                 <AnimatedCounter value={f.stat} suffix={f.suffix} duration={1400} />
               </p>
             </div>

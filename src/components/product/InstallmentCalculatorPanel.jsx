@@ -22,8 +22,8 @@ export default function InstallmentCalculatorPanel({ price = 0 }) {
   if (!safePrice) return null;
 
   return (
-    <div className="rounded-lg border border-violet-200 bg-violet-50/50 p-4">
-      <h3 className="text-sm font-semibold text-violet-800 mb-3">Ước tính trả góp</h3>
+    <div className="rounded-lg border border-indigo-200 bg-indigo-50/50 p-4">
+      <h3 className="text-sm font-semibold text-indigo-800 mb-3">Ước tính trả góp</h3>
 
       <div className="space-y-3">
         <div>
@@ -38,7 +38,7 @@ export default function InstallmentCalculatorPanel({ price = 0 }) {
             step="5"
             value={downPercent}
             onChange={(e) => setDownPercent(Number(e.target.value))}
-            className="w-full accent-violet-600"
+            className="w-full accent-indigo-600"
           />
         </div>
 
@@ -90,7 +90,7 @@ export default function InstallmentCalculatorPanel({ price = 0 }) {
         </div>
         <div className="mt-2 flex items-center justify-between border-t border-gray-100 pt-2">
           <span className="text-gray-700 font-semibold">Tạm tính mỗi tháng</span>
-          <span className="text-sm font-bold text-violet-700">
+          <span className="text-sm font-bold text-indigo-700">
             {formatCurrency(computed.monthlyPayment)}
           </span>
         </div>

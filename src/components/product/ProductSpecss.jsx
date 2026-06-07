@@ -45,7 +45,7 @@ export default function ProductSpeccs() {
           {/* Left Section: Product Specs */}
           <div>
             <div className="text-sm mb-4 text-gray-600">
-              <span className="hover:text-violet-600 transition cursor-pointer">
+              <span className="hover:text-indigo-600 transition cursor-pointer">
                 Home / {product.categoryName} /{"  "}
               </span>
               <span className="text-gray-400">{product.seriesName}</span>
@@ -53,7 +53,7 @@ export default function ProductSpeccs() {
             <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
               {product.productName}
             </h1>
-            <p className="text-violet-600 text-sm mb-6 hover:underline cursor-pointer">
+            <p className="text-indigo-600 text-sm mb-6 hover:underline cursor-pointer">
               Be the first to review this product
             </p>
 
@@ -83,7 +83,7 @@ export default function ProductSpeccs() {
             <div className="mb-6 pb-6 border-b border-gray-200">
               <div className="flex items-center mb-2">
                 <p className="text-sm text-gray-700">{t('product.have_a_question')}</p>
-                <a href="#" className="text-violet-600 text-sm ml-2 hover:underline">
+                <a href="#" className="text-indigo-600 text-sm ml-2 hover:underline">
                   {t('product.contact_us')}
                 </a>
               </div>
@@ -93,7 +93,7 @@ export default function ProductSpeccs() {
             {/* More Information */}
             <div>
               <button
-                className="flex items-center text-sm font-medium text-gray-700 hover:text-violet-600 transition"
+                className="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition"
                 onClick={() => setExpanded(!expanded)}
               >
                 <span className="mr-2 text-lg">{expanded ? "−" : "+"}</span>
@@ -111,13 +111,13 @@ export default function ProductSpeccs() {
           <div className="flex flex-col items-center lg:items-end">
             <div className="flex flex-col lg:flex-row justify-between w-full h-full">
               <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-2 mb-4 lg:mb-0">
-                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-violet-400 hover:text-red-500 transition shadow-sm">
+                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-indigo-400 hover:text-red-500 transition shadow-sm">
                   <IcHeart className="w-5 h-5 text-gray-500" />
                 </button>
-                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-violet-400 hover:text-blue-500 transition shadow-sm">
+                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-indigo-400 hover:text-blue-500 transition shadow-sm">
                   <IcShare className="w-5 h-5 text-gray-500" />
                 </button>
-                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-violet-400 hover:text-green-500 transition shadow-sm">
+                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-indigo-400 hover:text-green-500 transition shadow-sm">
                   <IcMessage className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
@@ -139,13 +139,13 @@ export default function ProductSpeccs() {
                   <img src={zip} alt={t('product.zip_payment_option')} className="h-5" />
                   <p className="text-xs text-gray-600">
                     own it now, up to 6 months interest free{" "}
-                    <a href="#" className="text-violet-600 font-medium hover:underline">
+                    <a href="#" className="text-indigo-600 font-medium hover:underline">
                       {t('product.learn_more')}
                     </a>
                   </p>
                 </div>
                 <div className="flex justify-center space-x-2">
-                  <span className="h-2 w-2 rounded-full bg-violet-600"></span>
+                  <span className="h-2 w-2 rounded-full bg-indigo-600"></span>
                   <span className="h-2 w-2 rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer transition"></span>
                   <span className="h-2 w-2 rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer transition"></span>
                 </div>

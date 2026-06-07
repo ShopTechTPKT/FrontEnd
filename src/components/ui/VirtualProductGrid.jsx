@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 
 // Wrapper for a chunk of products that virtualizes itself
-const GridChunk = ({ items, renderItem, minHeight = "400px" }) => {
-  const [isVisible, setIsVisible] = useState(false);
+const GridChunk = ({ items, renderItem, className, minHeight = "400px" }) => {
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
   const chunkRef = useRef(null);
 
   useEffect(() => {
+    // If it's already rendered, we don't need to observe it anymore
+    if (hasBeenVisible) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setHasBeenVisible(true);
+        }
       },
       {
-        rootMargin: "400px 0px", // Unload/load with margin for smooth scroll
+        rootMargin: "450px 0px", // Unload/load with margin for smooth scroll
       }
     );
 
@@ -22,18 +27,19 @@ const GridChunk = ({ items, renderItem, minHeight = "400px" }) => {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [hasBeenVisible]);
 
   return (
     <div
       ref={chunkRef}
-      style={{ minHeight: isVisible ? "auto" : minHeight }}
-      className="contents"
+      style={{ minHeight: hasBeenVisible ? "auto" : minHeight }}
     >
-      {isVisible ? (
-        items.map((item, idx) => renderItem(item, idx))
+      {hasBeenVisible ? (
+        <div className={className}>
+          {items.map((item, idx) => renderItem(item, idx))}
+        </div>
       ) : (
-        <div style={{ height: minHeight }} className="col-span-full" />
+        <div style={{ height: minHeight }} />
       )}
     </div>
   );
@@ -53,12 +59,13 @@ const VirtualProductGrid = ({
   }
 
   return (
-    <div className={className}>
+    <div className="flex flex-col gap-6">
       {chunks.map((chunk, idx) => (
         <GridChunk
           key={idx}
           items={chunk}
           renderItem={renderItem}
+          className={className}
           minHeight={minChunkHeight}
         />
       ))}

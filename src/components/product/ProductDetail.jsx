@@ -58,7 +58,7 @@ export default function ProductDetail() {
           <div>
             {/* Breadcrumb */}
             <div className="text-sm mb-4 text-gray-600">
-              <span className="hover:text-violet-600 transition cursor-pointer">
+              <span className="hover:text-indigo-600 transition cursor-pointer">
                 Home / {product.categoryName} /{" "}
               </span>
               <span className="text-gray-400">{product.seriesName}</span>
@@ -67,7 +67,7 @@ export default function ProductDetail() {
             <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
               {product.productName}
             </h1>
-            <p className="text-violet-600 text-sm mb-6 hover:underline cursor-pointer">
+            <p className="text-indigo-600 text-sm mb-6 hover:underline cursor-pointer">
               Be the first to review this product
             </p>
 
@@ -78,9 +78,9 @@ export default function ProductDetail() {
                 {product.attributeList?.split("|").map((attr, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-violet-50 border border-violet-100 text-xs font-medium text-violet-800 leading-tight"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-100 text-xs font-medium text-indigo-800 leading-tight"
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5 text-violet-500 shrink-0">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5 text-indigo-500 shrink-0">
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     {attr.trim()}
@@ -89,16 +89,16 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="mb-6 rounded-xl border border-violet-200 bg-violet-50 p-4">
-              <p className="text-sm font-semibold text-violet-900">
+            <div className="mb-6 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+              <p className="text-sm font-semibold text-indigo-900">
                 Mua trên 10 sản phẩm? Nhận báo giá ưu đãi cho doanh nghiệp.
               </p>
-              <p className="mt-1 text-xs text-violet-700">
+              <p className="mt-1 text-xs text-indigo-700">
                 Gửi yêu cầu nhanh, đội ngũ ShopPC sẽ phản hồi giá tốt nhất cho số lượng lớn.
               </p>
               <Link
                 to={`/bulk-buy?productId=${product?.id || ""}&productName=${encodeURIComponent(product?.productName || "")}`}
-                className="mt-3 inline-flex items-center rounded-lg bg-violet-700 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-800"
+                className="mt-3 inline-flex items-center rounded-lg bg-indigo-700 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-800"
               >
                 Gửi yêu cầu báo giá
               </Link>
@@ -108,7 +108,7 @@ export default function ProductDetail() {
             <div className="mb-6 pb-6 border-b border-gray-200">
               <div className="flex items-center mb-2">
                 <p className="text-sm text-gray-700">{t("product.have_a_question")}</p>
-                <a href="#" className="text-violet-600 text-sm ml-2 hover:underline">
+                <a href="#" className="text-indigo-600 text-sm ml-2 hover:underline">
                   {t("product.contact_us")}
                 </a>
               </div>
@@ -119,7 +119,7 @@ export default function ProductDetail() {
 
             {/* More Information */}
             <button
-              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-violet-600 transition-colors"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
               onClick={() => setExpanded(!expanded)}
             >
               <svg
@@ -132,7 +132,7 @@ export default function ProductDetail() {
               <span>{t("product.more_information")}</span>
             </button>
             {expanded && (
-              <div className="mt-4 text-sm text-gray-600 bg-violet-50/50 p-4 rounded-xl border border-violet-100">
+              <div className="mt-4 text-sm text-gray-600 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
                 Thong tin bo sung ve san pham se duoc hien thi tai day...
               </div>
             )}
@@ -143,13 +143,13 @@ export default function ProductDetail() {
             <div className="flex flex-col lg:flex-row justify-between w-full h-full">
               {/* Social Icons */}
               <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-2 mb-4 lg:mb-0">
-                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-violet-400 hover:text-red-500 transition shadow-sm">
+                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-indigo-400 hover:text-red-500 transition shadow-sm">
                   <IcHeart className="w-5 h-5 text-gray-500" />
                 </button>
-                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-violet-400 hover:text-blue-500 transition shadow-sm">
+                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-indigo-400 hover:text-blue-500 transition shadow-sm">
                   <IcShare className="w-5 h-5 text-gray-500" />
                 </button>
-                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-violet-400 hover:text-green-500 transition shadow-sm">
+                <button className="bg-white rounded-full p-2.5 border border-gray-200 hover:border-indigo-400 hover:text-green-500 transition shadow-sm">
                   <IcMessage className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
@@ -157,7 +157,7 @@ export default function ProductDetail() {
               {/* Product Image */}
               <div className="flex-1 flex justify-center items-center w-full lg:w-auto">
                 <div className="relative w-full max-w-md bg-gray-50 rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6 group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-violet-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" />
                   <img
                     src={product.image}
                     alt={product.productName}
@@ -178,14 +178,14 @@ export default function ProductDetail() {
                   />
                   <p className="text-xs text-gray-600">
                     own it now, up to 6 months interest free{" "}
-                    <a href="#" className="text-violet-600 font-medium hover:underline">
+                    <a href="#" className="text-indigo-600 font-medium hover:underline">
                       {t("product.learn_more")}
                     </a>
                   </p>
                 </div>
 
                 <div className="flex justify-center space-x-2">
-                  <span className="h-2 w-2 rounded-full bg-violet-600"></span>
+                  <span className="h-2 w-2 rounded-full bg-indigo-600"></span>
                   <span className="h-2 w-2 rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer transition"></span>
                   <span className="h-2 w-2 rounded-full bg-gray-300 hover:bg-gray-400 cursor-pointer transition"></span>
                 </div>

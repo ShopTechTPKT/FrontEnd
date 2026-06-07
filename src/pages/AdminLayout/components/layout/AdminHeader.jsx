@@ -274,7 +274,7 @@ export default function AdminHeader({
             type="button"
             onClick={() => setShowQuickActions(!showQuickActions)}
             onBlur={() => setTimeout(() => setShowQuickActions(false), 200)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-primary-)] to-purple-600 hover:from-[var(--color-primary-)] hover:to-purple-700 shadow-md shadow-[var(--color-primary-)]/50 transition-all"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[var(--color-primary-)] to-indigo-600 hover:from-[var(--color-primary-)] hover:to-indigo-700 shadow-md shadow-[var(--color-primary-)]/50 transition-all"
           >
             <FaPlus size={12} />
             Mới
@@ -402,7 +402,7 @@ export default function AdminHeader({
 
         <div className="relative ml-1 cursor-pointer hover:opacity-90 transition-opacity">
           <div
-            className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary-)] to-purple-600 text-white text-xs font-bold shadow-md ring-2 ring-[var(--color-bg)] shrink-0"
+            className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary-)] to-indigo-600 text-white text-xs font-bold shadow-md ring-2 ring-[var(--color-bg)] shrink-0"
             title={t("admin.breadcrumb_admin", "Admin")}
             role="img"
             aria-label={t("admin.breadcrumb_admin", "Admin")}

@@ -59,10 +59,10 @@ const ToastDemo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-violet-900 to-slate-900 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 py-12 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-96 h-96 bg-violet-500/30 rounded-full blur-3xl animate-pulse" style={{ top: '10%', left: '10%' }}></div>
+        <div className="absolute w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl animate-pulse" style={{ top: '10%', left: '10%' }}></div>
         <div className="absolute w-96 h-96 bg-pink-500/30 rounded-full blur-3xl animate-pulse" style={{ bottom: '10%', right: '10%', animationDelay: '1s' }}></div>
         <div className="absolute w-96 h-96 bg-blue-500/30 rounded-full blur-3xl animate-pulse" style={{ top: '50%', left: '50%', animationDelay: '2s' }}></div>
       </div>
@@ -71,15 +71,15 @@ const ToastDemo = () => {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="inline-block relative mb-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-pink-600 rounded-3xl blur-2xl opacity-50 animate-pulse"></div>
-            <div className="relative bg-gradient-to-r from-violet-600 via-pink-600 to-violet-600 p-6 rounded-3xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-pink-600 rounded-3xl blur-2xl opacity-50 animate-pulse"></div>
+            <div className="relative bg-gradient-to-r from-indigo-600 via-pink-600 to-indigo-600 p-6 rounded-3xl">
               <FaBell className="text-white text-6xl animate-bounce" />
             </div>
           </div>
-          <h1 className="text-6xl md:text-7xl font-black mb-4 bg-gradient-to-r from-violet-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">
+          <h1 className="text-6xl md:text-7xl font-black mb-4 bg-gradient-to-r from-indigo-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent animate-pulse">
             Toast Notification 2025
           </h1>
-          <p className="text-violet-200 text-xl font-semibold">
+          <p className="text-indigo-200 text-xl font-semibold">
             Glassmorphism • Animated Gradients • Micro-interactions
           </p>
         </div>
@@ -87,7 +87,7 @@ const ToastDemo = () => {
         {/* Toast Types */}
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 mb-8">
           <h2 className="text-3xl font-black text-white mb-8 flex items-center gap-3">
-            <div className="w-2 h-10 bg-gradient-to-b from-violet-400 to-pink-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-10 bg-gradient-to-b from-indigo-400 to-pink-400 rounded-full animate-pulse"></div>
             Toast Types
           </h2>
           
@@ -152,21 +152,21 @@ const ToastDemo = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <button
               onClick={handleTopLeft}
-              className="bg-gradient-to-br from-violet-500/30 to-pink-500/30 backdrop-blur-sm border-2 border-violet-400/50 rounded-2xl p-5 hover:shadow-2xl hover:scale-110 hover:-translate-y-1 transition-all duration-300 text-white font-bold text-lg"
+              className="bg-gradient-to-br from-indigo-500/30 to-pink-500/30 backdrop-blur-sm border-2 border-indigo-400/50 rounded-2xl p-5 hover:shadow-2xl hover:scale-110 hover:-translate-y-1 transition-all duration-300 text-white font-bold text-lg"
             >
               Top Left
             </button>
 
             <button
               onClick={handleTopCenter}
-              className="bg-gradient-to-br from-violet-500/30 to-pink-500/30 backdrop-blur-sm border-2 border-violet-400/50 rounded-2xl p-5 hover:shadow-2xl hover:scale-110 hover:-translate-y-1 transition-all duration-300 text-white font-bold text-lg"
+              className="bg-gradient-to-br from-indigo-500/30 to-pink-500/30 backdrop-blur-sm border-2 border-indigo-400/50 rounded-2xl p-5 hover:shadow-2xl hover:scale-110 hover:-translate-y-1 transition-all duration-300 text-white font-bold text-lg"
             >
               Top Center
             </button>
 
             <button
               onClick={handleShowSuccess}
-              className="bg-gradient-to-br from-violet-500/30 to-pink-500/30 backdrop-blur-sm border-2 border-violet-400/50 rounded-2xl p-5 hover:shadow-2xl hover:scale-110 hover:-translate-y-1 transition-all duration-300 text-white font-bold text-lg"
+              className="bg-gradient-to-br from-indigo-500/30 to-pink-500/30 backdrop-blur-sm border-2 border-indigo-400/50 rounded-2xl p-5 hover:shadow-2xl hover:scale-110 hover:-translate-y-1 transition-all duration-300 text-white font-bold text-lg"
             >
               Top Right
             </button>
@@ -204,7 +204,7 @@ const ToastDemo = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={handleMultiple}
-              className="bg-gradient-to-r from-violet-600 to-pink-600 text-white rounded-xl p-6 hover:shadow-2xl hover:scale-105 transition-all duration-300 font-bold text-lg"
+              className="bg-gradient-to-r from-indigo-600 to-pink-600 text-white rounded-xl p-6 hover:shadow-2xl hover:scale-105 transition-all duration-300 font-bold text-lg"
             >
               Show Multiple Toasts (Order Flow)
             </button>
@@ -234,7 +234,7 @@ const ToastDemo = () => {
             <p className="text-gray-600 text-sm">Gradient colors, backdrop blur, shadows</p>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-violet-100">
+          <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-indigo-100">
             <div className="text-3xl mb-3">TM</div>
             <h3 className="font-bold text-gray-800 mb-2">Progress Bar</h3>
             <p className="text-gray-600 text-sm">Visual countdown trước khi auto-dismiss</p>

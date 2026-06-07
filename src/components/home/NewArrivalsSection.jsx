@@ -15,8 +15,8 @@ function toCardProduct(p) {
     productName: p.productName ?? src.productName ?? src.name,
     image: p.image ?? src.image ?? src.imageUrl,
     price: p.price ?? src.price ?? src.unitPrice,
-    inStock: p.inStock ?? (src.stock ?? 0) > 0,
-    stock: p.stock ?? src.stock,
+    inStock: p.inStock ?? (src.quantity ?? src.stock ?? 0) > 0,
+    stock: p.stock ?? src.stock ?? src.quantity,
     isNew: true,
     createdAt: src.createdAt,
   };
@@ -80,7 +80,7 @@ export default function NewArrivalsSection({ products = [] }) {
               onClick={() => setFilter(i)}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                 filter === i
-                  ? "bg-violet-600 text-white"
+                  ? "bg-indigo-600 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
               }`}
             >

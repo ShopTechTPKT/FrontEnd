@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import formatCurrency from "../utils/formatCurrency";
@@ -233,7 +233,7 @@ const HeroSearchSection = ({ product = [] }) => {
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onKeyPress={handleKeyPress}
-                className="w-full h-[42px] pl-10 pr-10 py-2.5 text-gray-900 text-base rounded-xl border border-gray-200 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20 bg-white"
+                className="w-full h-[42px] pl-10 pr-10 py-2.5 text-gray-900 text-base rounded-xl border border-gray-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 bg-white"
               />
               {searchTerm && (
                 <button
@@ -294,7 +294,7 @@ const HeroSearchSection = ({ product = [] }) => {
                   {filteredProducts.length > 8 && (
                     <button
                       onClick={handleSearch}
-                      className="w-full px-4 py-2 text-sm text-violet-700 hover:bg-violet-50 font-medium text-center border-t border-gray-100"
+                      className="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 font-medium text-center border-t border-gray-100"
                     >
                       Xem tất cả {filteredProducts.length} kết quả
                     </button>
@@ -317,7 +317,7 @@ const HeroSearchSection = ({ product = [] }) => {
           <div className="relative w-full sm:w-auto sm:min-w-[240px]">
             <button 
               onClick={toggleLocationModal}
-              className="w-full h-[42px] px-3 py-2.5 text-gray-700 text-base rounded-xl border border-gray-200 hover:border-violet-300 focus:outline-none focus:ring-2 focus:ring-violet-500/20 bg-white flex items-center justify-between gap-2"
+              className="w-full h-[42px] px-3 py-2.5 text-gray-700 text-base rounded-xl border border-gray-200 hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 bg-white flex items-center justify-between gap-2"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <svg viewBox="0 0 24 24" fill="none" className="text-gray-500 flex-shrink-0 w-4 h-4">
@@ -337,7 +337,7 @@ const HeroSearchSection = ({ product = [] }) => {
           {/* Search Button - Match primary gradient */}
           <button
             onClick={handleSearch}
-            className="h-[42px] px-6 py-2.5 bg-violet-700 text-white text-base rounded-xl hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:ring-offset-2 flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+            className="h-[42px] px-6 py-2.5 bg-indigo-500 text-white text-base rounded-xl hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:ring-offset-2 flex items-center justify-center gap-2 transition-all whitespace-nowrap active:scale-[0.97]"
           >
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
               <path d="M11 19a8 8 0 1 1 5.3-14l.2.2A8 8 0 0 1 11 19Zm10 2-4.4-4.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -383,13 +383,13 @@ const HeroSearchSection = ({ product = [] }) => {
                     onClick={() => handleLocationSelect(loc)}
                     className={`w-full p-3 text-left rounded-xl border flex items-start gap-3 transition-colors ${
                       location === loc.name 
-                        ? 'border-violet-500 bg-violet-50' 
-                        : 'border-gray-200 hover:border-violet-300 hover:bg-violet-50'
+                        ? 'border-indigo-500 bg-indigo-50' 
+                        : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50'
                     }`}
                   >
                     {/* Icon */}
                     <svg viewBox="0 0 24 24" fill="none" className={`mt-0.5 flex-shrink-0 w-4 h-4 ${
-                      location === loc.name ? 'text-violet-600' : 'text-gray-400'
+                      location === loc.name ? 'text-indigo-600' : 'text-gray-400'
                     }`}>
                       <path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                       <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8" />
@@ -398,7 +398,7 @@ const HeroSearchSection = ({ product = [] }) => {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className={`font-medium text-sm ${
-                        location === loc.name ? 'text-violet-700' : 'text-gray-700'
+                        location === loc.name ? 'text-indigo-700' : 'text-gray-700'
                       }`}>
                         {loc.name}
                       </div>

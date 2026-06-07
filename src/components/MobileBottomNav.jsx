@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import path from "../constant/path";
 import { IconCart } from "./header/HeaderIcons";
@@ -24,13 +24,13 @@ export default function MobileBottomNav() {
       to={to}
       onClick={vibrateTap}
       className={`relative flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-medium transition-colors sm:text-xs ${
-        active ? "text-violet-700 dark:text-violet-400" : "text-gray-500 dark:text-gray-400"
+        active ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-gray-400"
       }`}
     >
       <span className="relative [&>svg]:h-5 [&>svg]:w-5">
         {icon}
         {to === path.shoppingCart && cartQty > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-violet-600 px-0.5 text-[9px] font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-indigo-500 px-0.5 text-[9px] font-bold text-white">
             {cartQty > 9 ? "9+" : cartQty}
           </span>
         ) : null}
@@ -41,7 +41,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] flex border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] pt-1 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] backdrop-blur-lg dark:border-gray-800 dark:bg-gray-950/95 lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-[var(--z-sticky)] flex border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)] pt-1 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:border-gray-800 dark:bg-gray-950 lg:hidden"
       aria-label="Mobile navigation"
     >
       <Item

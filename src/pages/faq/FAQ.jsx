@@ -103,7 +103,7 @@ const FAQ = () => {
               or services from Shop;
             </li>
             <li>
-              <span className="font-medium">{t('faq.c')}</span> t('product.product') means any
+              <span className="font-medium">{t('faq.c')}</span> '{t('product.product', { defaultValue: 'Product' })}' means any
               goods, materials, equipment or services provided to the Customer
               by shop;
             </li>

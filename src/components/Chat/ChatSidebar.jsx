@@ -29,7 +29,7 @@
                 onClick={() => onSelect(s)}
                 className={`flex items-center p-4 cursor-pointer transition-all ${
                   selectedSession?.id === s.id
-                    ? "bg-gradient-to-r from-gray-900 to-purple-950 text-white border-l-4 border-violet-500"
+                    ? "bg-gradient-to-r from-gray-900 to-indigo-950 text-white border-l-4 border-indigo-500"
                     : "hover:bg-gray-50"
                 }`}
               >
@@ -37,7 +37,7 @@
                 <div className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center font-semibold mr-3 ${
                   selectedSession?.id === s.id
                     ? "bg-white/20 text-white"
-                    : "bg-gradient-to-br from-gray-800 to-violet-900 text-white"
+                    : "bg-gradient-to-br from-gray-800 to-indigo-900 text-white"
                 }`}>
                   {s.guestName?.charAt(0)?.toUpperCase() || "?"}
                 </div>
@@ -52,7 +52,7 @@
                     </p>
                     {s.unread && (
                       <span className={`ml-2 w-2 h-2 rounded-full animate-pulse ${
-                        selectedSession?.id === s.id ? "bg-white" : "bg-violet-500"
+                        selectedSession?.id === s.id ? "bg-white" : "bg-indigo-500"
                       }`} />
                     )}
                   </div>

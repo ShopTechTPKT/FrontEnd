@@ -83,7 +83,7 @@ export default function BulkBuyPage() {
         <p className="mt-1 text-sm text-gray-600">Mua trên 10 sản phẩm để nhận báo giá tốt hơn cho doanh nghiệp.</p>
 
         {productNameFromQuery ? (
-          <p className="mt-2 inline-flex rounded-lg bg-violet-50 px-3 py-1 text-xs font-medium text-violet-800">
+          <p className="mt-2 inline-flex rounded-lg bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-800">
             Sản phẩm đang chọn: {productNameFromQuery}
           </p>
         ) : null}
@@ -98,7 +98,7 @@ export default function BulkBuyPage() {
             <input className="rounded-lg border border-gray-300 px-3 py-2 text-sm md:col-span-2" placeholder="Email liên hệ" value={form.contactEmail} onChange={(e) => setForm((p) => ({ ...p, contactEmail: e.target.value }))} />
             <textarea className="rounded-lg border border-gray-300 px-3 py-2 text-sm md:col-span-2" rows={4} placeholder="Ghi chú yêu cầu (cấu hình, thời gian cần hàng...)" value={form.note} onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))} />
           </div>
-          <button onClick={onSubmit} disabled={loading} className="mt-3 rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white">
+          <button onClick={onSubmit} disabled={loading} className="mt-3 rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white">
             {loading ? "Đang gửi..." : "Gửi yêu cầu báo giá"}
           </button>
         </div>

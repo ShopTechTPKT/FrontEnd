@@ -7,8 +7,8 @@ const statusMap = {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    subtle: "bg-violet-50 text-violet-900 border-violet-200 dark:bg-violet-950/40 dark:text-violet-100 dark:border-violet-800",
-    solid: "bg-violet-600 text-white border-violet-600",
+    subtle: "bg-indigo-50 text-indigo-900 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-100 dark:border-indigo-800",
+    solid: "bg-indigo-600 text-white border-indigo-600",
   },
   success: {
     icon: (
@@ -65,8 +65,8 @@ function Alert({
       className={[
         "flex gap-3 rounded-xl border p-4",
         styles,
-        variant === "left-accent" ? "border-l-violet-600 dark:border-l-violet-400" : "",
-        variant === "top-accent" ? "border-t-violet-600 dark:border-t-violet-400" : "",
+        variant === "left-accent" ? "border-l-indigo-600 dark:border-l-indigo-400" : "",
+        variant === "top-accent" ? "border-t-indigo-600 dark:border-t-indigo-400" : "",
         className,
       ].join(" ")}
       role="alert"

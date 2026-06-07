@@ -188,7 +188,7 @@ const UserDiscounts = ({ userId }) => {
                       ? "bg-gray-400"
                       : expired
                       ? "bg-orange-400"
-                      : "bg-gradient-to-r from-violet-600 to-violet-500"
+                      : "bg-gradient-to-r from-indigo-600 to-indigo-500"
                   }`}
                 >
                   <div className="flex items-center justify-between">

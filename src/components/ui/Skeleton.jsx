@@ -9,7 +9,7 @@ const variantRound = {
 
 const animClass = {
   shimmer:
-    "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/70 dark:before:via-violet-500/15 before:to-transparent",
+    "before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/70 dark:before:via-indigo-500/15 before:to-transparent",
   pulse: "animate-pulse",
   wave: "animate-shimmer",
 };

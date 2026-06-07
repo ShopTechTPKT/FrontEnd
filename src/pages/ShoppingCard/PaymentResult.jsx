@@ -89,7 +89,7 @@ function PaymentResult() {
         <div className="mt-6 flex items-center gap-2">
           <Link
             to="/userProfile?tab=my-orders"
-            className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700"
+            className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
           >
             Xem đơn hàng
           </Link>

@@ -54,7 +54,7 @@ export default function NotifyMeButton({ productId, className = "" }) {
         type="button"
         onClick={handleSubscribe}
         disabled={submitting || !productId}
-        className="w-full rounded-lg border border-violet-200 bg-violet-50 py-3 text-sm font-semibold text-violet-700 hover:bg-violet-100 disabled:opacity-60"
+        className="w-full rounded-lg border border-indigo-200 bg-indigo-50 py-3 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 disabled:opacity-60"
       >
         {submitting ? "Đang đăng ký..." : "Thông báo khi có hàng"}
       </button>

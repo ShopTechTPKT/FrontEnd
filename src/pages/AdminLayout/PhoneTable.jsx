@@ -39,7 +39,7 @@ const PhoneTable = memo(() => {
   const fetchPhones = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8081/api/products", {
+      const response = await fetch("http://localhost:8080/api/products", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

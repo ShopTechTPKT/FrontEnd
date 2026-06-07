@@ -35,10 +35,10 @@ export default function ProductBundlePanel({
   const savings = Math.max(0, Number(bundle.originalPrice || 0) - Number(bundle.bundlePrice || 0));
 
   return (
-    <div className="mt-6 rounded-xl border border-violet-200 bg-violet-50/50 p-4">
+    <div className="mt-6 rounded-xl border border-indigo-200 bg-indigo-50/50 p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-violet-800">Mua theo bộ</p>
+          <p className="text-sm font-semibold text-indigo-800">Mua theo bộ</p>
           <h3 className="text-lg font-bold text-gray-900">{bundle.name || "Combo tiết kiệm"}</h3>
           {bundle.description && (
             <p className="mt-1 text-sm text-gray-600">{bundle.description}</p>
@@ -71,13 +71,13 @@ export default function ProductBundlePanel({
       <div className="mt-4 flex items-center justify-between gap-3">
         <div>
           <p className="text-xs text-gray-500 line-through">{formatCurrency(bundle.originalPrice)}</p>
-          <p className="text-lg font-bold text-violet-700">{formatCurrency(bundle.bundlePrice)}</p>
+          <p className="text-lg font-bold text-indigo-700">{formatCurrency(bundle.bundlePrice)}</p>
         </div>
         <button
           type="button"
           onClick={() => onAddBundleToCart?.(bundle)}
           disabled={adding}
-          className="inline-flex items-center gap-2 rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-800 disabled:opacity-60"
         >
           <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="2">
             <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1 5h13M7 13 5.4 5M10 20a1 1 0 1 0 0 .01M18 20a1 1 0 1 0 0 .01" strokeLinecap="round" strokeLinejoin="round" />

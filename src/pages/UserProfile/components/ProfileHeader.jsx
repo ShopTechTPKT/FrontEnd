@@ -35,7 +35,7 @@ const ProfileHeader = ({ accountInfo, user, stats = {}, tierData = null }) => {
     <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-[var(--color-primary-700)] via-[var(--color-primary-600)] to-[var(--color-secondary-600)] text-white p-6 md:p-8 shadow-lg mb-6">
       {/* Decorative blobs */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-violet-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-5">
         {/* Avatar */}
@@ -53,7 +53,7 @@ const ProfileHeader = ({ accountInfo, user, stats = {}, tierData = null }) => {
               ⭐ {tier.name}
             </span>
           </div>
-          <p className="text-violet-100 text-sm truncate">
+          <p className="text-indigo-100 text-sm truncate">
             {accountInfo.email || user?.email}
           </p>
         </div>
@@ -62,20 +62,20 @@ const ProfileHeader = ({ accountInfo, user, stats = {}, tierData = null }) => {
         <div className="flex gap-4 sm:gap-6">
           <div className="text-center">
             <p className="text-2xl font-bold">{stats.totalOrders || 0}</p>
-            <p className="text-xs text-violet-200">{t("account.orders", { defaultValue: "Đơn hàng" })}</p>
+            <p className="text-xs text-indigo-200">{t("account.orders", { defaultValue: "Đơn hàng" })}</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold">{(points || 0).toLocaleString("vi-VN")}</p>
-            <p className="text-xs text-violet-200">{t("account.points", { defaultValue: "Điểm" })}</p>
+            <p className="text-xs text-indigo-200">{t("account.points", { defaultValue: "Điểm" })}</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold">{stats.pendingOrders || 0}</p>
-            <p className="text-xs text-violet-200">{t("account.in_delivery", { defaultValue: "Đang giao" })}</p>
+            <p className="text-xs text-indigo-200">{t("account.in_delivery", { defaultValue: "Đang giao" })}</p>
           </div>
         </div>
       </div>
       <div className="relative z-10 mt-4">
-        <div className="mb-1 flex items-center justify-between text-xs text-violet-100">
+        <div className="mb-1 flex items-center justify-between text-xs text-indigo-100">
           <span>Tien do hang thanh vien</span>
           <span>{progress}%</span>
         </div>
@@ -83,7 +83,7 @@ const ProfileHeader = ({ accountInfo, user, stats = {}, tierData = null }) => {
           <div className="h-full rounded-full bg-white transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
         {perks.length > 0 && (
-          <p className="mt-2 text-xs text-violet-100 truncate">
+          <p className="mt-2 text-xs text-indigo-100 truncate">
             Uu dai: {perks.join(" | ")}
           </p>
         )}

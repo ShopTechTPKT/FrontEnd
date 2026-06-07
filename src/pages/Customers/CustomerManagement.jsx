@@ -91,7 +91,7 @@ const CustomerManagement = () => {
 
   const tierConfig = {
     all: { label: t('customer.all_customers'), color: 'gray', icon: FaUsers },
-    VIP: { label: t('customer.vip'), color: 'purple', icon: FaStar },
+    VIP: { label: t('customer.vip'), color: 'indigo', icon: FaStar },
     Gold: { label: t('customer.gold'), color: 'yellow', icon: FaStar },
     Silver: { label: t('customer.silver'), color: 'gray', icon: FaStar },
     Regular: { label: t('customer.regular'), color: 'blue', icon: FaUsers }

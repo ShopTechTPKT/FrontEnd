@@ -134,13 +134,13 @@ const Warranties = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <FaShieldAlt className="text-6xl mb-4 text-violet-400" />
+              <FaShieldAlt className="text-6xl mb-4 text-indigo-400" />
               <h1 className="text-5xl font-bold mb-3">{t('common.warranty_management')}</h1>
-              <p className="text-xl text-violet-300">{t('common.track_and_manage_product')}</p>
+              <p className="text-xl text-indigo-300">{t('common.track_and_manage_product')}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
               <div className="text-center">
-                <p className="text-violet-300 text-sm mb-1">{t('common.active_warranties')}</p>
+                <p className="text-indigo-300 text-sm mb-1">{t('common.active_warranties')}</p>
                 <p className="text-4xl font-bold">{warranties.filter(w => w.status === 'active').length}</p>
               </div>
             </div>
@@ -158,8 +158,8 @@ const Warranties = () => {
                 onClick={() => setFilterStatus(key)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   filterStatus === key
-                    ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600'
+                    ? 'bg-gradient-to-r from-indigo-800 to-indigo-900 text-white shadow-lg scale-105'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-indigo-600'
                 }`}
               >
                 {config.label} ({config.count})
@@ -175,7 +175,7 @@ const Warranties = () => {
               placeholder={t('common.search_by_warranty_id')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
             />
           </div>
         </div>
@@ -190,13 +190,13 @@ const Warranties = () => {
               className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-violet-800 to-violet-900 text-white p-4">
+              <div className="bg-gradient-to-r from-indigo-800 to-indigo-900 text-white p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-lg">{warranty.id}</span>
                   <FaShieldAlt className="text-2xl" />
                 </div>
                 <h3 className="font-bold text-xl mb-1">{warranty.productName}</h3>
-                <p className="text-violet-200 text-sm">SN: {warranty.serialNumber}</p>
+                <p className="text-indigo-200 text-sm">SN: {warranty.serialNumber}</p>
               </div>
 
               {/* Body */}
@@ -222,7 +222,7 @@ const Warranties = () => {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">{t('common.type')}</span>
-                    <span className="font-semibold text-violet-600">{warranty.type}</span>
+                    <span className="font-semibold text-indigo-600">{warranty.type}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">{t('common.duration')}</span>
@@ -250,7 +250,7 @@ const Warranties = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <button className="flex-1 bg-violet-700 text-white py-2 rounded-lg hover:bg-violet-800 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                  <button className="flex-1 bg-indigo-700 text-white py-2 rounded-lg hover:bg-indigo-800 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
                     <FaFileAlt />{t('search.view_details')}</button>
                   {warranty.status === 'active' && (
                     <button className="flex-1 bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
@@ -292,10 +292,10 @@ const Warranties = () => {
             <p className="text-3xl font-bold">{warranties.filter(w => w.status === 'expired').length}</p>
             <p className="text-red-100">{t('common.expired_warranties')}</p>
           </div>
-          <div className="bg-gradient-to-br from-violet-600 to-violet-700 text-white p-6 rounded-2xl shadow-lg">
+          <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white p-6 rounded-2xl shadow-lg">
             <FaShieldAlt className="text-4xl mb-3" />
             <p className="text-3xl font-bold">{warranties.reduce((sum, w) => sum + w.claimCount, 0)}</p>
-            <p className="text-violet-100">{t('common.total_claims')}</p>
+            <p className="text-indigo-100">{t('common.total_claims')}</p>
           </div>
         </div>
       </div>

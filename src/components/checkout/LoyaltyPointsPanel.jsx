@@ -36,7 +36,7 @@ export default function LoyaltyPointsPanel({
         Điểm thưởng
       </h2>
       <p className="mb-3 text-sm text-gray-600">
-        Điểm hiện có: <span className="font-semibold text-violet-700">{available}</span>
+        Điểm hiện có: <span className="font-semibold text-indigo-700">{available}</span>
         {" · "}Tỷ lệ quy đổi: 1 điểm = 100đ
       </p>
       <div className="flex gap-2">
@@ -47,12 +47,12 @@ export default function LoyaltyPointsPanel({
           value={inputPoints}
           onChange={(e) => setInputPoints(e.target.value)}
           placeholder={`Tối đa ${maxUsablePoints} điểm`}
-          className="h-10 flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 text-sm focus:border-violet-500 focus:ring-violet-500/30"
+          className="h-10 flex-1 rounded-md border border-gray-200 bg-gray-50 px-3 text-sm focus:border-indigo-500 focus:ring-indigo-500/30"
         />
         <button
           type="button"
           onClick={handleApply}
-          className="rounded-md bg-violet-600 px-4 text-sm font-medium text-white hover:bg-violet-700"
+          className="rounded-md bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700"
         >
           Áp dụng
         </button>

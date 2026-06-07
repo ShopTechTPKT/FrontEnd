@@ -1,38 +1,38 @@
 import React from "react";
 
 const solidMap = {
-  primary: "bg-violet-600 text-white border-violet-600",
+  primary: "bg-indigo-600 text-white border-indigo-600",
   success: "bg-emerald-600 text-white border-emerald-600",
   warning: "bg-amber-500 text-white border-amber-500",
   danger: "bg-red-600 text-white border-red-600",
-  info: "bg-violet-600 text-white border-violet-600",
+  info: "bg-indigo-600 text-white border-indigo-600",
   neutral: "bg-gray-600 text-white border-gray-600",
 };
 
 const subtleMap = {
-  primary: "bg-violet-50 text-violet-800 border-violet-200 dark:bg-violet-950/50 dark:text-violet-200 dark:border-violet-800",
+  primary: "bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-200 dark:border-indigo-800",
   success: "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-200",
   warning: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-200",
   danger: "bg-red-50 text-red-800 border-red-200 dark:bg-red-950/40 dark:text-red-200",
-  info: "bg-violet-50 text-violet-800 border-violet-200 dark:bg-violet-950/50 dark:text-violet-200",
+  info: "bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-200",
   neutral: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-200",
 };
 
 const outlineMap = {
-  primary: "bg-transparent text-violet-700 border-violet-400 dark:text-violet-300",
+  primary: "bg-transparent text-indigo-700 border-indigo-400 dark:text-indigo-300",
   success: "bg-transparent text-emerald-700 border-emerald-400 dark:text-emerald-300",
   warning: "bg-transparent text-amber-700 border-amber-400 dark:text-amber-300",
   danger: "bg-transparent text-red-700 border-red-400 dark:text-red-300",
-  info: "bg-transparent text-violet-700 border-violet-400 dark:text-violet-300",
+  info: "bg-transparent text-indigo-700 border-indigo-400 dark:text-indigo-300",
   neutral: "bg-transparent text-gray-600 border-gray-300 dark:text-gray-300",
 };
 
 const dotColors = {
-  primary: "bg-violet-500",
+  primary: "bg-indigo-500",
   success: "bg-emerald-500",
   warning: "bg-amber-500",
   danger: "bg-red-500",
-  info: "bg-violet-500",
+  info: "bg-indigo-500",
   neutral: "bg-gray-400",
 };
 

@@ -37,7 +37,7 @@ export default class RouteErrorBoundary extends React.Component {
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
             <Button
               onClick={this.handleReset}
-              className="flex items-center gap-2 px-6 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl shadow-md transition-all font-semibold"
+              className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all font-semibold"
             >
               <RefreshCw className="h-4 w-4" />
               <span>Thử lại ngay</span>

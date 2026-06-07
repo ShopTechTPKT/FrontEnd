@@ -47,7 +47,7 @@ const StaffManagement = () => {
   };
 
   const getRoleInfo = (roleId) => {
-    if (roleId === 1) return { name: 'Admin', badge: 'bg-violet-100 text-violet-800', icon: FaUserShield };
+    if (roleId === 1) return { name: 'Admin', badge: 'bg-indigo-100 text-indigo-800', icon: FaUserShield };
     if (roleId === 2) return { name: 'Customer Service', badge: 'bg-blue-100 text-blue-800', icon: FaBriefcase };
     if (roleId === 3) return { name: 'Staff', badge: 'bg-emerald-100 text-emerald-800', icon: FaUserTie };
     return { name: 'Unknown', badge: 'bg-[var(--color-bg-muted)] text-[var(--color-text-secondary)]', icon: FaUsers };
@@ -119,7 +119,7 @@ const StaffManagement = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--color-bg)] p-6 rounded-2xl shadow-sm border border-[var(--color-border)]">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-violet-200/50">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200/50">
             <FaUserShield size={24} />
           </div>
           <div>
@@ -223,7 +223,7 @@ const StaffManagement = () => {
                     return (
                       <tr key={member.id} className="admin-table-row">
                         <td className="w-16 text-center pl-4 py-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-100 to-purple-200 text-violet-700 flex items-center justify-center font-bold text-sm mx-auto shadow-sm">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-sm mx-auto shadow-sm">
                             {getInitials(member.fullName)}
                           </div>
                         </td>
@@ -252,7 +252,7 @@ const StaffManagement = () => {
                         </td>
                         <td className="text-right pr-6">
                           <div className="flex justify-end gap-2">
-                            <button className="p-2 text-[var(--color-text-secondary)] hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-lg transition-colors">
+                            <button className="p-2 text-[var(--color-text-secondary)] hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors">
                               <FaEdit size={16} />
                             </button>
                             <button onClick={() => setDeleteTarget(member)} className="p-2 text-[var(--color-text-secondary)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">
@@ -275,12 +275,12 @@ const StaffManagement = () => {
                 return (
                   <div key={member.id} className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl p-5 hover:shadow-lg transition-all relative group">
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      <button className="p-1.5 text-[var(--color-text-muted)] hover:text-violet-600 bg-[var(--color-bg-subtle)] rounded-md"><FaEdit size={14}/></button>
+                      <button className="p-1.5 text-[var(--color-text-muted)] hover:text-indigo-600 bg-[var(--color-bg-subtle)] rounded-md"><FaEdit size={14}/></button>
                       <button onClick={() => setDeleteTarget(member)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-600 bg-[var(--color-bg-subtle)] rounded-md"><FaTrash size={14}/></button>
                     </div>
                     
                     <div className="flex flex-col items-center mb-4">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-100 to-purple-200 text-violet-700 flex items-center justify-center font-bold text-xl shadow-inner mb-3">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-xl shadow-inner mb-3">
                         {getInitials(member.fullName)}
                       </div>
                       <h3 className="font-bold text-lg text-[var(--color-text)]">{member.fullName || 'N/A'}</h3>

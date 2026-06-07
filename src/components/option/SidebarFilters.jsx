@@ -2,9 +2,30 @@ import { useState, useMemo } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
+const subCategoryMapping = {
+  "All Laptops": { list: [45, 46, 47, 48, 49, 50, 51] },
+  "Mouse": { list: [6, 7, 8, 9, 10] },
+  "KeyBoard": { list: [1, 2, 3, 4, 5] },
+  "Game Gear": { list: [14, 15, 16] },
+  "Mouse Pad": { list: [11, 12, 13] },
+  "Headphone": { list: [42, 43] },
+  "Monitor": { list: [36, 37, 38, 39] },
+  "Case": { list: [17] },
+  "CPU": { list: [18, 19] },
+  "MainBoard": { list: [20, 21, 22] },
+  "PSU": { list: [23, 24, 25, 26] },
+  "Storage": { list: [27, 28, 29] },
+  "RAM": { list: [30, 31, 32] },
+  "iPhone": { list: [52, 53, 54], brand: "iPhone" },
+  "Samsung": { list: [52, 53, 54], brand: "Samsung" },
+  "Xiaomi": { list: [52, 53, 54], brand: "Xiaomi" },
+  "iPad": { list: [44] }
+};
+
+const SidebarFilters = ({ products = [], allProducts, dbProducts = [], onApplyFilters }) => {
   const { t } = useTranslation();
 
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [filterName, setFilterName] = useState("");
   const [expandedCategories, setExpandedCategories] = useState({});
@@ -14,7 +35,7 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
     name: true,
   });
 
-  // Categories with subcategories - for display only, not for filtering
+  // Categories with subcategories
   const categoryStructure = {
     "Laptops": ["All Laptops"],
     "Gaming Gear": ["Mouse", "KeyBoard", "Game Gear", "Mouse Pad", "Headphone"],
@@ -36,6 +57,7 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
   const clearFilters = () => {
     setSelectedPriceRange("");
     setFilterName("");
+    setSelectedSubCategory("");
     onApplyFilters(allProducts);
   };
 
@@ -50,19 +72,31 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
     { min: 7000000, max: Infinity, label: "7,000,000đ trở lên" },
   ];
 
-  // Hàm lọc sản phẩm theo lựa chọn hiện tại
-  // Note: Category is for display only, not used for filtering
+  // Lọc sản phẩm theo lựa chọn hiện tại để tính số lượng sản phẩm hiển thị trong mỗi khoảng giá
   const filteredProducts = useMemo(() => {
-    let filtered = [...(allProducts || products)];
+    const sourceList = selectedSubCategory ? dbProducts : (allProducts || products);
+    let filtered = [...sourceList];
 
-    // Removed category filtering - categories are for display only
+    if (selectedSubCategory && subCategoryMapping[selectedSubCategory]) {
+      const { list, brand } = subCategoryMapping[selectedSubCategory];
+      filtered = filtered.filter(product => {
+        const matchesCategory = list.includes(product.categoryId);
+        if (!matchesCategory) return false;
+        if (brand) {
+          const itemBrandName = (product.brandName || product.brand?.name || product.brand || "").toLowerCase();
+          const productName = (product.name || product.productName || "").toLowerCase();
+          const searchBrand = brand.toLowerCase();
+          return itemBrandName.includes(searchBrand) || productName.includes(searchBrand);
+        }
+        return true;
+      });
+    }
 
     if (selectedPriceRange) {
       const [minStr, maxStr] = selectedPriceRange.split(" - ");
       const min = parseFloat(minStr.replace(/[₫,]/g, ""));
       const max = maxStr ? parseFloat(maxStr.replace(/[₫,]/g, "")) : Infinity;
       filtered = filtered.filter(product => {
-        // Use unitPrice (original price) for filtering
         const priceValue = typeof product.unitPrice === 'string'
           ? parseFloat(product.unitPrice.replace(/[₫,]/g, ""))
           : parseFloat(product.unitPrice || product.price || 0);
@@ -71,12 +105,11 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
     }
 
     return filtered;
-  }, [allProducts, products, selectedPriceRange]);
+  }, [allProducts, dbProducts, products, selectedSubCategory, selectedPriceRange]);
 
   // Tính priceCounts dựa trên filteredProducts
   const priceCounts = priceRanges.map(({ min, max }) => {
     return filteredProducts.filter(product => {
-      // Handle both string and number unitPrice
       const productPrice = typeof product.unitPrice === 'string'
         ? parseFloat(product.unitPrice.replace(/[₫,]/g, ""))
         : parseFloat(product.unitPrice || 0);
@@ -141,17 +174,27 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
                     )}
                   </div>
 
-                  {/* Sub Categories - display only */}
+                  {/* Sub Categories */}
                   {expandedCategories[parentCategory] && (
                     <div className="bg-white">
-                      {categoryStructure[parentCategory].map(subCategory => (
-                        <div
-                          key={subCategory}
-                          className="px-5 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-all duration-200"
-                        >
-                          {subCategory}
-                        </div>
-                      ))}
+                      {categoryStructure[parentCategory].map(subCategory => {
+                        const isSelected = selectedSubCategory === subCategory;
+                        return (
+                          <div
+                            key={subCategory}
+                            className={`px-5 py-2 text-sm cursor-pointer transition-all duration-200 ${
+                              isSelected
+                                ? "bg-indigo-50 text-indigo-700 font-semibold"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            }`}
+                            onClick={() => {
+                              setSelectedSubCategory(isSelected ? "" : subCategory);
+                            }}
+                          >
+                            {subCategory}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -218,7 +261,7 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
               value={filterName}
               onChange={e => setFilterName(e.target.value)}
               placeholder={t("common.search_by_name") || "Tìm kiếm theo tên..."}
-              className="mt-3 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/25 focus:border-violet-400 transition-all"
+              className="mt-3 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-400 transition-all"
             />
           )}
         </div>
@@ -226,10 +269,25 @@ const SidebarFilters = ({ products = [], allProducts, onApplyFilters }) => {
         {/* Apply Filters Button */}
         <button
           type="button"
-          className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 px-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
           onClick={() => {
-            // Note: Categories are for display only, not used in filtering
-            let finalFiltered = [...(allProducts || products)];
+            const sourceList = selectedSubCategory ? dbProducts : (allProducts || products);
+            let finalFiltered = [...sourceList];
+
+            if (selectedSubCategory && subCategoryMapping[selectedSubCategory]) {
+              const { list, brand } = subCategoryMapping[selectedSubCategory];
+              finalFiltered = finalFiltered.filter(product => {
+                const matchesCategory = list.includes(product.categoryId);
+                if (!matchesCategory) return false;
+                if (brand) {
+                  const itemBrandName = (product.brandName || product.brand?.name || product.brand || "").toLowerCase();
+                  const productName = (product.name || product.productName || "").toLowerCase();
+                  const searchBrand = brand.toLowerCase();
+                  return itemBrandName.includes(searchBrand) || productName.includes(searchBrand);
+                }
+                return true;
+              });
+            }
 
             if (selectedPriceRange) {
               const [minStr, maxStr] = selectedPriceRange.split(" - ");

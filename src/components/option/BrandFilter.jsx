@@ -26,10 +26,10 @@ function BrandLogoButton({ brand, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect(brand.name)}
-      className="flex items-center justify-center border border-transparent hover:border-violet-200 rounded-md p-2 bg-white transition min-h-[48px]"
+      className="flex items-center justify-center border border-transparent hover:border-indigo-200 rounded-md p-2 bg-white transition min-h-[48px]"
     >
       {broken ? (
-        <span className="text-[11px] font-semibold text-violet-700 text-center leading-tight px-1">
+        <span className="text-[11px] font-semibold text-indigo-700 text-center leading-tight px-1">
           {brand.name}
         </span>
       ) : (

@@ -49,23 +49,18 @@ export default defineConfig({
     include: ["sockjs-client", "stompjs"],
   },
   server: {
+    port: 5188,
     proxy: {
       // Prefer direct services in dev so FE works even if api-gateway (8081) is not started.
-      // Auth-service (8082): /api/auth/**
-      "/api/auth": {
-        target: "http://localhost:8082",
-        changeOrigin: true,
-        secure: false,
-      },
-      // Backend-service (8083): everything else under /api/**
+      // Monolith backend (8080): everything under /api/**
       "/api": {
-        target: "http://localhost:8083",
+        target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
       },
       // WebSocket (SockJS): /ws/**
       "/ws": {
-        target: "http://localhost:8083",
+        target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
         ws: true,

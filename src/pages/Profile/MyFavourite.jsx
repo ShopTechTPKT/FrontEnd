@@ -145,7 +145,7 @@ function MyFavourite() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-light bg-gradient-to-r from-gray-900 to-purple-950 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-light bg-gradient-to-r from-gray-900 to-indigo-950 bg-clip-text text-transparent">
           My Favourite Products
         </h2>
         <p className="text-gray-600 mt-2">Your collection of favourite items</p>
@@ -208,7 +208,7 @@ function MyFavourite() {
               {/* Category Badge */}
               {product.productCategoryName && (
                 <div className="absolute top-3 left-3">
-                  <span className="inline-block px-3 py-1 bg-gradient-to-r from-gray-900 to-purple-950 text-white text-xs font-semibold rounded-full">
+                  <span className="inline-block px-3 py-1 bg-gradient-to-r from-gray-900 to-indigo-950 text-white text-xs font-semibold rounded-full">
                     {product.productCategoryName}
                   </span>
                 </div>

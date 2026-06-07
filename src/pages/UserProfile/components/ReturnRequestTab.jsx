@@ -75,7 +75,7 @@ export default function ReturnRequestTab({ userId }) {
     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 animate-fadeIn">
       <div className="mb-6 border-b border-gray-50 pb-4 dark:border-gray-800">
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-          <RotateCcw className="h-5.5 w-5.5 text-violet-600" />
+          <RotateCcw className="h-5.5 w-5.5 text-indigo-600" />
           <span>Yêu cầu Đổi trả sản phẩm</span>
         </h3>
         <p className="text-xs text-gray-400 mt-1">
@@ -90,7 +90,7 @@ export default function ReturnRequestTab({ userId }) {
             <select
               value={form.orderId}
               onChange={(e) => setForm((prev) => ({ ...prev, orderId: e.target.value }))}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm outline-none transition-all focus:border-violet-500 focus:bg-white dark:border-gray-800 dark:bg-gray-950"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm outline-none transition-all focus:border-indigo-500 focus:bg-white dark:border-gray-800 dark:bg-gray-950"
             >
               <option value="">-- Chọn đơn hàng để đổi trả --</option>
               {orders.map((order) => (
@@ -107,7 +107,7 @@ export default function ReturnRequestTab({ userId }) {
               type="text"
               value={form.reason}
               onChange={(e) => setForm((prev) => ({ ...prev, reason: e.target.value }))}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm outline-none transition-all focus:border-violet-500 focus:bg-white dark:border-gray-800 dark:bg-gray-950"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm outline-none transition-all focus:border-indigo-500 focus:bg-white dark:border-gray-800 dark:bg-gray-950"
               placeholder="VD: Sản phẩm bị móp méo, Lỗi RAM..."
             />
           </div>
@@ -118,7 +118,7 @@ export default function ReturnRequestTab({ userId }) {
           <textarea
             value={form.description}
             onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm outline-none transition-all focus:border-violet-500 focus:bg-white dark:border-gray-800 dark:bg-gray-950 min-h-24"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-2.5 text-sm outline-none transition-all focus:border-indigo-500 focus:bg-white dark:border-gray-800 dark:bg-gray-950 min-h-24"
             placeholder="Mô tả cụ thể biểu hiện lỗi hoặc sự cố của thiết bị để kỹ thuật viên hỗ trợ nhanh nhất..."
           />
         </div>
@@ -143,7 +143,7 @@ export default function ReturnRequestTab({ userId }) {
           {files.length > 0 && (
             <div className="mt-3 flex items-center gap-2 flex-wrap">
               {files.map((file, idx) => (
-                <div key={idx} className="flex items-center gap-1.5 rounded-lg bg-violet-50 px-2.5 py-1 text-xs text-violet-700 dark:bg-violet-950/30 dark:text-violet-400 font-medium">
+                <div key={idx} className="flex items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1 text-xs text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 font-medium">
                   <FileText className="h-3.5 w-3.5" />
                   <span>{file.name}</span>
                 </div>
@@ -155,7 +155,7 @@ export default function ReturnRequestTab({ userId }) {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-600 py-3.5 text-sm font-bold text-white shadow-md shadow-violet-500/10 hover:bg-violet-700 transition-all disabled:opacity-60"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white shadow-md shadow-indigo-500/10 hover:bg-indigo-700 transition-all disabled:opacity-60"
         >
           <span>{submitting ? "Đang gửi yêu cầu..." : "Gửi yêu cầu đổi trả hàng"}</span>
         </button>
@@ -164,7 +164,7 @@ export default function ReturnRequestTab({ userId }) {
       {/* Lịch sử yêu cầu */}
       <div className="mt-8 border-t border-gray-100 pt-6 dark:border-gray-800">
         <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <History className="h-4 w-4 text-violet-600" />
+          <History className="h-4 w-4 text-indigo-600" />
           <span>Lịch sử gửi yêu cầu đổi trả</span>
         </h4>
         <div className="space-y-3">

@@ -453,7 +453,7 @@ export default function AnalyticsDashboard() {
   );
 }
 
-const KpiCard = React.memo(function KpiCard({ label, value, subValue, icon, gradient = "from-[var(--color-primary-)] to-purple-600", trend, trendUp }) {
+const KpiCard = React.memo(function KpiCard({ label, value, subValue, icon, gradient = "from-[var(--color-primary-)] to-indigo-600", trend, trendUp }) {
   return (
     <div className="admin-card relative rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
       <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${gradient}`} />

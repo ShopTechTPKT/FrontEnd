@@ -40,7 +40,7 @@ const ChatBoxMessageBubble = memo(function ChatBoxMessageBubble({ message, isUse
           </div>
         </div>
         {isUser && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-violet-700 to-violet-600 text-sm font-bold text-white shadow-lg">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-indigo-700 to-indigo-600 text-sm font-bold text-white shadow-lg">
             Bạn
           </div>
         )}

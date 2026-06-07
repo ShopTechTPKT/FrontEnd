@@ -84,7 +84,7 @@ const CSDashboard = () => {
       label: "Chat dang xu ly",
       value: stats.activeSessions,
       icon: "CHAT",
-      gradient: "from-[var(--color-primary-)] to-purple-600",
+      gradient: "from-[var(--color-primary-)] to-indigo-600",
     },
     {
       label: "Da giai quyet hom nay",
@@ -135,7 +135,7 @@ const CSDashboard = () => {
 
   return (
     <div className="p-4 lg:p-6 space-y-6 animate-pageIn">
-      <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-[var(--color-primary-)] to-purple-700 text-white p-6 shadow-lg">
+      <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-r from-[var(--color-primary-)] to-indigo-700 text-white p-6 shadow-lg">
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="relative z-10">
           <h1 className="text-xl font-bold mb-1">Tong quan ho tro khach hang</h1>

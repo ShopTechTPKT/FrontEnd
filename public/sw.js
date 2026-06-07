@@ -1,20 +1,22 @@
-const CACHE_NAME = "shoppc-cache-v1";
-const URLS_TO_CACHE = ["/", "/manifest.webmanifest"];
+const CACHE_NAME = "shoppc-cache-v2";
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(URLS_TO_CACHE)));
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          return caches.delete(cache);
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        const cloned = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
-        return response;
-      });
-    })
-  );
+  // Direct network access without caching
+  return;
 });

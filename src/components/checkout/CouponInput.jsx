@@ -51,14 +51,14 @@ export default function CouponInput({ orderTotal = 0, onApply, apiBase = "" }) {
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           placeholder={t("coupon.placeholder") || "Nhap ma giam gia"}
-          className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 uppercase tracking-wider"
+          className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 uppercase tracking-wider"
           maxLength={20}
           onKeyDown={(e) => e.key === "Enter" && handleValidate()}
         />
         <button
           onClick={handleValidate}
           disabled={loading || !code.trim()}
-          className="px-4 py-2 bg-violet-700 text-white text-sm font-medium rounded-lg hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-indigo-700 text-white text-sm font-medium rounded-lg hover:bg-indigo-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "..." : t("coupon.apply") || "Ap dung"}
         </button>

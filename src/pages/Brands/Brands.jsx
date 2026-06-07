@@ -137,11 +137,11 @@ const Brands = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white py-20">
-        <div className="absolute inset-0 bg-gradient-to-r from-violet-600/10 via-transparent to-violet-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-transparent to-indigo-600/10"></div>
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="text-center">
             <h1 className="text-6xl font-bold mb-4">{t('brand.top_brands')}</h1>
-            <p className="text-xl text-violet-300 mb-8">
+            <p className="text-xl text-indigo-300 mb-8">
               Shop from the world's leading tech brands
             </p>
             
@@ -153,7 +153,7 @@ const Brands = () => {
                 placeholder={t('brand.search_brands')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-16 pr-6 py-5 rounded-2xl text-gray-900 text-lg border-2 border-violet-600 focus:outline-none focus:ring-4 focus:ring-violet-400 shadow-xl"
+                className="w-full pl-16 pr-6 py-5 rounded-2xl text-gray-900 text-lg border-2 border-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-400 shadow-xl"
               />
             </div>
           </div>
@@ -170,8 +170,8 @@ const Brands = () => {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-violet-800 to-violet-900 text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-violet-600 hover:text-violet-600'
+                    ? 'bg-gradient-to-r from-indigo-800 to-indigo-900 text-white shadow-lg scale-105'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-indigo-600 hover:text-indigo-600'
                 }`}
               >
                 <span className="text-xl">{cat.icon}</span>
@@ -194,10 +194,10 @@ const Brands = () => {
           {filteredBrands.map(brand => (
             <div 
               key={brand.id}
-              className="group bg-white border-2 border-gray-200 rounded-2xl p-6 hover:shadow-2xl hover:border-violet-600 transition-all duration-300 cursor-pointer"
+              className="group bg-white border-2 border-gray-200 rounded-2xl p-6 hover:shadow-2xl hover:border-indigo-600 transition-all duration-300 cursor-pointer"
             >
               {/* Logo */}
-              <div className="h-24 flex items-center justify-center mb-6 bg-gray-50 rounded-xl p-4 group-hover:bg-violet-50 transition-colors">
+              <div className="h-24 flex items-center justify-center mb-6 bg-gray-50 rounded-xl p-4 group-hover:bg-indigo-50 transition-colors">
                 <img 
                   src={brand.logo}
                   alt={brand.name}
@@ -210,7 +210,7 @@ const Brands = () => {
 
               {/* Content */}
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-violet-600 transition-colors">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
                   {brand.name}
                 </h3>
                 <p className="text-gray-600 mb-4">{brand.description}</p>
@@ -223,11 +223,11 @@ const Brands = () => {
                   </div>
                   <div className="text-gray-400">|</div>
                   <div className="text-gray-600">
-                    <span className="font-semibold text-violet-600">{brand.products}</span>{t('common.products')}</div>
+                    <span className="font-semibold text-indigo-600">{brand.products}</span>{t('common.products')}</div>
                 </div>
 
                 {/* Button */}
-                <button className="w-full py-3 bg-white border-2 border-violet-600 text-violet-600 rounded-xl font-bold group-hover:bg-gradient-to-r group-hover:from-violet-900 group-hover:to-purple-950 group-hover:text-white group-hover:border-transparent transition-all duration-300">{t('brand.view_products')}</button>
+                <button className="w-full py-3 bg-white border-2 border-indigo-600 text-indigo-600 rounded-xl font-bold group-hover:bg-gradient-to-r group-hover:from-indigo-900 group-hover:to-indigo-950 group-hover:text-white group-hover:border-transparent transition-all duration-300">{t('brand.view_products')}</button>
               </div>
             </div>
           ))}
@@ -247,10 +247,10 @@ const Brands = () => {
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-16">
         <div className="max-w-7xl mx-auto px-4 text-center text-white">
           <h2 className="text-4xl font-bold mb-4">{t('brand.cant_find_your_brand')}</h2>
-          <p className="text-xl text-violet-300 mb-8">
+          <p className="text-xl text-indigo-300 mb-8">
             Let us know and we'll try to add it!
           </p>
-          <button className="px-12 py-4 bg-gradient-to-r from-violet-700 to-violet-600 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg">{t('brand.request_brand')}</button>
+          <button className="px-12 py-4 bg-gradient-to-r from-indigo-700 to-indigo-600 rounded-xl font-bold text-lg hover:scale-105 transition-transform shadow-lg">{t('brand.request_brand')}</button>
         </div>
       </div>
     </div>

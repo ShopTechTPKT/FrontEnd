@@ -17,7 +17,7 @@ export default function ChatBoxInput({
         <div className="relative flex-1">
           <input
             type="text"
-            className="w-full rounded-full border border-gray-200 bg-gray-50/60 px-5 py-3 pr-20 text-sm text-gray-900 transition-all duration-200 placeholder-gray-500 focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:bg-gray-800"
+            className="w-full rounded-full border border-gray-200 bg-gray-50/60 px-5 py-3 pr-20 text-sm text-gray-900 transition-all duration-200 placeholder-gray-500 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:bg-gray-800"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Nhập tin nhắn của bạn..."
@@ -33,7 +33,7 @@ export default function ChatBoxInput({
           <div className="absolute right-3 top-1/2 flex -translate-y-1/2 space-x-1">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="rounded-full p-1 text-gray-400 transition-colors hover:bg-violet-50 hover:text-violet-700"
+              className="rounded-full p-1 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
               disabled={loading || isUploading}
               title="Upload ảnh sản phẩm"
             >
@@ -44,7 +44,7 @@ export default function ChatBoxInput({
 
             <button
               onClick={() => fileInputRefMultiple.current?.click()}
-              className="rounded-full p-1 text-gray-400 transition-colors hover:bg-violet-50 hover:text-violet-700"
+              className="rounded-full p-1 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
               disabled={loading || isUploading}
               title="So sánh 2 ảnh sản phẩm"
             >
@@ -56,7 +56,7 @@ export default function ChatBoxInput({
         </div>
 
         <button
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-white shadow-sm transition-colors duration-200 hover:bg-violet-700 disabled:opacity-50"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-sm transition-colors duration-200 hover:bg-indigo-700 disabled:opacity-50"
           onClick={() => sendMessage()}
           disabled={loading || isUploading}
         >
@@ -78,7 +78,7 @@ export default function ChatBoxInput({
           <button
             key={question}
             onClick={() => sendMessage(question)}
-            className="rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-xs text-violet-800 transition-colors duration-200 hover:bg-violet-100"
+            className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs text-indigo-800 transition-colors duration-200 hover:bg-indigo-100"
             disabled={loading || isUploading}
           >
             {question}

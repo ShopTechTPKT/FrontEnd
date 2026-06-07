@@ -85,7 +85,7 @@ const TestimonialSlider = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="w-8 h-8 border-3 border-violet-200 border-t-violet-600 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
       </div>
     );
   }
@@ -103,14 +103,14 @@ const TestimonialSlider = ({
       {/* Card */}
       <div className="relative overflow-hidden rounded-3xl border border-gray-100 bg-white px-10 py-10 shadow-sm dark:border-gray-800 dark:bg-gray-900 md:px-16">
         {/* Decorative gradient quote mark */}
-        <div className="absolute top-6 left-8 text-7xl font-serif leading-none bg-gradient-to-br from-violet-200 to-purple-100 bg-clip-text text-transparent select-none pointer-events-none">
+        <div className="absolute top-6 left-8 text-7xl font-serif leading-none bg-gradient-to-br from-indigo-200 to-indigo-100 bg-clip-text text-transparent select-none pointer-events-none">
           &ldquo;
         </div>
 
         {/* Nav: Prev */}
         <button
           onClick={goToPrev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center shadow-md hover:scale-110 transition-all duration-200"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-600 text-white flex items-center justify-center shadow-md hover:scale-110 transition-all duration-200"
           aria-label={t('common.previous_testimonial')}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -121,7 +121,7 @@ const TestimonialSlider = ({
         {/* Nav: Next */}
         <button
           onClick={goToNext}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center shadow-md hover:scale-110 transition-all duration-200"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-600 to-indigo-600 text-white flex items-center justify-center shadow-md hover:scale-110 transition-all duration-200"
           aria-label={t('common.next_testimonial')}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
@@ -155,7 +155,7 @@ const TestimonialSlider = ({
 
                 {/* Author */}
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
                     {testimonial.author?.[0]?.toUpperCase() || "K"}
                   </div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{testimonial.author}</p>
@@ -168,7 +168,7 @@ const TestimonialSlider = ({
 
       {/* Bottom controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between mt-5 gap-3 px-2">
-        <button className="px-5 py-2 text-sm font-semibold text-violet-700 border border-violet-200 rounded-xl hover:bg-violet-50 transition-colors">
+        <button className="px-5 py-2 text-sm font-semibold text-indigo-700 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors">
           {t('common.leave_us_a_review')}
         </button>
 
@@ -180,8 +180,8 @@ const TestimonialSlider = ({
               aria-label={`Go to testimonial ${index + 1}`}
               className={`rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? "w-6 h-2 bg-gradient-to-r from-violet-600 to-purple-500"
-                  : "w-2 h-2 bg-gray-200 hover:bg-violet-300"
+                  ? "w-6 h-2 bg-gradient-to-r from-indigo-600 to-indigo-500"
+                  : "w-2 h-2 bg-gray-200 hover:bg-indigo-300"
               }`}
             />
           ))}

@@ -45,7 +45,7 @@ export default function PriceAlertsTab({ userId }) {
   if (loading) {
     return (
       <div className="profile-card flex flex-col items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-violet-600 mb-3" />
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mb-3" />
         <p className="text-sm text-gray-500">Đang tải danh sách báo động giá...</p>
       </div>
     );
@@ -55,7 +55,7 @@ export default function PriceAlertsTab({ userId }) {
     <div className="space-y-4 animate-fadeIn">
       <div className="profile-card">
         <div className="flex items-center gap-2 mb-1">
-          <Bell className="h-5 w-5 text-violet-600" />
+          <Bell className="h-5 w-5 text-indigo-600" />
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Báo động giá</h3>
         </div>
         <p className="text-xs text-gray-500">Nhận thông báo ngay khi sản phẩm yêu thích của bạn giảm xuống mức giá mong muốn.</p>

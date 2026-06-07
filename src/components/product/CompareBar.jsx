@@ -16,7 +16,7 @@ export default function CompareBar() {
   const canCompare = items.length >= 2;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-lg animate-slideInUp dark:bg-gray-900/95 dark:border-gray-700">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg animate-slideInUp dark:bg-gray-900 dark:border-gray-700">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         {/* Product thumbnails */}
         <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export default function CompareBar() {
           <button
             onClick={() => navigate("/compare")}
             disabled={!canCompare}
-            className="px-4 py-2 bg-violet-700 text-white text-sm font-medium rounded-lg hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 active:scale-[0.97] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {canCompare ? t("compare.compare_now") : t("compare.select_more")}
           </button>

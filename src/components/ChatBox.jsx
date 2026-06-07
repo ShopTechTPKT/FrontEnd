@@ -60,10 +60,10 @@ const ChatBox = () => {
 
   const theme = {
     textPrimary: "text-white",
-    buttonBg: "bg-violet-600",
-    buttonHover: "hover:bg-violet-700",
-    animateColor: "bg-violet-600",
-    accentGlow: "shadow-lg shadow-violet-500/20"
+    buttonBg: "bg-indigo-500",
+    buttonHover: "hover:bg-indigo-600",
+    animateColor: "bg-indigo-500",
+    accentGlow: "shadow-sm shadow-indigo-500/10"
   };
 
   const quickQuestions = [
@@ -107,12 +107,13 @@ const ChatBox = () => {
               </svg>
             }
             onClick={() => setOpen(true)}
+            theme={theme}
           />
         )}
 
         {open && (
           <div className="fixed bottom-4 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[380px] h-[clamp(400px,70vh,600px)] flex flex-col rounded-3xl shadow-xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 animate-fadeIn">
-            <div className="relative px-6 py-5 bg-gradient-to-r from-violet-50 via-fuchsia-50 to-white dark:from-violet-900/40 dark:via-fuchsia-900/20 dark:to-gray-900 border-b border-gray-200 dark:border-gray-800">
+            <div className="relative px-6 py-5 bg-gradient-to-r from-indigo-50 via-slate-50 to-white dark:from-indigo-900/40 dark:via-slate-900/20 dark:to-gray-900 border-b border-gray-200 dark:border-gray-800">
               <div className="relative z-10 flex justify-between items-center">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm ring-1 ring-gray-200">

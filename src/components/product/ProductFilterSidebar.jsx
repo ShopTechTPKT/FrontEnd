@@ -175,7 +175,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                         {t("common.filters") || "Bộ Lọc"}
                     </h2>
                     {activeFilterCount > 0 && (
-                        <span className="text-xs font-semibold px-2 py-1 rounded-full bg-violet-100 text-violet-700">
+                        <span className="text-xs font-semibold px-2 py-1 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400">
                             {activeFilterCount} {t("common.apply_filters") || "đang áp dụng"}
                         </span>
                     )}
@@ -211,7 +211,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                                     <div
                                         key={category.categoryId}
                                         className={`flex justify-between items-center cursor-pointer px-3 py-2.5 rounded-lg border transition-colors ${filters.categoryId === category.categoryId
-                                            ? "bg-violet-50 border-violet-200 text-violet-700"
+                                            ? "bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-400"
                                             : "hover:bg-gray-50 text-gray-700"
                                             }`}
                                         onClick={() => handleCategorySelect(category)}
@@ -251,7 +251,7 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                                     <div
                                         key={index}
                                         className={`flex justify-between items-center cursor-pointer px-3 py-2.5 rounded-lg border transition-colors ${filters.minPrice === range.minPrice && filters.maxPrice === range.maxPrice
-                                            ? "bg-violet-50 border-violet-200 text-violet-700"
+                                            ? "bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-400"
                                             : "hover:bg-gray-50 text-gray-700"
                                             }`}
                                         onClick={() => handlePriceRangeSelect(range)}
@@ -309,8 +309,8 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                                     onClick={() => handleStatusSelect(option)}
                                     className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                                         filters.status === option
-                                            ? "bg-violet-50 border-violet-200 text-violet-700"
-                                            : "bg-white border-gray-200 text-gray-600 hover:border-violet-200 hover:text-violet-700"
+                                            ? "bg-indigo-50 border-indigo-200 text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-400"
+                                            : "bg-white border-gray-200 text-gray-600 hover:border-indigo-200 hover:text-indigo-600"
                                     }`}
                                 >
                                     {option}
@@ -339,14 +339,14 @@ const ProductFilterSidebar = ({ onFilterChange, currentFilters }) => {
                             value={filters.searchName}
                             onChange={handleSearchNameChange}
                             placeholder={t("common.search_by_name") || "Tìm kiếm theo tên..."}
-                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-violet-500 transition-colors"
+                            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 transition-colors"
                         />
                     )}
                 </div>
 
                 {/* Apply Filters Button */}
                 <button
-                    className="w-full bg-violet-600 text-white py-3 rounded-xl font-bold hover:bg-violet-700 transition-colors shadow-sm"
+                    className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 active:scale-[0.97] transition-all shadow-sm"
                     onClick={handleApplyFilters}
                 >
                     {t("common.apply_filters") || "Áp dụng bộ lọc"}

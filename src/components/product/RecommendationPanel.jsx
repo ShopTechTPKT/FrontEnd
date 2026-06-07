@@ -33,7 +33,7 @@ export default function RecommendationPanel({
             <button
               key={item.productID}
               onClick={() => navigate(`/product/${item.productID}/productAbout`)}
-              className="w-48 shrink-0 rounded-xl border border-gray-100 p-3 text-left transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-sm"
+              className="w-48 shrink-0 rounded-xl border border-gray-100 p-3 text-left transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-sm"
             >
               <div className="flex h-28 items-center justify-center rounded-lg bg-gray-50">
                 <img
@@ -45,7 +45,7 @@ export default function RecommendationPanel({
               <p className="mt-3 line-clamp-2 text-sm font-medium text-gray-800">
                 {item.productName}
               </p>
-              <p className="mt-1 text-sm font-semibold text-violet-700">
+              <p className="mt-1 text-sm font-semibold text-indigo-700">
                 {formatCurrency(item.price || 0)}
               </p>
             </button>

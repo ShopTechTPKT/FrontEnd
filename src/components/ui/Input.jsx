@@ -6,7 +6,7 @@ const variantClasses = {
   filled:
     "border-0 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200/80 dark:hover:bg-gray-800/90",
   flushed:
-    "border-0 border-b-2 rounded-none bg-transparent px-0 border-gray-200 dark:border-gray-600 focus:border-violet-600",
+    "border-0 border-b-2 rounded-none bg-transparent px-0 border-gray-200 dark:border-gray-600 focus:border-indigo-600",
 };
 
 const sizeClasses = {
@@ -86,7 +86,7 @@ const Input = forwardRef(function Input(
       : "";
   const ringDefault =
     !error && !success
-      ? "focus:border-violet-400 focus:ring-violet-500/20"
+      ? "focus:border-indigo-500 focus:ring-indigo-500/25"
       : "";
 
   return (

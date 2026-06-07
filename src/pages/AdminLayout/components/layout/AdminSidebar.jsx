@@ -376,7 +376,7 @@ export default function AdminSidebar({
           [
             "relative flex items-center gap-0 rounded-xl transition-all duration-200 border-l-[3px]",
             isActive
-              ? "bg-gradient-to-r from-[var(--color-primary-)] to-purple-600 text-white shadow-md shadow-[var(--color-primary-)]/60 border-white pl-[9px] pr-3 py-2.5"
+              ? "bg-gradient-to-r from-[var(--color-primary-)] to-indigo-600 text-white shadow-md shadow-[var(--color-primary-)]/60 border-white pl-[9px] pr-3 py-2.5"
               : "border-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-subtle)] hover:text-[var(--color-primary)] px-3 py-2.5",
           ].join(" ")
         }
@@ -408,9 +408,9 @@ export default function AdminSidebar({
     >
       {/* Logo area */}
       <div className="relative p-5 flex items-center justify-center lg:justify-start border-b border-[var(--color-border)] h-[73px] overflow-hidden shrink-0">
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[var(--color-primary-)] to-purple-500" />
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[var(--color-primary-)] to-indigo-500" />
         <img src={logoText} alt="Logo" className="h-8 lg:mr-3 object-contain" />
-        <span className={`text-base font-bold bg-gradient-to-r from-[var(--color-primary-)] to-purple-600 bg-clip-text text-transparent ${collapsed ? "hidden" : "hidden lg:block"}`}>
+        <span className={`text-base font-bold bg-gradient-to-r from-[var(--color-primary-)] to-indigo-600 bg-clip-text text-transparent ${collapsed ? "hidden" : "hidden lg:block"}`}>
           {t("admin.techstore")}
         </span>
       </div>
@@ -498,7 +498,7 @@ export default function AdminSidebar({
         </button>
         <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] shadow-sm">
           <div className="relative">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary-)] to-purple-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--color-primary-)] to-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
               {initials}
             </div>
             <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[var(--color-bg)] rounded-full"></div>

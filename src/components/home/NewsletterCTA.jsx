@@ -25,25 +25,24 @@ export default function NewsletterCTA() {
   };
 
   return (
-    <section className="relative mx-4 mb-10 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-700 to-violet-900 px-6 py-12 text-center shadow-xl sm:mx-6 sm:px-10">
-      <div className="pointer-events-none absolute -left-10 top-0 h-40 w-40 rounded-full bg-white/10 blur-2xl motion-safe:animate-floatY" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-48 w-48 rounded-full bg-fuchsia-500/20 blur-3xl" />
+    <section className="relative mx-4 mb-10 overflow-hidden rounded-3xl bg-indigo-600 px-6 py-12 text-center shadow-sm sm:mx-6 sm:px-10 dark:bg-indigo-900">
+      <div className="pointer-events-none absolute -left-10 top-0 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
       <div className="relative mx-auto max-w-lg">
         <h2 className="text-2xl font-bold text-white">{t("home.newsletterCtaTitle", { defaultValue: "Nhận ưu đãi mới nhất" })}</h2>
-        <p className="mt-2 text-sm text-violet-100">{t("home.newsletterCtaSub", { defaultValue: "Đăng ký email — không spam." })}</p>
+        <p className="mt-2 text-sm text-indigo-100">{t("home.newsletterCtaSub", { defaultValue: "Đăng ký email — không spam." })}</p>
         <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-2 sm:flex-row">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("footer.newsletter.placeholder")}
-            className="h-12 flex-1 rounded-xl border border-white/25 bg-white/15 px-4 text-sm text-white outline-none placeholder:text-violet-200 focus:ring-2 focus:ring-white/30"
+            className="h-12 flex-1 rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white outline-none placeholder:text-indigo-200 focus:ring-2 focus:ring-white/30"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="h-12 rounded-xl bg-white px-6 text-sm font-bold text-violet-800 shadow-lg transition-transform hover:scale-[1.02] disabled:opacity-50"
+            className="h-12 rounded-xl bg-white px-6 text-sm font-bold text-indigo-600 shadow-sm transition-all active:scale-[0.97] disabled:opacity-50"
           >
             {loading ? "…" : t("footer.newsletter.subscribe")}
           </button>

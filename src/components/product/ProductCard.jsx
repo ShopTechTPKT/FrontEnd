@@ -109,6 +109,7 @@ const ProductCard = ({ product }) => {
   const soldCount = product.soldCount || product.sold || null;
   const rating = product.rating || product.averageRating || null;
   const ratingDisplay = rating ? parseFloat(rating).toFixed(1) : "4.8";
+  const miniSpecs = product.categoryName || product.brandName || null;
   // Mini specs: parse from categoryName or seriesName
   // Priority Badge
   let topBadge = null;
@@ -123,9 +124,8 @@ const ProductCard = ({ product }) => {
   return (
     <>
       <div
-        className="group product-card-hover relative cursor-pointer overflow-hidden rounded-2xl border border-transparent bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-violet-800"
+        className="group product-card-hover relative cursor-pointer overflow-hidden rounded-2xl border border-transparent bg-white shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-indigo-700"
         onClick={handleClick}
-        style={{ willChange: "transform, box-shadow" }}
       >
         {/* ── Top badges row ── */}
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
@@ -162,7 +162,7 @@ const ProductCard = ({ product }) => {
           <div className="flex flex-col gap-2">
             <button
               onClick={handleAddToCompare}
-              className="p-2 bg-gradient-to-r from-violet-600 to-purple-500 text-white rounded-full shadow-md hover:scale-105 transition-transform"
+              className="p-2 bg-indigo-500 text-white rounded-full shadow-md hover:bg-indigo-600 active:scale-[0.97] transition-all"
               title={t("product.add_compare")}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -172,7 +172,7 @@ const ProductCard = ({ product }) => {
             {/* Wishlist */}
             <button
               onClick={handleAddToWishlist}
-              className={`p-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow-md hover:scale-105 transition-transform ${favoriteLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`p-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full shadow-md active:scale-[0.97] transition-all ${favoriteLoading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={favoriteLoading}
               title={isFavorited ? t("product.remove_favorite") : t("product.add_favorite")}
             >
@@ -190,7 +190,7 @@ const ProductCard = ({ product }) => {
             {/* Add to Cart */}
             <button
               onClick={handleAddToCart}
-              className="p-2 bg-gradient-to-r from-violet-600 to-purple-500 text-white rounded-full shadow-md hover:scale-105 transition-transform"
+              className="p-2 bg-indigo-500 text-white rounded-full shadow-md hover:bg-indigo-600 active:scale-[0.97] transition-all"
               title={t("product.add_to_cart")}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -288,7 +288,7 @@ const ProductCard = ({ product }) => {
                 e.stopPropagation();
                 setShowQuickView(true);
               }}
-              className="opacity-0 group-hover:opacity-100 p-2 bg-violet-700 text-white rounded-lg hover:bg-violet-800 transition-all duration-200 shrink-0"
+              className="opacity-0 group-hover:opacity-100 p-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 active:scale-[0.97] transition-all shrink-0"
               title={t("product.quick_view")}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5">

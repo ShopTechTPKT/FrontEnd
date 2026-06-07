@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import axiosInstance from "../../custom/axios";
 import ForgotPasswordModal from "../../components/ForgotPasswordModal";
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081';
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
 const getPasswordStrength = (password) => {
   if (!password) return { score: 0, label: "", color: "bg-gray-200" };
@@ -143,53 +143,58 @@ function useCaptcha() {
 
 const CaptchaWidget = ({ canvasRef, captchaInput, setCaptchaInput, captchaError, setCaptchaError, generateCaptcha }) => (
   <div className="w-full space-y-2">
-    <label className="block text-xs font-semibold text-gray-600 mb-1">Xác minh CAPTCHA</label>
-    <div className="flex items-center gap-3">
-      <canvas
-        ref={canvasRef}
-        width={CAPTCHA_WIDTH}
-        height={CAPTCHA_HEIGHT}
-        className="rounded-lg border border-gray-200 shadow-sm flex-shrink-0"
-        style={{ imageRendering: 'auto' }}
-      />
-      <button
-        type="button"
-        onClick={generateCaptcha}
-        className="p-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-violet-50 hover:border-violet-300 text-gray-500 hover:text-violet-600 transition-all flex-shrink-0"
-        title="Tạo CAPTCHA mới"
-      >
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M1 4v6h6" />
-          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-        </svg>
-      </button>
+    <div className="flex items-center justify-between">
+      <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Xác minh bảo mật (CAPTCHA)</label>
+      <span className="text-[10px] font-semibold text-indigo-650 bg-indigo-50 px-2 py-0.5 rounded-full">Bắt buộc</span>
     </div>
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+    
+    <div className="flex gap-2.5 items-stretch">
+      {/* CAPTCHA Display Card */}
+      <div className="relative flex items-center bg-slate-50 border border-slate-200/80 rounded-xl overflow-hidden p-1 shrink-0">
+        <canvas
+          ref={canvasRef}
+          width={CAPTCHA_WIDTH}
+          height={CAPTCHA_HEIGHT}
+          className="rounded-lg h-9 w-[130px] object-contain flex-shrink-0 bg-white"
+          style={{ imageRendering: 'auto' }}
+        />
+        <button
+          type="button"
+          onClick={generateCaptcha}
+          className="p-2 hover:bg-slate-100/80 text-slate-400 hover:text-indigo-600 active:scale-90 transition-all rounded-lg ml-1 flex-shrink-0"
+          title="Đổi phép tính khác"
+        >
+          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1 4v6h6" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+        </button>
       </div>
-      <input
-        type="text"
-        inputMode="numeric"
-        value={captchaInput}
-        onChange={(e) => {
-          setCaptchaInput(e.target.value.replace(/[^0-9-]/g, ''));
-          if (captchaError) setCaptchaError('');
-        }}
-        placeholder="Nhập kết quả phép tính"
-        className={`w-full pl-10 pr-4 py-2.5 border rounded-xl bg-gray-50/60 focus:bg-white focus:outline-none focus:ring-2 transition-all text-sm ${
-          captchaError
-            ? 'border-red-500 focus:ring-red-500/30'
-            : 'border-gray-200 focus:ring-violet-500/25 focus:border-violet-400'
-        }`}
-        autoComplete="off"
-      />
+      
+      {/* CAPTCHA Input Box */}
+      <div className="relative flex-1">
+        <input
+          type="text"
+          inputMode="numeric"
+          value={captchaInput}
+          onChange={(e) => {
+            setCaptchaInput(e.target.value.replace(/[^0-9-]/g, ''));
+            if (captchaError) setCaptchaError('');
+          }}
+          placeholder="Nhập kết quả phép tính"
+          className={`w-full h-full px-3.5 border rounded-xl bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-4 transition-all text-xs font-semibold ${
+            captchaError
+              ? 'border-red-500 focus:ring-red-500/8 focus:border-red-500 text-red-600 placeholder-red-300'
+              : 'border-slate-200 focus:ring-indigo-500/8 focus:border-indigo-500 text-slate-800'
+          }`}
+          autoComplete="off"
+        />
+      </div>
     </div>
+    
     {captchaError && (
-      <p className="text-red-500 text-xs mt-0.5 flex items-center gap-1">
-        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <p className="text-red-500 text-[11px] font-medium flex items-center gap-1 animate-[fadeIn_200ms_ease-out]">
+        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 flex-shrink-0" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -702,13 +707,13 @@ function AuthCard() {
 
                 <div className="flex items-center justify-between">
                   <label className="flex items-center">
-                    <input type="checkbox" className="w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-400" />
+                    <input type="checkbox" className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-400" />
                     <span className="ml-2 text-sm text-gray-600">{t('common.remember_me')}</span>
                   </label>
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-sm text-violet-700 hover:text-violet-800 font-medium"
+                    className="text-sm text-indigo-700 hover:text-indigo-800 font-medium"
                   >
                     {t('common.forgot_password')}
                   </button>
@@ -814,9 +819,9 @@ function AuthCard() {
                 )}
 
                 <div className="flex items-start">
-                  <input type="checkbox" className="w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-400 mt-1" />
+                  <input type="checkbox" className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-400 mt-1" />
                   <span className="ml-2 text-sm text-gray-600">
-                    {t('common.i_agree_to')} <a href="#" className="text-violet-700 hover:text-violet-800 font-medium">{t('common.terms_conditions')}</a>{t('common.and')}<a href="#" className="text-violet-700 hover:text-violet-800 font-medium">{t('common.privacy_policy')}</a>
+                    {t('common.i_agree_to')} <a href="#" className="text-indigo-700 hover:text-indigo-800 font-medium">{t('common.terms_conditions')}</a>{t('common.and')}<a href="#" className="text-indigo-700 hover:text-indigo-800 font-medium">{t('common.privacy_policy')}</a>
                   </span>
                 </div>
 
@@ -847,11 +852,11 @@ function AuthCard() {
           </div>
 
           {/* Right Side - Premium Brand Panel */}
-          <div className="relative hidden md:flex flex-col justify-center overflow-hidden bg-gradient-to-br from-violet-700 via-violet-600 to-purple-800 p-8 lg:p-12 animate-[fadeIn_650ms_ease-out]">
+          <div className="relative hidden md:flex flex-col justify-center overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-600 to-indigo-800 p-8 lg:p-12 animate-[fadeIn_650ms_ease-out]">
             {/* Decorative blobs */}
             <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/5 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-20 -left-16 w-80 h-80 rounded-full bg-purple-900/40 blur-3xl pointer-events-none" />
-            <div className="absolute top-1/2 right-0 w-48 h-48 rounded-full bg-violet-400/10 blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-20 -left-16 w-80 h-80 rounded-full bg-indigo-900/40 blur-3xl pointer-events-none" />
+            <div className="absolute top-1/2 right-0 w-48 h-48 rounded-full bg-indigo-400/10 blur-2xl pointer-events-none" />
 
             <div className="relative z-10">
               {/* Logo / Brand */}
@@ -865,7 +870,7 @@ function AuthCard() {
                 <h3 className="text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
                   {isLogin ? t('common.new_here') : t('common.already_have_account')}
                 </h3>
-                <p className="text-violet-200 text-base leading-relaxed">
+                <p className="text-indigo-200 text-base leading-relaxed">
                   {isLogin ? t('common.register_description') : t('common.login_description')}
                 </p>
               </div>
@@ -898,7 +903,7 @@ function AuthCard() {
                 ].map(({ number, label }, i) => (
                   <div key={i} className="text-center p-3 rounded-xl bg-white/10 backdrop-blur-sm">
                     <p className="text-xl font-bold text-white">{number}</p>
-                    <p className="text-xs text-violet-200 mt-0.5">{label}</p>
+                    <p className="text-xs text-indigo-200 mt-0.5">{label}</p>
                   </div>
                 ))}
               </div>
@@ -938,7 +943,7 @@ const ModernInput = ({
         htmlFor={name}
         className={`absolute left-12 transition-all duration-200 pointer-events-none ${
           value
-            ? "top-1.5 text-[11px] text-violet-600"
+            ? "top-1.5 text-[11px] text-indigo-600"
             : "top-1/2 -translate-y-1/2 text-sm text-gray-400"
         }`}
       >
@@ -956,7 +961,7 @@ const ModernInput = ({
         aria-invalid={Boolean(error)}
         className={`w-full pl-12 pr-4 pt-5 pb-2 border rounded-xl bg-gray-50/60 focus:bg-white focus:outline-none focus:ring-2 transition-all ${error
           ? 'border-red-500 focus:ring-red-500/30'
-            : 'border-gray-200 focus:ring-violet-500/25 focus:border-violet-400'
+            : 'border-gray-200 focus:ring-indigo-500/25 focus:border-indigo-400'
           }`}
       />
     </div>
@@ -987,7 +992,7 @@ const ModernButton = ({ text, onClick, type = "button", disabled, variant = "pri
   const base =
     "w-full py-3 font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ring-1 ring-transparent";
   const primary =
-    "bg-violet-600 hover:bg-violet-700 text-white ring-violet-600/10";
+    "bg-indigo-600 hover:bg-indigo-700 text-white ring-indigo-600/10";
   const secondary = "bg-slate-800 text-slate-100 hover:bg-slate-700";
   const classes = `${base} ${variant === "secondary" ? secondary : primary}`;
 
@@ -1008,7 +1013,7 @@ const SocialButton = ({ icon, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center justify-center p-3 border border-gray-200 rounded-xl bg-white hover:bg-violet-50 hover:border-violet-300 transition-all text-gray-600 hover:text-violet-700"
+    className="flex items-center justify-center p-3 border border-gray-200 rounded-xl bg-white hover:bg-indigo-50 hover:border-indigo-300 transition-all text-gray-600 hover:text-indigo-700"
   >
     <span className="text-xl">{icon}</span>
   </button>
@@ -1017,7 +1022,7 @@ const SocialButton = ({ icon, onClick }) => (
 // Feature Component
 const Feature = ({ text }) => (
   <div className="flex items-center gap-3">
-    <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+    <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
     <span className="text-gray-700">{text}</span>
   </div>
 );

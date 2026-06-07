@@ -135,7 +135,7 @@ export default function DashboardCharts() {
           label={t("dashboard.total_revenue") || "Tổng doanh thu"}
           value={formatVND(overview.totalRevenue)}
           suffix=" VND"
-          color="violet"
+          color="indigo"
         />
         <SummaryCard
           label={t("dashboard.total_orders") || "Tổng đơn hàng"}
@@ -236,7 +236,7 @@ export default function DashboardCharts() {
   );
 }
 
-function SummaryCard({ label, value, suffix = "", color = "violet" }) {
+function SummaryCard({ label, value, suffix = "", color = "indigo" }) {
   const colors = {
     violet: "bg-[var(--color-primary-)] text-[var(--color-primary-)] border-[var(--color-primary-)]",
     blue: "bg-[var(--color-primary-)] text-[var(--color-primary-)] border-[var(--color-primary-)]",

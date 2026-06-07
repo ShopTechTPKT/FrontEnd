@@ -39,7 +39,7 @@ const IcCheck = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8081';
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080';
 
 const ForgotPasswordModal = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
@@ -196,7 +196,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={handleClose}>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[10000] p-4" onClick={handleClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -217,19 +217,19 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center">
               {step > s ? (
-                <div className="flex items-center justify-center w-10 h-10 rounded-full font-semibold bg-gradient-to-r from-violet-700 to-violet-600 text-white">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full font-semibold bg-indigo-500 text-white">
                   <IcCheck className="w-4 h-4" />
                 </div>
               ) : (
                 <div className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold ${
-                  step >= s ? 'bg-gradient-to-r from-violet-700 to-violet-600 text-white' : 'bg-gray-200 text-gray-500'
+                  step >= s ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-500'
                 }`}>
                   {s}
                 </div>
               )}
               {s < 3 && (
                 <div className={`w-16 h-1 mx-2 ${
-                  step > s ? 'bg-gradient-to-r from-violet-700 to-violet-600' : 'bg-gray-200'
+                  step > s ? 'bg-indigo-500' : 'bg-gray-200'
                 }`} />
               )}
             </div>
@@ -240,8 +240,8 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 1 && (
           <form onSubmit={handleSendOTP} className="space-y-5">
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <IcEnvelope className="w-8 h-8 text-violet-600" />
+              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <IcEnvelope className="w-8 h-8 text-indigo-600" />
               </div>
               <p className="text-gray-600">{t('forgotPassword.step1.description')}</p>
             </div>
@@ -261,7 +261,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.email
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
             </div>
@@ -282,7 +282,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.confirmEmail
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
             </div>
@@ -291,7 +291,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-violet-700 to-violet-600 hover:from-violet-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+              className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 active:scale-[0.97] text-white font-semibold rounded-lg transition-all shadow-sm"
             >
               {loading ? t('forgotPassword.sending') : t('forgotPassword.step1.send_otp')}
             </button>
@@ -302,8 +302,8 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 2 && (
           <form onSubmit={handleVerifyOTP} className="space-y-5">
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <IcKey className="w-8 h-8 text-violet-600" />
+              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <IcKey className="w-8 h-8 text-indigo-600" />
               </div>
               <p className="text-gray-600">{t('forgotPassword.step2.description', { email })}</p>
             </div>
@@ -325,7 +325,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all text-center text-2xl tracking-widest ${
                   errors.otp
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
             </div>
@@ -342,7 +342,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="flex-1 py-3 bg-gradient-to-r from-violet-700 to-violet-600 hover:from-violet-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                className="flex-1 py-3 bg-indigo-500 hover:bg-indigo-600 active:scale-[0.97] text-white font-semibold rounded-lg transition-all shadow-sm"
               >
                 {loading ? t('forgotPassword.verifying') : t('forgotPassword.step2.verify')}
               </button>
@@ -354,8 +354,8 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         {step === 3 && (
           <form onSubmit={handleResetPassword} className="space-y-5">
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <IcLock className="w-8 h-8 text-violet-600" />
+              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <IcLock className="w-8 h-8 text-indigo-600" />
               </div>
               <p className="text-gray-600">{t('forgotPassword.step3.description')}</p>
             </div>
@@ -375,7 +375,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.newPassword
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
             </div>
@@ -396,7 +396,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.confirmPassword
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-violet-600 focus:border-violet-600'
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
               />
             </div>
@@ -413,7 +413,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-violet-700 to-violet-600 hover:from-violet-600 hover:to-fuchsia-400 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl"
+                className="flex-1 py-3 bg-indigo-500 hover:bg-indigo-600 active:scale-[0.97] text-white font-semibold rounded-lg transition-all shadow-sm"
               >
                 {loading ? t('forgotPassword.resetting') : t('forgotPassword.step3.reset_password')}
               </button>

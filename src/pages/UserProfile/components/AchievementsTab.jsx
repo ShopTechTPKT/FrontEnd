@@ -5,7 +5,7 @@ import { Award, ShoppingBag, Cpu, Star, Zap, Trophy, ShieldAlert } from "lucide-
 // Map names to icons and colors
 const ACHIEVEMENT_META = {
   "Đơn hàng đầu tiên": { icon: ShoppingBag, color: "from-pink-500 to-rose-500", desc: "Hoàn thành đơn hàng đầu tiên của bạn" },
-  "PC Builder Master": { icon: Cpu, color: "from-violet-500 to-indigo-600", desc: "Sử dụng tính năng xây dựng cấu hình PC" },
+  "PC Builder Master": { icon: Cpu, color: "from-indigo-500 to-indigo-600", desc: "Sử dụng tính năng xây dựng cấu hình PC" },
   "Review 5 sao": { icon: Star, color: "from-amber-400 to-orange-500", desc: "Đánh giá chất lượng sản phẩm 5 sao" },
   "Streak 30 ngày": { icon: Zap, color: "from-yellow-400 to-amber-500", desc: "Điểm danh liên tục trong vòng 30 ngày" },
   "Top Spender": { icon: Trophy, color: "from-emerald-500 to-teal-600", desc: "Đạt mốc chi tiêu cao hàng đầu tháng" },
@@ -40,7 +40,7 @@ export default function AchievementsTab({ userId }) {
   if (loading) {
     return (
       <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-violet-600 border-t-transparent" />
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
         <p className="mt-3 text-sm text-gray-500">Đang tải danh sách thành tích của bạn...</p>
       </div>
     );
@@ -50,7 +50,7 @@ export default function AchievementsTab({ userId }) {
     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 animate-fadeIn">
       <div className="mb-6 border-b border-gray-50 pb-4 dark:border-gray-800">
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-          <Award className="h-5.5 w-5.5 text-violet-600 animate-bounce" />
+          <Award className="h-5.5 w-5.5 text-indigo-600 animate-bounce" />
           <span>Hệ thống Thành tích & Huy hiệu</span>
         </h3>
         <p className="text-xs text-gray-400 mt-1">
@@ -69,7 +69,7 @@ export default function AchievementsTab({ userId }) {
               key={item.id}
               className={`relative rounded-2xl border p-4 transition-all duration-300 ${
                 item.unlocked
-                  ? "border-violet-100 bg-violet-50/20 hover:shadow-md dark:border-violet-950/20 dark:bg-violet-950/5"
+                  ? "border-indigo-100 bg-indigo-50/20 hover:shadow-md dark:border-indigo-950/20 dark:bg-indigo-950/5"
                   : "border-gray-100 bg-gray-50/50 grayscale dark:border-gray-800 dark:bg-gray-950/30"
               }`}
             >
@@ -108,7 +108,7 @@ export default function AchievementsTab({ userId }) {
                     <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
-                          item.unlocked ? "bg-gradient-to-r from-violet-500 to-indigo-600" : "bg-gray-400"
+                          item.unlocked ? "bg-gradient-to-r from-indigo-500 to-indigo-600" : "bg-gray-400"
                         }`}
                         style={{ width: `${Math.min(100, progressPct)}%` }}
                       />

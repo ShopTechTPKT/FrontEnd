@@ -40,7 +40,7 @@ function HeaderMobileMenu({
 
   const mobileLinkClass = (active) =>
     `block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
-      active ? "text-violet-700 bg-violet-50" : "text-gray-700 hover:bg-gray-50"
+      active ? "text-indigo-600 bg-indigo-50" : "text-gray-700 hover:bg-gray-50"
     }`;
 
   const getSectionIcon = (titleKey) => {
@@ -186,7 +186,7 @@ function HeaderMobileMenu({
                     key={link.to}
                     to={link.to}
                     onClick={onClose}
-                    className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-violet-700 transition-colors"
+                    className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors"
                   >
                     {t(link.labelKey)}
                   </Link>
@@ -195,7 +195,7 @@ function HeaderMobileMenu({
                   <Link
                     to="/customer-service"
                     onClick={onClose}
-                    className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-violet-700 transition-colors"
+                    className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors"
                   >
                     {t("support.customerService")}
                   </Link>
@@ -214,21 +214,21 @@ function HeaderMobileMenu({
               {user ? (
                 <>
                   {isCustomer && (
-                    <Link to="/userProfile" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    <Link to="/userProfile" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
                       {t("account.myAccount")}
                     </Link>
                   )}
                   {isAdmin && (
-                    <Link to="/admin" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    <Link to="/admin" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
                       {t("account.manage")}
                     </Link>
                   )}
                   {isCustomerService && (
-                    <Link to="/customer-service" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    <Link to="/customer-service" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
                       {t("account.staff")}
                     </Link>
                   )}
-                  <Link to="/favorites" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                  <Link to="/favorites" onClick={onClose} className="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
                     Yêu thích
                   </Link>
                   <button
@@ -243,7 +243,7 @@ function HeaderMobileMenu({
                 <Link
                   to="/login"
                   onClick={() => { onClose(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                  className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
+                  className="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
                 >
                   {t("account.loginRegister")}
                 </Link>

@@ -20,8 +20,8 @@ const METHODS = [
         <path d="M2 10h20" stroke="currentColor" strokeWidth="1.8" />
       </svg>
     ),
-    accent: "border-violet-300 bg-violet-50",
-    dot: "bg-violet-500",
+    accent: "border-indigo-300 bg-indigo-50",
+    dot: "bg-indigo-500",
   },
   {
     id: "vnpay",
@@ -35,8 +35,8 @@ const METHODS = [
         </svg>
       </div>
     ),
-    accent: "border-violet-300 bg-violet-50",
-    dot: "bg-violet-500",
+    accent: "border-indigo-300 bg-indigo-50",
+    dot: "bg-indigo-500",
   },
   {
     id: "bank",
@@ -47,8 +47,8 @@ const METHODS = [
         <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     ),
-    accent: "border-violet-300 bg-violet-50",
-    dot: "bg-violet-500",
+    accent: "border-indigo-300 bg-indigo-50",
+    dot: "bg-indigo-500",
   },
   {
     id: "momo",
@@ -62,8 +62,8 @@ const METHODS = [
         </svg>
       </div>
     ),
-    accent: "border-violet-300 bg-violet-50",
-    dot: "bg-violet-500",
+    accent: "border-indigo-300 bg-indigo-50",
+    dot: "bg-indigo-500",
   },
   {
     id: "zalopay",
@@ -77,8 +77,8 @@ const METHODS = [
         </svg>
       </div>
     ),
-    accent: "border-violet-300 bg-violet-50",
-    dot: "bg-violet-500",
+    accent: "border-indigo-300 bg-indigo-50",
+    dot: "bg-indigo-500",
   },
 ];
 
@@ -109,7 +109,7 @@ const PaymentMethodSelector = ({ selected, onChange }) => {
             />
             <div
               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                isSelected ? `border-violet-600 bg-violet-600` : "border-gray-300 bg-white"
+                isSelected ? `border-indigo-600 bg-indigo-600` : "border-gray-300 bg-white"
               }`}
             >
               {isSelected && (
@@ -136,12 +136,12 @@ const PaymentMethodSelector = ({ selected, onChange }) => {
 
       {/* VNPAY note */}
       {selected === "vnpay" && (
-        <div className="flex items-start gap-2 p-3 bg-violet-50 rounded-xl border border-violet-100 animate-fadeIn">
-          <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-violet-500 mt-0.5 shrink-0">
+        <div className="flex items-start gap-2 p-3 bg-indigo-50 rounded-xl border border-indigo-100 animate-fadeIn">
+          <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-indigo-500 mt-0.5 shrink-0">
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
             <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
-          <p className="text-xs text-violet-700">
+          <p className="text-xs text-indigo-700">
             Ban se duoc chuyen den cong thanh toan VNPAY an toan sau khi dat hang.
             Ho tro: Visa, MasterCard, ATM noi dia va QR Code.
           </p>
@@ -149,9 +149,9 @@ const PaymentMethodSelector = ({ selected, onChange }) => {
       )}
 
       {selected === "bank" && (
-        <div className="p-3 bg-violet-50 rounded-xl border border-violet-100 animate-fadeIn">
-          <p className="text-xs font-semibold text-violet-800 mb-1">Thong tin chuyen khoan:</p>
-          <div className="space-y-0.5 text-xs text-violet-700">
+        <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-100 animate-fadeIn">
+          <p className="text-xs font-semibold text-indigo-800 mb-1">Thong tin chuyen khoan:</p>
+          <div className="space-y-0.5 text-xs text-indigo-700">
             <p>Ngan hang: <strong>Techcombank</strong></p>
             <p>STK: <strong>19036789012345</strong></p>
             <p>Chu TK: <strong>CONG TY TNHH SHOPPC</strong></p>

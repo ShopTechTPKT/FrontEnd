@@ -39,9 +39,9 @@ const ChatButton = () => {
           {/* Pulse rings - màu tím như header */}
           {!isOpen && (
             <>
-              <div className="absolute inset-0 rounded-full bg-violet-600 opacity-20 pulse-ring"></div>
+              <div className="absolute inset-0 rounded-full bg-indigo-600 opacity-20 pulse-ring"></div>
               <div
-                className="absolute inset-0 rounded-full bg-violet-600 opacity-10 pulse-ring"
+                className="absolute inset-0 rounded-full bg-indigo-600 opacity-10 pulse-ring"
                 style={{ animationDelay: "1s" }}
               ></div>
             </>
@@ -53,8 +53,8 @@ const ChatButton = () => {
             className={`relative flex items-center justify-center w-16 h-16 rounded-full shadow-lg transition-all duration-200 transform hover:scale-105 ${
               isOpen
                 ? "bg-white text-gray-700 hover:bg-gray-50 rotate-0"
-                : "bg-violet-600 text-white hover:bg-violet-700 float-animation-button"
-            } focus:outline-none focus:ring-4 focus:ring-violet-500/25`}
+                : "bg-indigo-600 text-white hover:bg-indigo-700 float-animation-button"
+            } focus:outline-none focus:ring-4 focus:ring-indigo-500/25`}
             aria-label={isOpen ? "Đóng khung chat" : "Mở khung chat"}
           >
             {isOpen ? (

@@ -572,7 +572,7 @@ const ChatWindow = () => {
   return (
     <div className="fixed bottom-24 left-6 z-50 w-96 h-[520px] bg-white shadow-xl rounded-3xl border border-gray-200 flex flex-col overflow-hidden transition-all duration-300">
       {/* Header */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-violet-50 via-fuchsia-50 to-white text-gray-900 px-5 py-4 border-b border-gray-200">
+      <div className="flex items-center justify-between bg-gradient-to-r from-indigo-50 via-indigo-50 to-white text-gray-900 px-5 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm ring-1 ring-gray-200">
             💬
@@ -623,7 +623,7 @@ const ChatWindow = () => {
         {!isRegistered ? (
           <form onSubmit={handleRegister} className="flex flex-col gap-4 mt-4">
             <div className="text-center mb-2">
-              <div className="w-16 h-16 mx-auto mb-3 bg-violet-600 rounded-2xl flex items-center justify-center text-3xl shadow-sm">
+              <div className="w-16 h-16 mx-auto mb-3 bg-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow-sm">
                 💬
               </div>
               <h2 className="text-lg font-semibold text-gray-800 mb-1">
@@ -680,7 +680,7 @@ const ChatWindow = () => {
                   onChange={e =>
                     setCustomer({ ...customer, name: e.target.value })
                   }
-                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
+                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
                 />
               </div>
 
@@ -711,7 +711,7 @@ const ChatWindow = () => {
                   onChange={e =>
                     setCustomer({ ...customer, phone: e.target.value })
                   }
-                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
+                  className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
                 />
               </div>
 
@@ -724,7 +724,7 @@ const ChatWindow = () => {
               <button
                 type="submit"
                 disabled={!customer.name || !customer.phone || isRegistering}
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm shadow-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm shadow-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isRegistering ? (
                   <>
@@ -765,7 +765,7 @@ const ChatWindow = () => {
                     <div
                       className={`max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
                         m.senderType === "CUSTOMER"
-                          ? "bg-violet-600 text-white rounded-br-sm"
+                          ? "bg-indigo-600 text-white rounded-br-sm"
                           : "bg-gray-50 text-gray-800 border border-gray-100 rounded-bl-sm"
                       } ${m.pending ? "opacity-60 italic" : ""}`}
                     >
@@ -844,7 +844,7 @@ const ChatWindow = () => {
                 <div className="flex justify-center gap-2">
                   <button
                     onClick={handleEnableAI}
-                    className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
                   >
                     {t("bookingChat.useAI")}
                   </button>
@@ -925,12 +925,12 @@ const ChatWindow = () => {
               placeholder={t("bookingChat.enterMessages")}
               value={input}
               onChange={e => setInput(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
               disabled={isBotThinking || askedAI}
             />
             <button
               type="submit"
-              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 font-medium text-sm shadow-sm"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 font-medium text-sm shadow-sm"
               disabled={(!connected && !useAI) || isBotThinking || askedAI || (!input.trim() && !selectedFile)}
             >
               Gửi
@@ -948,12 +948,12 @@ const ChatWindow = () => {
             placeholder={t("bookingChat.enterMessages")}
             value={input}
             onChange={e => setInput(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all text-sm bg-gray-50/60 focus:bg-white"
             disabled={isBotThinking || askedAI}
           />
           <button
             type="submit"
-            className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 font-medium text-sm shadow-sm"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 font-medium text-sm shadow-sm"
             disabled={(!connected && !useAI) || isBotThinking || askedAI}
           >
             Gửi

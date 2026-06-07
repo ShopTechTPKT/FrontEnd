@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = "http://localhost:8081/api";
+const API_URL = "http://localhost:8080/api";
 
 export const CATEGORY_IDS = {
   laptop: [45, 46, 47, 48, 49, 50, 51],

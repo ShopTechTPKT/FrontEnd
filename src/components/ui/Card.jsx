@@ -13,14 +13,14 @@ const variantClasses = {
     "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xs",
   flat: "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800",
   interactive:
-    "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xs hover:shadow-md hover:border-violet-200 dark:hover:border-violet-800 transition-all duration-200 cursor-pointer active:scale-[0.995]",
+    "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-xs hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-200 cursor-pointer active:scale-[0.995]",
 };
 
 const hoverEffects = {
   none: "",
   lift: "hover:-translate-y-1 hover:shadow-lg",
   glow: "hover:shadow-[0_0_24px_-4px_rgba(109,40,217,0.35)]",
-  "border-highlight": "hover:border-violet-400 dark:hover:border-violet-500",
+  "border-highlight": "hover:border-indigo-400 dark:hover:border-indigo-500",
 };
 
 function CardRoot({

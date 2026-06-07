@@ -68,7 +68,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-violet-600">
+            <span className="text-indigo-600">
               <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="18" height="18" rx="2"/>
                 <path d="M8 8h8v8H8z"/>
@@ -104,7 +104,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={`Tìm ${category?.label}...`}
-              className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition"
+              className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition"
             />
           </div>
 
@@ -112,7 +112,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="text-xs border border-gray-200 rounded-xl px-2 py-2 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-300 cursor-pointer"
+            className="text-xs border border-gray-200 rounded-xl px-2 py-2 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer"
           >
             <option value="price_asc">Giá ↑</option>
             <option value="price_desc">Giá ↓</option>
@@ -123,7 +123,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
           <div className="flex border border-gray-200 rounded-xl overflow-hidden">
             <button
               onClick={() => setView("grid")}
-              className={`px-2.5 py-2 transition-colors ${view === "grid" ? "bg-violet-700 text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+              className={`px-2.5 py-2 transition-colors ${view === "grid" ? "bg-indigo-700 text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
                 <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z" />
@@ -131,7 +131,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
             </button>
             <button
               onClick={() => setView("list")}
-              className={`px-2.5 py-2 transition-colors ${view === "list" ? "bg-violet-700 text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+              className={`px-2.5 py-2 transition-colors ${view === "list" ? "bg-indigo-700 text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-3.5 h-3.5">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -162,14 +162,14 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
                     onClick={() => { onSelect(comp); onClose(); }}
                     className={`text-left p-3 rounded-xl border-2 transition-all ${
                       isSelected
-                        ? "border-violet-500 bg-violet-50 shadow-md shadow-violet-100"
-                        : "border-gray-100 hover:border-violet-300 hover:bg-violet-50/40 bg-white"
+                        ? "border-indigo-500 bg-indigo-50 shadow-md shadow-indigo-100"
+                        : "border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/40 bg-white"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <BadgeEl text={comp.badge} />
                       {isSelected && (
-                        <span className="w-4 h-4 bg-violet-600 rounded-full flex items-center justify-center shrink-0">
+                        <span className="w-4 h-4 bg-indigo-600 rounded-full flex items-center justify-center shrink-0">
                           <svg viewBox="0 0 12 12" fill="white" className="w-2.5 h-2.5">
                             <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" />
                           </svg>
@@ -182,7 +182,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
                     {comp.specs && (
                       <p className="text-[10px] text-gray-500 line-clamp-2 mb-1.5">{comp.specs}</p>
                     )}
-                    <p className="text-sm font-bold text-violet-700">{formatCurrency(comp.price)}</p>
+                    <p className="text-sm font-bold text-indigo-700">{formatCurrency(comp.price)}</p>
                     {comp.watt > 0 && (
                       <p className="text-[10px] text-amber-600 mt-0.5 flex items-center gap-1">
                         <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -205,13 +205,13 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
                     onClick={() => { onSelect(comp); onClose(); }}
                     className={`w-full text-left flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${
                       isSelected
-                        ? "border-violet-500 bg-violet-50"
-                        : "border-gray-100 hover:border-violet-300 hover:bg-violet-50/30 bg-white"
+                        ? "border-indigo-500 bg-indigo-50"
+                        : "border-gray-100 hover:border-indigo-300 hover:bg-indigo-50/30 bg-white"
                     }`}
                   >
                     {/* Check indicator */}
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                      isSelected ? "border-violet-600 bg-violet-600" : "border-gray-300"
+                      isSelected ? "border-indigo-600 bg-indigo-600" : "border-gray-300"
                     }`}>
                       {isSelected && (
                         <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3">
@@ -231,7 +231,7 @@ const PCBuilderModal = ({ category, components = [], selectedId, onSelect, onClo
                     </div>
 
                     <div className="shrink-0 text-right">
-                      <p className="text-sm font-bold text-violet-700">{formatCurrency(comp.price)}</p>
+                      <p className="text-sm font-bold text-indigo-700">{formatCurrency(comp.price)}</p>
                       {comp.watt > 0 && (
                         <p className="text-[10px] text-amber-600 flex items-center justify-end gap-1">
                           <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

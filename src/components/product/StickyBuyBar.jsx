@@ -91,7 +91,7 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
             <p className="text-sm font-semibold text-gray-900 truncate leading-tight">
               {name}
             </p>
-            <p className="text-base font-bold text-violet-700 leading-tight tabular-nums">
+            <p className="text-base font-bold text-indigo-600 leading-tight tabular-nums">
               {formatCurrency(price * quantity)}
               {selectedQty > 1 && (
                 <span className="text-xs font-normal text-gray-500 ml-1.5">
@@ -125,7 +125,7 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
             <button
               onClick={handleAddToCart}
               disabled={adding}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-700 text-white text-sm font-semibold rounded-xl hover:bg-violet-800 disabled:opacity-60 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo-500 text-white text-sm font-semibold rounded-xl hover:bg-indigo-600 active:scale-[0.97] disabled:opacity-60 transition-all shadow-sm"
             >
               {adding ? (
                 <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -145,7 +145,7 @@ const StickyBuyBar = ({ product, quantity = 1, anchorRef }) => {
             <a
               href={`/shopping_card_checkout?installment=1`}
               onClick={handleAddToCart}
-              className="px-4 py-2.5 border border-violet-200 text-violet-700 text-sm font-semibold rounded-xl hover:bg-violet-50 transition-colors hidden sm:flex items-center gap-1.5"
+              className="px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-900 active:scale-[0.97] transition-all hidden sm:flex items-center gap-1.5"
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
                 <path

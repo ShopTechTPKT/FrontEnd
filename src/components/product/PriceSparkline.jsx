@@ -138,7 +138,7 @@ export default function PriceSparkline({ productId, currentPrice = 0 }) {
           type="button"
           disabled={loading}
           onClick={handleCreateAlert}
-          className="h-8 rounded bg-violet-600 px-3 text-xs text-white disabled:opacity-60"
+          className="h-8 rounded bg-indigo-600 px-3 text-xs text-white disabled:opacity-60"
         >
           {loading ? "Dang luu..." : "Thong bao gia"}
         </button>

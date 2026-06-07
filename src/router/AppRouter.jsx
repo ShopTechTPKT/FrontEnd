@@ -194,13 +194,13 @@ const AppRouter = () => {
           />
           <Route path="contact" element={<Contact />} />
           <Route path="about" element={<About />} />
-          <Route path="laptops" element={<Laptop />} />
+          <Route path="laptops" element={<All_Product />} />
           <Route path="laptops/catalog" element={<Catalog />} />
           <Route path="faq" element={<FAQ />} />
-          <Route path="desktops" element={<Desktop />} />
-          <Route path="networking_devices" element={<NetWorking />} />
-          <Route path="printer_scanner" element={<Printer_Scanner />} />
-          <Route path="pc_parts" element={<PC_Part />} />
+          <Route path="desktops" element={<All_Product />} />
+          <Route path="networking_devices" element={<All_Product />} />
+          <Route path="printer_scanner" element={<All_Product />} />
+          <Route path="pc_parts" element={<All_Product />} />
           <Route path="all_products" element={<All_Product />} />
           <Route path="repair" element={<Repair />} />
           <Route path="our_deal" element={<Our_Deal />} />

@@ -15,7 +15,7 @@ export default function Timeline({ steps = [] }) {
         {/* Progress line */}
         <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200" />
         <div
-          className="absolute top-5 left-0 h-0.5 bg-violet-600 transition-all duration-500"
+          className="absolute top-5 left-0 h-0.5 bg-indigo-600 transition-all duration-500"
           style={{
             width: `${
               (steps.filter((s) => s.status === "done").length /
@@ -31,9 +31,9 @@ export default function Timeline({ steps = [] }) {
             <div
               className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                 step.status === "done"
-                  ? "bg-violet-600 border-violet-600 text-white"
+                  ? "bg-indigo-600 border-indigo-600 text-white"
                   : step.status === "active"
-                  ? "bg-white border-violet-600 text-violet-600 ring-4 ring-violet-100 animate-pulse"
+                  ? "bg-white border-indigo-600 text-indigo-600 ring-4 ring-indigo-100 animate-pulse"
                   : "bg-white border-gray-300 text-gray-400"
               }`}
             >
@@ -49,9 +49,9 @@ export default function Timeline({ steps = [] }) {
             <span
               className={`mt-2 text-xs font-medium text-center ${
                 step.status === "done"
-                  ? "text-violet-700"
+                  ? "text-indigo-700"
                   : step.status === "active"
-                  ? "text-violet-600 font-semibold"
+                  ? "text-indigo-600 font-semibold"
                   : "text-gray-400"
               }`}
             >
@@ -74,9 +74,9 @@ export default function Timeline({ steps = [] }) {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center border-2 shrink-0 ${
                   step.status === "done"
-                    ? "bg-violet-600 border-violet-600 text-white"
+                    ? "bg-indigo-600 border-indigo-600 text-white"
                     : step.status === "active"
-                    ? "bg-white border-violet-600 text-violet-600 ring-4 ring-violet-100"
+                    ? "bg-white border-indigo-600 text-indigo-600 ring-4 ring-indigo-100"
                     : "bg-white border-gray-300 text-gray-400"
                 }`}
               >
@@ -91,7 +91,7 @@ export default function Timeline({ steps = [] }) {
               {idx < steps.length - 1 && (
                 <div
                   className={`w-0.5 h-8 ${
-                    step.status === "done" ? "bg-violet-600" : "bg-gray-200"
+                    step.status === "done" ? "bg-indigo-600" : "bg-gray-200"
                   }`}
                 />
               )}
@@ -101,9 +101,9 @@ export default function Timeline({ steps = [] }) {
               <p
                 className={`text-sm font-medium ${
                   step.status === "done"
-                    ? "text-violet-700"
+                    ? "text-indigo-700"
                     : step.status === "active"
-                    ? "text-violet-600"
+                    ? "text-indigo-600"
                     : "text-gray-400"
                 }`}
               >

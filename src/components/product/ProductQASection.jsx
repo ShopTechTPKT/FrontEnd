@@ -178,7 +178,7 @@ export default function ProductQASection({ productId }) {
           <p className="text-xs md:text-sm text-gray-600">
             Bạn đang đăng nhập với vai trò <span className="font-semibold">nhân viên / staff</span>. 
             Khách hàng sẽ gửi câu hỏi tại đây, và bạn có thể chọn từng câu bên dưới để trả lời với badge 
-            <span className="font-semibold text-violet-700"> “Câu trả lời từ Shop”</span>.
+            <span className="font-semibold text-indigo-700"> “Câu trả lời từ Shop”</span>.
           </p>
         ) : (
           <>
@@ -191,12 +191,12 @@ export default function ProductQASection({ productId }) {
                 value={newQuestion}
                 onChange={(e) => setNewQuestion(e.target.value)}
                 placeholder={t("product.qa_ask_placeholder") || "Bạn đang thắc mắc điều gì về sản phẩm này?"}
-                className="flex-1 w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-violet-600 bg-gray-50"
+                className="flex-1 w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 bg-gray-50"
               />
               <button
                 type="button"
                 onClick={handleAskQuestion}
-            className="w-full md:w-auto px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-gradient-to-r from-violet-700 to-violet-600 shadow-sm hover:shadow-md hover:opacity-90 transition-all"
+            className="w-full md:w-auto px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-700 to-indigo-600 shadow-sm hover:shadow-md hover:opacity-90 transition-all"
               >
                 {t("product.qa_send_question") || "Gửi câu hỏi"}
               </button>
@@ -215,7 +215,7 @@ export default function ProductQASection({ productId }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder={t("product.qa_search_placeholder") || "Tìm trong hỏi đáp..."}
-            className="w-full md:w-72 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-violet-600 bg-white"
+            className="w-full md:w-72 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 bg-white"
           />
           {loading && (
             <span className="text-xs text-gray-400">
@@ -239,7 +239,7 @@ export default function ProductQASection({ productId }) {
               className="border border-gray-100 rounded-lg p-3 md:p-4 bg-gray-50"
             >
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sm font-semibold text-violet-800">
+                <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sm font-semibold text-indigo-800">
                   {getInitial(q.userFullName)}
                 </div>
                 <div className="flex-1">
@@ -247,7 +247,7 @@ export default function ProductQASection({ productId }) {
                     <span className="text-sm font-medium text-gray-800">
                       {q.userFullName || "Khách hàng"}
                     </span>
-                    <span className="text-[11px] uppercase tracking-wide text-violet-700 bg-sky-50 px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] uppercase tracking-wide text-indigo-700 bg-sky-50 px-2 py-0.5 rounded-full">
                       Hỏi
                     </span>
                     {q.status === "ANSWERED" && (
@@ -269,7 +269,7 @@ export default function ProductQASection({ productId }) {
                         key={a.id}
                         className={`border-l-2 pl-3 md:pl-4 py-2 rounded-r-lg ${
                           a.official
-                            ? "border-violet-600 bg-sky-50"
+                            ? "border-indigo-600 bg-sky-50"
                             : "border-gray-200 bg-white"
                         }`}
                       >
@@ -278,7 +278,7 @@ export default function ProductQASection({ productId }) {
                             {a.userFullName || (a.official ? "Shop Tech" : "Người dùng")}
                           </span>
                           {a.official && (
-                            <span className="text-[11px] text-violet-800 bg-violet-100 px-2 py-0.5 rounded-full font-semibold">
+                            <span className="text-[11px] text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full font-semibold">
                               {t("product.qa_official_answer") || "Câu trả lời từ Shop"}
                             </span>
                           )}
@@ -292,7 +292,7 @@ export default function ProductQASection({ productId }) {
                           </p>
                           <button
                             type="button"
-                            className="text-[11px] text-violet-700 hover:text-violet-800 font-medium"
+                            className="text-[11px] text-indigo-700 hover:text-indigo-800 font-medium"
                             onClick={() => handleLikeAnswer(q.id, a.id)}
                           >
                             {t("product.qa_like") || "Thích"} ({(a.likeCount ?? 0) + (answerVotes[a.id]?.up || 0)})
@@ -335,13 +335,13 @@ export default function ProductQASection({ productId }) {
                             value={newAnswer}
                             onChange={(e) => setNewAnswer(e.target.value)}
                             placeholder="Nhập câu trả lời chính thức từ Shop..."
-                            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-violet-600 focus:border-violet-600 bg-white"
+                            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:border-indigo-600 bg-white"
                           />
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
                               onClick={handleSubmitAnswer}
-                              className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-violet-700 to-violet-600 hover:opacity-90 transition-all"
+                              className="px-3 py-1.5 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-700 to-indigo-600 hover:opacity-90 transition-all"
                             >
                               Gửi trả lời
                             </button>
@@ -361,7 +361,7 @@ export default function ProductQASection({ productId }) {
                         <button
                           type="button"
                           onClick={() => handleOpenAnswerBox(q.id)}
-                          className="mt-2 text-xs font-medium text-violet-700 hover:text-violet-800"
+                          className="mt-2 text-xs font-medium text-indigo-700 hover:text-indigo-800"
                         >
                           Trả lời với tư cách Shop
                         </button>

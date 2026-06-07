@@ -140,7 +140,7 @@ const ChatWindow = ({
       {/* Header */}
       <div className="px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 flex justify-between items-center sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-800 to-violet-900 text-white flex items-center justify-center font-semibold text-lg">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-800 to-indigo-900 text-white flex items-center justify-center font-semibold text-lg">
             {selectedSession.guestName?.charAt(0)?.toUpperCase() || "?"}
           </div>
           <div>
@@ -254,14 +254,14 @@ const ChatWindow = ({
             placeholder={t("chat.enter_message")}
             value={input}
             onChange={e => setInput(e.target.value)}
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-600/20 focus:border-violet-600 transition-all text-sm"
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all text-sm"
           />
           <button
             type="submit"
             disabled={!connected || isUploading || (!input.trim() && !selectedFile)}
             className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 shadow-md ${
               connected && !isUploading && (input.trim() || selectedFile)
-                ? "bg-gradient-to-r from-violet-700 to-violet-600 text-white hover:opacity-90 hover:-translate-y-0.5 hover:shadow-lg"
+                ? "bg-gradient-to-r from-indigo-700 to-indigo-600 text-white hover:opacity-90 hover:-translate-y-0.5 hover:shadow-lg"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >

@@ -102,36 +102,34 @@ const Footer = () => {
   };
 
   const linkClass =
-    "text-sm text-gray-400 transition-colors duration-200 hover:text-violet-300";
+    "text-sm text-slate-500 transition-colors duration-150 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400";
   const iconBtnClass =
-    "flex h-10 w-10 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-200 transition-all duration-200 hover:border-violet-400 hover:bg-violet-500/20";
+    "flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-400 transition-all duration-150 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400";
 
   return (
-    <footer className="relative overflow-hidden border-t border-violet-500/20 bg-gradient-to-b from-gray-950 via-gray-900 to-black text-gray-300">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(109,40,217,0.25),transparent)]" />
-
+    <footer className="relative border-t border-slate-200 bg-white text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
       <div className="relative mx-auto max-w-screen-xl px-4 py-14 sm:px-6">
-        <div className="mb-12 rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-600/90 via-purple-700/85 to-violet-900/90 p-8 text-center shadow-xl shadow-violet-950/40 sm:p-10">
-          <div className="mb-4 inline-flex animate-pulse-subtle items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
+        <div className="mb-12 rounded-2xl border border-indigo-100 bg-indigo-600 p-8 text-center shadow-sm sm:p-10 dark:border-indigo-900 dark:bg-indigo-900">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
             <span className="text-xs font-bold uppercase tracking-widest text-white">
               {t("footer.newsletter.badge", { defaultValue: "Giảm 10% — Ưu đãi độc quyền" })}
             </span>
           </div>
           <h3 className="mb-2 text-2xl font-bold tracking-tight text-white">{t("footer.newsletter.title")}</h3>
-          <p className="mb-6 text-sm text-violet-100/90">{t("footer.newsletter.subtitle")}</p>
+          <p className="mb-6 text-sm text-indigo-100">{t("footer.newsletter.subtitle")}</p>
           <form onSubmit={handleNewsletterSubmit} className="mx-auto flex max-w-md flex-col gap-2 sm:flex-row">
             <input
               type="email"
               placeholder={t("footer.newsletter.placeholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-12 flex-1 rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white outline-none backdrop-blur-sm placeholder:text-violet-200/70 focus:border-white/40 focus:ring-2 focus:ring-white/20"
+              className="h-12 flex-1 rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white outline-none placeholder:text-indigo-200 focus:border-white/40 focus:ring-2 focus:ring-white/20"
               required
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-12 rounded-xl bg-white px-6 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="h-12 rounded-xl bg-white px-6 text-sm font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? "..." : t("footer.newsletter.subscribe")}
             </button>
@@ -146,7 +144,7 @@ const Footer = () => {
         <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-4">
           {FOOTER_COLUMNS.map((col) => (
             <div key={col.titleKey}>
-              <h4 className="mb-4 text-sm font-semibold text-white">{t(col.titleKey)}</h4>
+              <h4 className="mb-4 text-sm font-semibold text-slate-900 dark:text-slate-100">{t(col.titleKey)}</h4>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.labelKey}>
@@ -160,28 +158,28 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="mb-10 rounded-2xl border border-gray-800 bg-gray-900/50 p-5 sm:p-6">
-          <h4 className="mb-3 text-sm font-semibold text-white">{t("footer.address.title")}</h4>
+        <div className="mb-10 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6 dark:border-slate-800 dark:bg-slate-900/50">
+          <h4 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{t("footer.address.title")}</h4>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
-            <address className="flex-1 space-y-1.5 text-sm not-italic text-gray-400">
+            <address className="flex-1 space-y-1.5 text-sm not-italic text-slate-500 dark:text-slate-400">
               <p className="flex items-start gap-2">
-                <span className="mt-0.5 text-violet-400" aria-hidden>
+                <span className="mt-0.5 text-indigo-500" aria-hidden>
                   📍
                 </span>
                 {t("footer.address.street")}
               </p>
               <p>
                 {t("footer.address.phone")}{" "}
-                <span className="font-medium text-violet-300">{t("footer.address.phoneNumber")}</span>
+                <span className="font-medium text-indigo-600 dark:text-indigo-400">{t("footer.address.phoneNumber")}</span>
               </p>
               <p>
                 {t("footer.address.email")}{" "}
-                <span className="font-medium text-violet-300">{t("footer.address.emailAddress")}</span>
+                <span className="font-medium text-indigo-600 dark:text-indigo-400">{t("footer.address.emailAddress")}</span>
               </p>
             </address>
             <div className="text-sm">
-              <p className="mb-1.5 font-semibold text-white">{t("footer.address.openHours")}</p>
-              <ul className="space-y-0.5 text-gray-500">
+              <p className="mb-1.5 font-semibold text-slate-900 dark:text-slate-100">{t("footer.address.openHours")}</p>
+              <ul className="space-y-0.5 text-slate-400">
                 <li>{t("footer.address.mondayThursday")}</li>
                 <li>{t("footer.address.friday")}</li>
                 <li>{t("footer.address.saturday")}</li>
@@ -190,8 +188,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mb-8 flex flex-col gap-4 border-y border-gray-800 py-8">
-          <p className="text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <div className="mb-8 flex flex-col gap-4 border-y border-slate-200 py-8 dark:border-slate-800">
+          <p className="text-center text-xs font-semibold uppercase tracking-wider text-slate-400">
             {t("footer.trust.title", { defaultValue: "Thanh toán & bảo mật" })}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2" aria-label="Payment methods">
@@ -204,7 +202,7 @@ const Footer = () => {
               </span>
             ))}
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               SSL
@@ -223,26 +221,26 @@ const Footer = () => {
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
-            <Link to="/" className="hover:text-violet-300">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
+            <Link to="/" className="hover:text-indigo-600">
               {t("footer.legal.privacy", { defaultValue: "Privacy" })}
             </Link>
-            <span className="text-gray-700">|</span>
-            <Link to="/" className="hover:text-violet-300">
+            <span className="text-slate-200 dark:text-slate-800">|</span>
+            <Link to="/" className="hover:text-indigo-600">
               {t("footer.legal.terms", { defaultValue: "Terms" })}
             </Link>
-            <span className="text-gray-700">|</span>
-            <Link to="/" className="hover:text-violet-300">
+            <span className="text-slate-200 dark:text-slate-800">|</span>
+            <Link to="/" className="hover:text-indigo-600">
               {t("footer.legal.cookies", { defaultValue: "Cookies" })}
             </Link>
           </div>
 
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-4">
-            <p className="text-xs text-gray-500">{t("footer.copyright")}</p>
+            <p className="text-xs text-slate-400">{t("footer.copyright")}</p>
             <button
               type="button"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="rounded-full border border-violet-500/40 px-4 py-2 text-xs font-semibold text-violet-300 transition-colors hover:bg-violet-500/10"
+              className="rounded-full border border-indigo-200 px-4 py-2 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-950/50"
             >
               {t("footer.backToTop", { defaultValue: "Lên đầu trang" })}
             </button>

@@ -207,7 +207,7 @@ const Blog = () => {
           {/* Search */}
           <div className="max-w-xl mx-auto">
             <div className="relative">
-              <IcSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <IcSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder={t('blog.search_placeholder')}
@@ -230,7 +230,7 @@ const Blog = () => {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-violet-700 to-violet-600 text-white'
+                    ? 'bg-gradient-to-r from-indigo-700 to-indigo-600 text-white'
                     : 'bg-gray-100 text-gray-700'
                 }`}
               >
@@ -256,7 +256,7 @@ const Blog = () => {
                   e.target.src = 'https://via.placeholder.com/800x600?text=Featured+Post';
                 }}
               />
-              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-violet-700 to-violet-600 text-white rounded font-bold text-sm">
+              <div className="absolute top-3 left-3 px-3 py-1 bg-gradient-to-r from-indigo-700 to-indigo-600 text-white rounded font-bold text-sm">
                 {t('blog.featured')}
               </div>
             </div>
@@ -271,16 +271,16 @@ const Blog = () => {
                 {featuredPost.excerpt}
               </p>
               <div className="flex items-center gap-4 text-gray-500 text-sm mb-4">
-                <div className="flex items-center gap-1">
-                  <IcUser className="text-xs" />
+                <div className="flex items-center gap-1.5">
+                  <IcUser className="w-4 h-4 text-gray-400" />
                   <span>{featuredPost.author}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <IcClock className="text-xs" />
+                <div className="flex items-center gap-1.5">
+                  <IcClock className="w-4 h-4 text-gray-400" />
                   <span>{featuredPost.date}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <IcEye className="text-xs" />
+                <div className="flex items-center gap-1.5">
+                  <IcEye className="w-4 h-4 text-gray-400" />
                   <span>{featuredPost.views?.toLocaleString('vi-VN')}</span>
                 </div>
               </div>
@@ -350,54 +350,38 @@ const Blog = () => {
         </div>
       </div>
 
-      {/* Newsletter */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center text-white">
-          <h2 className="text-2xl font-bold mb-3">{t('blog.subscribe_title')}</h2>
-          <p className="text-gray-300 mb-6">
-            {t('blog.subscribe_subtitle')}
-          </p>
-          <div className="flex max-w-md mx-auto gap-2">
-            <input 
-              type="email" 
-              placeholder={t('blog.email_placeholder')}
-              className="flex-1 px-4 py-3 rounded-lg text-gray-900 border border-gray-300 focus:outline-none focus:border-violet-600"
-            />
-            <button className="px-6 py-3 bg-white text-gray-900 rounded-lg font-medium">{t('blog.subscribe')}</button>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };
 
 // SVG Icons
-const IcClock = ({ className = "w-4 h-4" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const IcClock = ({ className = "" }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
 );
 
-const IcUser = ({ className = "w-4 h-4" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const IcUser = ({ className = "" }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
   </svg>
 );
 
-const IcArrowRight = ({ className = "w-4 h-4" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const IcArrowRight = ({ className = "" }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
   </svg>
 );
 
-const IcSearch = ({ className = "w-4 h-4" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const IcSearch = ({ className = "" }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 );
 
-const IcEye = ({ className = "w-4 h-4" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+const IcEye = ({ className = "" }) => (
+  <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
   </svg>

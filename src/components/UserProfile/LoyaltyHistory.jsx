@@ -28,9 +28,9 @@ export default function LoyaltyHistory({ userId }) {
 
   return (
     <div>
-      <div className="mb-4 rounded-xl border border-violet-100 bg-violet-50 p-4">
+      <div className="mb-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
         <p className="text-sm text-gray-600">Điểm hiện có</p>
-        <p className="text-2xl font-bold text-violet-700">{balance}</p>
+        <p className="text-2xl font-bold text-indigo-700">{balance}</p>
       </div>
 
       {history.length === 0 ? (

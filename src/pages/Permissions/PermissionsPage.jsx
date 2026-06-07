@@ -164,7 +164,7 @@ const PermissionsPage = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--color-bg)] p-6 rounded-2xl shadow-sm border border-[var(--color-border)]">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary-)] to-purple-600 flex items-center justify-center text-white shadow-lg shadow-[var(--color-primary-)]/50">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-primary-)] to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-[var(--color-primary-)]/50">
               <FaUserShield size={24} />
             </div>
             <div>

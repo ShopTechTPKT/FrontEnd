@@ -1,21 +1,19 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef } from "react";
 
 const variantClasses = {
   primary:
-    "bg-violet-700 text-white shadow-xs hover:bg-violet-800 hover:shadow-sm focus-visible:ring-violet-700/30",
+    "bg-indigo-500 text-white shadow-sm hover:bg-indigo-600 hover:shadow-md active:bg-indigo-700 focus-visible:ring-indigo-500/30",
   secondary:
-    "bg-violet-100 text-violet-900 hover:bg-violet-200 focus-visible:ring-violet-500/25 dark:bg-violet-950/60 dark:text-violet-100 dark:hover:bg-violet-900/80",
+    "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 active:bg-indigo-200 focus-visible:ring-indigo-500/25 dark:bg-indigo-950/60 dark:text-indigo-100 dark:hover:bg-indigo-900/80",
   outline:
-    "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 focus-visible:ring-gray-400/20",
+    "bg-white dark:bg-gray-900 text-slate-700 dark:text-gray-200 border border-slate-200 dark:border-gray-600 hover:bg-slate-50 hover:border-slate-300 dark:hover:bg-gray-800 active:bg-slate-100 focus-visible:ring-slate-400/20",
   ghost:
-    "bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:ring-gray-400/20",
+    "bg-transparent text-slate-600 dark:text-gray-200 hover:bg-slate-100 dark:hover:bg-gray-800 active:bg-slate-200 focus-visible:ring-slate-400/20",
   danger:
-    "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600/30",
+    "bg-red-500 text-white hover:bg-red-600 active:bg-red-700 focus-visible:ring-red-500/30",
   success:
-    "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-600/30",
-  link: "bg-transparent text-violet-700 dark:text-violet-400 hover:underline shadow-none px-0 h-auto focus-visible:ring-violet-500/30 underline-offset-4",
-  gradient:
-    "text-white shadow-md hover:shadow-lg focus-visible:ring-violet-500/30 bg-gradient-to-br from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700",
+    "bg-emerald-500 text-white hover:bg-emerald-600 active:bg-emerald-700 focus-visible:ring-emerald-500/30",
+  link: "bg-transparent text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 hover:underline shadow-none px-0 h-auto focus-visible:ring-indigo-500/30 underline-offset-4",
 };
 
 const sizeClasses = {
@@ -26,25 +24,7 @@ const sizeClasses = {
   xl: "h-14 px-8 text-lg gap-2.5 rounded-xl min-h-[56px]",
 };
 
-function RippleLayer({ ripples }) {
-  return (
-    <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-      {ripples.map((r) => (
-        <span
-          key={r.id}
-          className="absolute animate-ping rounded-full bg-white/40"
-          style={{
-            left: r.x,
-            top: r.y,
-            width: r.size,
-            height: r.size,
-            animationDuration: "600ms",
-          }}
-        />
-      ))}
-    </span>
-  );
-}
+/* Ripple removed for performance — CSS-only active state is used instead */
 
 function Button({
   type = "button",
@@ -59,34 +39,13 @@ function Button({
   rightIcon,
   fullWidth = false,
   active = false,
-  ripple = true,
   children,
 }) {
-  const [ripples, setRipples] = useState([]);
   const btnRef = useRef(null);
   const isDisabled = disabled || loading;
   const startIcon = leftIcon ?? icon;
 
-  const spawnRipple = useCallback(
-    (e) => {
-      if (!ripple || isDisabled || variant === "link") return;
-      const el = btnRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const size = Math.max(rect.width, rect.height) * 1.2;
-      const id = `${Date.now()}-${Math.random()}`;
-      setRipples((prev) => [...prev.slice(-2), { id, x: x - size / 2, y: y - size / 2, size }]);
-      window.setTimeout(() => {
-        setRipples((prev) => prev.filter((r) => r.id !== id));
-      }, 650);
-    },
-    [ripple, isDisabled, variant]
-  );
-
   const handleClick = (e) => {
-    spawnRipple(e);
     onClick?.(e);
   };
 
@@ -100,19 +59,18 @@ function Button({
       className={[
         "relative isolate inline-flex items-center justify-center font-medium overflow-hidden",
         "transition-all duration-200",
-        variant === "link" ? "" : "active:scale-[0.98]",
+        variant === "link" ? "" : "active:scale-[0.97]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-900",
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
         variantClasses[variant] || variantClasses.primary,
         sizeClasses[size] || sizeClasses.md,
         fullWidth ? "w-full" : "",
-        active && variant !== "link" ? "ring-2 ring-violet-500/40" : "",
+        active && variant !== "link" ? "ring-2 ring-indigo-500/40" : "",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {variant !== "link" && ripples.length > 0 ? <RippleLayer ripples={ripples} /> : null}
       {loading ? (
         <span className="relative z-10 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       ) : startIcon ? (

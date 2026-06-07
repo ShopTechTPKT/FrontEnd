@@ -20,7 +20,7 @@ export default function QuickActions() {
       label: "PC Builder",
       desc: "Tự build cấu hình",
       icon: Trophy,
-      color: "from-violet-500 to-purple-600",
+      color: "from-indigo-500 to-indigo-600",
       path: "/pc-builder"
     },
     {
@@ -50,9 +50,9 @@ export default function QuickActions() {
             <button
               key={action.id}
               onClick={() => navigate(action.path)}
-              className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-white p-3 shadow-xs border border-gray-100 transition-all hover:-translate-y-1 hover:shadow-md dark:bg-gray-900 dark:border-gray-800 text-left"
+              className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-white p-3 shadow-xs border border-gray-100 transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:bg-gray-900 dark:border-gray-800 text-left"
             >
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${action.color} text-white shadow-sm transition-transform group-hover:scale-110`}>
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${action.color} text-white shadow-sm transition-transform duration-200 group-hover:scale-110`}>
                 <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">

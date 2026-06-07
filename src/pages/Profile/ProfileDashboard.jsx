@@ -209,7 +209,7 @@ function ProfileDashboard() {
                                                 name="currentPassword"
                                                 value={currentPassword}
                                                 onChange={handlePasswordInputChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition bg-white"
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:border-indigo-950 transition bg-white"
                                                 placeholder="Nhập mật khẩu hiện tại"
                                             />
                                         </div>
@@ -220,7 +220,7 @@ function ProfileDashboard() {
                                                 name="newPassword"
                                                 value={newPassword}
                                                 onChange={handlePasswordInputChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition bg-white"
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:border-indigo-950 transition bg-white"
                                                 placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
                                             />
                                         </div>
@@ -231,7 +231,7 @@ function ProfileDashboard() {
                                                 name="confirmNewPassword"
                                                 value={confirmNewPassword}
                                                 onChange={handlePasswordInputChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition bg-white"
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:border-indigo-950 transition bg-white"
                                                 placeholder="Nhập lại mật khẩu mới"
                                             />
                                         </div>
@@ -277,7 +277,7 @@ function ProfileDashboard() {
                                 name="fullName"
                                 value={editAccountInfo.fullName}
                                 onChange={handleEditInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:border-indigo-950 transition"
                             />
                         </div>
                         <div>
@@ -287,7 +287,7 @@ function ProfileDashboard() {
                                 name="email"
                                 value={editAccountInfo.email}
                                 onChange={handleEditInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:border-indigo-950 transition"
                             />
                         </div>
                         <div>
@@ -297,7 +297,7 @@ function ProfileDashboard() {
                                 name="phoneNumber"
                                 value={editAccountInfo.phoneNumber}
                                 onChange={handleEditInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-purple-950 transition"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:border-indigo-950 transition"
                             />
                         </div>
                         <div>

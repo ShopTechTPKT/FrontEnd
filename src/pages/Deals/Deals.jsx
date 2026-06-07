@@ -376,7 +376,7 @@ const Deals = () => {
   // Error state
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[var(--color-primary-)] to-purple-50 dark:from-gray-950 dark:to-[var(--color-primary-)]/40">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[var(--color-primary-)] to-indigo-50 dark:from-gray-950 dark:to-[var(--color-primary-)]/40">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="text-6xl mb-4">😞</div>
           <h2 className="text-2xl font-bold text-red-700 mb-2">{t('deals.error.title')}</h2>

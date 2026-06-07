@@ -68,7 +68,7 @@ const SmartRecommendation = ({ products = [], maxItems = 12 }) => {
     <section className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          <span className="inline-block h-6 w-1 rounded-full bg-gradient-to-b from-violet-600 to-purple-500" />
+          <span className="inline-block h-6 w-1 rounded-full bg-indigo-500" />
           <h2 className="text-xl font-bold tracking-tight text-[var(--color-text)]">
             {t("home.may_like", { defaultValue: "Có thể bạn quan tâm" })} ✨
           </h2>

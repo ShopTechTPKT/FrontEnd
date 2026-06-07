@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import formatCurrency from "../utils/formatCurrency";
@@ -110,7 +110,7 @@ export default function CommandSearch() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[15vh]" role="dialog" aria-modal="true" aria-label={t("search.search") || "Search"}>
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+      <div className="absolute inset-0 bg-black/40" onClick={() => setIsOpen(false)} />
 
       <div className="relative mx-4 w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl animate-fadeIn">
         <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-3">
@@ -137,7 +137,7 @@ export default function CommandSearch() {
                 <li key={product.productID || product.id || idx}>
                   <button
                     onClick={() => handleSelect(product)}
-                    className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${idx === selectedIndex ? "bg-violet-50 text-violet-700" : "text-gray-700 hover:bg-gray-50"}`}
+                    className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${idx === selectedIndex ? "bg-indigo-50/60 text-indigo-600" : "text-gray-700 hover:bg-gray-50/50"}`}
                   >
                     <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                       <img
@@ -150,7 +150,7 @@ export default function CommandSearch() {
                       <p className="truncate text-sm font-medium">{product.productName || product.name}</p>
                       <p className="text-xs text-gray-400">{product.categoryName || ""}</p>
                     </div>
-                    <span className="shrink-0 text-sm font-semibold text-violet-700">{formatCurrency(product.price || product.unitPrice || 0)}</span>
+                    <span className="shrink-0 text-sm font-semibold text-indigo-600">{formatCurrency(product.price || product.unitPrice || 0)}</span>
                   </button>
                 </li>
               ))}

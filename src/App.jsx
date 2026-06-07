@@ -4,7 +4,7 @@ import AppRouter from "./router/AppRouter";
 import { UserProvider } from "./context/UserContext";
 import { Provider } from "react-redux";
 import store from "./utils/redux/store";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ChatBox = lazy(() => import("./components/ChatBox"));
@@ -28,7 +28,7 @@ function App() {
           </Suspense>
           <ToastContainer
             position="bottom-right"
-            autoClose={3000}
+            autoClose={2500}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
@@ -37,7 +37,8 @@ function App() {
             draggable
             pauseOnHover
             theme="colored"
-            limit={3}
+            limit={2}
+            transition={Slide}
             toastClassName="shop-toast"
             progressClassName="shop-toast-progress"
           />
@@ -48,4 +49,3 @@ function App() {
 }
 
 export default App;
-

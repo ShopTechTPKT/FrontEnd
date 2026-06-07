@@ -105,7 +105,7 @@ export default function ImageGallery({ images = [], alt = "" }) {
               onClick={() => switchImage(idx)}
               className={`w-14 h-14 rounded-lg border-2 overflow-hidden shrink-0 transition-all ${
                 idx === activeIndex
-                  ? "border-violet-600 ring-2 ring-violet-200"
+                  ? "border-indigo-600 ring-2 ring-indigo-200"
                   : "border-gray-200 hover:border-gray-300"
               }`}
             >

@@ -21,7 +21,7 @@ const pad = (n) => String(n).padStart(2, "0");
 /* ── Countdown cell ─────────────────────────────────── */
 const TimeCell = React.memo(({ value, label }) => (
   <div className="flex min-w-[2.5rem] flex-col items-center">
-    <span className="rounded-lg border border-white/20 bg-white/15 px-2 py-1 font-mono text-base font-bold leading-none text-white tabular-nums shadow-inner backdrop-blur-md dark:bg-violet-950/40">
+    <span className="rounded-lg border border-white/20 bg-white/15 px-2 py-1 font-mono text-base font-bold leading-none text-white tabular-nums shadow-inner dark:bg-indigo-950/40">
       {pad(value)}
     </span>
     <span className="text-[10px] text-gray-400 mt-0.5 uppercase tracking-wide">{label}</span>
@@ -29,7 +29,7 @@ const TimeCell = React.memo(({ value, label }) => (
 ));
 
 const Colon = () => (
-  <span className="text-violet-400 font-bold text-base self-start mt-1 px-0.5 leading-none">:</span>
+  <span className="text-indigo-400 font-bold text-base self-start mt-1 px-0.5 leading-none">:</span>
 );
 
 const FlashSaleItem = React.memo(({ item, progress, onNavigate }) => (
@@ -83,8 +83,8 @@ const FlashSaleItem = React.memo(({ item, progress, onNavigate }) => (
                 progress >= 80
                   ? "var(--color-flash-sale)"   // red — sắp hết
                   : progress >= 50
-                  ? "var(--color-primary-600)"   // violet-600 — trung bình
-                  : "var(--color-primary)",  // violet-700 — còn nhiều
+                  ? "var(--color-primary-500)"   // indigo-500 — trung bình
+                  : "var(--color-primary)",  // indigo-600 — còn nhiều
             }}
           />
         </div>
@@ -215,7 +215,7 @@ const FlashSaleStrip = () => {
           {/* Right: see all */}
           <button
             onClick={() => navigate("/deals")}
-            className="text-sm text-violet-700 font-medium hover:text-violet-800 flex items-center gap-1 transition-colors"
+            className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1 transition-colors"
           >
             Xem tất cả
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,4 +1,4 @@
-﻿import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import formatCurrency from "../utils/formatCurrency";
 
 function DiscountModal({
@@ -75,7 +75,7 @@ function DiscountModal({
                       className={`relative border rounded-lg overflow-hidden transition-all ${
                         isExpired
                           ? "border-gray-200 bg-gray-50 opacity-60"
-                          : "border-gray-200 bg-white hover:border-purple-950 hover:shadow-md cursor-pointer"
+                          : "border-gray-200 bg-white hover:border-indigo-200 hover:shadow-md cursor-pointer"
                       }`}
                       onClick={
                         !isExpired
@@ -85,7 +85,7 @@ function DiscountModal({
                     >
                       {/* Ribbon góc */}
                       {!isExpired && (
-                        <div className="absolute top-0 right-0 bg-gradient-to-r from-gray-900 to-purple-950 text-white text-xs px-3 py-1 rounded-bl-lg font-semibold">
+                        <div className="absolute top-0 right-0 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-xs px-3 py-1 rounded-bl-lg font-semibold">
                           {isPercentage
                             ? `${(voucher.discountRate * 100).toFixed(0)}%`
                             : "GIẢM GIÁ"}
@@ -108,7 +108,7 @@ function DiscountModal({
                               className={`flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center ${
                                 isExpired
                                   ? "bg-gray-200"
-                                  : "bg-gradient-to-br from-gray-900 to-purple-950"
+                                  : "bg-gradient-to-br from-indigo-500 to-indigo-600"
                               }`}
                             >
                               <span className="text-white font-bold text-lg">
@@ -131,7 +131,7 @@ function DiscountModal({
 
                             {/* Tên sản phẩm */}
                             {voucher.productName && (
-                              <p className="text-xs text-purple-950 font-medium mb-1 truncate">
+                              <p className="text-xs text-indigo-600 font-medium mb-1 truncate">
                                 {voucher.productName}
                               </p>
                             )}
@@ -149,7 +149,7 @@ function DiscountModal({
                                 className={`flex items-center gap-1 ${
                                   isExpired
                                     ? "text-gray-400"
-                                    : "text-purple-950 font-semibold"
+                                    : "text-indigo-600 font-semibold"
                                 }`}
                               >
                                 <svg
@@ -229,7 +229,7 @@ function DiscountModal({
                             </div>
                           ) : (
                             <button
-                              className="w-full bg-gradient-to-r from-gray-900 to-purple-950 hover:from-purple-950 hover:to-gray-900 text-white text-sm py-2 px-4 rounded-md font-medium transition-all"
+                              className="w-full bg-indigo-500 hover:bg-indigo-600 active:scale-[0.97] text-white text-sm py-2 px-4 rounded-md font-medium transition-all"
                               onClick={e => {
                                 e.stopPropagation();
                                 onSelectVoucher(voucher.name);

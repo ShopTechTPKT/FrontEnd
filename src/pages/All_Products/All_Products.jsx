@@ -22,6 +22,7 @@ function All_Products() {
     const [sortBy, setSortBy] = useState('default'); // 'default', 'price_asc', 'price_desc', 'name_asc'
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [activeCategoryTab, setActiveCategoryTab] = useState("all");
+    const [allProducts, setAllProducts] = useState([]);
 
     const categoryPathToId = {
         "/all_products": "all",
@@ -69,15 +70,74 @@ function All_Products() {
         loadProducts(next);
     };
 
-    // Load products on mount with filters from navigation state
-    useEffect(() => {
-        loadProducts(initialFilters);
-    }, [location.key]); // Use location.key to trigger on every navigation
+    const getInitialFilters = () => {
+        const filters = {};
+        const params = new URLSearchParams(location.search);
+        
+        const categoryParam = params.get('category');
+        const searchParam = params.get('search');
+        
+        if (searchParam) {
+            filters.searchName = searchParam;
+        }
 
+        const path = location.pathname;
+        if (path === "/laptops" || categoryParam === "laptop") {
+            filters.categoryIds = [45, 46, 47, 48, 49, 50, 51];
+        } else if (path === "/desktops" || categoryParam === "desktop") {
+            filters.categoryIds = [40, 41];
+        } else if (path === "/pc_parts" || categoryParam === "pc_parts") {
+            filters.categoryIds = Array.from({ length: 19 }, (_, i) => 17 + i).concat([11, 12, 13]);
+        } else if (path === "/printer_scanner" || categoryParam === "printer_scanner") {
+            filters.categoryIds = [];
+        } else if (path === "/networking_devices" || categoryParam === "networking") {
+            filters.categoryIds = [];
+        } else if (categoryParam === "keyboard") {
+            filters.categoryIds = [1, 2, 3, 4, 5];
+        } else if (categoryParam === "mouse") {
+            filters.categoryIds = [6, 7, 8, 9, 10];
+        } else if (categoryParam === "headset") {
+            filters.categoryIds = [42, 43];
+        }
+        
+        return filters;
+    };
+
+    // Fetch all products once on mount to compute category counts
     useEffect(() => {
-        const tab = categoryPathToId[location.pathname] || "all";
+        const fetchAllProducts = async () => {
+            try {
+                const response = await filterProducts({});
+                const productsData = response?.products || response?.data?.products || [];
+                setAllProducts(productsData);
+            } catch (err) {
+                console.error("❌ Error fetching all products for counts:", err);
+            }
+        };
+        fetchAllProducts();
+    }, []);
+
+    // Load products and active tab whenever URL pathname or query search changes
+    useEffect(() => {
+        const initialFilters = getInitialFilters();
+        setCurrentFilters(initialFilters);
+        loadProducts(initialFilters);
+
+        // Update active tab matching URL
+        const params = new URLSearchParams(location.search);
+        const categoryParam = params.get('category');
+        let tab = "all";
+        if (categoryParam) {
+            if (categoryParam === "keyboard") {
+                tab = "keyboard_mouse";
+            } else {
+                tab = categoryParam;
+            }
+        } else {
+            tab = categoryPathToId[location.pathname] || "all";
+        }
         setActiveCategoryTab(tab);
-    }, [location.pathname]);
+    }, [location.pathname, location.search]);
 
     useEffect(() => {
         if (!showMobileFilters) return;
@@ -110,7 +170,11 @@ function All_Products() {
                         price: p.hasDiscount ? (p.discountPrice || p.unitPrice || 0) : (p.unitPrice || 0),
                         originalPrice: p.unitPrice || 0,
                         image: p.imageUrl || '/images/placeholder.png',
-                        inStock: p.status === 'ACTIVE',
+                        inStock: (!p.status || (
+                            p.status.toUpperCase() !== 'INACTIVE' &&
+                            p.status.toUpperCase() !== 'OUT_OF_STOCK' &&
+                            p.status.toUpperCase() !== 'DISCONTINUED'
+                        )) && (p.quantity === undefined || p.quantity > 0),
                         categoryName: p.categoryName || 'Uncategorized',
                         hasDiscount: p.hasDiscount || false,
                         percentage: p.percentage || 0,
@@ -170,19 +234,20 @@ function All_Products() {
 
     const displayedProducts = sortProducts(products);
     const appliedFilterChips = getAppliedFilterChips();
+    const countSource = allProducts.length > 0 ? allProducts : products;
     const categoryCounts = {
-        all: totalProducts || products.length,
-        laptop: products.filter((p) => (p.categoryName || "").toLowerCase().includes("laptop")).length,
-        desktop: products.filter((p) => (p.categoryName || "").toLowerCase().includes("desktop") || (p.categoryName || "").toLowerCase().includes("pc")).length,
-        pc_parts: products.filter((p) => (p.categoryName || "").toLowerCase().includes("linh kiện") || (p.categoryName || "").toLowerCase().includes("part")).length,
-        keyboard_mouse: products.filter((p) => {
+        all: allProducts.length > 0 ? allProducts.length : (totalProducts || products.length),
+        laptop: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("laptop")).length,
+        desktop: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("desktop") || (p.categoryName || "").toLowerCase().includes("pc")).length,
+        pc_parts: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("linh kiện") || (p.categoryName || "").toLowerCase().includes("part")).length,
+        keyboard_mouse: countSource.filter((p) => {
             const c = (p.categoryName || "").toLowerCase();
             return c.includes("keyboard") || c.includes("bàn phím") || c.includes("chuột") || c.includes("mouse");
         }).length,
-        mouse: products.filter((p) => (p.categoryName || "").toLowerCase().includes("chuột") || (p.categoryName || "").toLowerCase().includes("mouse")).length,
-        headset: products.filter((p) => (p.categoryName || "").toLowerCase().includes("headset") || (p.categoryName || "").toLowerCase().includes("tai nghe")).length,
-        printer_scanner: products.filter((p) => (p.categoryName || "").toLowerCase().includes("printer") || (p.categoryName || "").toLowerCase().includes("máy in")).length,
-        networking: products.filter((p) => (p.categoryName || "").toLowerCase().includes("network")).length,
+        mouse: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("chuột") || (p.categoryName || "").toLowerCase().includes("mouse")).length,
+        headset: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("headset") || (p.categoryName || "").toLowerCase().includes("tai nghe")).length,
+        printer_scanner: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("printer") || (p.categoryName || "").toLowerCase().includes("máy in")).length,
+        networking: countSource.filter((p) => (p.categoryName || "").toLowerCase().includes("network")).length,
     };
 
     return (
@@ -217,7 +282,7 @@ function All_Products() {
                                     <button
                                         key={chip.key}
                                         onClick={() => clearSingleFilter(chip.key)}
-                                        className="inline-flex items-center gap-1 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700 hover:bg-violet-100"
+                                        className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
                                         title="Bấm để bỏ bộ lọc này"
                                     >
                                         <span>{chip.label}</span>
@@ -254,7 +319,7 @@ function All_Products() {
                         {/* Mobile Filter Button */}
                         <button
                             onClick={() => setShowMobileFilters(!showMobileFilters)}
-                            className="lg:hidden fixed bottom-4 right-4 z-50 bg-violet-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-violet-700 flex items-center gap-2"
+                            className="lg:hidden fixed bottom-4 right-4 z-50 bg-indigo-600 text-white px-4 py-3 rounded-full shadow-lg hover:bg-indigo-700 flex items-center gap-2"
                         >
                             <SlidersHorizontal size={20} />
                             <span className="font-semibold">{t("common.filter") || "Lọc"}</span>
@@ -347,7 +412,7 @@ function All_Products() {
                                                     <strong>Cách khắc phục:</strong>
                                                 </p>
                                                 <ul className="list-disc list-inside mt-1 space-y-1">
-                                                    <li>Kiểm tra Backend đang chạy trên <code className="bg-red-100 px-1 rounded">http://localhost:8081</code></li>
+                                                    <li>Kiểm tra Backend đang chạy trên <code className="bg-red-100 px-1 rounded">http://localhost:8080</code></li>
                                                     <li>Kiểm tra endpoint <code className="bg-red-100 px-1 rounded">POST /api/products/filter</code> đã được implement chưa</li>
                                                     <li>Xem Console (F12) để biết thêm chi tiết</li>
                                                 </ul>

@@ -124,8 +124,8 @@ const CategoryTabBar = ({
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium
                           whitespace-nowrap shrink-0 transition-all duration-200
                           ${isActive
-                            ? "bg-violet-700 text-white shadow-sm"
-                            : "bg-gray-50 text-gray-600 hover:bg-violet-50 hover:text-violet-700 border border-gray-200 hover:border-violet-200"
+                            ? "bg-indigo-700 text-white shadow-sm"
+                            : "bg-gray-50 text-gray-600 hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200 hover:border-indigo-200"
                           }`}
             >
               <Icon />
