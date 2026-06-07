@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, memo, useCallback, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { UserContext } from "../context/UserContext";
+import { createPortal } from "react-dom";
 import { removeFromCart, updateCartItemQuantity } from "../utils/redux/cartSlice";
 import { selectCartItems, selectCartSubtotal } from "../utils/redux/selectors";
 import formatCurrency from "../utils/formatCurrency";
@@ -13,7 +15,7 @@ import Button from "./ui/Button";
  * Shows all cart items with quantity controls, subtotal, and checkout CTA.
  */
 
-const CartItem = React.memo(({ item, optimisticQty, onIncrease, onDecrease, onRemove }) => {
+const CartItem = memo(({ item, optimisticQty, onIncrease, onDecrease, onRemove }) => {
   const productId = item.productID || item.productId || item.id;
   const qty = optimisticQty[productId] ?? item.quantity ?? 1;
 
@@ -22,18 +24,18 @@ const CartItem = React.memo(({ item, optimisticQty, onIncrease, onDecrease, onRe
       {/* Product image */}
       <div className="relative shrink-0">
         <img
-          src={item.imageUrl || item.image}
-          alt=""
+          src={item.image || item.imageUrl || item.product?.imageUrl || ""}
+          alt={item.productName || item.name || item.product?.name || "Product"}
           className="w-[72px] h-[72px] object-contain bg-white dark:bg-[var(--color-bg-subtle)] rounded-xl border border-gray-100 dark:border-[var(--color-border)] p-1.5"
         />
       </div>
 
       <div className="flex-1 min-w-0">
         <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug">
-          {item.name || item.productName}
+          {item.productName || item.name || item.product?.name || "Product"}
         </h4>
-        <p className="text-sm font-bold text-[var(--color-primary)] dark:text-violet-400 mt-1">
-          {formatCurrency(item.unitPrice || item.price)}
+        <p className="text-sm font-bold text-[var(--color-primary)] dark:text-indigo-400 mt-1">
+          {formatCurrency(item.unitPrice || item.price || item.product?.unitPrice || 0)}
         </p>
 
         {/* Quantity + Remove */}
@@ -84,7 +86,9 @@ export default function CartDrawer({ isOpen, onClose }) {
   const drawerRef = useRef(null);
   const qtyTimersRef = useRef({});
   const cartItems = useSelector(selectCartItems);
+  const { user } = useContext(UserContext);
   const [optimisticQty, setOptimisticQty] = useState({});
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const getCurrentUserId = () => {
     try {
@@ -130,7 +134,7 @@ export default function CartDrawer({ isOpen, onClose }) {
     };
   }, []);
 
-  const queueQuantityUpdate = React.useCallback((productId, quantity) => {
+  const queueQuantityUpdate = useCallback((productId, quantity) => {
     const nextQty = Math.max(1, quantity);
     setOptimisticQty((prev) => ({ ...prev, [productId]: nextQty }));
 
@@ -149,25 +153,40 @@ export default function CartDrawer({ isOpen, onClose }) {
     }, 320);
   }, [dispatch]);
 
-  const handleIncrease = React.useCallback((productId, qty) => {
+  const handleIncrease = useCallback((productId, qty) => {
     queueQuantityUpdate(productId, qty + 1);
   }, [queueQuantityUpdate]);
 
-  const handleDecrease = React.useCallback((productId, qty) => {
+  const handleDecrease = useCallback((productId, qty) => {
     queueQuantityUpdate(productId, qty - 1);
   }, [queueQuantityUpdate]);
 
-  const handleRemove = React.useCallback((productId) => {
+  const handleRemove = useCallback((productId) => {
     dispatch(removeFromCart({ userId: getCurrentUserId(), productId }));
   }, [dispatch]);
 
+  const handleCheckoutClick = () => {
+    if (!user) {
+      setShowLoginModal(true);
+    } else {
+      onClose();
+      navigate("/checkout");
+    }
+  };
+
+  const handleGoToLogin = () => {
+    setShowLoginModal(false);
+    onClose();
+    navigate("/login", { state: { from: "/checkout" } });
+  };
+
   const subtotal = useSelector(selectCartSubtotal);
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[var(--z-modal-backdrop)] bg-black/30 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -176,20 +195,20 @@ export default function CartDrawer({ isOpen, onClose }) {
       {/* Drawer */}
       <div
         ref={drawerRef}
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-500 ease-out ${
+        className={`fixed top-0 right-0 z-[var(--z-modal)] h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-500 ease-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
         <div className="relative flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700 overflow-hidden">
           {/* Gradient accent */}
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-600 to-purple-500" />
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-indigo-500" />
           <div className="flex items-center gap-2.5">
             <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
               {t("cart.title") || "Gio hang"}
             </h2>
             {cartItems.length > 0 && (
-              <span className="min-w-[22px] h-[22px] px-1.5 flex items-center justify-center rounded-full bg-violet-600 text-white text-[11px] font-bold">
+              <span className="min-w-[22px] h-[22px] px-1.5 flex items-center justify-center rounded-full bg-indigo-500 text-white text-[11px] font-bold">
                 {cartItems.length}
               </span>
             )}
@@ -245,8 +264,8 @@ export default function CartDrawer({ isOpen, onClose }) {
 
             {/* Checkout CTA */}
             <button
-              onClick={() => { onClose(); navigate("/checkout"); }}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[var(--color-primary-600)] to-purple-600 text-white font-semibold text-sm shadow-md shadow-violet-200/50 hover:shadow-violet-300/60 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2"
+              onClick={handleCheckoutClick}
+              className="w-full py-3.5 rounded-xl bg-indigo-500 text-white font-semibold text-sm hover:bg-indigo-600 active:scale-[0.97] transition-all duration-150 flex items-center justify-center gap-2"
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -257,13 +276,61 @@ export default function CartDrawer({ isOpen, onClose }) {
             {/* Continue shopping */}
             <button
               onClick={onClose}
-              className="w-full py-2.5 text-sm text-gray-500 hover:text-violet-700 font-medium transition-colors"
+              className="w-full py-2.5 text-sm text-gray-500 hover:text-indigo-600 font-medium transition-colors"
             >
               {t("cart.continue_shopping") || "Tiep tuc mua sam"}
             </button>
           </div>
         )}
       </div>
-    </>
+
+      {/* Login Confirmation Modal */}
+      {showLoginModal && (
+        <div className="fixed inset-0 z-[var(--z-popover)] flex items-center justify-center p-4">
+          {/* Modal Backdrop with glass effect */}
+          <div 
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setShowLoginModal(false)}
+          />
+          
+          {/* Modal Panel */}
+          <div className="relative bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800/50 transform scale-100 transition-all duration-300 text-center animate-fadeIn">
+            {/* Lock/Warning Icon */}
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+
+            {/* Title */}
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">
+              Yêu cầu đăng nhập
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+              Bạn cần đăng nhập tài khoản để thực hiện thanh toán đơn hàng. Bạn có muốn đi đến trang đăng nhập ngay không?
+            </p>
+
+            {/* Buttons */}
+            <div className="space-y-2">
+              <button
+                onClick={handleGoToLogin}
+                className="w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] shadow-sm hover:shadow-md"
+              >
+                Đăng nhập ngay
+              </button>
+              <button
+                onClick={() => setShowLoginModal(false)}
+                className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-medium text-sm transition-colors duration-150"
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>,
+    document.body
   );
 }
