@@ -3,30 +3,24 @@ import { createContext, useContext, useState, useEffect, useMemo } from "react";
 const ThemeContext = createContext();
 
 /**
- * ThemeProvider — Manages light/dark theme state.
- * Persists preference in localStorage and syncs with <html> class.
+ * ThemeProvider — Manages theme state.
+ * Forced to "light" as per user request to disable dark mode.
  */
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved;
-    return "light";
-  });
+  const [theme] = useState("light");
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    root.classList.remove("dark");
+    root.classList.remove("dark-mode");
+    localStorage.setItem("theme", "light");
+  }, []);
 
-  const toggleTheme = () =>
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  const toggleTheme = () => {
+    // Disabled
+  };
 
-  const value = useMemo(() => ({ theme, toggleTheme }), [theme]);
+  const value = useMemo(() => ({ theme: "light", toggleTheme }), []);
 
   return (
     <ThemeContext.Provider value={value}>

@@ -229,7 +229,7 @@ const ProductCard = ({ product }) => {
             <div className="flex items-center gap-1">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="text-yellow-400 w-3 h-3">
+                  <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="text-[var(--color-accent)] w-3 h-3">
                     <path d="M10 2.8l2.2 4.4 4.9.7-3.5 3.4.8 4.8L10 14.7 5.6 16l.8-4.8L2.9 7.9l4.9-.7L10 2.8Z" />
                   </svg>
                 ))}
@@ -258,15 +258,15 @@ const ProductCard = ({ product }) => {
           {/* Price row */}
           <div className="flex items-center justify-between gap-2 mt-2">
             <div>
-              <p className="text-base font-bold leading-none text-red-600 dark:text-red-500">
+              <p className="text-base font-bold leading-none text-red-600 dark:text-red-500 font-mono">
                 {formatCurrency(price)}
               </p>
               {hasDiscount && (
                 <div className="flex items-center gap-1.5 mt-1">
-                  <p className="text-[11px] text-gray-400 line-through leading-none">
+                  <p className="text-[11px] text-gray-400 line-through leading-none font-mono">
                     {formatCurrency(originalPrice)}
                   </p>
-                  <span className="text-[10px] font-medium text-red-500 leading-none">
+                  <span className="text-[10px] font-medium text-red-500 leading-none font-mono">
                     Tiết kiệm {formatCurrency(originalPrice - price)}
                   </span>
                 </div>

@@ -107,7 +107,7 @@ const Footer = () => {
     "flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-400 transition-all duration-150 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400";
 
   return (
-    <footer className="relative border-t border-slate-200 bg-white text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
+    <footer className="relative border-t border-slate-200/50 bg-white/45 backdrop-blur-sm text-slate-600 dark:border-slate-800/50 dark:bg-slate-950/45 dark:text-slate-400">
       <div className="relative mx-auto max-w-screen-xl px-4 py-14 sm:px-6">
         <div className="mb-12 rounded-2xl border border-indigo-100 bg-indigo-600 p-8 text-center shadow-sm sm:p-10 dark:border-indigo-900 dark:bg-indigo-900">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
@@ -158,7 +158,7 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="mb-10 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6 dark:border-slate-800 dark:bg-slate-900/50">
+        <div className="mb-10 rounded-2xl border border-slate-200/40 bg-white/20 p-5 sm:p-6 dark:border-slate-800/40 dark:bg-slate-900/10 backdrop-blur-xs">
           <h4 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{t("footer.address.title")}</h4>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
             <address className="flex-1 space-y-1.5 text-sm not-italic text-slate-500 dark:text-slate-400">

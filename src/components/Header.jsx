@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { loadCartItems } from "../utils/redux/cartSlice";
 import { selectCartTotalItems } from "../utils/redux/selectors";
 import notify from "../utils/notify";
-import ThemeToggle from "./ui/ThemeToggle";
 
 import { IconFacebook } from "./header/HeaderIcons";
 import HeaderMobileMenu from "./header/HeaderMobileMenu";
@@ -120,7 +119,7 @@ const Header = () => {
     >
       {/* Top bar đơn giản - desktop lg+ */}
       <div
-        className={`hidden border-b border-slate-100 bg-slate-50/50 text-[11px] transition-all duration-300 dark:border-slate-800/60 dark:bg-slate-900/20 lg:flex lg:items-center lg:justify-between lg:px-8 lg:py-1 ${
+        className={`hidden border-b border-slate-100 bg-white/40 backdrop-blur-xs text-[11px] transition-all duration-300 dark:border-slate-800/60 dark:bg-slate-900/20 lg:flex lg:items-center lg:justify-between lg:px-8 lg:py-1 ${
           isScrolled ? "!hidden" : ""
         }`}
       >
@@ -155,13 +154,12 @@ const Header = () => {
             <IconFacebook className="h-3.5 w-3.5" />
           </a>
           <LanguageSwitcher />
-          <ThemeToggle />
         </div>
       </div>
 
       <div
         className={`relative border-b border-slate-100 transition-colors duration-300 dark:border-slate-900 ${
-          isScrolled ? "bg-white py-1.5 dark:bg-slate-950 shadow-sm" : "bg-white py-2.5 dark:bg-slate-950"
+          isScrolled ? "bg-white/80 backdrop-blur-md py-1.5 dark:bg-slate-950/80 shadow-sm" : "bg-white/80 backdrop-blur-md py-2.5 dark:bg-slate-950/80"
         }`}
       >
         <div className="container-app flex flex-col gap-2">

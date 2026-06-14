@@ -5,7 +5,6 @@ import { IconCart, IconMenu, IconClose } from "./HeaderIcons";
 import NotificationBell from "./NotificationBell";
 import CartDrawer from "../CartDrawer";
 import LanguageSwitcher from "../LanguageSwitcher";
-import ThemeToggle from "../ui/ThemeToggle";
 import HeaderSearchBar from "./HeaderSearchBar";
 
 const HeaderActions = ({
@@ -55,7 +54,6 @@ const HeaderActions = ({
         <HeaderSearchBar onNavigate={onNavigate} />
       </div>
 
-
       <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         <button
           type="button"
@@ -70,7 +68,6 @@ const HeaderActions = ({
 
         <div className="flex items-center gap-1 lg:hidden">
           <LanguageSwitcher />
-          <ThemeToggle />
         </div>
 
         <NotificationBell />
